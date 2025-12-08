@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Search, Filter, Calendar, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserTransactionsWithUsers } from "../../Redux/Slice/transactionSlice";
-import TransactionStats from "../../components/admin/transaction/TransactionStats";
+import TransactionStats from "../../Components/admin/transaction/TransactionStats";
 import TransactionRow from "../../Components/admin/transaction/transactionDetails/transaction-row/TransactionRow";
-import TransactionHeader from "../../components/admin/transaction/TransactionHeader";
+import TransactionHeader from "../../Components/admin/transaction/TransactionHeader";
 import TransactionCard from "../../Components/admin/transaction/transactionDetails/transaction-card/TransactionCard";
 
 export default function Payments() {
