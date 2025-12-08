@@ -301,7 +301,7 @@ export default function Navbar({ adminData }) {
 
                     <button
                       onClick={() => {
-                        navigate("/settings");
+                        navigate("/admin/dashboard/settings");
                         setShowUserMenu(false);
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all text-sm"
