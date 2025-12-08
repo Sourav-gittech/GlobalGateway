@@ -19,9 +19,24 @@ export const addContactMessage = createAsyncThunk("contactSlice/addContactMessag
     }
 );
 
+// Fetch all contact messages
+export const fetchAllContactMessages = createAsyncThunk("contactSlice/fetchAllContactMessages",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
+            console.log('Response for fetching all contact message', res);
+
+            if (res?.error) return rejectWithValue(res?.error.message);
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 const initialState = {
     contactLoading: false,
-    contactData: false,
+    contactData: [],
     contactError: null
 }
 
@@ -31,16 +46,31 @@ export const contactSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            // add a contact messages slice
             .addCase(addContactMessage.pending, (state) => {
                 state.contactLoading = true;
             })
             .addCase(addContactMessage.fulfilled, (state) => {
                 state.contactLoading = false;
-                state.contactData = true;
+                state.contactData = action.payload;
             })
             .addCase(addContactMessage.rejected, (state, action) => {
                 state.contactLoading = false;
                 state.contactError = action.payload || "Failed to send message";
+            })
+
+            // Fetch all contact messages slice
+            .addCase(fetchAllContactMessages.pending, (state) => {
+                state.isLoading = true;
+                state.errorMessage = null;
+            })
+            .addCase(fetchAllContactMessages.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.messages = action.payload;
+            })
+            .addCase(fetchAllContactMessages.rejected, (state, action) => {
+                state.isLoading = false;
+                state.errorMessage = action.error.message;
             });
     },
 });

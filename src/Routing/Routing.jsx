@@ -21,7 +21,7 @@ import Users from "../pages/admin/Users";
 import Payments from "../pages/admin/Payments";
 import Settings from "../pages/admin/Settings";
 import Analytics from "../pages/admin/Analytics";
-import ContactMessages from "../pages/admin/UserContact";
+import ContactMessages from '../Pages/admin/UserContact.jsx';
 import CountryManagement from "../pages/admin/AddCountry";
 import AdminLoginForm from "../pages/admin/auth/AdminLoginForm";
 import Error_404 from '../Pages/Error_404.jsx';

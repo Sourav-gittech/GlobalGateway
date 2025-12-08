@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Filter, Download, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, toggleUserBlock } from "../../redux/slice/userSlice";
+import { getAllUsers, toggleUserBlock } from "../../Redux/Slice/userSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";
 import UserRow from "../../Components/admin/user/UserRow";
 import UserCard from "../../Components/admin/user/UserCard";

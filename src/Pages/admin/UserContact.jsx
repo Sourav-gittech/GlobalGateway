@@ -1,20 +1,7 @@
 import React, { useState } from "react";
-import { 
-  MessageSquare,
-  Search,
-  Filter,
-  Mail,
-  Calendar,
-  Clock,
-  Eye,
-  Trash2,
-  CheckCircle,
-  Reply,
-  X,
-  Send,
-  ArrowLeft,
-  Download
-} from "lucide-react";
+import { MessageSquare, Search, Filter, Mail, CheckCircle, Download } from "lucide-react";
+import MessageCard from "../../Components/admin/contact/ContactMessageCard";
+import ContactMessageModal from "../../Components/admin/contact/ContactMessageModal";
 
 // Mock data
 const MESSAGES = [
@@ -40,233 +27,6 @@ const MESSAGES = [
   },
 ];
 
-function StatusBadge({ status }) {
-  const config = {
-    new: { bg: "bg-blue-500/20", text: "text-blue-400", border: "border-blue-500/30", Icon: MessageSquare },
-    read: { bg: "bg-slate-500/20", text: "text-slate-400", border: "border-slate-500/30", Icon: Eye },
-    replied: { bg: "bg-green-500/20", text: "text-green-400", border: "border-green-500/30", Icon: CheckCircle },
-  }[status];
-
-  const { Icon } = config;
-
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.bg} ${config.text} ${config.border}`}>
-      <Icon className="w-3 h-3" />
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-}
-
-function MessageModal({ message, onClose, onDelete }) {
-  const [isReplying, setIsReplying] = useState(false);
-  const [replySubject, setReplySubject] = useState(`Re: Message from ${message.name}`);
-  const [replyMessage, setReplyMessage] = useState("");
-  const [isSending, setIsSending] = useState(false);
-
-  const handleSendReply = async () => {
-    if (!replyMessage.trim()) return;
-    
-    setIsSending(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    alert(`Reply sent to ${message.email}!\n\nSubject: ${replySubject}\nMessage: ${replyMessage}`);
-    setIsSending(false);
-    onClose();
-  };
-
-  const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete this message from ${message.name}?`)) {
-      onDelete(message.id);
-      onClose();
-    }
-  };
-
-  if (isReplying) {
-    return (
-      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
-        <div 
-          className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 w-full max-w-2xl overflow-hidden"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="border-b border-slate-700/50 p-5 sm:p-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setIsReplying(false)} 
-                className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-slate-400" />
-              </button>
-              <h2 className="text-lg sm:text-xl font-semibold text-white">Reply to Message</h2>
-            </div>
-            <button onClick={onClose} className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
-              <X className="w-5 h-5 text-slate-400" />
-            </button>
-          </div>
-
-          <div className="p-5 sm:p-6 space-y-4">
-            <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-                  <span className="text-blue-400 font-semibold text-sm">
-                    {message.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-white">To: {message.name}</div>
-                  <div className="text-xs text-slate-400 truncate">{message.email}</div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
-              <input
-                type="text"
-                value={replySubject}
-                onChange={(e) => setReplySubject(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                placeholder="Enter subject"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Your Reply</label>
-              <textarea
-                value={replyMessage}
-                onChange={(e) => setReplyMessage(e.target.value)}
-                rows={6}
-                className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none"
-                placeholder="Type your reply here..."
-              />
-              <div className="text-xs text-slate-400 mt-1">
-                {replyMessage.length} characters
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={handleSendReply}
-                disabled={!replyMessage.trim() || isSending}
-                className="flex-1 px-4 py-2.5 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm transition-all flex items-center justify-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                {isSending ? "Sending..." : "Send Reply"}
-              </button>
-              <button
-                onClick={() => setIsReplying(false)}
-                className="px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-all"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div 
-        className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 w-full max-w-2xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="border-b border-slate-700/50 p-5 sm:p-6 flex items-center justify-between">
-          <h2 className="text-lg sm:text-xl font-semibold text-white">Message Details</h2>
-          <button onClick={onClose} className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-slate-400" />
-          </button>
-        </div>
-
-        <div className="p-5 sm:p-6 space-y-5">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-blue-400 font-semibold text-lg">
-                {message.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base sm:text-lg font-semibold text-white mb-1">{message.name}</h3>
-              <p className="text-sm text-slate-400 break-all">{message.email}</p>
-              <p className="text-sm text-slate-400 mt-1">{message.phone}</p>
-            </div>
-            <StatusBadge status={message.status} />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
-            <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50 text-sm text-white leading-relaxed">
-              {message.message}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Message ID</label>
-              <p className="text-sm text-white font-mono">{message.id}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Submitted</label>
-              <p className="text-sm text-white">{message.date} at {message.time}</p>
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={() => setIsReplying(true)}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 text-white text-sm transition-all flex items-center justify-center gap-2"
-            >
-              <Reply className="w-4 h-4" />
-              Reply
-            </button>
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2.5 rounded-lg bg-red-600/30 hover:bg-red-600/50 border border-red-500/30 text-red-400 text-sm transition-all flex items-center justify-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MessageCard({ message, onView }) {
-  return (
-    <div 
-      className="p-4 border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors cursor-pointer" 
-      onClick={() => onView(message)}
-    >
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-            <span className="text-blue-400 font-semibold text-sm">
-              {message.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-white mb-1 truncate">{message.name}</div>
-            <div className="text-xs text-slate-400 truncate">{message.email}</div>
-          </div>
-        </div>
-        <StatusBadge status={message.status} />
-      </div>
-
-      <p className="text-sm text-slate-300 mb-3 line-clamp-2">{message.message}</p>
-
-      <div className="flex items-center gap-2 text-xs text-slate-400">
-        <Calendar className="w-3 h-3" />
-        <span>{message.date}</span>
-        <span className="mx-1">•</span>
-        <Clock className="w-3 h-3" />
-        <span>{message.time}</span>
-      </div>
-    </div>
-  );
-}
-
 export default function ContactMessages() {
   const [messages, setMessages] = useState(MESSAGES);
   const [searchQuery, setSearchQuery] = useState("");
@@ -278,7 +38,7 @@ export default function ContactMessages() {
   };
 
   const filteredMessages = messages.filter(msg => {
-    const matchesSearch = 
+    const matchesSearch =
       msg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       msg.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       msg.message.toLowerCase().includes(searchQuery.toLowerCase());
@@ -387,7 +147,7 @@ export default function ContactMessages() {
 
       {/* Modal */}
       {selectedMessage && (
-        <MessageModal
+        <ContactMessageModal
           message={selectedMessage}
           onClose={() => setSelectedMessage(null)}
           onDelete={handleDelete}
