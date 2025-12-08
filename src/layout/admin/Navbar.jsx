@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import Sidebar from "./Sidebar";
-import { logoutUser } from "../../redux/slice/auth/checkAuthSlice";
+import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch } from "react-redux";
 
 // Constants
