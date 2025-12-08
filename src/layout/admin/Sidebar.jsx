@@ -152,10 +152,10 @@ export default function Sidebar({ adminData }) {
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <h1 className="text-white font-semibold text-base truncate">
+                <h1 className="text-white font-semibold text-base text-lg truncate">
                   Global Gateway
                 </h1>
-                <p className="text-gray-400 text-xs">Admin Panel</p>
+                
               </div>
             )}
           </div>
