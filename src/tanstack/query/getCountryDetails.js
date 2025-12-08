@@ -1,0 +1,12 @@
+import { useQuery } from "@tanstack/react-query";
+import { getFullCountryDetails } from "../../functions/getCountryDetails";
+
+export function useFullCountryDetails(id) {
+    // console.log("Fetching country's ID", id);
+
+    return useQuery({
+        queryKey: ["full_country_details", id],
+        queryFn: () => getFullCountryDetails(id),
+        enabled: !!id,
+    });
+}
