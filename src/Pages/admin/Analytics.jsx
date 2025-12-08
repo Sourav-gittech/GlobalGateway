@@ -22,10 +22,10 @@ import {
   BarChart3,
   PieChart
 } from "lucide-react";
-import { ApplicationTrendChart } from "../../components/admin/ui/charts/analytics/ApplicationChart";
-import { ApprovalRateChart } from "../../components/admin/ui/charts/analytics/ApprovalRateChart";
-import { MonthlyComparisonChart } from "../../components/admin/ui/charts/analytics/MonthlyComparisonChart";
-import { VisaTypeChart } from "../../components/admin/ui/charts/analytics/VisaTypeChart";
+import { ApplicationTrendChart } from "../../Components/admin/ui/charts/analytics/ApplicationChart";
+import { ApprovalRateChart } from "../../Components/admin/ui/charts/analytics/ApprovalRateChart";
+import { MonthlyComparisonChart } from "../../Components/admin/ui/charts/analytics/MonthlyComparisonChart";
+import { VisaTypeChart } from "../../Components/admin/ui/charts/analytics/VisaTypeChart";
 
 // Register Chart.js components
 ChartJS.register(
