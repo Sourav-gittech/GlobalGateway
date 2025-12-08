@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useDispatch, useSelector } from "react-redux";
-import { checkLoggedInUser } from "../../redux/slice/auth/checkAuthSlice";
+import { checkLoggedInUser } from "../../Redux/Slice/auth/checkAuthSlice";
 
 export default function AdminLayout() {
   const dispatch = useDispatch();
