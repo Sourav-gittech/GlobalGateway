@@ -27,10 +27,27 @@ export default function AverageProcessingTime() {
                 Average Processing Times
             </div>
 
-            <div className="space-y-3">
+            <style>{`
+              .process-scroll::-webkit-scrollbar {
+                width: 6px;
+              }
+              .process-scroll::-webkit-scrollbar-track {
+                background: #1e293b;
+                border-radius: 3px;
+              }
+              .process-scroll::-webkit-scrollbar-thumb {
+                background: #475569;
+                border-radius: 3px;
+              }
+              .process-scroll::-webkit-scrollbar-thumb:hover {
+                background: #64748b;
+              }
+            `}</style>
+
+            <div className="process-scroll space-y-3 max-h-30 overflow-y-auto">
                 {data.map(item => (
                     <div key={item.visa_type}>
-                        <div className="flex justify-between text-xs sm:text-sm mb-1">
+                        <div className="flex justify-between text-xs sm:text-sm mb-1 mr-1">
                             <span className="text-slate-400">{item.visa_type}</span>
                             <span className="text-white font-medium">{item.avg_days} days</span>
                         </div>

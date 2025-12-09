@@ -3,6 +3,7 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, Legend } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useApplicationsChartFormatted } from "../../../../hooks/useApplicationsChartFormatted";
+import { Loader2 } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
@@ -46,7 +47,21 @@ export function UserChart() {
     },
   };
 
-  if (isLoading) return <p className="text-gray-400">Loading chart...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <Loader2 className="w-14 h-14 animate-spin text-blue-400" />
+      </div>
+    );
+  }
+
+  if (!chartData) {
+        return (
+            <div className="text-slate-400 text-center py-6">
+                No application data available.
+            </div>
+        );
+    }
 
   return (
     <div className="w-full h-full min-h-[200px] sm:min-h-[250px]">

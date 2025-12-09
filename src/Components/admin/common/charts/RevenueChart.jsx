@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, Legend, } from "chart.js";
 import { useApprovalRateChart } from "../../../../tanstack/query/getApprovalRateChartData";
+import { Loader2 } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler, Legend);
 
@@ -88,15 +89,26 @@ export function RevenueChart() {
     animation: { duration: 750, easing: "easeInOutQuart" },
   }), []);
 
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <Loader2 className="w-14 h-14 animate-spin text-blue-400" />
+      </div>
+    );
+  }
+
+  if (!data) {
+        return (
+            <div className="text-slate-400 text-center py-6">
+                No application data available.
+            </div>
+        );
+    }
+
   return (
     <div className="w-full h-full min-h-[200px] sm:min-h-[250px]">
-      {isLoading ? (
-        <div className="flex justify-center items-center h-full text-slate-400 text-sm italic">
-          Loading chart...
-        </div>
-      ) : (
-        <Line data={chartData} options={chartOptions} />
-      )}
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 }

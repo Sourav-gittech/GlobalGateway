@@ -33,7 +33,7 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
     onClick={onClick}
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-sm font-medium relative group
-      ${isActive ? "bg-white/10 text-white shadow-lg" : "text-gray-300 hover:bg-white/5 hover:text-white"}` }
+      ${isActive ? "bg-white/10 text-white shadow-lg" : "text-gray-300 hover:bg-white/5 hover:text-white"}`}
   >
     <div className="flex items-center justify-center w-6 flex-shrink-0">
       <Icon size={18} />
@@ -183,17 +183,10 @@ export default function Sidebar({ adminData }) {
               <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
                 <User size={18} />
               </div>
-<<<<<<< HEAD
+
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm font-medium truncate">Admin Panel</p>
                 <p className="text-gray-400 text-xs truncate">{adminData?.email || 'admin@global.com'}</p>
-=======
-              <div>
-                <p className="text-white text-sm font-medium truncate">Admin User</p>
-                <p className="text-gray-400 text-xs truncate">
-                  {adminData?.email || "admin@global.com"}
-                </p>
->>>>>>> ce916af8b139750b6acb9936895c17156608ee47
               </div>
             </div>
           </div>
@@ -210,9 +203,9 @@ export default function Sidebar({ adminData }) {
             </button>
           )}
 
-          {navItems.map((item) => (
+          {navItems.map((item,idx) => (
             <NavItem
-              key={item.to}
+              key={idx}
               to={item.to}
               icon={item.icon}
               collapsed={collapsed}

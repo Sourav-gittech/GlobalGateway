@@ -1,32 +1,26 @@
 import supabase from "../util/Supabase/supabase";
 
 export async function getAverageProcessingTimes() {
-    // Fetch any 3 active visas
-    const { data: visaTypes, error: visaErr } = await supabase.from("visa").select("id, visa_type").eq("status", "active").limit(3);
+    const { data: visaTypes, error: visaErr } = await supabase.from("visa").select("id, visa_type").eq("status", "active");
 
     if (visaErr) throw visaErr;
     if (!visaTypes?.length) return [];
 
     const visaIds = visaTypes.map(v => v.id);
 
-    // Fetch their visa_details
     const { data: visaDetails, error: detailsErr } = await supabase.from("visa_details").select("visa_id, visa_processing_time").in("visa_id", visaIds).eq("status", "active");
 
     if (detailsErr) throw detailsErr;
 
-    // FIXED conversion logic
     const parseDays = (str) => {
         if (!str) return 0;
 
         const cleaned = str.replace("days", "").trim();
-
-        // Ranged values: "10–12", "18-20"
         if (cleaned.includes("-") || cleaned.includes("–")) {
             const [min, max] = cleaned.split(/-|–/).map(v => parseInt(v.trim()));
             return (min + max) / 2;
         }
 
-        // Single value: "20"
         return parseInt(cleaned);
     };
 

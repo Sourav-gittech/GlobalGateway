@@ -136,7 +136,7 @@ export default function Navbar({ adminData }) {
 
               <div className="">
                 <h1 className="text-white text-sm sm:text-base md:text-base font-semibold">Global Gateway</h1>
-                <p className="text-gray-400 text-xs">Admin Console</p>
+                <p className="text-gray-400 text-xs">Admin Panel</p>
               </div>
             </div>
           </div>
