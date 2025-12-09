@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Search,
-  Bell,
-  User,
-  LogOut,
-  Settings,
-  ChevronDown,
-  Moon,
-  Sun,
-  Menu,
-  X,
-} from "lucide-react";
+import { Search, Bell, LogOut, Settings, ChevronDown, Moon, Sun, Menu, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch } from "react-redux";
