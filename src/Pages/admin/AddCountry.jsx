@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Globe, Image, MapPin, DollarSign, Save, RefreshCw, Check, FileText, Settings, Loader2, Plus, X, Edit, Trash2, Search } from "lucide-react";
+import { Globe, Image, MapPin, DollarSign, Save, RefreshCw, Check, FileText, Settings, Loader2, Plus, X, Edit, Trash2, Search, ChevronDown, ChevronUp, Calendar, Users, TrendingUp } from "lucide-react";
 
 const SettingsSection = ({ title, description, icon: Icon, children }) => (
   <div className="p-5 sm:p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
@@ -149,95 +149,328 @@ const CountryFormModal = ({ isOpen, onClose, country, onSave }) => {
   );
 };
 
+const CountryRow = ({ country, onEdit, onDelete, isExpanded, onToggleExpand }) => {
+  return (
+    <>
+      <tr className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
+        <td className="p-4">
+          <button 
+            onClick={() => onToggleExpand(country.id)}
+            className="p-1 hover:bg-slate-600/50 rounded transition-colors"
+          >
+            {isExpanded ? 
+              <ChevronUp className="w-4 h-4 text-slate-400" /> : 
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            }
+          </button>
+        </td>
+        <td className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-6 rounded overflow-hidden bg-slate-700 flex items-center justify-center flex-shrink-0">
+              {country.flag_url ? <img src={country.flag_url} alt={`${country.name} flag`} className="w-full h-full object-cover" /> : <Globe className="w-4 h-4 text-slate-400" />}
+            </div>
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-white truncate">{country.name}</div>
+              <div className="text-xs text-slate-400 truncate">{country.official_name}</div>
+            </div>
+          </div>
+        </td>
+        <td className="p-4"><span className="text-sm text-slate-300 font-mono">{country.code}</span></td>
+        <td className="p-4 text-sm text-slate-300">{country.continent}</td>
+        <td className="p-4 text-sm text-slate-300">{country.capital}</td>
+        <td className="p-4">
+          <div className="flex flex-col gap-1">
+            {country.visa_required && <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs inline-block w-fit whitespace-nowrap">Visa Required</span>}
+            <span className={`px-2 py-0.5 rounded-full border text-xs inline-block w-fit whitespace-nowrap ${country.is_active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-slate-500/20 text-slate-400 border-slate-500/30"}`}>{country.is_active ? "Active" : "Inactive"}</span>
+          </div>
+        </td>
+        <td className="p-4">
+          <div className="flex items-center justify-end gap-2">
+            <button onClick={() => onEdit(country)} className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-colors" title="Edit"><Edit className="w-4 h-4" /></button>
+            <button onClick={() => confirm('Delete this country?') && onDelete(country.id)} className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
+          </div>
+        </td>
+      </tr>
+      {isExpanded && (
+        <tr className="bg-slate-800/30 border-b border-slate-700/30">
+          <td colSpan="7" className="p-0">
+            <div className="p-6 space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+              {/* Country Image */}
+              {country.image_url && (
+                <div className="rounded-lg overflow-hidden border border-slate-700/50">
+                  <img src={country.image_url} alt={country.name} className="w-full h-48 object-cover" />
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Geographic Information */}
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MapPin className="w-4 h-4 text-blue-400" />
+                    <h4 className="text-sm font-semibold text-white">Geographic Details</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Region:</span>
+                      <span className="text-slate-300">{country.region}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Area:</span>
+                      <span className="text-slate-300">{country.area}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Population:</span>
+                      <span className="text-slate-300">{country.population}</span>
+                    </div>
+                    {country.latitude && country.longitude && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-400">Coordinates:</span>
+                        <span className="text-slate-300">{country.latitude}, {country.longitude}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Cultural & Financial */}
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <DollarSign className="w-4 h-4 text-green-400" />
+                    <h4 className="text-sm font-semibold text-white">Cultural & Financial</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Currency:</span>
+                      <span className="text-slate-300">{country.currency}</span>
+                    </div>
+                    {country.currency_symbol && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-400">Symbol:</span>
+                        <span className="text-slate-300">{country.currency_symbol}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Language:</span>
+                      <span className="text-slate-300">{country.language}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Metadata */}
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Calendar className="w-4 h-4 text-purple-400" />
+                    <h4 className="text-sm font-semibold text-white">Metadata</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Created:</span>
+                      <span className="text-slate-300">{new Date(country.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400">Updated:</span>
+                      <span className="text-slate-300">{new Date(country.updated_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description & Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="w-4 h-4 text-cyan-400" />
+                    <h4 className="text-sm font-semibold text-white">Description</h4>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">{country.description}</p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-4 h-4 text-indigo-400" />
+                    <h4 className="text-sm font-semibold text-white">Overview</h4>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-4">{country.overview}</p>
+                </div>
+              </div>
+
+              {/* Available Visas */}
+              {country.available_visas && (
+                <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="w-4 h-4 text-orange-400" />
+                    <h4 className="text-sm font-semibold text-white">Available Visas</h4>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {country.available_visas.split(',').map((visa, idx) => (
+                      <span key={idx} className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs">
+                        {visa.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+};
+
 export default function CountryAdminPanel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterContinent, setFilterContinent] = useState("");
+  const [expandedRows, setExpandedRows] = useState(new Set());
   const [countries, setCountries] = useState([
-    { id: 1, name: "United Arab Emirates", code: "AE", official_name: "United Arab Emirates", continent: "Asia", region: "Western Asia", capital: "Abu Dhabi", flag_url: "https://flagcdn.com/w320/ae.png", image_url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c", area: "83,600 sq km", population: "11,294,243", currency: "UAE dirham (د.إ)", language: "Arabic, English", visa_required: true, is_active: true, created_at: "2024-01-15T10:30:00Z" },
-    { id: 2, name: "United Kingdom", code: "GB", official_name: "UK of Great Britain", continent: "Europe", region: "Northern Europe", capital: "London", flag_url: "https://flagcdn.com/w320/gb.png", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad", area: "242,495 sq km", population: "67,886,011", currency: "Pound Sterling (£)", language: "English", visa_required: true, is_active: true, created_at: "2024-01-16T14:20:00Z" },
-    { id: 3, name: "Canada", code: "CA", official_name: "Canada", continent: "North America", region: "Northern America", capital: "Ottawa", flag_url: "https://flagcdn.com/w320/ca.png", image_url: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce", area: "9,984,670 sq km", population: "38,005,238", currency: "Canadian Dollar ($)", language: "English, French", visa_required: true, is_active: true, created_at: "2024-01-17T09:15:00Z" }
+    { id: 1, name: "United Arab Emirates", code: "AE", official_name: "United Arab Emirates", continent: "Asia", region: "Western Asia", capital: "Abu Dhabi", flag_url: "https://flagcdn.com/w320/ae.png", image_url: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c", area: "83,600 sq km", population: "11,294,243", latitude: "23.4241", longitude: "53.8478", currency: "UAE dirham (د.إ)", currency_symbol: "د.إ", language: "Arabic, English", overview: "The United Arab Emirates is a federation of seven emirates on the eastern side of the Arabian peninsula, at the entrance to the Persian Gulf. It has coastlines on the Gulf of Oman and the Persian Gulf, with Saudi Arabia to the west and southwest, and Oman to the southeast as well as maritime borders with Qatar and Iran.", description: "A modern desert nation known for luxury shopping, ultramodern architecture and a lively nightlife scene.", available_visas: "Tourist Visa, Business Visa, Work Visa, Student Visa", visa_required: true, is_active: true, created_at: "2024-01-15T10:30:00Z", updated_at: "2024-12-01T14:20:00Z" },
+    { id: 2, name: "United Kingdom", code: "GB", official_name: "UK of Great Britain", continent: "Europe", region: "Northern Europe", capital: "London", flag_url: "https://flagcdn.com/w320/gb.png", image_url: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad", area: "242,495 sq km", population: "67,886,011", latitude: "55.3781", longitude: "-3.4360", currency: "Pound Sterling (£)", currency_symbol: "£", language: "English", overview: "The United Kingdom of Great Britain and Northern Ireland, commonly known as the United Kingdom or Britain, is a sovereign country in Europe, off the north-western coast of the continental mainland. It comprises England, Scotland, Wales and Northern Ireland.", description: "A European nation with a rich history, iconic landmarks, and diverse cultural heritage.", available_visas: "Tourist Visa, Student Visa, Work Visa, Business Visa, Family Visa", visa_required: true, is_active: true, created_at: "2024-01-16T14:20:00Z", updated_at: "2024-12-02T10:15:00Z" },
+    { id: 3, name: "Canada", code: "CA", official_name: "Canada", continent: "North America", region: "Northern America", capital: "Ottawa", flag_url: "https://flagcdn.com/w320/ca.png", image_url: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce", area: "9,984,670 sq km", population: "38,005,238", latitude: "56.1304", longitude: "-106.3468", currency: "Canadian Dollar ($)", currency_symbol: "C$", language: "English, French", overview: "Canada is a country in North America. Its ten provinces and three territories extend from the Atlantic Ocean to the Pacific Ocean and northward into the Arctic Ocean, making it the world's second-largest country by total area.", description: "Known for its vast wilderness, multicultural cities, and high quality of life.", available_visas: "Tourist Visa, Student Visa, Work Permit, Express Entry, Family Sponsorship", visa_required: true, is_active: true, created_at: "2024-01-17T09:15:00Z", updated_at: "2024-12-03T16:45:00Z" },
+    { id: 4, name: "Australia", code: "AU", official_name: "Commonwealth of Australia", continent: "Oceania", region: "Australia and New Zealand", capital: "Canberra", flag_url: "https://flagcdn.com/w320/au.png", image_url: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be", area: "7,692,024 sq km", population: "25,687,041", latitude: "-25.2744", longitude: "133.7751", currency: "Australian Dollar ($)", currency_symbol: "A$", language: "English", overview: "Australia is a sovereign country comprising the mainland of the Australian continent, the island of Tasmania, and numerous smaller islands. Australia is the largest country by area in Oceania and the world's sixth-largest country.", description: "Famous for its natural wonders, beaches, deserts, and unique wildlife.", available_visas: "Tourist Visa, Student Visa, Skilled Worker Visa, Working Holiday Visa", visa_required: true, is_active: true, created_at: "2024-01-18T11:30:00Z", updated_at: "2024-12-04T08:20:00Z" }
   ]);
 
   const handleSave = (data) => setCountries(selectedCountry ? countries.map(c => c.id === selectedCountry.id ? data : c) : [...countries, data]);
+  
+  const handleDelete = (id) => setCountries(countries.filter(c => c.id !== id));
+  
+  const handleEdit = (country) => {
+    setSelectedCountry(country);
+    setIsModalOpen(true);
+  };
+  
+  const toggleRowExpansion = (id) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedRows(newExpanded);
+  };
+  
   const filtered = countries.filter(c => (c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.code.toLowerCase().includes(searchQuery.toLowerCase()) || c.capital.toLowerCase().includes(searchQuery.toLowerCase())) && (!filterContinent || c.continent === filterContinent));
   const continents = ["Africa", "Antarctica", "Asia", "Europe", "North America", "South America", "Oceania"];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Manage Countries</h1>
-          <p className="text-slate-400">Manage and Add new countries </p>
-        </div>
-        <button onClick={() => { setSelectedCountry(null); setIsModalOpen(true); }} className="px-4 py-2 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 text-white text-sm transition-all flex items-center gap-2"><Plus className="w-4 h-4" /><span className="hidden sm:inline">Add Country</span></button>
-      </div>
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input type="text" placeholder="Search countries..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm" />
-        </div>
-        <select value={filterContinent} onChange={(e) => setFilterContinent(e.target.value)} className="px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm appearance-none cursor-pointer min-w-[160px]">
-          <option value="">All Continents</option>
-          {continents.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
-      </div>
-      <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden max-h-[600px] flex flex-col">
-        <div className="overflow-x-auto overflow-y-auto flex-1">
-          <table className="w-full">
-            <thead className="sticky top-0 bg-slate-800/90 backdrop-blur-sm z-10">
-              <tr className="border-b border-slate-700/50">
-                {["Country", "Code", "Continent", "Region", "Capital", "Currency", "Language", "Status", "Update/Delete"].map(h => <th key={h} className={`text-${h === "Actions" ? "right" : "left"} p-4 text-sm font-semibold text-slate-300`}>{h}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(c => (
-                <tr key={c.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-6 rounded overflow-hidden bg-slate-700 flex items-center justify-center flex-shrink-0">
-                        {c.flag_url ? <img src={c.flag_url} alt={`${c.name} flag`} className="w-full h-full object-cover" /> : <Globe className="w-4 h-4 text-slate-400" />}
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-white truncate">{c.name}</div>
-                        <div className="text-xs text-slate-400 truncate">{c.official_name}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4"><span className="text-sm text-slate-300 font-mono">{c.code}</span></td>
-                  <td className="p-4 text-sm text-slate-300">{c.continent}</td>
-                  <td className="p-4 text-sm text-slate-300">{c.region}</td>
-                  <td className="p-4 text-sm text-slate-300">{c.capital}</td>
-                  <td className="p-4 text-sm text-slate-300">{c.currency}</td>
-                  <td className="p-4 text-sm text-slate-300">{c.language}</td>
-                  <td className="p-4">
-                    <div className="flex flex-col gap-1">
-                      {c.visa_required && <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs inline-block w-fit whitespace-nowrap">Visa Required</span>}
-                      <span className={`px-2 py-0.5 rounded-full border text-xs inline-block w-fit whitespace-nowrap ${c.is_active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-slate-500/20 text-slate-400 border-slate-500/30"}`}>{c.is_active ? "Active" : "Inactive"}</span>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => { setSelectedCountry(c); setIsModalOpen(true); }} className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-colors" title="Edit"><Edit className="w-4 h-4" /></button>
-                      <button onClick={() => confirm('Delete this country?') && setCountries(countries.filter(x => x.id !== c.id))} className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {filtered.length === 0 && (
-          <div className="p-12 text-center">
-            <Globe className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-400 mb-2">{searchQuery || filterContinent ? 'No countries found' : 'No countries yet'}</h3>
-            <p className="text-sm text-slate-500 mb-4">{searchQuery || filterContinent ? 'Try adjusting your search' : 'Add your first country'}</p>
-            {!searchQuery && !filterContinent && <button onClick={() => { setSelectedCountry(null); setIsModalOpen(true); }} className="px-4 py-2 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 text-white text-sm transition-all inline-flex items-center gap-2"><Plus className="w-4 h-4" />Add Country</button>}
+    <div className="min-h-screen bg-slate-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Manage Countries</h1>
+            <p className="text-slate-400">Manage and add new countries to the platform</p>
           </div>
-        )}
-        {filtered.length > 0 && <div className="p-4 border-t border-slate-700/50 text-sm text-slate-400 text-center">Showing {filtered.length} of {countries.length} countries</div>}
+          <button onClick={() => { setSelectedCountry(null); setIsModalOpen(true); }} className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
+            <Plus className="w-4 h-4" />
+            <span>Add Country</span>
+          </button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-500/30">
+                <Globe className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-400">Total Countries</p>
+                <p className="text-2xl font-bold text-white">{countries.length}</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-green-500/20 border border-green-500/30">
+                <Check className="w-5 h-5 text-green-400" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-400">Active Countries</p>
+                <p className="text-2xl font-bold text-white">{countries.filter(c => c.is_active).length}</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-purple-500/20 border border-purple-500/30">
+                <TrendingUp className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm text-slate-400">Continents</p>
+                <p className="text-2xl font-bold text-white">{new Set(countries.map(c => c.continent)).size}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input type="text" placeholder="Search countries..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm" />
+          </div>
+          <select value={filterContinent} onChange={(e) => setFilterContinent(e.target.value)} className="px-4 py-2.5 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm appearance-none cursor-pointer min-w-[160px]">
+            <option value="">All Continents</option>
+            {continents.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+
+        {/* Table */}
+        <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-800/90 backdrop-blur-sm sticky top-0 z-10">
+                <tr className="border-b border-slate-700/50">
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300 w-12"></th>
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300">Country</th>
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300">Code</th>
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300">Continent</th>
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300">Capital</th>
+                  <th className="text-left p-4 text-sm font-semibold text-slate-300">Status</th>
+                  <th className="text-right p-4 text-sm font-semibold text-slate-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="p-12 text-center">
+                      <Globe className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-slate-400 mb-2">
+                        {searchQuery || filterContinent ? 'No countries found' : 'No countries yet'}
+                      </h3>
+                      <p className="text-sm text-slate-500 mb-4">
+                        {searchQuery || filterContinent ? 'Try adjusting your search' : 'Add your first country'}
+                      </p>
+                      {!searchQuery && !filterContinent && (
+                        <button onClick={() => { setSelectedCountry(null); setIsModalOpen(true); }} className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm transition-all inline-flex items-center gap-2">
+                          <Plus className="w-4 h-4" />Add Country
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map(c => (
+                    <CountryRow 
+                      key={c.id} 
+                      country={c} 
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      isExpanded={expandedRows.has(c.id)}
+                      onToggleExpand={toggleRowExpansion}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {filtered.length > 0 && (
+            <div className="p-4 border-t border-slate-700/50 text-sm text-slate-400 text-center bg-slate-800/30">
+              Showing {filtered.length} of {countries.length} countries
+            </div>
+          )}
+        </div>
       </div>
+      
       <CountryFormModal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); setSelectedCountry(null); }} country={selectedCountry} onSave={handleSave} />
     </div>
   );
