@@ -4,6 +4,7 @@ import { Search, Bell, LogOut, Settings, ChevronDown, Moon, Sun, Menu, X } from 
 import Sidebar from "./Sidebar";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch } from "react-redux";
+import { useSidebarStore } from "../../util/useSidebarStore";
 
 // Constants
 const NOTIFICATIONS = [
@@ -21,12 +22,14 @@ export default function Navbar({ adminData }) {
   const [unreadCount, setUnreadCount] = useState(2);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Get collapsed state from sidebar store
+  const collapsed = useSidebarStore((s) => s.collapsed);
+  
   const dispatch = useDispatch();
   const notificationRef = useRef(null);
   const userMenuRef = useRef(null);
   const searchInputRef = useRef(null);
-
-  // console.log('Admin Data',adminData);
 
   // Detect screen size
   useEffect(() => {
@@ -116,8 +119,8 @@ export default function Navbar({ adminData }) {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-black/10 backdrop-blur-md border-b border-white/10">
-        <div className="flex items-center justify-between px-4 md:h-18 lg:h-18 md:px-6 py-3 md:py-4">
+      <header className={`fixed top-0 right-0 left-0 z-40 transition-all duration-300 bg-black/10 backdrop-blur-md border-b border-white/10 ${collapsed ? "md:left-20" : "md:left-64"}`}>
+        <div className="flex items-center justify-between px-4 h-16 md:h-18 lg:h-18 md:px-6">
           {/* Left Section - Logo & Mobile Menu Button */}
           <div className="flex items-center gap-3 md:gap-4">
             {/* Mobile Menu Button */}
@@ -133,49 +136,17 @@ export default function Navbar({ adminData }) {
 
             {/* Logo */}
             <div className="flex items-center gap-2">
-
               <div className="">
                 <h1 className="text-white text-sm sm:text-base md:text-base font-semibold">Global Gateway</h1>
-                <p className="text-gray-400 text-xs">Admin Panel</p>
+                <p className="text-gray-400 text-xs">Admin Console</p>
               </div>
             </div>
           </div>
 
-          {/* Center Section - Search Bar (Hidden on small mobile) */}
-          <div className="hidden sm:flex flex-1 max-w-md lg:max-w-2xl mx-4">
-            <div className="relative w-full">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={16}
-              />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch(e);
-                  }
-                }}
-                placeholder="Search"
-                className="w-full pl-9 pr-4 py-2 md:py-2.5 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-              />
-            </div>
-          </div>
+
 
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-3">
-            {/* Search Button (Mobile Only) */}
-            {isMobile && (
-              <button
-                onClick={() => searchInputRef.current?.focus()}
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all sm:hidden"
-                aria-label="Search"
-              >
-                <Search size={18} />
-              </button>
-            )}
 
             {/* Theme Toggle */}
             <button
@@ -286,8 +257,6 @@ export default function Navbar({ adminData }) {
                   </div>
 
                   <div className="p-2">
-
-
                     <button
                       onClick={() => {
                         navigate("/admin/dashboard/settings");
@@ -314,30 +283,6 @@ export default function Navbar({ adminData }) {
             </div>
           </div>
         </div>
-
-        {/* Mobile Search Bar */}
-        {isMobile && (
-          <div className="px-4 pb-3 sm:hidden">
-            <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={16}
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch(e);
-                  }
-                }}
-                placeholder="Search..."
-                className="w-full pl-9 pr-4 py-2 text-sm bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
-              />
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Mobile Sidebar Overlay & Container */}

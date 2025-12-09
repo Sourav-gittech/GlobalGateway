@@ -31,7 +31,7 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar adminData={userAuthData} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#0b1020] via-[#07080a] to-[#050506] overflow-x-hidden">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 mt-16 md:mt-[72px] lg:mt-[72px] bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#0b1020] via-[#07080a] to-[#050506] overflow-x-hidden">
           <div className="max-w-full">
             <Outlet />
           </div>
