@@ -156,7 +156,7 @@ export default function Sidebar({ adminData }) {
                 <h1 className="text-white font-semibold text-base text-lg truncate">
                   Global Gateway
                 </h1>
-                
+
               </div>
             )}
           </div>
@@ -231,13 +231,8 @@ export default function Sidebar({ adminData }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className={`w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all
-              ${isLoggingOut
-                ? "bg-white text-gray-500 cursor-not-allowed"
-                : "text-gray-300 hover:bg-red-500/10 hover:text-red-400"
-              }`}
-            aria-label="Logout"
-          >
+            className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all bg-white/10
+              text-gray-300 hover:bg-red-500/10 hover:text-red-400" aria-label="Logout">
             <LogOut size={18} className={isLoggingOut ? "animate-spin" : ""} />
             {!collapsed && (
               <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
