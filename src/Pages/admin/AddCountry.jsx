@@ -104,7 +104,7 @@ export default function CountryAdminPanel() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-slate-900">
+    <div className="min-h-screen w-full bg-transparent">
       <div className="space-y-6">
         {/* Header */}
         <CountryHeader setSelectedCountry={setSelectedCountry} setIsModalOpen={setIsModalOpen} />

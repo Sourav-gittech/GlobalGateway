@@ -180,10 +180,7 @@ export default function Users() {
                 <option value="pending">Pending</option>
               </select>
             </div>
-            <button className="px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-colors flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Export</span>
-            </button>
+            
           </div>
         </div>
       </div>

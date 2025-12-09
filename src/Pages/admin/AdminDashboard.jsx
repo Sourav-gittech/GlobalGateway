@@ -19,7 +19,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-              Visa Immigration Dashboard
+              Visa Immigration Insights Panel
             </h1>
             <p className="text-sm sm:text-base text-slate-400 mt-1">
               Track applications, approvals, and processing times

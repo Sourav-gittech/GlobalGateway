@@ -26,6 +26,8 @@ import CountryManagement from "../Pages/admin/AddCountry";
 import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
 import Error_404 from '../Pages/Error_404.jsx';
 import AmbessyManage from '../Pages/admin/AmbessyManage.jsx';
+import CourseManage from '../Pages/admin/CourseManage.jsx';
+import AddAdmin from '../Pages/admin/AddAdmin.jsx';
 
 
 const AuthForm = lazy(() => import('../Pages/user/auth/Authentication'));
@@ -87,6 +89,8 @@ const Routing = () => {
             <Route path="contact" element={<ContactMessages />} />
             <Route path="country" element={<CountryManagement />} />
             <Route path="ambessyManage" element={<AmbessyManage />} />
+            <Route path="courseManage" element={<CourseManage />} />
+             <Route path="addAdmin" element={<AddAdmin />} />
             
 
           </Route>

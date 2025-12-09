@@ -1,7 +1,7 @@
 import React from "react";
 import { FileCog} from "lucide-react";
 
-const AmbessyManage = () => {
+const CourseManage = () => {
   return (
     <section className="w-full h-[80vh] flex flex-col items-center justify-center text-center">
       {/* Icon Group */}
@@ -23,4 +23,4 @@ const AmbessyManage = () => {
   );
 };
 
-export default AmbessyManage;
+export default CourseManage;
