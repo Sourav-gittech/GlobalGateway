@@ -2,26 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom"; // ⬅ Added useLocation
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import "../../../src/app.css"
-import {
-  Home,
-  Users,
-  CreditCard,
-  Settings,
-  Bell,
-  BarChart2,
-  Menu,
-  LogOut,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  User,
-  ShieldCheck,
-  Landmark,
-  Globe,
-  Library,
-  Loader2,
-} from "lucide-react";
+import "../../../src/App.css";
+import { Home, Users, CreditCard, Settings, Bell, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, ShieldCheck, Landmark, Globe, Library, Loader2 } from "lucide-react";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../Redux/Slice/userSlice";
@@ -203,7 +185,7 @@ export default function Sidebar({ adminData }) {
             </button>
           )}
 
-          {navItems.map((item,idx) => (
+          {navItems.map((item, idx) => (
             <NavItem
               key={idx}
               to={item.to}
