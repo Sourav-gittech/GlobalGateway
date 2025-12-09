@@ -191,7 +191,7 @@ export default function Sidebar({ adminData }) {
                 <User size={18} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">Admin User</p>
+                <p className="text-white text-sm font-medium truncate">Admin Panel</p>
                 <p className="text-gray-400 text-xs truncate">{adminData?.email || 'admin@global.com'}</p>
               </div>
             </div>
