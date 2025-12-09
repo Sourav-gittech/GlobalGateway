@@ -17,6 +17,22 @@ export const fetchAllCountryList = createAsyncThunk("countrySlice/fetchAllCountr
     }
 )
 
+// fetch all country details action
+export const fetchAllCountryDetails = createAsyncThunk("countrySlice/fetchAllCountryDetails",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await supabase.from("countries").select(`*,country_details:country_details(*)`).order("created_at", { ascending: false });
+            console.log('Response for getting country details', res);
+
+            if (res?.error) throw res?.error;
+
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 const initialState = {
     isAllCountryListLoading: false,
     getAllCountryList: [],
@@ -38,6 +54,19 @@ export const countrySlice = createSlice({
                 state.getAllCountryList = action.payload;
             })
             .addCase(fetchAllCountryList.rejected, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.isAllCountryListError = action.error.message;
+            })
+            
+            // fetch all country details reducer
+            .addCase(fetchAllCountryDetails.pending, (state, action) => {
+                state.isAllCountryListLoading = true;
+            })
+            .addCase(fetchAllCountryDetails.fulfilled, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.getAllCountryList = action.payload;
+            })
+            .addCase(fetchAllCountryDetails.rejected, (state, action) => {
                 state.isAllCountryListLoading = false;
                 state.isAllCountryListError = action.error.message;
             })
