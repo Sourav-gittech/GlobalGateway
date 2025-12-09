@@ -2,7 +2,7 @@ import React from 'react'
 import CountryRow from './CountryRow';
 import { Globe } from 'lucide-react';
 
-const CountryTable = ({ filtered, countries }) => {
+const CountryTable = ({ searchQuery, filtered, countries,filterContinent }) => {
     return (
         <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden max-h-[600px] flex flex-col">
             <div className="overflow-x-auto overflow-y-auto flex-1">

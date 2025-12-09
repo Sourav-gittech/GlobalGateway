@@ -107,7 +107,7 @@ export default function CountryAdminPanel() {
     <div className="min-h-screen w-full bg-slate-900">
       <div className="space-y-6">
         {/* Header */}
-        <CountryHeader />
+        <CountryHeader setSelectedCountry={setSelectedCountry} setIsModalOpen={setIsModalOpen} />
 
         {/* Search + Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -135,7 +135,7 @@ export default function CountryAdminPanel() {
         </div>
 
         {/* TABLE */}
-        <CountryTable filtered={filtered} countries={countries} />
+        <CountryTable searchQuery={searchQuery} filtered={filtered} countries={countries} filterContinent={filterContinent} />
 
         <CountryFormModal
           isOpen={isModalOpen}
