@@ -110,11 +110,12 @@ export default function Sidebar({ adminData }) {
   const navItems = [
     { to: "/admin/dashboard", label: "Dashboard", icon: Home },
     { to: "/admin/dashboard/users", label: "Users", icon: Users, badge: isUserLoading ? <Loader2 className="w-4 h-4 text-white animate-spin" /> : getUserData?.length },
+    { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
+    { to: "/admin/dashboard/country", label: "Manage Countries", icon: Users },
+    { to: "/admin/dashboard/ambessyManage", label: "Manage Ambessy", icon: Users },
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
-    { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
-    { to: "/admin/dashboard/country", label: "Countries", icon: Users },
   ];
 
   return (
@@ -152,10 +153,10 @@ export default function Sidebar({ adminData }) {
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <h1 className="text-white font-semibold text-base truncate">
+                <h1 className="text-white font-semibold text-base text-lg truncate">
                   Global Gateway
                 </h1>
-                <p className="text-gray-400 text-xs">Admin Panel</p>
+                
               </div>
             )}
           </div>
@@ -232,7 +233,7 @@ export default function Sidebar({ adminData }) {
             disabled={isLoggingOut}
             className={`w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-all
               ${isLoggingOut
-                ? "bg-white/5 text-gray-500 cursor-not-allowed"
+                ? "bg-white text-gray-500 cursor-not-allowed"
                 : "text-gray-300 hover:bg-red-500/10 hover:text-red-400"
               }`}
             aria-label="Logout"

@@ -136,7 +136,7 @@ export default function Navbar({ adminData }) {
 
               <div className="">
                 <h1 className="text-white text-sm sm:text-base md:text-base font-semibold">Global Gateway</h1>
-                <p className="text-gray-400 text-xs">Admin Panel</p>
+                <p className="text-gray-400 text-xs">Admin Console</p>
               </div>
             </div>
           </div>
@@ -290,7 +290,7 @@ export default function Navbar({ adminData }) {
 
                     <button
                       onClick={() => {
-                        navigate("/settings");
+                        navigate("/admin/dashboard/settings");
                         setShowUserMenu(false);
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all text-sm"
