@@ -197,7 +197,7 @@ const CountryFormModal = ({ isOpen, onClose, country, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-800/50" onClick={onClose} />
       <div className="relative w-full max-w-2xl bg-slate-800/80 border border-slate-700/60 rounded-lg p-6 z-10">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">
