@@ -51,7 +51,7 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                     dispatch(getAllAdmins());
                     // setBlockModalOpen(false);
 
-                    if (userAuthData?.id == selectedAdminId && setStatus) {
+                    if (userAuthData?.id == adminId && status) {
                         dispatch(logoutUser("admin"));
                         navigate("/admin/");
                     }
