@@ -3,7 +3,14 @@ import AdminCard from './AdminCard'
 import AdminRow from './AdminRow'
 import { Loader2 } from 'lucide-react';
 
-const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSuccessMessage, setShowSuccess }) => {
+const AdminTable = ({ 
+    filteredAdmins, 
+    admins, 
+    isAdminLoading, 
+    setAdmins, 
+    setSuccessMessage, 
+    setShowSuccess
+}) => {
 
     const showSuccessNotification = (message) => {
         setSuccessMessage(message);
@@ -11,21 +18,29 @@ const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSucc
         setTimeout(() => setShowSuccess(false), 3000);
     };
 
-    const handleBlockAdmin = (id) => {
-        setAdmins(admins.map(admin =>
-            admin.id === id
-                ? { ...admin, status: admin.status === "active" ? "blocked" : "active" }
-                : admin
-        ));
+    const handleBlockAdmin = async (id) => {
+        // Find the admin BEFORE updating state
         const admin = admins.find(a => a.id === id);
-        showSuccessNotification(
-            admin.status === "active"
-                ? "Admin access blocked successfully!"
-                : "Admin access restored successfully!"
-        );
+        const wasBlocked = admin?.is_blocked;
+        
+        // Toggle is_blocked state
+        setAdmins(admins.map(a =>
+            a.id === id
+                ? { ...a, is_blocked: !a.is_blocked }
+                : a
+        ));
+        
+        // Show notification with correct message based on previous state
+        if (wasBlocked === false) {
+            // Admin was active, now blocking
+            showSuccessNotification("Admin blocked successfully!");
+        } else {
+            // Admin was blocked, now unblocking
+            showSuccessNotification("Admin unblocked successfully!");
+        }
     };
 
-    const handleDeleteAdmin = (id) => {
+    const handleDeleteAdmin = async (id) => {
         setAdmins(admins.filter(admin => admin.id !== id));
         showSuccessNotification("Admin removed successfully!");
     };
@@ -62,7 +77,14 @@ const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSucc
                         )}
                         {!isAdminLoading && filteredAdmins?.length > 0 &&
                             filteredAdmins.map((admin, index) => (
-                                <AdminRow key={admin.id} index={index} admin={admin} filteredAdmins={filteredAdmins} handleBlockAdmin={handleBlockAdmin} handleDeleteAdmin={handleDeleteAdmin} />
+                                <AdminRow 
+                                    key={admin.id} 
+                                    index={index} 
+                                    admin={admin} 
+                                    filteredAdmins={filteredAdmins} 
+                                    handleBlockAdmin={handleBlockAdmin} 
+                                    handleDeleteAdmin={handleDeleteAdmin} 
+                                />
                             ))}
                     </tbody>
                 </table>
@@ -70,9 +92,15 @@ const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSucc
 
             {/* Mobile/Tablet Card View */}
             <div className="lg:hidden divide-y divide-slate-700/30">
-                {filteredAdmins.map((admin) => (
-                    <AdminCard key={admin.id} admin={admin} handleBlockAdmin={handleBlockAdmin} handleDeleteAdmin={handleDeleteAdmin} />
-                ))}
+                {!isAdminLoading && filteredAdmins?.length > 0 &&
+                    filteredAdmins.map((admin) => (
+                        <AdminCard 
+                            key={admin.id} 
+                            admin={admin} 
+                            handleBlockAdmin={handleBlockAdmin} 
+                            handleDeleteAdmin={handleDeleteAdmin} 
+                        />
+                    ))}
             </div>
         </>
     )

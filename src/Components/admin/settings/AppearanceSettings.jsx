@@ -60,14 +60,14 @@ const AppearanceSettings = ({ SettingsSection }) => {
                         <Mail className="w-4 h-4" />
                         Update Email
                     </button>
-                    <button className="w-full px-4 py-2.5 rounded-lg bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/30 text-white text-sm transition-all flex items-center justify-center gap-2">
+                    <button className="w-full px-4 py-2.5 rounded-lg bg-red-600/30 hover:bg-red-900 border border-red-500/30 text-white text-sm transition-all flex items-center justify-center gap-2">
                         <Lock className="w-4 h-4" />
                         Deactivate Account
                     </button>
-                    <button className="w-full px-4 py-2.5 rounded-lg bg-red-600/30 hover:bg-red-600/50 border border-red-500/30 text-white text-sm transition-all flex items-center justify-center gap-2">
+                    {/* <button className="w-full px-4 py-2.5 rounded-lg bg-red-600/30 hover:bg-red-600/50 border border-red-500/30 text-white text-sm transition-all flex items-center justify-center gap-2">
                         <X className="w-4 h-4" />
                         Delete Account
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </SettingsSection>
