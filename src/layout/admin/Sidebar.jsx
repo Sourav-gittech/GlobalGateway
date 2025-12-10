@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Users, CreditCard, Settings, Bell, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Globe, Library, Loader2, UserRoundCog } from "lucide-react";
+import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Globe, Library, Loader2, UserRoundCog } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -82,12 +82,15 @@ export default function Sidebar({ adminData }) {
 
   const navItems = [
     { to: "/admin/dashboard", label: "Dashboard", icon: Home },
+     { to: "/admin/dashboard/adminProfile", label: "Profile", icon: UserCircle },
+
     {
       to: "/admin/dashboard/users", label: "Manage Users", icon: Users,
       badge: isUserLoading ? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (getUserData?.length),
     },
     { to: "/admin/dashboard/admin", label: "Manage Admin", icon: UserRoundCog },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
+    { to: "/admin/dashboard/visaManage", label: "Manage Visa", icon: IdCard },
     { to: "/admin/dashboard/ambessyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
@@ -121,8 +124,14 @@ export default function Sidebar({ adminData }) {
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/5">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg border border-white/10">
+          {/* Logo + Title */}
+          <div
+            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "w-14" : "w-48"
+              } min-w-0`}
+          >
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-white/10 backdrop-blur-sm
+      flex items-center justify-center text-white font-bold text-lg shadow-lg 
+      border border-white/10">
               <FlightTakeoffIcon fontSize="small" />
             </div>
 
@@ -133,22 +142,27 @@ export default function Sidebar({ adminData }) {
             )}
           </div>
 
+          {/* Collapse Button */}
           {!collapsed && (
             <button
               onClick={toggle}
-              className="hidden md:flex p-2 rounded-lg hover:bg-white/5 text-gray-300 hover:text-white"
+              className="hidden md:flex p-2 rounded-lg hover:bg-white/5 
+      text-gray-300 hover:text-white"
             >
               <ChevronLeft size={18} />
             </button>
           )}
 
+          {/* Mobile Close */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="md:hidden p-2 rounded-lg hover:bg-white/5 text-gray-300 hover:text-white"
+            className="md:hidden p-2 rounded-lg hover:bg-white/5 
+    text-gray-300 hover:text-white"
           >
             <X size={18} />
           </button>
         </div>
+
 
         {/* User profile */}
         {!collapsed && (
