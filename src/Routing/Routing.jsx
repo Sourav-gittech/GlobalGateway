@@ -22,12 +22,12 @@ import Payments from "../Pages/admin/Payments";
 import Settings from "../Pages/admin/Settings";
 import Analytics from "../Pages/admin/Analytics";
 import ContactMessages from '../Pages/admin/UserContact.jsx';
-import CountryManagement from "../Pages/admin/AddCountry";
+import CountryManagement from "../Pages/admin/ManageCountry.jsx";
 import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
 import Error_404 from '../Pages/Error_404.jsx';
-import AmbessyManage from '../Pages/admin/AmbessyManage.jsx';
+import AmbessyManage from '../Pages/admin/ManageAmbessy.jsx';
 import CourseManage from '../Pages/admin/CourseManage.jsx';
-import AddAdmin from '../Pages/admin/AddAdmin.jsx';
+import AddAdmin from '../Pages/admin/ManageAdmin.jsx';
 
 
 const AuthForm = lazy(() => import('../Pages/user/auth/Authentication'));

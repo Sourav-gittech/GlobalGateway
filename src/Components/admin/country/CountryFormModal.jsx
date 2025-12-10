@@ -89,7 +89,8 @@ const CountryFormModal = ({ isOpen, onClose, country, onSave }) => {
                     </div>
                     <button onClick={onClose} type="button" className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-6">
+
+                <div className="scroll-bar flex-1 overflow-y-auto p-6">
                     {showSuccess && <div className="mb-6 p-4 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center gap-3"><Check className="w-5 h-5 text-green-400 flex-shrink-0" /><span className="text-sm text-green-400">Country {country ? 'updated' : 'added'} successfully!</span></div>}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Globe, Plus } from 'lucide-react';
+import { Globe, Loader2, Plus } from 'lucide-react';
 import CountryRow from './CountryRow';
 import CountryFormModal from './CountryFormModal';
 
-const CountryTable = ({ searchQuery, filtered, countries, filterContinent, setCountries }) => {
+const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filterContinent, setCountries }) => {
     const [expandedCountryId, setExpandedCountryId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
+
+  console.log('All available country', filteredCountry);
 
     const handleSaveCountry = (countryData) => {
         if (selectedCountry) {
@@ -26,7 +28,7 @@ const CountryTable = ({ searchQuery, filtered, countries, filterContinent, setCo
     return (
         <>
             <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden max-h-[600px] flex flex-col">
-                <div className="overflow-x-auto overflow-y-auto flex-1">
+                <div className="scroll-bar overflow-x-auto overflow-y-auto flex-1">
                     <table className="w-full">
                         <thead className="sticky top-0 bg-slate-800/90 backdrop-blur-sm z-10">
                             <tr className="border-b border-slate-700/50">
@@ -43,10 +45,17 @@ const CountryTable = ({ searchQuery, filtered, countries, filterContinent, setCo
                         </thead>
 
                         <tbody>
-                            {filtered.map((c) => (
-                                <CountryRow 
-                                    key={c.id} 
-                                    c={c}
+                            {isLoading && (
+                                <tr>
+                                    <td colSpan={7} className="px-6 py-12 text-center">
+                                        <Loader2 className="w-8 h-8 text-white animate-spin mx-auto" />
+                                    </td>
+                                </tr>
+                            )}
+                            {!isLoading && filteredCountry?.map((country) => (
+                                <CountryRow
+                                    key={country?.id}
+                                    country={country}
                                     setSelectedCountry={setSelectedCountry}
                                     setIsModalOpen={setIsModalOpen}
                                     setCountries={setCountries}
@@ -60,7 +69,7 @@ const CountryTable = ({ searchQuery, filtered, countries, filterContinent, setCo
                 </div>
 
                 {/* FOOTER */}
-                {filtered.length === 0 && (
+                {filteredCountry.length === 0 && (
                     <div className="p-12 text-center">
                         <Globe className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                         <h3 className="text-lg font-semibold text-slate-400 mb-2">
@@ -89,9 +98,9 @@ const CountryTable = ({ searchQuery, filtered, countries, filterContinent, setCo
                     </div>
                 )}
 
-                {filtered.length > 0 && (
+                {filteredCountry.length > 0 && (
                     <div className="p-4 border-t border-slate-700/50 text-sm text-slate-400 text-center">
-                        Showing {filtered.length} of {countries.length} countries
+                        Showing {filteredCountry.length} of {countries.length} countries
                     </div>
                 )}
             </div>

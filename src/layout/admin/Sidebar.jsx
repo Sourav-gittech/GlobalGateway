@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom"; // ⬅ Added useLocation
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import "../../../src/App.css";
 import { Home, Users, CreditCard, Settings, Bell, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, ShieldCheck, Landmark, Globe, Library, Loader2 } from "lucide-react";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../Redux/Slice/userSlice";
+import "../../../src/App.css";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
   <NavLink
@@ -98,10 +98,10 @@ export default function Sidebar({ adminData }) {
     { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
-     { to: "/admin/dashboard/addAdmin", label: "Manage Admin", icon: ShieldCheck },
+    { to: "/admin/dashboard/addAdmin", label: "Manage Admin", icon: ShieldCheck },
     { to: "/admin/dashboard/ambessyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
-   
+
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
   ];

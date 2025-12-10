@@ -1,12 +1,14 @@
 @import "tailwindcss";
-html, body {
+
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  
+
 }
 
 #root {
@@ -23,15 +25,35 @@ html, body {
 }
 
 .glass-scrollbar::-webkit-scrollbar-track {
-  background: transparent; /* fully transparent track */
+  background: transparent;
+  /* fully transparent track */
 }
 
 .glass-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15); /* frosted glass white */
+  background: rgba(255, 255, 255, 0.15);
+  /* frosted glass white */
   backdrop-filter: blur(6px);
   border-radius: 10px;
 }
 
 .glass-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+.scroll-bar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-bar::-webkit-scrollbar-track {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }

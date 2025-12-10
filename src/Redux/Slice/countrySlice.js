@@ -21,17 +21,28 @@ export const fetchAllCountryList = createAsyncThunk("countrySlice/fetchAllCountr
 export const fetchAllCountryDetails = createAsyncThunk("countrySlice/fetchAllCountryDetails",
     async (_, { rejectWithValue }) => {
         try {
-            const res = await supabase.from("countries").select(`*,country_details:country_details(*)`).order("created_at", { ascending: false });
-            console.log('Response for getting country details', res);
+            const resCountry = await supabase.from("countries").select("*").order("created_at", { ascending: false });
+            // console.log('Response for getting all country', resCountry);
 
-            if (res?.error) throw res?.error;
+            if (resCountry?.err) throw resCountry?.err;
 
-            return res?.data;
+            const resCountryDetails = await supabase.from("country_details").select("*");
+            // console.log('Response for getting country details', resCountryDetails);
+
+            if (resCountryDetails?.err) throw resCountryDetails?.err;
+
+            const merged = resCountry?.data.map((c) => ({
+                ...c,
+                country_details: resCountryDetails?.data.find((d) => d.id === c.id) || null,
+            }));
+
+            return merged;
         } catch (err) {
             return rejectWithValue(err.message);
         }
     }
-)
+);
+
 
 const initialState = {
     isAllCountryListLoading: false,
@@ -57,7 +68,7 @@ export const countrySlice = createSlice({
                 state.isAllCountryListLoading = false;
                 state.isAllCountryListError = action.error.message;
             })
-            
+
             // fetch all country details reducer
             .addCase(fetchAllCountryDetails.pending, (state, action) => {
                 state.isAllCountryListLoading = true;

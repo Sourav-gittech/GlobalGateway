@@ -42,93 +42,6 @@ export default function Users() {
       })
   }, []);
 
-  // Sample user data (in production, this would come from Supabase)
-  const users = [
-    {
-      id: "uuid-001",
-      name: "Rahul Sharma",
-      email: "rahul.sharma@example.com",
-      phone: "+91 98765 43210",
-      location: "Mumbai, India",
-      status: "active",
-      joinedDate: "2024-01-15",
-      lastLogin: "2024-12-04 10:30 AM",
-      authProvider: "Email/Password",
-      totalSpent: 67700,
-      visaApplications: [
-        { id: "VW-001", type: "Work Visa", amount: 37500, status: "completed" },
-      ],
-      coursePurchases: [
-        { name: "IELTS Preparation", price: 15000, date: "2024-11-01", progress: 65 },
-        { name: "Visa Interview Skills", price: 8500, date: "2024-10-15", progress: 100 },
-      ],
-    },
-    {
-      id: "uuid-002",
-      name: "Priya Patel",
-      email: "priya.patel@example.com",
-      phone: "+91 87654 32109",
-      location: "Ahmedabad, India",
-      status: "active",
-      joinedDate: "2024-02-20",
-      lastLogin: "2024-12-03 03:45 PM",
-      authProvider: "Google",
-      totalSpent: 41700,
-      visaApplications: [
-        { id: "VS-002", type: "Student Visa", amount: 29200, status: "pending" },
-      ],
-      coursePurchases: [
-        { name: "PTE Academic", price: 12500, date: "2024-11-15", progress: 40 },
-      ],
-    },
-    {
-      id: "uuid-003",
-      name: "Amit Kumar",
-      email: "amit.kumar@example.com",
-      phone: "+91 76543 21098",
-      location: "Delhi, India",
-      status: "active",
-      joinedDate: "2024-03-10",
-      lastLogin: "2024-12-04 09:15 AM",
-      authProvider: "Email/Password",
-      totalSpent: 12500,
-      visaApplications: [],
-      coursePurchases: [
-        { name: "TOEFL Preparation", price: 12500, date: "2024-11-20", progress: 25 },
-      ],
-    },
-    {
-      id: "uuid-004",
-      name: "Sneha Reddy",
-      email: "sneha.reddy@example.com",
-      phone: "+91 65432 10987",
-      location: "Hyderabad, India",
-      status: "inactive",
-      joinedDate: "2024-01-05",
-      lastLogin: "2024-10-15 02:20 PM",
-      authProvider: "Email/Password",
-      totalSpent: 37500,
-      visaApplications: [
-        { id: "VW-004", type: "Work Visa", amount: 37500, status: "failed" },
-      ],
-      coursePurchases: [],
-    },
-    {
-      id: "uuid-005",
-      name: "Vikram Singh",
-      email: "vikram.singh@example.com",
-      phone: "+91 54321 09876",
-      location: "Bangalore, India",
-      status: "pending",
-      joinedDate: "2024-12-01",
-      lastLogin: "2024-12-04 08:00 AM",
-      authProvider: "Google",
-      totalSpent: 0,
-      visaApplications: [],
-      coursePurchases: [],
-    },
-  ];
-
   // Filter users
   const filteredUsers = getUserData.filter(user => {
     const matchesSearch =
@@ -262,7 +175,7 @@ export default function Users() {
       {filteredUsers.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-0">
           <div className="text-xs sm:text-sm text-slate-400">
-            Showing {filteredUsers.length} of {users.length} users
+            Showing {filteredUsers.length} of {getUserData.length} users
           </div>
           <div className="flex gap-2">
             <button className="px-3 py-1.5 rounded bg-slate-700/30 hover:bg-slate-700/50 text-white text-xs sm:text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">

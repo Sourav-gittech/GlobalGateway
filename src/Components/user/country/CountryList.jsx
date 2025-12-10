@@ -3,19 +3,26 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllCountryList } from "../../../Redux/Slice/countrySlice";
 import CountryCard from "./CountryCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import getSweetAlert from "../../../util/alert/sweetAlert";
 
 const ITEMS_PER_PAGE = 6;
 
 const CountryList = () => {
     const dispatch = useDispatch();
-
     const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector((state) => state.allCountry);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchAllCountryList());
+        dispatch(fetchAllCountryList())
+            .then(res => {
+                // console.log('Response for fetching all country', res);
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            });
     }, []);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;

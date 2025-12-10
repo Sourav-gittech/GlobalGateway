@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Phone, Mail, Loader2, ClipboardList } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useFullCountryDetails } from "../../../../tanstack/query/getCountryDetails";
 import CountryDescription from "../../../../Components/user/country/country-details/CountryDescription";
@@ -8,6 +8,9 @@ import KeyInformation from "../../../../Components/user/country/country-details/
 import CountryMap from "../../../../Components/user/country/country-details/CountryMap";
 import { Link } from "react-router-dom";
 import { useCountryWiseVisaDetails } from "../../../../tanstack/query/getCountryWiseVisaDetails";
+import Disclaimer from "../../../../Components/user/country/country-details/Disclaimer";
+import ContactInfo from "../../../../Components/user/country/country-details/ContactInfo";
+import CountryCTA from "../../../../Components/user/country/country-details/CountryCTA";
 
 const CountryDetails = () => {
   const { country_id } = useParams();
@@ -108,7 +111,7 @@ const CountryDetails = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16 lg:mb-24">
 
           {/* Left: Key Information */}
-          <KeyInformation officialName={countryData?.details?.official_name} capital={countryData?.details?.capital} region={countryData?.details?.region} population={countryData?.details?.population} currency={countryData?.details?.currency} languages={countryData?.details?.languages} available_visa={countryWiseVisaDetails} area={countryData?.details?.area} />
+          <KeyInformation officialName={countryData?.details?.official_name} capital={countryData?.details?.capital} continents={countryData?.details?.continents} population={countryData?.details?.population} currency={countryData?.details?.currency} languages={countryData?.details?.languages} available_visa={countryWiseVisaDetails} area={countryData?.details?.area} />
 
           {/* Right: Map */}
           <CountryMap lat={countryData?.details?.latlng[0]} lng={countryData?.details?.latlng[1]} zoom={countryData?.details?.zoom} name={countryData?.name} />
@@ -118,54 +121,13 @@ const CountryDetails = () => {
         <motion.div variants={itemVariants} className="pt-12 lg:pt-16">
 
           {/* CTA Section */}
-          <div className="mb-8 lg:mb-12 text-center lg:text-left">
-            <h3 className="text-2xl sm:text-3xl font-light text-gray-900 mb-3">Ready to begin your journey?</h3>
-            <p className="text-gray-600 font-light text-base lg:text-lg">Apply for your visa or explore our coaching services to ensure a smooth transition.</p>
-          </div>
+          <CountryCTA country_id={countryData?.id} handleContinue={handleContinue} />
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <Link to={`/visaprocess/${countryData?.id}`}
-              className="flex-1 px-6 sm:px-8 py-4 sm:py-5 bg-red-500 text-white font-medium rounded hover:bg-red-600 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-100 flex items-center justify-center gap-3 group"
-            >
-              <FileText className="w-5 h-5 group-hover:rotate-6 transition-transform" />
-              <span className="text-sm tracking-wide uppercase">Apply for Visa</span>
-            </Link>
-
-            <button
-              onClick={handleContinue}
-              className="flex-1 px-6 sm:px-8 py-4 sm:py-5 bg-white border-2 border-gray-200 text-gray-700 font-medium rounded hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
-            >
-              <ClipboardList className="w-5 h-5 group-hover:rotate-6 transition-transform" />
-              <span className="text-sm tracking-wide uppercase">Check Visa Courses</span>
-            </button>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 py-6 sm:py-8">
-            <a href="tel:+1234567890" className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
-              <Phone className="w-4 h-4" />
-              <span className="text-sm font-medium">+1 (234) 567-890</span>
-            </a>
-            <div className="hidden sm:block w-px h-4 bg-gray-300"></div>
-            <a href="mailto:info@visaconsult.com" className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition-colors">
-              <Mail className="w-4 h-4" />
-              <span className="text-sm font-medium">info@visaconsult.com</span>
-            </a>
-          </div>
+          <ContactInfo />
 
           {/* Disclaimer */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-6 mt-8">
-            <div className="flex items-start gap-3 sm:gap-4">
-              <div className="w-6 h-6 rounded-full bg-white border-2 border-red-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-red-500 text-xs font-bold">!</span>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2 text-sm uppercase tracking-wide">Important Notice</h4>
-                <p className="text-gray-600 text-sm leading-relaxed font-light">
-                  Visa requirements and immigration regulations are subject to change without notice. We strongly recommend consulting with our certified visa specialists for the most current and accurate information pertaining to your specific situation.
-                </p>
-              </div>
-            </div>
-          </div>
+          <Disclaimer />
+
         </motion.div>
       </motion.div>
     </div>

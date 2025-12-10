@@ -3,7 +3,7 @@ import { Globe, Languages, MapPin, Flag, Banknote, Users, Landmark } from "lucid
 import { motion } from "framer-motion";
 import VisaListDropdown from "./VisaListDropdown";
 
-const KeyInformation = ({ officialName, capital, region, area, population, languages = [], currency = {}, available_visa = [] }) => {
+const KeyInformation = ({ officialName, capital, continents, area, population, languages = [], currency = {}, available_visa = [] }) => {
 
     const itemVariants = {
         hidden: { opacity: 0, y: 30 },
@@ -56,9 +56,9 @@ const KeyInformation = ({ officialName, capital, region, area, population, langu
 
                 {/* Region */}
                 <InfoRow
-                    title="Region"
+                    title="Continent"
                     icon={<Globe className="w-5 h-5 text-red-500" />}
-                    value={region}
+                    value={continents}
                 />
 
                 {/* Area */}

@@ -1,14 +1,32 @@
-import React, { useState } from "react";
-import {  Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import CountryFormModal from "../../Components/admin/country/CountryFormModal";
 import CountryHeader from "../../Components/admin/country/CountryHeader";
 import CountryTable from "../../Components/admin/country/CountryTable";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllCountryDetails } from "../../Redux/Slice/countrySlice";
+import getSweetAlert from "../../util/alert/sweetAlert";
 
 export default function CountryAdminPanel() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterContinent, setFilterContinent] = useState("");
+  const dispatch = useDispatch();
+  const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector((state) => state.allCountry);
+
+  useEffect(() => {
+    dispatch(fetchAllCountryDetails())
+      .then(res => {
+        // console.log('Response for fetching all country', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
+  }, []);
+
+  // console.log('All available country details', getAllCountryList);
 
   const [countries, setCountries] = useState([
     {
@@ -85,11 +103,11 @@ export default function CountryAdminPanel() {
       return [...prev, data];
     });
 
-  const filtered = countries.filter(
+  const filteredCountry = getAllCountryList.filter(
     (c) =>
-      (c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.capital.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (c?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c?.country_details?.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c?.country_details?.capital?.toLowerCase().includes(searchQuery.toLowerCase())) &&
       (!filterContinent || c.continent === filterContinent)
   );
 
@@ -135,7 +153,7 @@ export default function CountryAdminPanel() {
         </div>
 
         {/* TABLE */}
-        <CountryTable searchQuery={searchQuery} filtered={filtered} countries={countries} filterContinent={filterContinent} />
+        <CountryTable searchQuery={searchQuery} isLoading={isAllCountryListLoading} filteredCountry={filteredCountry} countries={getAllCountryList} filterContinent={filterContinent} />
 
         <CountryFormModal
           isOpen={isModalOpen}
