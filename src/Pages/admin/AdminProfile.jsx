@@ -75,7 +75,7 @@ export default function AdminProfile() {
             {!isEditing ? (
               <button
                 onClick={() => setIsEditing(true)}
-                className="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-white flex items-center gap-2"
+                className="bg-transparent border border-gray-500 hover:bg-white/10 px-5 py-2 rounded-lg text-white flex items-center gap-2"
               >
                 <Edit2 className="w-4 h-4" /> Edit
               </button>
