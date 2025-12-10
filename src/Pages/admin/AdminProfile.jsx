@@ -69,7 +69,7 @@ export default function AdminProfile() {
   );
 
   return (
-    <div className="w-full min-h-screen">
+    <div className=" w-full max-h-screen">
       <div className="">
         {/* Header */}
         <header className="mb-6">
@@ -82,7 +82,7 @@ export default function AdminProfile() {
           {/* Top Section */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-8 border-b border-slate-800">
             <div className="flex items-center gap-5">
-              <div className="w-20 h-20 md:w-30 md:h-30 rounded-full bg-gradient-to-br from-gray-600 to-white/10 flex items-center justify-center text-white text-3xl md:text-5xl font-bold shadow-lg ring-4 ring-slate-400" aria-label={`Profile picture for ${profile.name}`}>
+              <div className="w-18 h-18 sm:w-20 sm:h-20 md:w-30 md:h-30 rounded-full bg-gradient-to-br from-gray-600 to-white/10 flex items-center justify-center text-white text-3xl md:text-5xl font-bold shadow-lg ring-4 ring-slate-400" aria-label={`Profile picture for ${profile.name}`}>
                 {getInitials(profile.name)}
               </div>
               <div>
