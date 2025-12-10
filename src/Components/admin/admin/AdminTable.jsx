@@ -1,8 +1,9 @@
 import React from 'react'
 import AdminCard from './AdminCard'
 import AdminRow from './AdminRow'
+import { Loader2 } from 'lucide-react';
 
-const AdminTable = ({ filteredAdmins, admins, setAdmins, setSuccessMessage, setShowSuccess }) => {
+const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSuccessMessage, setShowSuccess }) => {
 
     const showSuccessNotification = (message) => {
         setSuccessMessage(message);
@@ -38,15 +39,31 @@ const AdminTable = ({ filteredAdmins, admins, setAdmins, setSuccessMessage, setS
                             <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Admin Name</th>
                             <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
                             <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Phone</th>
+                            <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Verification</th>
                             <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                             <th className="text-left p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Added Date</th>
                             <th className="text-right p-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredAdmins.map((admin, index) => (
-                            <AdminRow key={admin.id} index={index} admin={admin} filteredAdmins={filteredAdmins} handleBlockAdmin={handleBlockAdmin} handleDeleteAdmin={handleDeleteAdmin} />
-                        ))}
+                        {isAdminLoading && (
+                            <tr>
+                                <td colSpan={7} className="px-6 py-12 text-center">
+                                    <Loader2 className="w-8 h-8 text-white animate-spin mx-auto" />
+                                </td>
+                            </tr>
+                        )}
+                        {!isAdminLoading && (!filteredAdmins || filteredAdmins.length === 0) && (
+                            <tr>
+                                <td colSpan="7" className="px-6 py-12 text-center text-slate-400">
+                                    No admins found matching your criteria
+                                </td>
+                            </tr>
+                        )}
+                        {!isAdminLoading && filteredAdmins?.length > 0 &&
+                            filteredAdmins.map((admin, index) => (
+                                <AdminRow key={admin.id} index={index} admin={admin} filteredAdmins={filteredAdmins} handleBlockAdmin={handleBlockAdmin} handleDeleteAdmin={handleDeleteAdmin} />
+                            ))}
                     </tbody>
                 </table>
             </div>

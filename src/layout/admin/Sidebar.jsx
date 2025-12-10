@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Home, Users, CreditCard, Settings, Bell, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Globe, Library, Loader2, UserRoundCog } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import { Home, Users, CreditCard, Settings, Bell, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, ShieldCheck, Landmark, Globe, Library, Loader2 } from "lucide-react";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../Redux/Slice/userSlice";
 import "../../../src/App.css";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
-  <NavLink
-    to={to}
-    end
-    onClick={onClick}
+
+  <NavLink to={to} end onClick={onClick}
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-sm font-medium relative group
       ${isActive ? "bg-white/10 text-white shadow-lg" : "text-gray-300 hover:bg-white/5 hover:text-white"}`}
@@ -45,7 +43,7 @@ export default function Sidebar({ adminData }) {
   const collapsed = useSidebarStore((s) => s.collapsed);
   const toggle = useSidebarStore((s) => s.toggle);
   const navigate = useNavigate();
-  const location = useLocation(); // ⬅ NEW
+  const location = useLocation();
   const sidebarRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -73,7 +71,6 @@ export default function Sidebar({ adminData }) {
     return () => (document.body.style.overflow = "");
   }, [mobileOpen]);
 
-  // ⬅ FIXED: Correct route change sidebar closing 
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
@@ -86,12 +83,10 @@ export default function Sidebar({ adminData }) {
   const navItems = [
     { to: "/admin/dashboard", label: "Dashboard", icon: Home },
     {
-      to: "/admin/dashboard/users",
-      label: "Manage Users",
-      icon: Users,
+      to: "/admin/dashboard/users", label: "Manage Users", icon: Users,
       badge: isUserLoading ? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (getUserData?.length),
     },
-    { to: "/admin/dashboard/admin", label: "Manage Admin", icon: ShieldCheck },
+    { to: "/admin/dashboard/admin", label: "Manage Admin", icon: UserRoundCog },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
     { to: "/admin/dashboard/ambessyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
@@ -189,9 +184,9 @@ export default function Sidebar({ adminData }) {
               icon={item.icon}
               collapsed={collapsed}
               onClick={() => setMobileOpen(false)}
-              badge={item.badge}
+              badge={!collapsed ? item.badge : ''}
             >
-              {item.label}
+              {!collapsed ? item.label : ''}
             </NavItem>
           ))}
         </nav>

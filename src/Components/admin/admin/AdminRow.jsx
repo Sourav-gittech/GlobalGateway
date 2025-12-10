@@ -1,4 +1,4 @@
-import { Ban, Calendar, CheckCircle, Mail, Phone, Trash2, XCircle } from 'lucide-react'
+import { Ban, Calendar, CheckCircle, CircleAlert, Mail, Phone, Trash2, XCircle } from 'lucide-react'
 import React from 'react'
 
 const AdminRow = ({ admin, index, filteredAdmins, handleBlockAdmin, handleDeleteAdmin }) => {
@@ -7,37 +7,53 @@ const AdminRow = ({ admin, index, filteredAdmins, handleBlockAdmin, handleDelete
             }`}
         >
             <td className="p-4">
-                <div className="text-sm font-medium text-white">{admin.name}</div>
+                <div className="text-sm font-medium text-white">{admin?.name ? admin?.name : 'N/A'}</div>
             </td>
             <td className="p-4">
                 <div className="text-sm text-slate-300 flex items-center gap-1.5">
                     <Mail className="w-3.5 h-3.5 text-slate-400" />
-                    {admin.email}
+                    {admin.email ? admin.email : 'N/A'}
                 </div>
             </td>
             <td className="p-4">
                 <div className="text-sm text-slate-300 flex items-center gap-1.5">
                     <Phone className="w-3.5 h-3.5 text-slate-400" />
-                    {admin.phone}
+                    {admin.phone ? admin.phone : 'N/A'}
                 </div>
             </td>
             <td className="p-4">
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${admin.status === "active"
-                    ? "text-emerald-400 bg-emerald-500/20 border-emerald-500/30"
-                    : "text-red-400 bg-red-500/20 border-red-500/30"
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${admin.is_verified === "pending"
+                    ? "text-orange-400 bg-orange-500/20 border-orange-500/30" : admin.is_verified === "success"
+                        ? "text-emerald-400 bg-emerald-500/20 border-emerald-500/30"
+                        : "text-red-400 bg-red-500/20 border-red-500/30"
                     }`}>
-                    {admin.status === "active" ? (
+                    {admin.is_verified === "pending" ? (
+                        <CircleAlert className="w-3 h-3" />
+                    ) : admin.is_verified === "success" ? (
                         <CheckCircle className="w-3 h-3" />
                     ) : (
                         <XCircle className="w-3 h-3" />
                     )}
-                    {admin.status === "active" ? "Active" : "Blocked"}
+                    {admin.is_verified === "pending" ? "Pending" : admin.is_verified === "success" ? "success" : "Failed"}
+                </span>
+            </td>
+            <td className="p-4">
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${admin?.is_blocked === false
+                    ? "text-emerald-400 bg-emerald-500/20 border-emerald-500/30"
+                    : "text-red-400 bg-red-500/20 border-red-500/30"
+                    }`}>
+                    {admin?.is_blocked === false ? (
+                        <CheckCircle className="w-3 h-3" />
+                    ) : (
+                        <XCircle className="w-3 h-3" />
+                    )}
+                    {admin?.is_blocked === false ? "Active" : "Blocked"}
                 </span>
             </td>
             <td className="p-4">
                 <div className="text-sm text-slate-300 flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                    {admin.addedDate}
+                    {admin?.updated_at ? new Date(admin?.created_at)?.toLocaleDateString("en-GB") : "N/A"}
                 </div>
             </td>
             <td className="p-4">

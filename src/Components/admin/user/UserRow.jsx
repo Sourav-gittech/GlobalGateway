@@ -37,15 +37,15 @@ const UserRow = ({ user, onBlock }) => {
                         </div>
 
                         <div>
-                            <div className="text-sm font-medium text-white">{user?.name}</div>
-                            <div className="text-xs text-slate-400">{user?.email}</div>
+                            <div className="text-sm font-medium text-white">{user?.name ? user?.name : 'N/A'}</div>
+                            <div className="text-xs text-slate-400">{user?.email ? user?.email : 'N/A'}</div>
                         </div>
                     </div>
                 </td>
 
                 {/* Phone */}
                 <td className="hidden md:table-cell px-4 sm:px-6 py-4">
-                    <div className="text-sm text-slate-300">{user?.phone}</div>
+                    <div className="text-sm text-slate-300">{user?.phone ? user?.phone : 'N/A'}</div>
                 </td>
 
                 {/* Verification */}
@@ -61,7 +61,7 @@ const UserRow = ({ user, onBlock }) => {
                 {/* Join Date */}
                 <td className="hidden sm:table-cell px-4 sm:px-6 py-4">
                     <div className="text-sm text-slate-400">
-                        {user?.updated_at ? new Date(user?.created_at)?.toLocaleDateString("en-GB") : ""}
+                        {user?.updated_at ? new Date(user?.created_at)?.toLocaleDateString("en-GB") : "N/A"}
                     </div>
                 </td>
 
@@ -71,7 +71,7 @@ const UserRow = ({ user, onBlock }) => {
                         <button
                             onClick={() => onBlock(user?.id, user?.is_blocked)}
                             className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
-                            title="View Details" disabled={user?.is_verified != 'success'}>
+                            title="Block/Unblock" disabled={user?.is_verified != 'success'}>
                             {user?.is_verified == 'success' ? user?.is_blocked ? <ShieldCheck className="w-6 h-6 text-green-500 cursor-pointer" /> :
                                 <ShieldX className="w-6 h-6 text-red-500 cursor-pointer" /> : <ShieldAlert className="w-6 h-6 text-slate-400 cursor-not-allowed" />}
                         </button>

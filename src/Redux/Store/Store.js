@@ -10,6 +10,7 @@ import contactSliceReducer from '../Slice/contactSlice';
 import checkUserAuthSliceReducer from '../Slice/auth/checkAuthSlice';
 import userProfileSliceReducer from '../Slice/userSlice';
 import activitySliceReducer from '../Slice/activitySlice';
+import adminProfileSliceReducer from '../Slice/adminSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     checkAuth: checkUserAuthSliceReducer,
     allCountry: countrySliceReducer,
     userProfile: userProfileSliceReducer,
+    admin: adminProfileSliceReducer,
     application: applicationSliceReducer,
     visa: visaSliceReducer,
     charge: fetchChargesReducer,
