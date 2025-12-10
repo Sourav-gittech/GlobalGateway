@@ -30,12 +30,12 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
       </>
     )}
 
-    {collapsed && (
+    {/* {collapsed && (
       <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
         {children}
         {badge && <span className="ml-2 text-blue-400">({badge})</span>}
       </div>
-    )}
+    )} */}
   </NavLink>
 );
 
@@ -113,7 +113,7 @@ export default function Sidebar({ adminData }) {
         className={`
           fixed top-0 left-0 h-screen z-50 flex flex-col transition-all duration-300
           bg-gradient-to-b from-black/4 via-transparent to-black backdrop-blur-md
-          border-r border-white/5 
+          border-r border-white/5
           ${collapsed ? "w-20" : "w-64"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
@@ -184,9 +184,9 @@ export default function Sidebar({ adminData }) {
               icon={item.icon}
               collapsed={collapsed}
               onClick={() => setMobileOpen(false)}
-              badge={!collapsed ? item.badge : ''}
+              badge={item.badge}
             >
-              {!collapsed ? item.label : ''}
+              {item.label}
             </NavItem>
           ))}
         </nav>
