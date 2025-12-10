@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Edit, Trash2, Globe } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit, Ban, Globe } from 'lucide-react';
 import CountryDetailsExpanded from './CountryDetailsExpanded';
 
 const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries, countries, expandedCountryId, setExpandedCountryId }) => {
@@ -8,6 +8,10 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
     const handleToggleExpand = () => {
         setExpandedCountryId(isExpanded ? null : country.id);
     };
+
+    const handleBlock = (id, status) => {
+        console.log("ID:", id, "Status:", status);
+    }
 
     return (
         <>
@@ -44,10 +48,10 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
 
                         <div className="min-w-0">
                             <div className="text-sm font-medium text-white truncate">
-                                {country?.name}
+                                {country?.name ? country?.name : 'N/A'}
                             </div>
                             <div className="text-xs text-slate-400 truncate">
-                                {country?.country_details?.official_name}
+                                {country?.country_details?.official_name ? country?.country_details?.official_name : 'N/A'}
                             </div>
                         </div>
                     </div>
@@ -56,36 +60,32 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                 {/* CODE */}
                 <td className="p-4">
                     <span className="text-sm text-slate-300 font-mono">
-                        {country?.country_details?.code}
+                        {country?.country_details?.code ? country?.country_details?.code : 'N/A'}
                     </span>
                 </td>
 
                 {/* CONTINENT */}
-                <td className="p-4 text-sm text-slate-300">{country?.country_details?.region}</td>
-
-                {/* REGION */}
-                <td className="p-4 text-sm text-slate-300">{country?.region}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.continents ? country?.country_details?.continents : 'N/A'}</td>
 
                 {/* CAPITAL */}
-                <td className="p-4 text-sm text-slate-300">{country?.capital}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.capital ? country?.country_details?.capital : 'N/A'}</td>
 
                 {/* CURRENCY */}
-                <td className="p-4 text-sm text-slate-300">{country?.currency}</td>
+                <td className="p-4 text-sm text-slate-300">{Object.keys(country?.country_details?.currency).length > 0 ? `${country.country_details.currency.code} (${country.country_details.currency.symbol})` : 'N/A'}</td>
 
                 {/* LANGUAGE */}
-                <td className="p-4 text-sm text-slate-300">{country?.language}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.languages[0] ? country?.country_details?.languages[0] : 'N/A'}</td>
 
                 {/* STATUS */}
                 <td className="p-4">
                     <div className="flex flex-col gap-1">
                         <span
-                            className={`px-2 py-0.5 rounded-full border text-xs inline-block w-fit whitespace-nowrap ${
-                                country?.is_active
-                                    ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                    : "bg-red-500/20 text-red-400 border-red-500/30"
-                            }`}
+                            className={`px-2 py-0.5 rounded-full border text-xs inline-block w-fit whitespace-nowrap ${!country?.is_blocked
+                                ? "bg-green-500/20 text-green-400 border-green-500/30"
+                                : "bg-red-500/20 text-red-400 border-red-500/30"
+                                }`}
                         >
-                            {country?.is_active ? "Active" : "Inactive"}
+                            {!country?.is_blocked ? "Active" : "Inactive"}
                         </span>
                         {country?.visa_required && (
                             <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs inline-block w-fit whitespace-nowrap">
@@ -110,21 +110,17 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                         </button>
 
                         <button
-                            onClick={() =>
-                                confirm("Delete this country?") &&
-                                setCountries(countries.filter((x) => x.id !== country?.id))
-                            }
+                            onClick={() => handleBlock(country?.id, country?.is_blocked)}
                             className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 transition-colors"
-                            title="Delete"
-                        >
-                            <Trash2 className="w-4 h-4" />
+                            title="Delete">
+                            <Ban className="w-4 h-4" />
                         </button>
                     </div>
                 </td>
             </tr>
 
             {/* EXPANDED ROW */}
-            {isExpanded && <CountryDetailsExpanded c={country} />}
+            {isExpanded && <CountryDetailsExpanded country={country} />}
         </>
     );
 };

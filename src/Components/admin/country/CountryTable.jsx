@@ -8,7 +8,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
 
-  console.log('All available country', filteredCountry);
+    //   console.log('All available country', filteredCountry);
 
     const handleSaveCountry = (countryData) => {
         if (selectedCountry) {
@@ -33,7 +33,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                         <thead className="sticky top-0 bg-slate-800/90 backdrop-blur-sm z-10">
                             <tr className="border-b border-slate-700/50">
                                 <th className="w-12 p-4"></th>
-                                {["Country", "Code", "Continent", "Region", "Capital", "Currency", "Language", "Status", "Actions"].map((h) => (
+                                {["Country", "Code", "Continent", "Capital", "Currency", "Language", "Status", "Actions"].map((h) => (
                                     <th
                                         key={h}
                                         className="text-left p-4 text-sm font-semibold text-slate-300"
@@ -47,8 +47,8 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                         <tbody>
                             {isLoading && (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center">
-                                        <Loader2 className="w-8 h-8 text-white animate-spin mx-auto" />
+                                    <td colSpan={12} className="p-12 text-center">
+                                        <Loader2 className="w-12 h-12 text-white animate-spin mx-auto text-center" />
                                     </td>
                                 </tr>
                             )}

@@ -87,22 +87,18 @@ export default function Sidebar({ adminData }) {
     { to: "/admin/dashboard", label: "Dashboard", icon: Home },
     {
       to: "/admin/dashboard/users",
-      label: "Users",
+      label: "Manage Users",
       icon: Users,
-      badge: isUserLoading ? (
-        <Loader2 className="w-4 h-4 text-white animate-spin" />
-      ) : (
-        getUserData?.length
-      ),
+      badge: isUserLoading ? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (getUserData?.length),
     },
-    { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
-    { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
+    { to: "/admin/dashboard/admin", label: "Manage Admin", icon: ShieldCheck },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
-    { to: "/admin/dashboard/addAdmin", label: "Manage Admin", icon: ShieldCheck },
     { to: "/admin/dashboard/ambessyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
+    { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
 
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
+    { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
   ];
 

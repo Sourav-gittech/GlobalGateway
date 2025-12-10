@@ -19,29 +19,67 @@ body {
   background-color: inherit;
 }
 
+/* Works on Chrome, Edge, and Safari */
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #1e293b; /* slate-800 */
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #475569; /* slate-600 */
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #64748b; /* slate-500 */
+}
+
+/* Firefox support */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #475569 #1e293b;
+}
+
 /* Glassmorphic Scrollbar */
+/* Chrome / Edge / Safari */
 .glass-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
 
 .glass-scrollbar::-webkit-scrollbar-track {
   background: transparent;
-  /* fully transparent track */
 }
 
 .glass-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  /* frosted glass white */
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.18);   /* frosted white */
   border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25); /* adds glass edge */
 }
 
 .glass-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.28);
 }
 
+/* Firefox Support */
+.glass-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+ 
+
+.scroll-bar {
+  scrollbar-width: thin;          /* Firefox */
+  scrollbar-color: #475569 #1e293b;
+}
+
+/* Chrome/Edge/Safari */
 .scroll-bar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .scroll-bar::-webkit-scrollbar-track {

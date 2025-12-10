@@ -90,7 +90,7 @@ const Routing = () => {
             <Route path="country" element={<CountryManagement />} />
             <Route path="ambessyManage" element={<AmbessyManage />} />
             <Route path="courseManage" element={<CourseManage />} />
-             <Route path="addAdmin" element={<AddAdmin />} />
+             <Route path="admin" element={<AddAdmin />} />
             
 
           </Route>
