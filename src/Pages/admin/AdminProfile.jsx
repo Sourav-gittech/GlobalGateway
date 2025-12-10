@@ -14,7 +14,7 @@ import {
 export default function AdminProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: "Admin User",
+    name: "Global Gateway Admin",
     email: "admin@global.com",
     phone: "+91-9898989898",
     role: "Administrator",
@@ -47,7 +47,7 @@ export default function AdminProfile() {
       </div>
 
       {/* MAIN CARD */}
-      <div className="bg-transparent border border-slate-700/50 rounded-xl p-6 md:p-8 shadow-xl">
+      <div className="bg-transparent p-6 md:p-8 ">
 
         {/* TOP SECTION */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
