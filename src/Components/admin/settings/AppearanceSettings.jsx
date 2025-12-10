@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Palette, Moon, Sun, Monitor, Mail, Lock, X } from "lucide-react";
+import { Palette, Moon, Sun, Monitor, KeyRound, Lock, X } from "lucide-react";
 
 const AppearanceSettings = ({ SettingsSection }) => {
 
@@ -57,8 +57,8 @@ const AppearanceSettings = ({ SettingsSection }) => {
                 </div>
                 <div className="space-y-2 mt-4">
                     <button className="w-full px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-all flex items-center justify-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Update Email
+                        <KeyRound className="w-4 h-4" />
+                        Change Passward
                     </button>
                     <button className="w-full px-4 py-2.5 rounded-lg bg-red-600/30 hover:bg-red-900 border border-red-500/30 text-white text-sm transition-all flex items-center justify-center gap-2">
                         <Lock className="w-4 h-4" />
