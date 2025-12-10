@@ -69,8 +69,8 @@ export default function AdminProfile() {
   );
 
   return (
-    <div className="w-full h-screen overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <div className="w-full min-h-screen">
+      <div className="">
         {/* Header */}
         <header className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Profile</h1>
