@@ -6,7 +6,7 @@ import Home from '../Pages/user/home/Home';
 import AboutSection from '../Pages/user/about/AboutPage';
 import CountryGrid from '../Pages/user/countries/Country';
 import ContactUs from '../Pages/user/get-in-touch/ContactUs';
-import EmailVerification from '../Pages/user/auth/EmailVerificationPage';
+import EmailVerification from '../Pages/verification/EmailVerificationPage';
 import VisaProcess from '../Pages/user/apply-visa/VisaProcess';
 import Dashboard from '../Pages/user/dashboard/Dashboard'
 import CountryDetails from '../Pages/user/countries/country-details/CountryDetails.jsx';
@@ -38,17 +38,19 @@ const Routing = () => {
 
   const hideLayoutRoutes = [
     "/authentication",
+    "/verification",
     "/dashboard",
     "/country/:country_id",
     "/policy/:country_id",
     "/application-form/:country_id",
     "/payment-preview",
     "/payment-status",
-    "/admin"
+    "/admin",
   ];
 
   const hideLayout =
     hideLayoutRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/verification/") ||
     location.pathname.startsWith("/country/") ||
     location.pathname.startsWith("/policy/") ||
     location.pathname.startsWith("/application-form/") ||

@@ -71,7 +71,7 @@ const UserRow = ({ user, onBlock }) => {
                         <button
                             onClick={() => onBlock(user?.id, user?.is_blocked)}
                             className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
-                            title="Block/Unblock" disabled={user?.is_verified != 'success'}>
+                            title={!user.is_blocked ? "Block access" : "Restore access"} disabled={user?.is_verified != 'success'}>
                             {user?.is_verified == 'success' ? user?.is_blocked ? <ShieldCheck className="w-6 h-6 text-green-500 cursor-pointer" /> :
                                 <ShieldX className="w-6 h-6 text-red-500 cursor-pointer" /> : <ShieldAlert className="w-6 h-6 text-slate-400 cursor-not-allowed" />}
                         </button>

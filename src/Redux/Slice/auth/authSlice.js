@@ -4,6 +4,8 @@ import supabase from "../../../util/Supabase/supabase";
 // register slice 
 export const registerUser = createAsyncThunk("authSlice/registerUser",
   async (data, { rejectWithValue }) => {
+    console.log('Received register data', data);
+
     try {
       const redirectUrl = `${import.meta.env.VITE_CHECKOUT_ENDPOINT}/verification/${data.email}/${data.role || "user"}`;
 
@@ -22,18 +24,24 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
 
       const userId = signUpData.user.id;
 
+      let fileName = null;
+      let publicUrl = null;
+
       // insert into bucket
-      const file = data.avatar[0];
-      const fileName = `${userId}_${Date.now()}.${file.name.split(".").pop()}`;
+      if (data.role == 'user') {
+        const file = data.avatar[0];
+        fileName = `${userId}_${Date.now()}.${file.name.split(".").pop()}`;
 
-      const { error: uploadError } = await supabase.storage.from("user")
-        .upload(fileName, file, {
-          upsert: true,
-        });
+        const { error: uploadError } = await supabase.storage.from("user")
+          .upload(fileName, file, {
+            upsert: true,
+          });
 
-      if (uploadError) return rejectWithValue(uploadError.message);
+        if (uploadError) return rejectWithValue(uploadError.message);
 
-      const { data: publicURL } = supabase.storage.from("user").getPublicUrl(fileName);
+        const { data: urlData } = supabase.storage.from("user").getPublicUrl(fileName);
+        publicUrl = urlData.publicUrl;
+      }
 
       // insert into custom table
       const { data: insertData, error: insertError } = await supabase.from("users").insert({
@@ -42,12 +50,12 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
         phone: data.phone,
         email: data.email,
         avatar: fileName,
-        avatar_url: publicURL.publicUrl,
+        avatar_url: publicUrl,
         is_verified: "pending",
         is_blocked: data.is_blocked,
         last_sign_in_at: null,
-        providers:signUpData.user.app_metadata.provider,
-        role: data.role,
+        providers: signUpData.user.app_metadata.provider,
+        role: data.role
       });
 
       if (insertError) return rejectWithValue(insertError.message);

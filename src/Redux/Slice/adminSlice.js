@@ -19,6 +19,23 @@ export const getAllAdmins = createAsyncThunk("adminProfileSlice/getAllAdmins",
     }
 );
 
+// delete admin
+export const deleteUserById = createAsyncThunk("adminProfileSlice/deleteUserById",
+    async (adminId, { rejectWithValue }) => {
+        console.log('Deleted admin ID received in slice', adminId);
+
+        try {
+            const res = await supabase.auth.admin.deleteUser(adminId);
+            console.log('Response for deleting admin', res);
+
+            if (res?.error) return rejectWithValue(res?.error.message);
+
+            return adminId;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
 
 const initialState = {
     isAdminLoading: false,
@@ -42,6 +59,22 @@ export const adminProfileSlice = createSlice({
                 state.isAdminError = null;
             })
             .addCase(getAllAdmins.rejected, (state, action) => {
+                state.isAdminLoading = false;
+                state.isAdminError = action.payload || action.error.message;
+            })
+
+            // delete admin
+            .addCase(deleteUserById.pending, (state) => {
+                state.isAdminLoading = true;
+            })
+            .addCase(deleteUserById.fulfilled, (state, action) => {
+                state.isAdminLoading = false;
+                state.getAdminData = state.getAdminData.filter(
+                    (admin) => admin.id !== action.payload
+                );
+                state.isAdminError = null;
+            })
+            .addCase(deleteUserById.rejected, (state, action) => {
                 state.isAdminLoading = false;
                 state.isAdminError = action.payload || action.error.message;
             })

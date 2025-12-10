@@ -8,56 +8,6 @@ import { getAllAdmins } from "../../Redux/Slice/adminSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";
 
 export default function AdminManagement() {
-  const [admins, setAdmins] = useState([
-    {
-      id: 1,
-      email: "subhradeepnath2.o@gmail.com",
-      name: "Subhradeep Nath",
-      phone: "+91-9876543210",
-      status: "active",
-      addedDate: "Nov 15, 202"
-    },
-    {
-      id: 2,
-      email: "sarah.johnson@globalgateway.com",
-      name: "Sarah Johnson",
-      phone: "+1 (555) 234-5678",
-      status: "active",
-      addedDate: "Feb 20, 2024"
-    },
-    {
-      id: 3,
-      email: "mike.wilson@globalgateway.com",
-      name: "Mike Wilson",
-      phone: "+1 (555) 345-6789",
-      status: "blocked",
-      addedDate: "Mar 10, 2024"
-    },
-    {
-      id: 4,
-      email: "jane.smith@globalgateway.com",
-      name: "Jane Smith",
-      phone: "+1 (555) 456-7890",
-      status: "active",
-      addedDate: "Apr 5, 2024"
-    },
-    {
-      id: 5,
-      email: "david.brown@globalgateway.com",
-      name: "David Brown",
-      phone: "+1 (555) 567-8901",
-      status: "active",
-      addedDate: "May 18, 2024"
-    },
-    {
-      id: 6,
-      email: "emily.davis@globalgateway.com",
-      name: "Emily Davis",
-      phone: "+1 (555) 678-9012",
-      status: "active",
-      addedDate: "Jun 22, 2024"
-    }
-  ]);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +16,18 @@ export default function AdminManagement() {
   const [successMessage, setSuccessMessage] = useState("");
   const dispatch = useDispatch();
   const { getAdminData, isAdminLoading, isAdminError } = useSelector(state => state.admin);
+
+  // console.log('All admins', getAdminData);
+
+  useEffect(() => {
+  if (showSuccess) {
+    const timer = setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+
+    return () => clearTimeout(timer); 
+  }
+}, [showSuccess]);
 
   useEffect(() => {
     dispatch(getAllAdmins())
@@ -76,9 +38,7 @@ export default function AdminManagement() {
         console.log('Error occured', err);
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
-  }, []);
-
-  console.log('All admins', getAdminData);
+  }, [dispatch]);
 
   const filteredAdmins = getAdminData.filter(admin => {
     const matchesSearch =
@@ -142,7 +102,7 @@ export default function AdminManagement() {
       {/* Admin List */}
       <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden">
         {/* Desktop Table View */}
-        <AdminTable filteredAdmins={filteredAdmins} isAdminLoading={isAdminLoading} admins={admins} setAdmins={setAdmins} setSuccessMessage={setSuccessMessage} setShowSuccess={setShowSuccess} />
+        <AdminTable filteredAdmins={filteredAdmins} isAdminLoading={isAdminLoading} setSuccessMessage={setSuccessMessage} setShowSuccess={setShowSuccess} />
 
         {filteredAdmins.length === 0 && (
           <div className="p-8 text-center">
@@ -154,7 +114,7 @@ export default function AdminManagement() {
 
       {/* Add Admin Modal */}
       {showAddModal && (
-        <AddAdmin setShowAddModal={setShowAddModal} />
+        <AddAdmin setShowSuccess={setShowSuccess} setSuccessMessage={setSuccessMessage} setShowAddModal={setShowAddModal} />
       )}
     </div>
   );

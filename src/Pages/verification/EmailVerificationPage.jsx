@@ -4,9 +4,9 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
-import supabase from "../../../util/Supabase/supabase";
-import { verifyUser } from "../../../Redux/Slice/auth/userVerification";
-import { useGetIdByEmail } from "../../../tanstack/query/getIdByEmail";
+import supabase from "../../util/Supabase/supabase";
+import { verifyUser } from "../../Redux/Slice/auth/verification";
+import { useGetIdByEmail } from "../../tanstack/query/getIdByEmail";
 import { CircularProgress } from "@mui/material";
 
 export default function EmailVerificationPage() {
@@ -48,7 +48,7 @@ export default function EmailVerificationPage() {
               console.log('Error occured', err);
             })
 
-          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : '/'), 2000);
+          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : user_type === 'admin' ? '/admin/' : '/'), 2000);
         }
       } catch (err) {
         console.error(err);

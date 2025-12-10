@@ -2,8 +2,19 @@ import React from 'react'
 import AdminCard from './AdminCard'
 import AdminRow from './AdminRow'
 import { Loader2 } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleUserBlock } from '../../../Redux/Slice/userSlice';
+import hotToast from '../../../util/alert/hot-toast';
+import { getAllAdmins } from '../../../Redux/Slice/adminSlice';
+import { logoutUser } from '../../../Redux/Slice/auth/checkAuthSlice';
+import { useNavigate } from 'react-router-dom';
 
-const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSuccessMessage, setShowSuccess }) => {
+const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShowSuccess }) => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+    // console.log('Logged user data', userAuthData);
 
     const showSuccessNotification = (message) => {
         setSuccessMessage(message);
@@ -11,22 +22,35 @@ const AdminTable = ({ filteredAdmins, admins, isAdminLoading, setAdmins, setSucc
         setTimeout(() => setShowSuccess(false), 3000);
     };
 
-    const handleBlockAdmin = (id) => {
-        setAdmins(admins.map(admin =>
-            admin.id === id
-                ? { ...admin, status: admin.status === "active" ? "blocked" : "active" }
-                : admin
-        ));
-        const admin = admins.find(a => a.id === id);
-        showSuccessNotification(
-            admin.status === "active"
-                ? "Admin access blocked successfully!"
-                : "Admin access restored successfully!"
-        );
+    const handleBlockAdmin = (adminId, currentStatus) => {
+        // console.log("change status of admin:", adminId, currentStatus);
+        const status = !currentStatus ? 'blocked' : 'unblocked';
+
+        dispatch(toggleUserBlock({ id: adminId, currentStatus }))
+            .then(res => {
+                // console.log('Response for changing status', res);
+
+                if (res?.meta?.requestStatus == "fulfilled") {
+                    hotToast(`Admin ${status} successfully`, "success");
+                    dispatch(getAllAdmins());
+
+                    if (userAuthData?.id == adminId && !currentStatus) {
+                        dispatch(logoutUser("admin"));
+                        navigate("/admin/");
+                    }
+                }
+                else {
+                    hotToast(`Admin ${status} unsuccessfull`, "error");
+                }
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
     };
 
     const handleDeleteAdmin = (id) => {
-        setAdmins(admins.filter(admin => admin.id !== id));
+        // setAdmins(admins.filter(admin => admin.id !== id));
         showSuccessNotification("Admin removed successfully!");
     };
 

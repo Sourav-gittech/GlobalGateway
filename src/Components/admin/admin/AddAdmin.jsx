@@ -1,23 +1,51 @@
-import { X } from 'lucide-react';
 import React from 'react'
+import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../../../Redux/Slice/auth/authSlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { getAllAdmins } from '../../../Redux/Slice/adminSlice';
 
-const AddAdmin = ({ setShowAddModal }) => {
+const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
+    const dispatch = useDispatch(),
+        { isUserAuthLoading, userAuthData, userAuthError } = useSelector(state => state.auth);
+
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
 
     const handleAddAdmin = (data) => {
-        const newAdmin = {
-            id: Date.now(),
-            email: data.email,
+        // console.log("FORM SUBMITTED:", data);
+
+        const auth_obj = {
             name: data.name,
             phone: data.phone,
-            status: "active",
-            addedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-        };
-        setAdmins([...admins, newAdmin]);
-        reset();
-        setShowAddModal(false);
-        showSuccessNotification("Admin added successfully!");
+            email: data.email,
+            avatar: null,
+            password: data.password,
+            is_verified: "pending",
+            is_blocked: false,
+            role: "admin",
+        }
+
+        dispatch(registerUser(auth_obj))
+            .then(res => {
+                console.log('Response for register', res);
+
+                if (res.meta.requestStatus === "fulfilled") {
+                    // hotToast('Admin registered successfully. Please verify the email', "success");
+                    reset();
+                    setShowAddModal(false);
+                    setShowSuccess(true);
+                    setSuccessMessage('Admin registered successfully. Please verify the email');
+                    dispatch(getAllAdmins());
+                }
+                else {
+                    getSweetAlert('Oops...', res.payload, 'info');
+                }
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
     };
 
     const onSubmit = handleSubmit(handleAddAdmin);
@@ -37,7 +65,7 @@ const AddAdmin = ({ setShowAddModal }) => {
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="text-lg font-semibold text-white">Add New Admin</h3>
-                        <p className="text-sm text-slate-400 mt-1">Grant admin access to a new user</p>
+                        <p className="text-sm text-slate-400 mt-1">Grant a new admin access</p>
                     </div>
                     <button
                         onClick={() => {
@@ -65,7 +93,7 @@ const AddAdmin = ({ setShowAddModal }) => {
                                     message: "Name must be at least 2 characters"
                                 }
                             })}
-                            placeholder="Subhradeep Nath"
+                            placeholder="John Doe"
                             className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                         />
                         {errors.name && (
@@ -83,7 +111,7 @@ const AddAdmin = ({ setShowAddModal }) => {
                             {...register("email", {
                                 required: "Email is required",
                                 pattern: {
-                                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                    value: /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-zA-Z.]{2,}$/,
                                     message: "Invalid email address"
                                 }
                             })}
@@ -120,6 +148,27 @@ const AddAdmin = ({ setShowAddModal }) => {
                             <p className="mt-1 text-xs text-red-400">{errors.phone.message}</p>
                         )}
                     </div>
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
+                            Password
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            {...register("password", {
+                                required: "password is required",
+                                pattern: {
+                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                                    message: "Password must contain 8+ characters, uppercase, lowercase, number & special character",
+                                }
+                            })}
+                            placeholder='Admin12@GG'
+                            className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+                        />
+                        {errors.password && (
+                            <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+                        )}
+                    </div>
 
                     <div className="flex gap-3 pt-2">
                         <button
@@ -135,9 +184,14 @@ const AddAdmin = ({ setShowAddModal }) => {
                         <button
                             type="button"
                             onClick={onSubmit}
-                            className="flex-1 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm transition-all font-medium"
+                            className={`flex-1 px-4 py-2.5 rounded-lg hover:bg-blue-700 ${isUserAuthLoading ? 'bg-blue-600' : 'bg-blue-700'} text-white text-sm transition-all font-medium cursor-pointer`}
                         >
-                            Add Admin
+                            <span className='flex items-center justify-center'>
+                                {isUserAuthLoading && (
+                                    <div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                                )}
+                                Add Admin
+                            </span>
                         </button>
                     </div>
                 </div>

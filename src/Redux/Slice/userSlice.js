@@ -94,17 +94,17 @@ export const getAllUsers = createAsyncThunk("userProfileSlice/getAllUsers",
 
 // change user status
 export const toggleUserBlock = createAsyncThunk('userProfileSlice/toggleUserBlock',
-    async ({ userId, currentStatus }) => {
-        console.log('Status changable details', userId, currentStatus);
+    async ({ id, currentStatus }) => {
+        // console.log('Status changable details', id, currentStatus);
 
         try {
             const newStatus = !currentStatus;
-            const { data, error } = await supabase.from("users").update({ is_blocked: newStatus }).eq("id", userId).select().single();
+            const res = await supabase.from("users").update({ is_blocked: newStatus }).eq("id", id).select().single();
             // console.log('Response for updating user status', res);
 
-            if (error) throw error;
+            if (res?.error) throw res?.error;
 
-            return data;
+            return res?.data;
         } catch (err) {
             console.error("Error updating block status:", err.message);
             return null;

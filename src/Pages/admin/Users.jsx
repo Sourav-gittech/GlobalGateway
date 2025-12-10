@@ -8,6 +8,7 @@ import UserCard from "../../Components/admin/user/UserCard";
 import UserStats from "../../Components/admin/user/UserStats";
 import UserHeader from "../../Components/admin/user/UserHeader";
 import { useTotalRevenue } from "../../tanstack/query/getTotalRevenue";
+import hotToast from "../../util/alert/hot-toast";
 
 export default function Users() {
   const dispatch = useDispatch();
@@ -19,11 +20,19 @@ export default function Users() {
   // console.log('All User Data',getUserData);
 
   const handleBlock = (userId, currentStatus) => {
-    // console.log("change status of user:", userId, currentStatus);
+    console.log("change status of user:", userId, currentStatus);
+    const status = !currentStatus ? 'blocked' : 'unblocked';
 
-    dispatch(toggleUserBlock({ userId, currentStatus }))
+    dispatch(toggleUserBlock({ id:userId, currentStatus }))
       .then(res => {
         // console.log('Response for changing status', res);
+
+        if (res?.meta?.requestStatus == "fulfilled") {
+          hotToast(`User ${status} successfully`, "success");
+        }
+        else{
+          hotToast(`User ${status} unsuccessfull`, "error");
+        }
       })
       .catch(err => {
         console.log('Error occured', err);
@@ -93,7 +102,7 @@ export default function Users() {
                 <option value="pending">Pending</option>
               </select>
             </div>
-            
+
           </div>
         </div>
       </div>

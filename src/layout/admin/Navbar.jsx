@@ -143,8 +143,6 @@ export default function Navbar({ adminData }) {
             </div>
           </div>
 
-
-
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-3">
 
