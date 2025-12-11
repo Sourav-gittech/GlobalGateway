@@ -1,17 +1,14 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Edit, Ban, Globe } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit, Ban, Globe, CircleCheck } from 'lucide-react';
 import CountryDetailsExpanded from './CountryDetailsExpanded';
 
-const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries, countries, expandedCountryId, setExpandedCountryId }) => {
+const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries, countries, expandedCountryId, setExpandedCountryId, handleBlock }) => {
     const isExpanded = expandedCountryId === country.id;
+    const Icon = !country.is_blocked ? Ban : CircleCheck;
 
     const handleToggleExpand = () => {
         setExpandedCountryId(isExpanded ? null : country.id);
     };
-
-    const handleBlock = (id, status) => {
-        console.log("ID:", id, "Status:", status);
-    }
 
     return (
         <>
@@ -71,7 +68,10 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                 <td className="p-4 text-sm text-slate-300">{country?.country_details?.capital ? country?.country_details?.capital : 'N/A'}</td>
 
                 {/* CURRENCY */}
-                <td className="p-4 text-sm text-slate-300">{Object.keys(country?.country_details?.currency).length > 0 ? `${country.country_details.currency.code} (${country.country_details.currency.symbol})` : 'N/A'}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.currency &&
+                    Object.keys(country.country_details.currency).length > 0
+                    ? `${country.country_details.currency.code} (${country.country_details.currency.symbol})`
+                    : "N/A"}</td>
 
                 {/* LANGUAGE */}
                 <td className="p-4 text-sm text-slate-300">{country?.country_details?.languages[0] ? country?.country_details?.languages[0] : 'N/A'}</td>
@@ -81,8 +81,8 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                     <div className="flex flex-col gap-1">
                         <span
                             className={`px-2 py-0.5 rounded-full border text-xs inline-block w-fit whitespace-nowrap ${!country?.is_blocked
-                                ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                : "bg-red-500/20 text-red-400 border-red-500/30"
+                                ? "bg-green-500/20 text-green-400 border-green-500/30 px-4"
+                                : "bg-red-500/20 text-red-400 border-red-500/30 px-3"
                                 }`}
                         >
                             {!country?.is_blocked ? "Active" : "Inactive"}
@@ -109,11 +109,20 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                             <Edit className="w-4 h-4" />
                         </button>
 
-                        <button
+                        {/* <button
                             onClick={() => handleBlock(country?.id, country?.is_blocked)}
                             className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 transition-colors"
                             title="Delete">
                             <Ban className="w-4 h-4" />
+                        </button> */}
+
+                        <button
+                            onClick={() => handleBlock(country?.id, country?.is_blocked)}
+                            className={`p-2 rounded-lg border transition-all ${country.is_blocked
+                                ? "bg-green-600/20 hover:bg-green-600/30 border-green-500/30 text-green-400"
+                                : "bg-red-600/20 hover:bg-red-600/30 border-red-500/30 text-red-400"} ${country.is_verified === "pending" ? 'cursor-not-allowed bg-red-600/50 hover:bg-red-600/50 text-red-500' : 'cursor-pointer'}`}
+                            title={!country.is_blocked ? "Block access" : "Restore access"} disabled={country.is_verified === "pending"}>
+                            <Icon className="w-4 h-4" />
                         </button>
                     </div>
                 </td>

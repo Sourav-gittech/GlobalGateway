@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Search, Filter, Download, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, toggleUserBlock } from "../../Redux/Slice/userSlice";
+import { getAllUsers, toggleUserStatus } from "../../Redux/Slice/userSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";
 import UserRow from "../../Components/admin/user/UserRow";
 import UserCard from "../../Components/admin/user/UserCard";
@@ -23,7 +23,7 @@ export default function Users() {
     console.log("change status of user:", userId, currentStatus);
     const status = !currentStatus ? 'blocked' : 'unblocked';
 
-    dispatch(toggleUserBlock({ id:userId, currentStatus }))
+    dispatch(toggleUserStatus({ id:userId, currentStatus }))
       .then(res => {
         // console.log('Response for changing status', res);
 

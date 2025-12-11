@@ -40,7 +40,7 @@ const CountryDetailsHero = ({ country, countryWiseVisaDetails }) => {
 
           {/* Badges */}
           <div className="flex gap-2">
-            <span className={`px-3 py-1 rounded-lg border text-xs font-semibold ${!country?.is_blocked ? 'bg-green-500/20 text-green-300 border-green-500/50' : 'bg-slate-500/20 text-slate-300 border-slate-500/50'}`}>
+            <span className={`px-3 py-1 rounded-lg border text-xs font-semibold ${!country?.is_blocked ? 'bg-green-500/20 text-green-300 border-green-500/50' : 'bg-red-500/20 text-red-300 border-red-500/50'}`}>
               {!country?.is_blocked ? '✓ Active' : '○ Inactive'}
             </span>
             <span className={`px-3 py-1 rounded-lg ${countryWiseVisaDetails ? 'bg-amber-500/20 text-amber-300' : 'bg-red-500/20 text-red-300'} border border-amber-500/50 text-xs font-semibold flex items-center gap-1`}>

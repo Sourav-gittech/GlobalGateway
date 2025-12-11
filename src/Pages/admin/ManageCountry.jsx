@@ -108,7 +108,7 @@ export default function CountryAdminPanel() {
       (c?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c?.country_details?.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c?.country_details?.capital?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (!filterContinent || c.continent === filterContinent)
+      (!filterContinent || c?.country_details?.continents?.toLowerCase() === filterContinent?.toLowerCase())
   );
 
   const continents = [
@@ -147,7 +147,7 @@ export default function CountryAdminPanel() {
           >
             <option value="">All Continents</option>
             {continents.map((c) => (
-              <option key={c}>{c}</option>
+              <option key={c} value={c}>{c}</option>
             ))}
           </select>
         </div>

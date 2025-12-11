@@ -93,7 +93,7 @@ export const getAllUsers = createAsyncThunk("userProfileSlice/getAllUsers",
 );
 
 // change user status
-export const toggleUserBlock = createAsyncThunk('userProfileSlice/toggleUserBlock',
+export const toggleUserStatus = createAsyncThunk('userProfileSlice/toggleUserStatus',
     async ({ id, currentStatus }) => {
         // console.log('Status changable details', id, currentStatus);
 
@@ -169,15 +169,15 @@ export const userProfileSlice = createSlice({
             })
 
             // change user status
-            .addCase(toggleUserBlock.pending, (state) => {
+            .addCase(toggleUserStatus.pending, (state) => {
                 state.isUserLoading = true;
             })
-            .addCase(toggleUserBlock.fulfilled, (state, action) => {
+            .addCase(toggleUserStatus.fulfilled, (state, action) => {
                 state.isUserLoading = false;
                 state.getUserData = state.getUserData.map(u => u.id === action.payload.id ? action.payload : u);
                 state.isUserError = null;
             })
-            .addCase(toggleUserBlock.rejected, (state, action) => {
+            .addCase(toggleUserStatus.rejected, (state, action) => {
                 state.isUserLoading = false;
                 state.isUserError = action.payload || action.error.message;
             })

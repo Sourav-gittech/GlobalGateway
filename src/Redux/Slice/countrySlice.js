@@ -33,7 +33,7 @@ export const fetchAllCountryDetails = createAsyncThunk("countrySlice/fetchAllCou
 
             const merged = resCountry?.data.map((c) => ({
                 ...c,
-                country_details: resCountryDetails?.data.find((d) => d.id === c.id) || null,
+                country_details: resCountryDetails?.data.find((d) => d.id === c.id) || {},
             }));
 
             return merged;
@@ -42,6 +42,26 @@ export const fetchAllCountryDetails = createAsyncThunk("countrySlice/fetchAllCou
         }
     }
 );
+
+// change country status
+export const toggleCountryStatus = createAsyncThunk('countrySlice/toggleCountryStatus',
+    async ({ id, currentStatus }) => {
+        // console.log('Status changable details', id, currentStatus);
+
+        try {
+            const newStatus = !currentStatus;
+            const res = await supabase.from("countries").update({ is_blocked: newStatus }).eq("id", id).select().single();
+            // console.log('Response for updating country status', res);
+
+            if (res?.error) throw res?.error;
+
+            return res?.data;
+        } catch (err) {
+            console.error("Error updating block status:", err.message);
+            return null;
+        }
+    }
+)
 
 
 const initialState = {
@@ -80,6 +100,21 @@ export const countrySlice = createSlice({
             .addCase(fetchAllCountryDetails.rejected, (state, action) => {
                 state.isAllCountryListLoading = false;
                 state.isAllCountryListError = action.error.message;
+            })
+
+            // change country status
+            .addCase(toggleCountryStatus.pending, (state) => {
+                state.isAllCountryListLoading = true;
+            })
+            .addCase(toggleCountryStatus.fulfilled, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.getAllCountryList = state.getAllCountryList.map((u) =>
+                    u.id === action.payload.id ? { ...u, ...action.payload } : u);
+                state.isAllCountryListError = null;
+            })
+            .addCase(toggleCountryStatus.rejected, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.isAllCountryListError = action.payload || action.error.message;
             })
     }
 })

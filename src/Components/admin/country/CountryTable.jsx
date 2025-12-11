@@ -2,11 +2,22 @@ import React, { useState } from 'react';
 import { Globe, Loader2, Plus } from 'lucide-react';
 import CountryRow from './CountryRow';
 import CountryFormModal from './CountryFormModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllCountryDetails, toggleCountryStatus } from '../../../Redux/Slice/countrySlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import hotToast from '../../../util/alert/hot-toast';
+import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
 
 const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filterContinent, setCountries }) => {
     const [expandedCountryId, setExpandedCountryId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
+
+    const [alertModalOpen, setAlertModalOpen] = useState(false);
+    const [setStatus, setSetStatus] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState(false);
+    const [selectedCountryId, setSelectedCountryId] = useState(null);
+    const dispatch = useDispatch();
 
     //   console.log('All available country', filteredCountry);
 
@@ -23,6 +34,39 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedCountry(null);
+    };
+
+    const handleBlock = (countryId, recentStatus) => {
+        console.log("ID:", countryId, "Status:", recentStatus);
+        const status = !recentStatus ? 'blocked' : 'unblocked';
+
+        setCurrentStatus(recentStatus);
+        setSelectedCountryId(countryId);
+        setSetStatus(status);
+        setAlertModalOpen(true);
+    }
+
+    const confirmUnblockBlock = () => {
+        // console.log("Unblock / Block country:", selectedCountryId, setStatus);
+
+        dispatch(toggleCountryStatus({ id: selectedCountryId, currentStatus }))
+            .then(res => {
+                // console.log('Response for changing status', res);
+
+                if (res?.meta?.requestStatus == "fulfilled") {
+                    hotToast(`Admin ${setStatus} successfully`, "success");
+                    dispatch(fetchAllCountryDetails());
+                    setAlertModalOpen(false);
+
+                }
+                else {
+                    hotToast(`Admin ${setStatus} unsuccessful`, "error");
+                }
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
     };
 
     return (
@@ -62,6 +106,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                                     countries={countries}
                                     expandedCountryId={expandedCountryId}
                                     setExpandedCountryId={setExpandedCountryId}
+                                    handleBlock={handleBlock}
                                 />
                             ))}
                         </tbody>
@@ -111,6 +156,16 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                 onClose={handleCloseModal}
                 country={selectedCountry}
                 onSave={handleSaveCountry}
+            />
+
+            <ConfirmBlockUnblockAlert
+                open={alertModalOpen}
+                onClose={() => setAlertModalOpen(false)}
+                onConfirm={confirmUnblockBlock}
+                buttonText={setStatus == 'blocked' ? 'Block' : 'Unblock'}
+                type={setStatus == 'blocked' ? 'block' : 'Unblock'}
+                title={`${setStatus == 'blocked' ? 'Block' : 'Unblock'} Country`}
+                message={`Are you sure you want to ${setStatus == 'blocked' ? 'block' : 'unblock'} country?`}
             />
         </>
     );

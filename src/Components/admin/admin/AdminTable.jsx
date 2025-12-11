@@ -3,62 +3,65 @@ import AdminCard from './AdminCard'
 import AdminRow from './AdminRow'
 import { Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleUserBlock } from '../../../Redux/Slice/userSlice';
+import { toggleUserStatus } from '../../../Redux/Slice/userSlice';
 import hotToast from '../../../util/alert/hot-toast';
-import { deleteUserById, getAllAdmins } from '../../../Redux/Slice/adminSlice';
+import { getAllAdmins } from '../../../Redux/Slice/adminSlice';
 import { logoutUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import { useNavigate } from 'react-router-dom';
-import ConfirmBlockModal from '../common/alarts/ConfirmBlock';
 import getSweetAlert from '../../../util/alert/sweetAlert';
+import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
 
 const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShowSuccess }) => {
 
-    // const [blockModalOpen, setBlockModalOpen] = useState(false);
-    // const [setStatus, setSetStatus] = useState(null);
-    // const [selectedAdminId, setSelectedAdminId] = useState(null);
+    const [alertModalOpen, setAlertModalOpen] = useState(false);
+    const [setStatus, setSetStatus] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState(false);
+    const [selectedAdminId, setSelectedAdminId] = useState(null);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
     // console.log('Logged user data', userAuthData);
 
-    const showSuccessNotification = (message) => {
+    const showSuccessNotification = (message, success) => {
         setSuccessMessage(message);
-        setShowSuccess(true);
+        setShowSuccess(success);
         setTimeout(() => setShowSuccess(false), 3000);
     };
 
-    const handleBlockAdmin = (adminId, currentStatus) => {
-        // console.log("change status of admin:", adminId, currentStatus);
-        const status = !currentStatus ? 'blocked' : 'unblocked';
+    const handleUnblockBlockAdmin = (adminId, recentStatus) => {
+        // console.log("change status of admin:", adminId, recentStatus);
 
-    //     setSelectedAdminId(adminId);
-    //     setSetStatus(status);
-    //     setBlockModalOpen(true);
-    // }
+        const status = !recentStatus ? 'blocked' : 'unblocked';
 
-    // const confirmBlock = () => {
-    //     console.log("Block admin:", selectedAdminId, setStatus);
+        setCurrentStatus(recentStatus);
+        setSelectedAdminId(adminId);
+        setSetStatus(status);
+        setAlertModalOpen(true);
+    }
 
-        // dispatch(toggleUserBlock({ id: selectedAdminId, currentStatus: setStatus }))
-        dispatch(toggleUserBlock({ id: adminId, currentStatus }))
+    const confirmUnblockBlock = () => {
+        // console.log("Unblock / Block admin:", selectedAdminId, setStatus);
+
+        dispatch(toggleUserStatus({ id: selectedAdminId, currentStatus }))
             .then(res => {
                 // console.log('Response for changing status', res);
 
                 if (res?.meta?.requestStatus == "fulfilled") {
                     // hotToast(`Admin ${setStatus} successfully`, "success");
-                    hotToast(`Admin ${status} successfully`, "success");
-                    dispatch(getAllAdmins());
-                    // setBlockModalOpen(false);
 
-                    if (userAuthData?.id == adminId && status) {
+                    showSuccessNotification(`Admin ${setStatus} successfully`, true);
+                    dispatch(getAllAdmins());
+                    setAlertModalOpen(false);
+
+                    if (userAuthData?.id == selectedAdminId && setStatus) {
                         dispatch(logoutUser("admin"));
                         navigate("/admin/");
                     }
                 }
                 else {
                     // hotToast(`Admin ${setStatus} unsuccessful`, "error");
-                    hotToast(`Admin ${status} unsuccessful`, "error");
+                    showSuccessNotification(`Admin ${setStatus} unsuccessful`, false);
                 }
             })
             .catch(err => {
@@ -66,29 +69,6 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                 getSweetAlert('Oops...', 'Something went wrong!', 'error');
             })
     };
-
-    const handleDeleteAdmin = (id) => {
-        //     console.log('Deleted admin id', id);
-
-        //     setSelectedAdminId(id);
-        //     setDeleteModalOpen(true);
-    };
-
-    // const confirmDelete = () => {
-    //     console.log("Deleting admin:", selectedAdminId);
-
-    //     dispatch(deleteUserById(selectedAdminId))
-    //         .then(res => {
-    //             console.log('Response for deleting admin', res);
-
-    //             setDeleteModalOpen(false);
-
-    //         })
-    //         .catch(err => {
-    //             console.log('Error occured', err);
-    //             getSweetAlert('Oops...', 'Something went wrong!', 'error');
-    //         })
-    // };
 
     return (
         <>
@@ -127,8 +107,7 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                                     index={index}
                                     admin={admin}
                                     filteredAdmins={filteredAdmins}
-                                    handleBlockAdmin={handleBlockAdmin}
-                                    handleDeleteAdmin={handleDeleteAdmin}
+                                    handleUnblockBlockAdmin={handleUnblockBlockAdmin}
                                 />
                             ))}
                     </tbody>
@@ -142,19 +121,20 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                         <AdminCard
                             key={admin.id}
                             admin={admin}
-                            handleBlockAdmin={handleBlockAdmin}
-                            handleDeleteAdmin={handleDeleteAdmin}
+                            handleUnblockBlockAdmin={handleUnblockBlockAdmin}
                         />
                     ))}
             </div>
 
-            {/* <ConfirmBlockModal
-                open={blockModalOpen}
-                onClose={() => setBlockModalOpen(false)}
-                onConfirm={confirmBlock}
-                title="Block Admin"
-                message="Are you sure you want to block admin?"
-            /> */}
+            <ConfirmBlockUnblockAlert
+                open={alertModalOpen}
+                onClose={() => setAlertModalOpen(false)}
+                onConfirm={confirmUnblockBlock}
+                buttonText={setStatus == 'blocked' ? 'Block' : 'Unblock'}
+                type={setStatus == 'blocked' ? 'block' : 'Unblock'}
+                title={`${setStatus == 'blocked' ? 'Block' : 'Unblock'} Admin`}
+                message={`Are you sure you want to ${setStatus == 'blocked' ? 'block' : 'unblock'} admin?`}
+            />
         </>
     )
 

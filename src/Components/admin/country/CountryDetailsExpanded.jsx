@@ -103,7 +103,7 @@ const CountryDetailsExpanded = ({ country }) => {
                             <CheckCircle className="w-4 h-4" /> Active
                         </span>
                     ) : (
-                        <span className="flex items-center gap-1 text-slate-400 font-semibold">
+                        <span className="flex items-center gap-1 text-red-400 font-semibold">
                             <XCircle className="w-4 h-4" /> Inactive
                         </span>
                     )
