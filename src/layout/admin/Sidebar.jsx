@@ -10,11 +10,26 @@ import "../../../src/App.css";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
 
-  <NavLink to={to} end onClick={onClick}
-    className={({ isActive }) =>
-      `flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-sm font-medium relative group
-      ${isActive ? "bg-white/10 text-white shadow-lg" : "text-gray-300 hover:bg-white/5 hover:text-white"}`}
-  >
+ <NavLink
+  to={to}
+  end
+  onClick={onClick}
+  className={({ isActive }) =>
+    `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
+     ${collapsed ? "justify-center" : ""}
+     ${
+       isActive
+         ? collapsed
+           ? "bg-white/10 text-white shadow-lg rounded-xl"   // square when collapsed
+           : "bg-white/10 text-white shadow-lg rounded-lg"   // normal when expanded
+         : collapsed
+         ? "text-gray-300 hover:bg-white/5 hover:text-white rounded-xl" // square hover
+         : "text-gray-300 hover:bg-white/5 hover:text-white rounded-lg" // normal hover
+     }
+    `
+  }
+>
+
     <div className="flex items-center justify-center w-6 flex-shrink-0">
       <Icon size={18} />
     </div>
