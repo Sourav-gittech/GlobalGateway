@@ -6,11 +6,11 @@ import toastifyAlert from "../../../util/alert/toastify";
 export const fetchLoggedUserDetails = createAsyncThunk("checkUserAuthSlice/fetchLoggedUserDetails",
     async (userId, { rejectWithValue }) => {
         try {
-            const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
-            // console.log('Logged user details', data);
+            const res = await supabase.from("users").select("*").eq("id", userId).single();
+            // console.log('Logged user details', res);
 
-            if (error) throw new Error(error.message);
-            return data;
+            if (res?.error) throw new Error(res?.error.message);
+            return res?.data;
         }
         catch (err) {
             const message = err?.message ?? "Failed to fetch user details";

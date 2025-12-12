@@ -1,9 +1,19 @@
 import React, { useState } from 'react'
 import { Palette, Moon, Sun, Monitor, KeyRound, Lock, X } from "lucide-react";
 
-const AppearanceSettings = ({ SettingsSection }) => {
+const AppearanceSettings = ({ SettingsSection, userAuthData }) => {
 
     const [theme, setTheme] = useState("dark");
+
+    function formatToReadableDate(timestamp) {
+        if (!timestamp) return "";
+        const date = new Date(timestamp);
+        return date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+        });
+    }
 
     return (
         <SettingsSection
@@ -53,7 +63,7 @@ const AppearanceSettings = ({ SettingsSection }) => {
                 <div className="text-sm font-medium text-slate-300 mb-3">Account Information</div>
                 <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
                     <div className="text-sm font-medium text-white mb-1">Account Status</div>
-                    <div className="text-xs text-slate-400">Active since Jan 15, 2024</div>
+                    <div className="text-xs text-slate-400">Active since {formatToReadableDate(userAuthData?.created_at)}</div>
                 </div>
                 <div className="space-y-2 mt-4">
                     <button className="w-full px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-all flex items-center justify-center gap-2">

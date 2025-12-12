@@ -133,7 +133,7 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                             {...register("phone", {
                                 required: "Phone number is required",
                                 pattern: {
-                                    value: /^[\d\s\-\+\(\)]+$/,
+                                    value: /^[6-9]\d{9}$/,
                                     message: "Invalid phone number"
                                 },
                                 minLength: {

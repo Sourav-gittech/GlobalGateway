@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import GeneralSettings from "../../Components/admin/settings/GeneralSettings";
 import AppearanceSettings from "../../Components/admin/settings/AppearanceSettings";
+import { useDispatch, useSelector } from "react-redux";
+import SettingsHeader from "../../Components/admin/settings/SettingsHeader";
+import { checkLoggedInUser } from "../../Redux/Slice/auth/checkAuthSlice";
+import getSweetAlert from "../../util/alert/sweetAlert";
 
 // Settings Section Component
 function SettingsSection({ title, description, icon: Icon, children }) {
@@ -41,24 +45,28 @@ function FormField({ label, id, type = "text", placeholder, value, onChange, hel
 
 export default function Settings() {
 
+  const dispatch = useDispatch();
+  const { userAuthData, isUserLoading } = useSelector(state => state.checkAuth);
+
+  useEffect(() => {
+    dispatch(checkLoggedInUser()).catch(() => {
+      getSweetAlert('Oops...', 'Something went wrong!', 'error');
+    });
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Settings and Privacy</h1>
-          <p className="text-slate-400">Manage your application preferences and configurations</p>
-        </div>
-      </div>
+      <SettingsHeader />
 
       {/* Settings Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* General Settings - Disabled */}
-        <GeneralSettings SettingsSection={SettingsSection} FormField={FormField} />
+        <GeneralSettings SettingsSection={SettingsSection} FormField={FormField} userAuthData={userAuthData} />
 
         {/* Appearance & Account */}
-        <AppearanceSettings SettingsSection={SettingsSection} />
+        <AppearanceSettings SettingsSection={SettingsSection} userAuthData={userAuthData} />
 
       </div>
     </div>

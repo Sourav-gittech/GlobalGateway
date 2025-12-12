@@ -7,28 +7,25 @@ import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../Redux/Slice/userSlice";
 import "../../../src/App.css";
+import getSweetAlert from "../../util/alert/sweetAlert";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
 
- <NavLink
-  to={to}
-  end
-  onClick={onClick}
-  className={({ isActive }) =>
-    `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
+  <NavLink to={to} end onClick={onClick}
+    className={({ isActive }) =>
+      `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
      ${collapsed ? "justify-center" : ""}
-     ${
-       isActive
-         ? collapsed
-           ? "bg-white/10 text-white shadow-lg rounded-xl"   // square when collapsed
-           : "bg-white/10 text-white shadow-lg rounded-lg"   // normal when expanded
-         : collapsed
-         ? "text-gray-300 hover:bg-white/5 hover:text-white rounded-xl" // square hover
-         : "text-gray-300 hover:bg-white/5 hover:text-white rounded-lg" // normal hover
-     }
+     ${isActive
+        ? collapsed
+          ? "bg-white/10 text-white shadow-lg rounded-xl"   // square when collapsed
+          : "bg-white/10 text-white shadow-lg rounded-lg"   // normal when expanded
+        : collapsed
+          ? "text-gray-300 hover:bg-white/5 hover:text-white rounded-xl" // square hover
+          : "text-gray-300 hover:bg-white/5 hover:text-white rounded-lg" // normal hover
+      }
     `
-  }
->
+    }
+  >
 
     <div className="flex items-center justify-center w-6 flex-shrink-0">
       <Icon size={18} />
@@ -68,7 +65,14 @@ export default function Sidebar({ adminData }) {
   const { getUserData, isUserLoading } = useSelector(state => state.userProfile);
 
   useEffect(() => {
-    dispatch(getAllUsers());
+    dispatch(getAllUsers())
+      .then(res => {
+        // console.log('Response for fetching logged user',res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
   }, []);
 
   // Close sidebar on Escape
@@ -97,7 +101,7 @@ export default function Sidebar({ adminData }) {
 
   const navItems = [
     { to: "/admin/dashboard", label: "Dashboard", icon: Home },
-     { to: "/admin/dashboard/adminProfile", label: "Profile", icon: UserCircle },
+    { to: "/admin/dashboard/adminProfile", label: "Profile", icon: UserCircle },
 
     {
       to: "/admin/dashboard/users", label: "Manage Users", icon: Users,
@@ -225,7 +229,7 @@ export default function Sidebar({ adminData }) {
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg bg-white/10 text-gray-300 hover:bg-red-500/10 hover:text-red-400"
+            className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg bg-white/10 text-gray-300 hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
           >
             <LogOut size={18} className={isLoggingOut ? "animate-spin" : ""} />
             {!collapsed && <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>}

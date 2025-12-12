@@ -19,14 +19,32 @@ export const getAllAdmins = createAsyncThunk("adminProfileSlice/getAllAdmins",
     }
 );
 
+// update admin
+export const updateAdmin = createAsyncThunk("adminProfileSlice/updateAdmin",
+    async ({ id, updateData }, { rejectWithValue }) => {
+        console.log('Received data for updating admin', id, updateData);
+
+        try {
+            const res = await supabase.from("users").update(updateData).eq("id", id).select().single();
+            console.log('Response for updating the admin', res);
+
+            if (res?.error) return rejectWithValue(res?.error.message);
+
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 // delete admin
 export const deleteUserById = createAsyncThunk("adminProfileSlice/deleteUserById",
     async (adminId, { rejectWithValue }) => {
-        console.log('Deleted admin ID received in slice', adminId);
+        // console.log('Deleted admin ID received in slice', adminId);
 
         try {
             const res = await supabase.auth.admin.deleteUser(adminId);
-            console.log('Response for deleting admin', res);
+            // console.log('Response for deleting admin', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);
 
@@ -61,6 +79,25 @@ export const adminProfileSlice = createSlice({
             .addCase(getAllAdmins.rejected, (state, action) => {
                 state.isAdminLoading = false;
                 state.isAdminError = action.payload || action.error.message;
+            })
+
+            //   update admin 
+            .addCase(updateAdmin.pending, (state) => {
+                state.isAdminLoading = true;
+            })
+            .addCase(updateAdmin.fulfilled, (state, action) => {
+                state.isAdminLoading = false;
+
+                const updatedUser = action.payload;
+                const index = state.getAdminData.findIndex((u) => u.id === updatedUser.id);
+
+                if (index !== -1) {
+                    state.getAdminData[index] = { ...state.getAdminData[index], ...updatedUser };
+                }
+            })
+            .addCase(updateAdmin.rejected, (state, action) => {
+                state.isAdminLoading = false;
+                state.isAdminError = action.payload;
             })
 
             // delete admin

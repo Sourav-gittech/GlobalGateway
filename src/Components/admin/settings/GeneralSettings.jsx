@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Globe } from 'lucide-react'
 
-const GeneralSettings = ({ SettingsSection, FormField }) => {
+const GeneralSettings = ({ SettingsSection, FormField, userAuthData }) => {
 
     const [siteName, setSiteName] = useState("Global Gateway");
     const [siteDescription, setSiteDescription] = useState("Visa Immigration Services Platform-connecting Users with Embessies");
-    const [adminEmail, setAdminEmail] = useState("admin@globalgateway.com");
+    const [adminEmail, setAdminEmail] = useState(userAuthData?.email);
     const [supportEmail, setSupportEmail] = useState("support@globalgateway.com");
 
     return (

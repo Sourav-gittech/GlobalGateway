@@ -6,14 +6,15 @@ import { loginUser } from '../../../Redux/Slice/auth/authSlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import toastifyAlert from '../../../util/alert/toastify';
 import { useNavigate } from 'react-router-dom';
+import { updateLastSignInAt } from '../../../Redux/Slice/userSlice';
 
 // Utility component for input fields
 const InputField = ({ label, type = 'text', register, errors, name, setShowPassword, showPassword, ...rest }) => {
     const isPassword = name === 'password';
-    
+
     const baseClasses = `w-full px-4 py-3 rounded-md bg-transparent text-white placeholder-white/70 border transition duration-300 focus:outline-none`;
     const borderClasses = errors[name] ? 'border-red-500' : 'border-white/50 focus:border-white';
-    
+
     return (
         <div className="relative">
             <input
@@ -32,8 +33,8 @@ const InputField = ({ label, type = 'text', register, errors, name, setShowPassw
                 })}
                 {...rest}
             />
-            
-            <label 
+
+            <label
                 htmlFor={name}
                 className={`absolute left-3 transition-all duration-300 pointer-events-none 
                             peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-white/70
@@ -53,7 +54,7 @@ const InputField = ({ label, type = 'text', register, errors, name, setShowPassw
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                 </button>
             )}
-            
+
             {errors[name] && (
                 <p className="text-red-500 text-xs mt-1 ml-2">{errors[name].message}</p>
             )}
@@ -63,10 +64,10 @@ const InputField = ({ label, type = 'text', register, errors, name, setShowPassw
 
 const AdminLoginForm = () => {
     const [showPassword, setShowPassword] = useState(false);
-    
+
     const dispatch = useDispatch();
     const { isUserAuthLoading } = useSelector(state => state.auth);
-        
+
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
 
@@ -74,15 +75,25 @@ const AdminLoginForm = () => {
         const auth_obj = {
             email: data.email,
             password: data.password,
-            role: 'admin' 
+            role: 'admin'
         };
 
-        dispatch(loginUser(auth_obj))
-            .unwrap()
+        dispatch(loginUser(auth_obj)).unwrap()
             .then(res => {
-                toastifyAlert.success('Admin Login Successful');
-                sessionStorage.setItem('admin_token', res.accessToken);
-                navigate('/admin/dashboard');
+                // console.log('Response for login', res);
+
+                dispatch(updateLastSignInAt(res?.user?.id))
+                    .then(res => {
+                        // console.log('Response for  update login time', res);
+
+                        toastifyAlert.success('Admin Login Successful');
+                        sessionStorage.setItem('admin_token', res.accessToken);
+                        navigate('/admin/dashboard');
+                    })
+                    .catch(err => {
+                        console.log('Error occured', err);
+                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                    })
             })
             .catch(err => {
                 getSweetAlert('Access Denied', err || 'Invalid admin credentials. Please try again.', 'error');
@@ -90,19 +101,19 @@ const AdminLoginForm = () => {
     };
 
     return (
-        <div 
+        <div
             className="min-h-screen flex justify-center items-center px-4 py-8"
-            style={{ 
+            style={{
                 backgroundImage: `url(/Slider1.jpg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
         >
-            <div 
+            <div
                 className="w-full max-w-6xl h-[650px] flex shadow-2xl rounded-xl overflow-hidden"
             >
                 {/* LEFT VIDEO SECTION */}
-                <div 
+                <div
                     className="hidden md:block w-1/2 relative bg-black/80"
                 >
                     <video autoPlay loop muted playsInline
@@ -138,7 +149,7 @@ const AdminLoginForm = () => {
                     <h4 className="text-3xl font-bold text-white mb-2">
                         Admin Sign In
                     </h4>
-                    
+
                     <p className="text-sm text-white/60 mb-8">
                         Enter your credentials to access the admin panel
                     </p>
@@ -171,8 +182,8 @@ const AdminLoginForm = () => {
                             disabled={isUserAuthLoading}
                             className={`
                                 py-3 mt-2 rounded-md font-semibold text-white transition duration-300 flex justify-center items-center gap-2
-                                ${isUserAuthLoading 
-                                    ? 'bg-black/40 cursor-not-allowed' 
+                                ${isUserAuthLoading
+                                    ? 'bg-black/40 cursor-not-allowed'
                                     : 'bg-black hover:bg-black/80'
                                 }
                             `}
@@ -190,7 +201,7 @@ const AdminLoginForm = () => {
                     >
                         Forgot your password?
                     </p>
-                    
+
                     {/* Security Notice for Mobile */}
                     <div className="md:hidden mt-8 pt-6 border-t border-white/20">
                         <div className="flex items-center gap-2 text-xs text-white/70">
