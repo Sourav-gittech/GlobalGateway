@@ -131,7 +131,7 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                 onClose={() => setAlertModalOpen(false)}
                 onConfirm={confirmUnblockBlock}
                 buttonText={setStatus == 'blocked' ? 'Block' : 'Unblock'}
-                type={setStatus == 'blocked' ? 'block' : 'Unblock'}
+                type={setStatus == 'blocked' ? 'block' : 'unblock'}
                 title={`${setStatus == 'blocked' ? 'Block' : 'Unblock'} Admin`}
                 message={`Are you sure you want to ${setStatus == 'blocked' ? 'block' : 'unblock'} admin?`}
             />
