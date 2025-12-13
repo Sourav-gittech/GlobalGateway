@@ -1,12 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Loader2, Upload, X } from "lucide-react";
 
-const ImageUploadField = ({ label, id, helper, error, currentImageUrl, onImageSelect, uploading }) => {
+const ImageUploadField = ({ label, id, helper, error, currentImageUrl, preview, onImageSelect, uploading }) => {
     const [previewUrl, setPreviewUrl] = useState(currentImageUrl);
 
     useEffect(() => {
-        setPreviewUrl(currentImageUrl);
-    }, [currentImageUrl]);
+        // Use preview if passed, otherwise fallback to currentImageUrl
+        if (preview) {
+            if (preview instanceof File) {
+                setPreviewUrl(URL.createObjectURL(preview));
+            } else if (typeof preview === "string") {
+                setPreviewUrl(preview);
+            } else if (typeof preview === "object") {
+                setPreviewUrl(preview.url || preview.file?.url || null);
+            } else {
+                setPreviewUrl(null);
+            }
+        } else {
+            setPreviewUrl(currentImageUrl || null);
+        }
+    }, [preview, currentImageUrl]);
+
+    // console.log(helper, preview, previewUrl);
 
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];

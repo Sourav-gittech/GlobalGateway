@@ -67,7 +67,7 @@ const CountryDetailsExpanded = ({ country }) => {
             color: 'amber',
             items: [
                 { label: 'Population', value: fmt(country?.country_details?.population), icon: Users },
-                { label: 'Language', value: country?.country_details?.languages[0], icon: Languages },
+                { label: 'Language', value: country?.country_details?.languages.join(','), icon: Languages },
                 { label: 'Currency', value: Object.keys(country?.country_details?.currency)?.length > 0 ? ` ${country?.country_details?.currency?.name}` : null, icon: DollarSign },
                 { label: 'Code', value: country?.country_details?.code, icon: FileText, mono: true }
             ]

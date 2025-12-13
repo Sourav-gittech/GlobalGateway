@@ -1,7 +1,7 @@
 import React from 'react'
 import { Globe } from "lucide-react";
 
-const BasicFormSection = ({ SettingsSection, FormField, register, errors }) => {
+const BasicFormSection = ({ SettingsSection, FormField, register, errors, country }) => {
 
     return (
         <SettingsSection title="Basic Information" description="Essential country details" icon={Globe}>
@@ -10,7 +10,7 @@ const BasicFormSection = ({ SettingsSection, FormField, register, errors }) => {
                 register("name",
                     { required: "Country name is required" },
                     { pattern: { value: /^[A-Za-z -]+$/, message: "Country is not valid" } }
-                )} error={errors.name} />
+                )} error={errors.name} readOnly={Boolean(country)} />
 
             <FormField label="Country Code" id="code" placeholder="e.g., AE" register={
                 register("code", {
@@ -22,7 +22,7 @@ const BasicFormSection = ({ SettingsSection, FormField, register, errors }) => {
 
             <FormField label="Official Name" id="officialName" placeholder="e.g., United Arab Emirates" register={
                 register("officialName",
-                    { pattern: { value: /^[A-Za-z -]+$/, message: "Official Name is not valid" } }
+                    { pattern: { value: /^[A-Za-z \-']+$/, message: "Official Name is not valid" } }
                 )} error={errors.officialName} />
 
             <FormField label="Population" id="population" placeholder="e.g., 11,294,243" register={

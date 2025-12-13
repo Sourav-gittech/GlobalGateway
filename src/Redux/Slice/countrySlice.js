@@ -86,6 +86,36 @@ const uploadFile = async (file, country, type, folder) => {
     return bucketData;
 };
 
+// delete uploaded image from bucket
+async function deleteFile(country_id, dbName, folder) {
+    // console.log("Image deletion country I'd", country_id, " from", folder," of",dbName);
+
+    try {
+        const col_name = dbName == "countries" ? "id" : "country_id";
+        // Fetch existing country images
+        const { data: img, error: fetchErr } = await supabase.from(dbName).select("*").eq(col_name, country_id).single();
+        // console.log('Fetched image', img,col_name);
+
+        if (fetchErr) throw fetchErr;
+
+        const deleted_img = folder === 'flag' ? img?.flag_name : img?.image_name;
+
+        // delete old documents from bucket
+        if (deleted_img) {
+            // console.log('Deleted doc id', deleted_img,folder);
+
+            const res = await supabase.storage.from("country").remove(`${folder}/${deleted_img}`);
+            // console.log('Response for deleting doc', res);
+
+        }
+
+        return deleted_img;
+
+    } catch (err) {
+        console.error("Error deleting document:", err);
+    }
+}
+
 // add country
 export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCountry",
     async (countryData, { rejectWithValue }) => {
@@ -107,9 +137,10 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
 
             // Merge form data with API data (form data takes priority)
             const finalData = {
+                id: countryData?.id,
                 name: countryData.name.charAt(0).toUpperCase() + countryData.name.slice(1),
                 description: countryData.description || "",
-                imageFile: countryData.image[0] || null,
+                imageFile: countryData.image || null,
                 is_blocked: countryData.is_blocked ?? true,
                 code: countryData.code || apiData?.currency?.code || "",
                 official_name: countryData.official_name || apiData.officialName,
@@ -124,12 +155,22 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                 currency: { "name": countryData.currency.name || apiData.currency.name, "symbol": countryData.currency.symbol || apiData.currency.symbol, "code": countryData.currency.code || apiData.currency.code }
             };
 
+            // console.log(typeof (finalData.imageFile), finalData.imageFile);
+
             // Upload images
-            const flagUrl = await uploadFile(finalData.flagFile, finalData.name, 'flag', "flag");
-            const countryImageUrl = await uploadFile(finalData.imageFile, finalData.name, 'place', "important_place");
+            const flagUrl = typeof (finalData.flagFile) != 'string' ? await uploadFile(finalData.flagFile, finalData.name, 'flag', "flag") : finalData.flagFile;
+            const countryImageUrl = !finalData.imageFile?.isOld ? await uploadFile(finalData.imageFile, finalData.name, 'place', "important_place") : finalData.imageFile;
 
             // console.log(flagUrl, countryImageUrl);
             // console.log("final data", finalData);
+
+            if (typeof (finalData.flagFile) != 'string') {
+                deleteFile(finalData.id, "country_details", "flag");
+            }
+
+            if (!finalData.imageFile?.isOld) {
+                deleteFile(finalData.id, "countries", "important_place");
+            }
 
             // Upsert countries table
             const { data: countryRow, error: countryErr } = await supabase.from("countries").upsert(
@@ -168,7 +209,7 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                         currency: finalData.currency,
                     },
                 ],
-                { onConflict: ["code"], returning: "representation" }
+                { onConflict: ["country_id"], returning: "representation" }
             );
 
             // console.log('Response for adding country details', countryDetailsRow);

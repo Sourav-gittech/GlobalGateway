@@ -17,10 +17,7 @@ const CulturalFinancialSection = ({ SettingsSection, FormField, register, errors
             } error={errors.currencyCode} />
 
             <FormField label="Currency Symbol" id="currencySymbol" placeholder="e.g., د.إ" register={
-                register("currencySymbol",
-                    { pattern: { value: /^[^\d\s]+$/, message: "Currency symbol is not valid" } }
-                )
-            } helper="Symbol (optional)" error={errors.currencySymbol} />
+                register("currencySymbol")} helper="Symbol (optional)" error={errors.currencySymbol} />
 
             <FormField label="Primary Language(s)" id="language" placeholder="e.g., Arabic, English" register={
                 register("language",

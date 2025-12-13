@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { Check, X } from "lucide-react";
 import FormHeader from "./countryForm/FormHeader";
@@ -12,6 +12,7 @@ import FormBtnSection from "./countryForm/form-part/FormBtnSection";
 import { useDispatch } from "react-redux";
 import { addOrUpdateCountry, fetchAllCountryDetails } from "../../../Redux/Slice/countrySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
+import { useCountryWiseVisaDetails } from "../../../tanstack/query/getCountryWiseVisaDetails";
 
 const SettingsSection = ({ title, description, icon: Icon, children }) => (
     <div className="p-5 sm:p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
@@ -26,13 +27,13 @@ const SettingsSection = ({ title, description, icon: Icon, children }) => (
     </div>
 );
 
-const FormField = ({ label, id, type = "text", placeholder, register, helper, error, rows, maxLength }) => (
+const FormField = ({ label, id, type = "text", placeholder, register, helper, error, rows, readOnly, maxLength }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-slate-300 mb-2">{label}</label>
         {type === "textarea" ? (
-            <textarea id={id} rows={rows || 3} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none`} />
+            <textarea id={id} readOnly={readOnly} rows={rows || 3} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none`} />
         ) : (
-            <input id={id} type={type} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm`} />
+            <input id={id} readOnly={readOnly} type={type} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm`} />
         )}
         {error && <p className="mt-1 text-xs text-red-400">{error.message}</p>}
         {helper && <p className="mt-1 text-xs text-slate-400">{helper}</p>}
@@ -51,26 +52,90 @@ const SelectField = ({ label, id, register, options, error }) => (
 );
 
 const CountryFormModal = ({ isOpen, onClose, country }) => {
+    const initialValuesRef = useRef(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [imageFile, setImageFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
     const dispatch = useDispatch();
 
+    // console.log('Editable country details', country);
+
+    const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(country?.id);
+
     const { register, handleSubmit, control, watch, reset, setValue, formState: { errors, isSubmitting } } = useForm({ defaultValues: { name: "", code: "", officialName: "", continent: "", region: "", capital: "", flagImage: "", countryImage: "", area: "", population: "", latitude: "", longitude: "", currency: "", currencyCode: "", currencySymbol: "", language: "", description: "" } });
 
     useEffect(() => {
-        country ? reset({ name: country.name || "", code: country.code || "", officialName: country.official_name || "", continent: country.continent || "", region: country.region || "", capital: country.capital || "", flagImage: country.flag_url || "", countryImage: country.image_url || "", area: country.area || "", population: country.population || "", latitude: country.latitude || "", longitude: country.longitude || "", currency: country.currency || "", currencyCode: country.currencyCode || "", currencySymbol: country.currency_symbol || "", language: country.language || "", description: country.description || "", visaRequired: country.visa_required !== undefined ? country.visa_required : true, isActive: country.is_active !== undefined ? country.is_active : true }) : reset({ name: "", code: "", officialName: "", continent: "", region: "", capital: "", flagImage: "", countryImage: "", area: "", population: "", latitude: "", longitude: "", currency: "", currencyCode: "", currencySymbol: "", language: "", description: "", visaRequired: true, isActive: false });
+        const values = country
+            ? {
+                name: country.name || "",
+                code: country.country_details?.code || "",
+                officialName: country.country_details?.official_name || "",
+                continent: country.country_details?.continents || "",
+                capital: country.country_details?.capital || "",
+                flagImage: country.country_details?.flag_url || "",
+                countryImage: country.image_url || "",
+                area: country.country_details?.area || "",
+                population: country.country_details?.population || "",
+                latitude: country.country_details?.latlng?.[0] || "",
+                longitude: country.country_details?.latlng?.[1] || "",
+                currency: country.country_details?.currency?.name || "",
+                currencyCode: country.country_details?.currency?.code || "",
+                currencySymbol: country.country_details?.currency?.symbol || "",
+                language: country.country_details?.languages || "",
+                description: country.description || "",
+                visaRequired: !countryWiseVisaDetails,
+                isActive: !country.is_blocked,
+            }
+            : {
+                name: "",
+                code: "",
+                officialName: "",
+                continent: "",
+                capital: "",
+                flagImage: "",
+                countryImage: "",
+                area: "",
+                population: "",
+                latitude: "",
+                longitude: "",
+                currency: "",
+                currencyCode: "",
+                currencySymbol: "",
+                language: "",
+                description: "",
+                visaRequired: true,
+                isActive: false,
+            };
+
+        // Save once per open/edit
+        initialValuesRef.current = values;
+
+        // Populate form
+        reset(values);
+
         setImageFile(null);
         setUploadError(null);
     }, [country, reset]);
 
+    const handleReset = () => {
+        if (initialValuesRef.current) {
+            reset(initialValuesRef.current);
+            setImageFile(null);
+            setUploadError(null);
+        }
+    };
     const onSubmit = async (data) => {
 
         const countryData = {
+            id: country?.id,
             name: data.name,
             description: data.description,
-            image: data.countryImage,
+            image: typeof (data.countryImage) == 'string' ? {
+                docName: country.image_name,
+                url: country.image_url,
+                isOld: true
+            } : data.countryImage[0],
             is_blocked: true,
 
             code: data.code.toUpperCase(),
@@ -125,7 +190,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                        <BasicFormSection SettingsSection={SettingsSection} FormField={FormField} register={register} errors={errors} />
+                        <BasicFormSection SettingsSection={SettingsSection} FormField={FormField} register={register} errors={errors} country={country} />
 
                         <ImageMediaSection SettingsSection={SettingsSection} FormField={FormField} country={country} uploading={uploading} setValue={setValue} setImageFile={setImageFile} imageFile={imageFile} register={register} watch={watch} errors={errors} />
 
@@ -139,7 +204,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
 
                     </div>
                 </div>
-                <FormBtnSection country={country} isSubmitting={isSubmitting} uploading={uploading} handleSubmit={handleSubmit} onClose={onClose} onSubmit={onSubmit} />
+                <FormBtnSection country={country} isSubmitting={isSubmitting} uploading={uploading} handleSubmit={handleSubmit} onClose={onClose} onSubmit={onSubmit} handleReset={handleReset} />
             </div>
         </div>
     );

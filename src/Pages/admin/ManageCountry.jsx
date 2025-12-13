@@ -78,7 +78,7 @@ export default function CountryAdminPanel() {
         </div>
 
         {/* TABLE */}
-        <CountryTable searchQuery={searchQuery} isLoading={isAllCountryListLoading} filteredCountry={filteredCountry} countries={getAllCountryList} filterContinent={filterContinent} />
+        <CountryTable searchQuery={searchQuery} isLoading={isAllCountryListLoading} filteredCountry={filteredCountry} countries={getAllCountryList} filterContinent={filterContinent} setCountries={setSelectedCountry} />
 
         <CountryFormModal
           isOpen={isModalOpen}

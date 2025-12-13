@@ -24,15 +24,15 @@ const SettingsFormSection = ({ SettingsSection, control, watch }) => {
         <SettingsSection title="Settings" description="Visibility and requirements" icon={Settings}>
 
             <Controller name="visaRequired" control={control} render={({ field }) =>
-                <ToggleSwitch label="Visa Required" description="Visa required for entry" checked={true} />} />
+                <ToggleSwitch label="Visa Required" description="Visa unavailability for country" checked={watch("visaRequired")} />} />
 
             <Controller name="isActive" control={control} render={({ field }) =>
-                <ToggleSwitch label="Active Status" description="Show to users" checked={false} />} />
+                <ToggleSwitch label="Active Status" description="Show to users" checked={watch("isActive") ? watch("isActive") : false} />} />
 
             <div className="p-4 rounded-lg bg-slate-700/30 border border-slate-600/50">
                 <div className="text-sm font-medium text-white mb-2">Preview Status</div>
                 <div className="flex items-center gap-2 flex-wrap text-xs">
-                    {watch("visaRequired") && <span className="px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Visa Required</span>}
+                    {watch("visaRequired") && <span className="px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Visa Unavailable</span>}
                     <span className={`px-2 py-1 rounded-full border ${watch("isActive") ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-slate-500/20 text-slate-400 border-slate-500/30"}`}>{watch("isActive") ? "Active" : "Inactive"}</span>
                 </div>
             </div>
