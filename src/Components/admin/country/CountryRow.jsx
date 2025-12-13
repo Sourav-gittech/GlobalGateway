@@ -10,6 +10,8 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
         setExpandedCountryId(isExpanded ? null : country.id);
     };
 
+    // console.log('Country row details', country);
+
     return (
         <>
             {/* MAIN ROW */}
@@ -74,7 +76,7 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                     : "N/A"}</td>
 
                 {/* LANGUAGE */}
-                <td className="p-4 text-sm text-slate-300">{country?.country_details?.languages[0] ? country?.country_details?.languages[0] : 'N/A'}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.languages ? country?.country_details?.languages[0] : 'N/A'}</td>
 
                 {/* STATUS */}
                 <td className="p-4">

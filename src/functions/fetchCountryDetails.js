@@ -3,9 +3,11 @@ export const fetchCountryDetails = async ({ queryKey }) => {
 
     const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
     const data = await response.json();
-    const country = data[0];
+    const country = data[data.length-1];
 
-    // console.log('Country details response', country);
+    // console.log(data);
+
+    console.log('Country details response', country);
 
     const currencyKey = Object.keys(country.currencies)[0];
     const currency = country.currencies[currencyKey];
@@ -13,7 +15,7 @@ export const fetchCountryDetails = async ({ queryKey }) => {
     return {
         officialName: country.name.official,
         capital: country.capital?.[0] || "No capital",
-        region: country.region,
+        continents: country?.continents?.[0],
         latlng: country.latlng,
         area: country.area,
         population: country.population,

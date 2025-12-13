@@ -8,7 +8,7 @@ export async function getFullCountryDetails(id) {
     if (countryError) throw countryError;
 
     // fetch details using country name
-    const { data: details, error: detailsError } = await supabase.from("country_details").select("*").eq("id", id).single();
+    const { data: details, error: detailsError } = await supabase.from("country_details").select("*").eq("country_id", id).single();
     // console.log('Country details', country,details);
 
     if (detailsError) throw detailsError;

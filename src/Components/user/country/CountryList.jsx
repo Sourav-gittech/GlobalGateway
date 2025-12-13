@@ -63,7 +63,7 @@ const CountryList = () => {
             <div className="flex flex-wrap justify-center -m-4 lg:mx-8 md:mx-2">
                 {isAllCountryListLoading
                     ? renderSkeletons()
-                    : currentCountries.map((country) => (
+                    : currentCountries?.filter(cun => cun.is_blocked == false)?.map((country) => (
                         <CountryCard
                             key={country?.id}
                             countryId={country?.id}

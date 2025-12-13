@@ -54,13 +54,13 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                 // console.log('Response for changing status', res);
 
                 if (res?.meta?.requestStatus == "fulfilled") {
-                    hotToast(`Admin ${setStatus} successfully`, "success");
+                    hotToast(`Country ${setStatus} successfully`, "success");
                     dispatch(fetchAllCountryDetails());
                     setAlertModalOpen(false);
 
                 }
                 else {
-                    hotToast(`Admin ${setStatus} unsuccessful`, "error");
+                    hotToast(`Country ${setStatus} unsuccessful`, "error");
                 }
             })
             .catch(err => {
@@ -96,7 +96,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                                     </td>
                                 </tr>
                             )}
-                            {!isLoading && filteredCountry?.map((country) => (
+                            {!isLoading && filteredCountry?.map(country => (
                                 <CountryRow
                                     key={country?.id}
                                     country={country}
@@ -114,7 +114,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
                 </div>
 
                 {/* FOOTER */}
-                {filteredCountry.length === 0 && (
+                {!isLoading && filteredCountry.length === 0 && (
                     <div className="p-12 text-center">
                         <Globe className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                         <h3 className="text-lg font-semibold text-slate-400 mb-2">
