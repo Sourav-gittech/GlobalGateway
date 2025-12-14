@@ -13,6 +13,7 @@ import getSweetAlert from "../../../../util/alert/sweetAlert";
 import { Loader2 } from "lucide-react";
 import { useApplicationByUserAndCountry } from "../../../../tanstack/query/getApplicationByUserAndCountry";
 import { useCountryWiseVisaDetails } from "../../../../tanstack/query/getCountryWiseVisaDetails";
+import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
 
 export default function VisaApplicationForm() {
   const dispatch = useDispatch();
@@ -23,8 +24,9 @@ export default function VisaApplicationForm() {
   const [applicationId, setApplicationId] = useState(null);
   const { country_id } = useParams();
 
-  const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationByUserAndCountry(userAuthData?.id, country_id);
-  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(country_id);
+  const countryId = decodeBase64Url(country_id);
+  const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationByUserAndCountry(userAuthData?.id, countryId);
+  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(countryId);
   const finalAppId = applicationId || application?.id;
 
   useEffect(() => {
@@ -119,7 +121,7 @@ export default function VisaApplicationForm() {
             : "bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
             }`}
         >
-          {step === 1 && <Step1PersonalInfo onNext={next} onApplicationCreated={(id) => setApplicationId(id)} country_id={country_id} application_id={finalAppId} user_data={userAuthData} />}
+          {step === 1 && <Step1PersonalInfo onNext={next} onApplicationCreated={(id) => setApplicationId(id)} country_id={countryId} application_id={finalAppId} user_data={userAuthData} />}
           {step === 2 && <Step2PassportDetails onNext={next} onBack={prev} user_id={userAuthData?.id} application_id={finalAppId} />}
           {step === 3 && <Step3VisaType onNext={next} onBack={prev} countryWiseVisaDetails={countryWiseVisaDetails} user_id={userAuthData?.id} application_id={finalAppId} />}
           {step === 4 && <Step4UploadDocuments onNext={next} onBack={prev} user_id={userAuthData?.id} application_id={finalAppId} />}

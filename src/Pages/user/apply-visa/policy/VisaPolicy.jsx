@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import { useCountryWiseVisaDetails } from '../../../../tanstack/query/getCountryWiseVisaDetails';
 import { useFullCountryDetails } from '../../../../tanstack/query/getCountryDetails';
 import getSweetAlert from '../../../../util/alert/sweetAlert';
+import { decodeBase64Url, encodeBase64Url } from '../../../../util/encodeDecode/base64';
 
 const policyData = {
     'General Policies': {
@@ -38,8 +39,10 @@ const VisaPolicies = () => {
     const [hasReadPolicy, setHasReadPolicy] = useState(false);
 
     const { country_id } = useParams();
-    const { data: visaPolicyCategories, isLoading: isVisaListloading, error: isVisaListerror } = useCountryWiseVisaDetails(country_id);
-    const { data: countryDetails, isLoading: isCountryDetailsloading, error: isCountryDetailserror } = useFullCountryDetails(country_id);
+
+    const countryId = decodeBase64Url(country_id);
+    const { data: visaPolicyCategories, isLoading: isVisaListloading, error: isVisaListerror } = useCountryWiseVisaDetails(countryId);
+    const { data: countryDetails, isLoading: isCountryDetailsloading, error: isCountryDetailserror } = useFullCountryDetails(countryId);
 
     let currentPolicy;
 
@@ -72,7 +75,7 @@ const VisaPolicies = () => {
 
     const handleContinueToApplication = () => {
         if (hasReadPolicy) {
-            visaPolicyCategories ? navigate(`/application-form/${country_id}`) : getSweetAlert('Oops...', 'No Visa Available!', 'warning');
+            visaPolicyCategories ? navigate(`/application-form/${encodeBase64Url(String(countryId))}`) : getSweetAlert('Oops...', 'No Visa Available!', 'warning');
         }
     };
 

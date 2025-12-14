@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import VisaProcessSteps from '../../../Components/user/apply-visa/VisaProcessSteps';
+import { decodeBase64Url, encodeBase64Url } from '../../../util/encodeDecode/base64';
 
 const VisaProcess = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const VisaProcess = () => {
 
   const { country_id } = useParams();
 
+  const countryId = decodeBase64Url(country_id);
   useEffect(() => {
     dispatch(checkLoggedInUser())
       .then(res => {
@@ -51,7 +53,7 @@ const VisaProcess = () => {
 
   const handleContinueClick = () => {
     if (userAuthData) {
-      navigate(`/policy/${country_id}`);
+      navigate(`/policy/${encodeBase64Url(String(countryId))}`);
     } else {
       // toast.error('Please sign in first');
       navigate('/authentication');

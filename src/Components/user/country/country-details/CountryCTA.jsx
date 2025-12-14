@@ -1,8 +1,9 @@
 import { ClipboardList, FileText } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { encodeBase64Url } from '../../../../util/encodeDecode/base64'
 
-const CountryCTA = ({country_id,handleContinue}) => {
+const CountryCTA = ({countryId,handleContinue}) => {
     return (
         <>
             <div className="mb-8 lg:mb-12 text-center lg:text-left">
@@ -11,7 +12,7 @@ const CountryCTA = ({country_id,handleContinue}) => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                <Link to={`/visaprocess/${country_id}`}
+                <Link to={`/visaprocess/${encodeBase64Url(String(countryId))}`}
                     className="flex-1 px-6 sm:px-8 py-4 sm:py-5 bg-red-500 text-white font-medium rounded hover:bg-red-600 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-100 flex items-center justify-center gap-3 group"
                 >
                     <FileText className="w-5 h-5 group-hover:rotate-6 transition-transform" />

@@ -71,7 +71,7 @@ const schema = yup.object().shape({
 
 export default function Step1PersonalInfo({ onNext, onApplicationCreated, country_id, application_id, user_data }) {
   const dispatch = useDispatch();
-  const { isApplicationLoading, personalInfo, isApplicationError } = useSelector(state => state.application);
+  const { isApplicationLoading, application, personalInfo, isApplicationError } = useSelector(state => state.application);
   const { data: personalInfoData, isLoading: isApplicationDataLoading, error: isApplicationSDataError } = usePersonalInfoByApplicationId(application_id);
 
   const { register, handleSubmit, formState: { errors, touchedFields }, reset } = useForm({
@@ -99,7 +99,7 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
     }
   }, [personalInfoData, reset]);
 
-  // console.log('Personal Info retrive',personalInfoData);
+  // console.log('Personal Info retrive', personalInfoData, application_id);
   // console.log('Logged user details', user_data);
 
 
@@ -157,8 +157,9 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
                           // console.log('Response for adding activity', res);
 
                           if (res.meta.requestStatus === "fulfilled") {
+                            const appId = res?.meta?.arg?.application_id;
 
-                            onApplicationCreated(res?.meta?.arg?.applicationId);
+                            onApplicationCreated(appId);
                             onNext();
                           }
                           else {
@@ -241,7 +242,7 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
               label="First Name"
               icon={User}
               placeholder="John"
-              value={user_data?.name.split(" ").slice(0, -1).join(" ")}
+              value={user_data?.name?.split(" ")?.slice(0, -1)?.join(" ")}
               {...register('firstName')}
               errors={errors}
               touched={touchedFields.firstName}
@@ -253,7 +254,7 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
               label="Last Name"
               icon={User}
               placeholder="Doe"
-              value={user_data?.name.split(" ").slice(1)}
+              value={user_data?.name?.split(" ")?.slice(1)}
               {...register('lastName')}
               errors={errors}
               touched={touchedFields.lastName}

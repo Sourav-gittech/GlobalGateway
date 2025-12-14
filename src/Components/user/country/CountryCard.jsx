@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from "framer-motion";
 import { Link } from 'react-router-dom';
 import { useFullCountryDetails } from '../../../tanstack/query/getCountryDetails';
+import { encodeBase64Url } from '../../../util/encodeDecode/base64';
 
 const CountryCard = ({ countryId, countryName, countryDescription }) => {
 
@@ -51,7 +52,7 @@ const CountryCard = ({ countryId, countryName, countryDescription }) => {
                     {/* Button */}
                     <div className="mt-auto mb-6">
                         <Link
-                            to={`/country/${countryId}`}
+                            to={`/country/${encodeBase64Url(String(countryId))}`}
                             className="px-5 py-2 border-2 border-[#FF5252] text-[#FF5252] rounded-lg hover:bg-red-50 hover:border-red-500 hover:text-red-500 transition-all cursor:pointer"
                         >
                             View Details

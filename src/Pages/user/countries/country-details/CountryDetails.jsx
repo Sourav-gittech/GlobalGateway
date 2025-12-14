@@ -11,12 +11,14 @@ import { useCountryWiseVisaDetails } from "../../../../tanstack/query/getCountry
 import Disclaimer from "../../../../Components/user/country/country-details/Disclaimer";
 import ContactInfo from "../../../../Components/user/country/country-details/ContactInfo";
 import CountryCTA from "../../../../Components/user/country/country-details/CountryCTA";
+import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
 
 const CountryDetails = () => {
   const { country_id } = useParams();
 
-  const { data: countryData, isLoading: countryLoading, error: countryError } = useFullCountryDetails(country_id);
-  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(country_id);
+  const countryId = decodeBase64Url(country_id);
+  const { data: countryData, isLoading: countryLoading, error: countryError } = useFullCountryDetails(countryId);
+  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(countryId);
 
   // console.log("Country details", countryData);
   // console.log("Country wise visa details", countryWiseVisaDetails);
@@ -121,7 +123,7 @@ const CountryDetails = () => {
         <motion.div variants={itemVariants} className="pt-12 lg:pt-16">
 
           {/* CTA Section */}
-          <CountryCTA country_id={countryData?.id} handleContinue={handleContinue} />
+          <CountryCTA countryId={countryData?.id} handleContinue={handleContinue} />
 
           <ContactInfo />
 
