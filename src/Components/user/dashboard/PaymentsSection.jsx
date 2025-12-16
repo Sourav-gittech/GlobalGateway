@@ -5,6 +5,13 @@ import { useCountryByApplicationId } from '../../../tanstack/query/getCountryByA
 const PaymentsSection = ({ transactions, getStatusColor, getStatusIcon }) => {
     // console.log('Transaction details', transactions);
 
+    if(transactions.length==0){
+        return (
+            <div className="py-8">
+                <p className="text-center">No payment details available</p>
+            </div>
+        )
+    }
     return (
         <div className="space-y-4">
             {transactions?.map(payment => {

@@ -2,6 +2,58 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import supabase from "../../util/Supabase/supabase";
 import { fetchCountryDetails } from "../../functions/fetchCountryDetails";
 
+// fetch specific country based on country name(Case-Insensitive)
+export const fetchCountryByName = createAsyncThunk("countrySlice/fetchCountryByName",
+    async (countryName, { rejectWithValue }) => {
+        // console.log('Received country name in slice for fetching data', countryName);
+
+        try {
+            // Fetch from countries table
+            let res = await supabase.from("countries").select("*").ilike("name", `%${countryName}%`);
+            // console.log('Response for fetching country data based on country name', res);
+
+            if (res.error) return rejectWithValue(res.error.message);
+
+            if (res.data.length > 0) {
+                // Country found in countries table
+                const country = res.data[0];
+
+                // Fetch details from country_details using country_id
+                const detailsRes = await supabase.from("country_details").select("*").eq("country_id", country.id).single();
+                // console.log('Response for fetching country data based on country details name', detailsRes);
+
+                if (detailsRes.error && detailsRes.error.code !== "PGRST116") {
+                    return rejectWithValue(detailsRes.error.message);
+                }
+
+                return {
+                    ...country,
+                    details: detailsRes.data || null,
+                };
+            }
+
+            // If not found in countries, search country_details by official_name
+            const detailsRes = await supabase.from("country_details").select("*").ilike("official_name", `%${countryName}%`).single();
+
+            if (detailsRes.error && detailsRes.error.code !== "PGRST116") {
+                return rejectWithValue(detailsRes.error.message);
+            }
+
+            if (!detailsRes.data) return null;
+
+            // Fetch parent country info
+            const countryRes = await supabase.from("countries").select("*").eq("id", detailsRes.data.country_id).single();
+
+            return {
+                ...countryRes.data,
+                details: detailsRes.data,
+            };
+        } catch (err) {
+            return rejectWithValue("Something went wrong");
+        }
+    }
+)
+
 // fetch all country action
 export const fetchAllCountryList = createAsyncThunk("countrySlice/fetchAllCountryList",
     async () => {
@@ -142,6 +194,7 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                 description: countryData.description || "",
                 imageFile: countryData.image || null,
                 is_blocked: countryData.is_blocked ?? true,
+                is_approved: countryData.is_approved ?? "pending",
                 code: countryData.code || apiData?.currency?.code || "",
                 official_name: countryData.official_name || apiData.officialName,
                 capital: countryData.capital || apiData.capital,
@@ -229,6 +282,7 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
 const initialState = {
     isAllCountryListLoading: false,
     getAllCountryList: [],
+    getSpecificCountry: null,
     isAllCountryListError: null
 }
 
@@ -237,6 +291,19 @@ export const countrySlice = createSlice({
     initialState,
     extraReducers: builder => {
         builder
+
+            //fetch specific country based on country name
+            .addCase(fetchCountryByName.pending, (state) => {
+                state.isAllCountryListLoading = true;
+            })
+            .addCase(fetchCountryByName.fulfilled, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.getSpecificCountry = action.payload;
+            })
+            .addCase(fetchCountryByName.rejected, (state, action) => {
+                state.isAllCountryListLoading = false;
+                state.isAllCountryListError = action.payload;
+            })
 
             // fetch all country reducer
             .addCase(fetchAllCountryList.pending, (state, action) => {

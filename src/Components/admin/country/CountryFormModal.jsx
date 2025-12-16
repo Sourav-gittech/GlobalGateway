@@ -137,6 +137,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
                 isOld: true
             } : data.countryImage[0],
             is_blocked: true,
+            is_approved: "fulfilled",
 
             code: data.code.toUpperCase(),
             official_name: data.officialName,

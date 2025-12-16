@@ -4,15 +4,23 @@ import supabase from "../../../util/Supabase/supabase";
 // verifying action 
 export const verifyUser = createAsyncThunk("userVerifySlice/verifyUser",
     async (payload, { rejectWithValue }) => {
+
         const decodedEmail = decodeURIComponent(payload.email);
 
+        let userData = null, userError = null;
         try {
-            // Update user status
-            const { data: userData, error: userError } = await supabase.from("users")
-                .update({
-                    is_verified: payload.status,
-                })
-                .eq("email", decodedEmail).eq("is_verified", "pending").select("*");
+            if (payload.user_type == 'embassy') {
+                // Update embassy status
+                let { data: userData, error: userError } = await supabase.from("embassy").update({
+                    is_verified: payload.status
+                }).eq("email", decodedEmail).eq("is_verified", "pending").select("*");
+            }
+            else {
+                // Update user status
+                let { data: userData, error: userError } = await supabase.from("users").update({
+                    is_verified: payload.status
+                }).eq("email", decodedEmail).eq("is_verified", "pending").select("*");
+            }
 
             if (userError) throw userError;
             // console.log('Update user status', userData);

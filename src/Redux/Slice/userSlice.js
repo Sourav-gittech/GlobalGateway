@@ -58,11 +58,17 @@ export const updateUserProfile = createAsyncThunk("userProfileSlice/updateUserPr
 
 // updates `last_sign_in_at`
 export const updateLastSignInAt = createAsyncThunk("userProfileSlice/updateLastSignInAt",
-    async (userId, { rejectWithValue }) => {
-        // console.log('update login data', userId);
+    async ({ id, user_type }, { rejectWithValue }) => {
+        // console.log('update login data', id,user_type);
 
         try {
-            const res = await supabase.from("users").update({ last_sign_in_at: new Date().toISOString() }).eq("id", userId).select();
+            let res = null;
+            if (user_type == 'embassy') {
+                res = await supabase.from("embassy").update({ last_sign_in_at: new Date().toISOString() }).eq("id", id).select();
+            }
+            else {
+                res = await supabase.from("users").update({ last_sign_in_at: new Date().toISOString() }).eq("id", id).select();
+            }
             // console.log('Response for updating sign-in time', res);
 
             if (res?.error) return rejectWithValue(res?.error);

@@ -2,6 +2,14 @@ import React from 'react'
 import { Calendar } from 'lucide-react';
 
 const AppointmentsSection = ({ appointments, getStatusColor, getStatusIcon }) => {
+
+    if(appointments.length==0){
+        return (
+            <div className="py-8">
+                <p className="text-center">No appointments available</p>
+            </div>
+        )
+    }
     return (
         <div className="space-y-4">
             {appointments.map((appointment) => (

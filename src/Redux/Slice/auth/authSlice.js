@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import supabase from "../../../util/Supabase/supabase";
+import { fetchCountryByName } from "../countrySlice";
 
 // register slice 
 export const registerUser = createAsyncThunk("authSlice/registerUser",
-  async (data, { rejectWithValue }) => {
-    console.log('Received register data', data);
+  async (data, { rejectWithValue, dispatch }) => {
+    // console.log('Received register data', data);
 
     try {
       const redirectUrl = `${import.meta.env.VITE_CHECKOUT_ENDPOINT}/verification/${data.email}/${data.role || "user"}`;
@@ -18,14 +19,19 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
         }
       });
 
-      // console.log('Register user in auth table data', signUpData);
+      // console.log('Register user in auth table data', signUpData, signUpError);
 
       if (signUpError) return rejectWithValue(signUpError.message);
 
       const userId = signUpData.user.id;
+      const { data: exists } = await supabase.from("users").select("id").eq("email", data.email).single();
 
-      let fileName = null;
-      let publicUrl = null;
+      if (exists) {
+        return rejectWithValue("Email ID already exists");
+      }
+
+      let fileName = null, publicUrl = null;
+      let insertData = null, insertError = null;
 
       // insert into bucket
       if (data.role == 'user') {
@@ -43,21 +49,48 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
         publicUrl = urlData.publicUrl;
       }
 
-      // insert into custom table
-      const { data: insertData, error: insertError } = await supabase.from("users").insert({
-        id: userId,
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
-        avatar: fileName,
-        avatar_url: publicUrl,
-        is_verified: "pending",
-        is_blocked: data.is_blocked,
-        last_sign_in_at: null,
-        providers: signUpData.user.app_metadata.provider,
-        role: data.role
-      });
+      if (data.role === "embassy") {
 
+        const countryResult = await dispatch(fetchCountryByName(data.country_name)).unwrap();
+        // console.log('Country fetching result', countryResult);
+
+        const countryAvailable = !!countryResult;
+        const countryName = countryResult?.name || data.country_name;
+        const countryId = countryResult?.id || null;
+
+        let { data: insertData, error: insertError } = await supabase.from("embassy")
+          .insert({
+            id: userId,
+            country_name: countryName,
+            country_id: countryId,
+            email: data.email,
+            is_verified: "pending",
+            is_country_available: countryAvailable,
+            is_blocked: data.is_blocked,
+            is_approved: data.is_approved,
+            last_sign_in_at: null,
+            providers: signUpData.user.app_metadata.provider,
+            role: data.role,
+          });
+      }
+      else {
+        // insert into custom table
+        let { data: insertData, error: insertError } = await supabase.from("users").insert({
+          id: userId,
+          name: data.name,
+          phone: data.phone,
+          email: data.email,
+          avatar: fileName,
+          avatar_url: publicUrl,
+          is_verified: "pending",
+          is_blocked: data.is_blocked,
+          last_sign_in_at: null,
+          providers: signUpData.user.app_metadata.provider,
+          role: data.role
+        });
+        // console.log('Response after inserting data in public user table', insertData, insertError);
+
+      }
       if (insertError) return rejectWithValue(insertError.message);
 
       return insertData;
@@ -82,10 +115,17 @@ export const loginUser = createAsyncThunk("authSlice/loginUser",
       const refreshToken = data.session?.refresh_token;
 
       const userId = data.user.id;
+      let userData = null, userError = null;
 
-      const { data: userData, error: userError } = await supabase.from("users").select("*").eq("id", userId).single();
+      if (role === "embassy") {
+        ({ data: userData, error: userError } = await supabase.from("embassy").select("*").eq("id", userId).single());
+      }
+      else {
+        ({ data: userData, error: userError } = await supabase.from("users").select("*").eq("id", userId).single());
+      }
 
-      if (userError) return rejectWithValue(userError.message);
+      if (!userData)
+        return rejectWithValue("User record not found");
 
       if (userData.is_verified === "pending")
         return rejectWithValue("Please verify your email first");
@@ -93,11 +133,17 @@ export const loginUser = createAsyncThunk("authSlice/loginUser",
       if (userData.is_verified === "rejected")
         return rejectWithValue("Email verification failed");
 
+      if (role !== "embassy" && userData?.is_approved == 'pending')
+        return rejectWithValue("Your application still processing");
+
+      if (userData?.is_approved == 'rejected')
+        return rejectWithValue("Your application is rejected");
+
       if (userData.is_blocked)
         return rejectWithValue("You are blocked. Please contact admin.");
 
       if (userData.role != role) {
-        return rejectWithValue((role == 'admin' ? "Admin" : role == 'user' ? "User" : "Embassy") + " doesn't exist.");
+        return rejectWithValue((role == 'admin' ? "Admin" : role == 'user' ? "User" : "embassy") + " doesn't exist.");
       }
       return {
         user: userData,
@@ -133,8 +179,21 @@ export const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isUserAuthLoading = false;
-        state.userAuthError = action.payload == 'duplicate key value violates unique constraint "users_email_key"' ? 'Email ID already exist' : action.payload;
-      });
+        const error = action.payload || action.error?.message || "Something went wrong";
+
+        if (typeof error === "string") {
+          if (
+            error.includes("users_pkey") ||
+            error.includes("users_email_key") ||
+            error.includes("duplicate key")
+          ) {
+            state.userAuthError = "Email ID already exists";
+            return;
+          }
+        }
+
+        state.userAuthError = error;
+      })
 
     // LOGIN
     builder

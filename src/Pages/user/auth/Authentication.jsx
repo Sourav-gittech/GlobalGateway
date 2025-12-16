@@ -39,7 +39,7 @@ const AuthForm = () => {
 
           if (res.meta.requestStatus === "fulfilled") {
 
-            dispatch(updateLastSignInAt(res?.payload?.user?.id))
+            dispatch(updateLastSignInAt({id:res?.payload?.user?.id,user_type: 'user' }))
               .then(res => {
                 // console.log('Response for  update login time', res);
 
@@ -70,8 +70,8 @@ const AuthForm = () => {
         password: data.password,
         is_verified: "pending",
         is_blocked: false,
-        last_sign_in_at: data.last_sign_in_at,
-        role: "user",
+        last_sign_in_at: null,
+        role: "user"
       }
 
       dispatch(registerUser(auth_obj))

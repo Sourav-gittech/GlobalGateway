@@ -1,8 +1,8 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { getUserId } from "../../functions/getUserId";
+import { getUserId, getUserIdFromEmbassy } from "../../functions/getUserId";
 
-export const useGetIdByEmail = (email) => {
+export const useGetIdByEmail = (email, user_type) => {
 
     const encoded = email;
     const decoded = decodeURIComponent(encoded);
@@ -11,7 +11,7 @@ export const useGetIdByEmail = (email) => {
 
     return useQuery({
         queryKey: ["userId", email],
-        queryFn: () => getUserId(decoded),
+        queryFn: () => user_type == 'embassy' ? getUserIdFromEmbassy(decoded) : getUserId(decoded),
         enabled: !!email,
     });
 };

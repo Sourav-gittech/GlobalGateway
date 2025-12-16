@@ -82,7 +82,7 @@ const AdminLoginForm = () => {
             .then(res => {
                 // console.log('Response for login', res);
 
-                dispatch(updateLastSignInAt(res?.user?.id))
+                dispatch(updateLastSignInAt({id:res?.user?.id,user_type: 'admin' }))
                     .then(res => {
                         // console.log('Response for  update login time', res);
 

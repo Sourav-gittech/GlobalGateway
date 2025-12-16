@@ -6,6 +6,13 @@ import { calculateProcessingRange } from '../../../functions/calculateExpectedDa
 
 const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIcon }) => {
 
+    if(visaApplications.length==0){
+        return (
+            <div className="py-8">
+                <p className="text-center">No visa applications available</p>
+            </div>
+        )
+    }
     return (
         <div className="space-y-4">
             {visaApplications?.map(visa => {

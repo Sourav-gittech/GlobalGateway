@@ -16,7 +16,7 @@ export default function EmailVerificationPage() {
 
   const { email, user_type } = useParams();
 
-  const { data: userId } = useGetIdByEmail(email);
+  const { data: userId } = useGetIdByEmail(email, user_type);
 
   // console.log('Verifying user details', email, user_type, userId);
 
@@ -48,7 +48,7 @@ export default function EmailVerificationPage() {
               console.log('Error occured', err);
             })
 
-          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : user_type === 'admin' ? '/admin/' : '/'), 2000);
+          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : user_type === 'admin' ? '/admin/' : user_type === 'embassy' ? '/embassy/auth/' : '/'), 2000);
         }
       } catch (err) {
         console.error(err);
