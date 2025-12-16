@@ -8,8 +8,8 @@ const ContentSection = ({ SettingsSection, FormField, register, errors }) => {
             <FormField label="Description *" id="description" type="textarea" rows={5} placeholder="Brief description..." register={register("description", {
                 required: "Description is required",
                 minLength: {
-                    value: 500,
-                    message: "Minimum 500 characters required",
+                    value: 400,
+                    message: "Minimum 400 characters required",
                 },
                 maxLength: {
                     value: 600,

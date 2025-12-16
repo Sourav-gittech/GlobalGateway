@@ -1,88 +1,110 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import Navbar from '../layout/user/Navbar.jsx';
-import Footer from '../layout/user/Footer.jsx';
-import Home from '../Pages/user/home/Home';
-import AboutSection from '../Pages/user/about/AboutPage';
-import CountryGrid from '../Pages/user/countries/Country';
-import ContactUs from '../Pages/user/get-in-touch/ContactUs';
-import EmailVerification from '../Pages/verification/EmailVerificationPage';
-import VisaProcess from '../Pages/user/apply-visa/VisaProcess';
-import Dashboard from '../Pages/user/dashboard/Dashboard'
-import CountryDetails from '../Pages/user/countries/country-details/CountryDetails.jsx';
-import VisaPolicies from '../Pages/user/apply-visa/policy/VisaPolicy.jsx';
-import VisaApplicationForm from '../Pages/user/apply-visa/application-form/VisaApplicationForm.jsx';
-import PaymentPreview from '../Pages/user/apply-visa/payment/PaymentPreview.jsx';
-import PaymentStatus from '../Pages/user/apply-visa/payment/PaymentStatus.jsx';
-import ScrollToTop from '../Components/ScrollToTop.jsx';
+
+/* ---------- Global Layout ---------- */
+import Navbar from "../layout/user/Navbar.jsx";
+import Footer from "../layout/user/Footer.jsx";
+
+/* ---------- Global Utils ---------- */
+import ScrollToTop from "../Components/ScrollToTop.jsx";
+
+/* ---------- User Pages ---------- */
+import Home from "../Pages/user/home/Home";
+import AboutSection from "../Pages/user/about/AboutPage";
+import CountryGrid from "../Pages/user/countries/Country";
+import ContactUs from "../Pages/user/get-in-touch/ContactUs";
+import EmailVerification from "../Pages/verification/EmailVerificationPage";
+import VisaProcess from "../Pages/user/apply-visa/VisaProcess";
+import Dashboard from "../Pages/user/dashboard/Dashboard";
+import CountryDetails from "../Pages/user/countries/country-details/CountryDetails.jsx";
+import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy.jsx";
+import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm.jsx";
+import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview.jsx";
+import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus.jsx";
+
+/* ---------- Admin ---------- */
 import AdminLayout from "../layout/admin/AdminLayout";
 import AdminDashboard from "../Pages/admin/AdminDashboard.jsx";
 import Users from "../Pages/admin/Users";
 import Payments from "../Pages/admin/Payments";
 import Settings from "../Pages/admin/Settings";
 import Analytics from "../Pages/admin/Analytics";
-import ContactMessages from '../Pages/admin/UserContact.jsx';
+import ContactMessages from "../Pages/admin/UserContact.jsx";
 import CountryManagement from "../Pages/admin/ManageCountry.jsx";
 import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
-import Error_404 from '../Pages/Error_404.jsx';
-import AmbessyManage from '../Pages/admin/ManageAmbessy.jsx';
-import CourseManage from '../Pages/admin/CourseManage.jsx';
-import AddAdmin from '../Pages/admin/ManageAdmin.jsx';
-import VisaManage from '../Pages/admin/ManageVisa.jsx';
-import AdminProfile from '../Pages/admin/AdminProfile.jsx';
+import AmbessyManage from "../Pages/admin/ManageAmbessy.jsx";
+import CourseManage from "../Pages/admin/CourseManage.jsx";
+import AddAdmin from "../Pages/admin/ManageAdmin.jsx";
+import VisaManage from "../Pages/admin/ManageVisa.jsx";
+import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
+/* ---------- Embessy ---------- */
+import EmbessyLayout from "../layout/embessy/EmbessyLayout";
 
-const AuthForm = lazy(() => import('../Pages/user/auth/Authentication'));
+import EmbessyHome from "../Pages/embessy/Home";
+import EmbessyAbout from "../Pages/embessy/About";
+import EmbessyContact from "../Pages/embessy/Contact";
+import EmbessyAuth from "../Pages/embessy/auth/Auth.jsx";
+import EmbessyDashboard from "../Pages/embessy/Dashboard";
+import CountrySetUp from "../Pages/embessy/CountrySetUp";
+import Review from "../Pages/embessy/Review";
+import Approved from "../Pages/embessy/Approved";
+import Rejected from "../Pages/embessy/Rejected";
+
+/* ---------- Misc ---------- */
+import Error_404 from "../Pages/Error_404.jsx";
+
+const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
 const Routing = () => {
-
   const location = useLocation();
 
-  const hideLayoutRoutes = [
-    "/authentication",
-    "/verification",
-    "/dashboard",
-    "/country/:country_id",
-    "/policy/:country_id",
-    "/application-form/:country_id",
-    "/payment-preview",
-    "/payment-status",
-    "/admin",
-  ];
-
+  /* ---------- FIXED LAYOUT VISIBILITY LOGIC ---------- */
   const hideLayout =
-    hideLayoutRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/verification/") ||
+    location.pathname === "/authentication" ||
+    location.pathname.startsWith("/verification") ||
     location.pathname.startsWith("/country/") ||
     location.pathname.startsWith("/policy/") ||
     location.pathname.startsWith("/application-form/") ||
-    location.pathname.startsWith("/admin/");
+    location.pathname.startsWith("/dashboard") ||
+    location.pathname.startsWith("/payment") ||
+    location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/embessy") ||
+    location.pathname.startsWith("/auth");
 
   return (
     <>
+      {/* GLOBAL SCROLL */}
+      <ScrollToTop />
+
+      {/* USER NAVBAR */}
       {!hideLayout && <Navbar />}
 
-      <Suspense fallback={<h3 className='mt-5 text-center'>Loading...</h3>}>
-        <ScrollToTop />
+      <Suspense fallback={<h3 className="mt-5 text-center">Loading...</h3>}>
         <Routes>
+          {/* ================= USER ================= */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutSection />} />
+          <Route path="/country" element={<CountryGrid />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/authentication" element={<AuthForm />} />
+          <Route
+            path="/verification/:email/:user_type"
+            element={<EmailVerification />}
+          />
 
-          {/* user routes  */}
-          <Route path='/' element={<Home />} />
-          <Route path='/about' element={<AboutSection />} />
-          <Route path='/country' element={<CountryGrid />} />
-          <Route path='/contact' element={<ContactUs />} />
-          <Route path='/authentication' element={<AuthForm />} />
-          <Route path='/verification/:email/:user_type' element={<EmailVerification />} />
-
-          <Route path='/visaprocess/:country_id' element={<VisaProcess />} />
+          <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/country/:country_id" element={<CountryDetails />} />
           <Route path="/policy/:country_id" element={<VisaPolicies />} />
-          <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
+          <Route
+            path="/application-form/:country_id"
+            element={<VisaApplicationForm />}
+          />
           <Route path="/payment-preview" element={<PaymentPreview />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
 
-          {/* admin routes  */}
+          {/* ================= ADMIN ================= */}
           <Route path="/admin" element={<AdminLoginForm />} />
           <Route path="/admin/dashboard" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
@@ -97,14 +119,27 @@ const Routing = () => {
             <Route path="admin" element={<AddAdmin />} />
             <Route path="visaManage" element={<VisaManage />} />
             <Route path="adminProfile" element={<AdminProfile />} />
-            
-
           </Route>
 
-          <Route path='*' element={<Error_404 />} />
+          {/* ================= EMBESSY ================= */}
+          <Route path="/embessy" element={<EmbessyLayout />}>
+            <Route index element={<EmbessyHome />} />
+            <Route path="about" element={<EmbessyAbout />} />
+            <Route path="contact" element={<EmbessyContact />} />
+            <Route path="auth" element={<EmbessyAuth />} />
+            <Route path="dashboard" element={<EmbessyDashboard />} />
+            <Route path="country-setup" element={<CountrySetUp />} />
+            <Route path="review" element={<Review />} />
+            <Route path="approved" element={<Approved />} />
+            <Route path="rejected" element={<Rejected />} />
+          </Route>
+
+          {/* ================= FALLBACK ================= */}
+          <Route path="*" element={<Error_404 />} />
         </Routes>
       </Suspense>
 
+      {/* USER FOOTER */}
       {!hideLayout && <Footer />}
     </>
   );
