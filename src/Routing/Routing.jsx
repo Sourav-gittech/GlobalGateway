@@ -46,7 +46,7 @@ import EmbessyAbout from "../Pages/embessy/About";
 import EmbessyContact from "../Pages/embessy/Contact";
 import EmbessyAuth from "../Pages/embessy/auth/Auth.jsx";
 import EmbessyDashboard from "../Pages/embessy/Dashboard";
-import CountrySetUp from "../Pages/embessy/CountrySetUp";
+import CountrySetUp from "../Pages/embessy/CountrySetup";
 import Review from "../Pages/embessy/Review";
 import Approved from "../Pages/embessy/Approved";
 import Rejected from "../Pages/embessy/Rejected";
