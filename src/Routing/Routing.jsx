@@ -39,7 +39,7 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embessy ---------- */
-import EmbessyLayout from "../layout/embessy/EmbessyLayout";
+import EmbessyLayout from "../layout/Embessy/EmbessyLayout";
 
 import EmbessyHome from "../Pages/embessy/Home";
 import EmbessyAbout from "../Pages/embessy/About";
@@ -97,10 +97,7 @@ const Routing = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/country/:country_id" element={<CountryDetails />} />
           <Route path="/policy/:country_id" element={<VisaPolicies />} />
-          <Route
-            path="/application-form/:country_id"
-            element={<VisaApplicationForm />}
-          />
+          <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
           <Route path="/payment-preview" element={<PaymentPreview />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
 
