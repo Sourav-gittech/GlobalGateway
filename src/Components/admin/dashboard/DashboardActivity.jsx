@@ -53,8 +53,8 @@ const DashboardActivity = () => {
             {activities?.length === 0 ? (
                 <div className="text-slate-400 text-sm">No activities found.</div>
             ) : (
-                <ul className="text-xs sm:text-sm space-y-2 sm:space-y-3 text-slate-200">
-                    {activities.map((activity) => (
+                <ul className="glass-scrollbar text-xs sm:text-sm space-y-2 sm:space-y-3 text-slate-200 max-h-50 overflow-y-auto">
+                    {activities.map(activity => (
                         <li key={activity?.id} className="flex items-start gap-2 pb-2 border-b border-slate-700/50">
                             {getIconByStatus(activity?.icon)}
                             <span>{activity?.title} — ID: #{activity?.id?.slice(0, 8)}</span>
