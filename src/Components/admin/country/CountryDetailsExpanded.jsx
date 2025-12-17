@@ -44,9 +44,13 @@ const CountryDetailsExpanded = ({ country }) => {
 
     const stats = [
         { icon: Building2, label: 'Capital', value: country?.country_details?.capital || 'N/A', color: 'blue' },
-        { icon: Users, label: 'Population', value: country?.country_details?.population=='0'?country?.country_details?.population:fmt(country?.country_details?.population), color: 'amber' },
+        { icon: Users, label: 'Population', value: country?.country_details?.population == '0' ? country?.country_details?.population : fmt(country?.country_details?.population), color: 'amber' },
         { icon: Map, label: 'Area', value: country?.country_details?.area ? `${fmt(country?.country_details?.area)} km²` : 'N/A', color: 'blue' },
-        { icon: DollarSign, label: 'Currency', value: Object.keys(country?.country_details?.currency)?.length > 0 ? ` ${country?.country_details?.currency?.name} (${country?.country_details?.currency?.symbol})` : "N/A", color: 'green' }
+        // { icon: DollarSign, label: 'Currency', value: Object.keys(country?.country_details?.currency)?.length > 0 ? ` ${country?.country_details?.currency?.name} (${country?.country_details?.currency?.symbol})` : "N/A", color: 'green' }
+        {
+            icon: DollarSign, label: 'Currency', value: Object.keys(country?.country_details?.currency)?.length > 0 ? (<>
+                {country?.country_details?.currency?.name}{country.country_details.currency.symbol ? ` (${country.country_details.currency.symbol})` : ""}</>) : "N/A", color: 'green'
+        }
     ]
 
     const sections = [

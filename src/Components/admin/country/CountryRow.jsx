@@ -20,7 +20,7 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                 <td className="p-4">
                     <button
                         onClick={handleToggleExpand}
-                        className="text-slate-400 hover:text-white transition-colors"
+                        className="text-slate-400 hover:text-white transition-colors cursor-pointer"
                     >
                         {isExpanded ? (
                             <ChevronDown className="w-5 h-5" />
@@ -47,10 +47,10 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
 
                         <div className="min-w-0">
                             <div className="text-sm font-medium text-white truncate">
-                                {country?.name ? country?.name : 'N/A'}
+                                {country?.name ? country?.name.length > 12 ? country?.name?.slice(0, 13) + '...' : country?.name : 'N/A'}
                             </div>
                             <div className="text-xs text-slate-400 truncate">
-                                {country?.country_details?.official_name ? country?.country_details?.official_name : 'N/A'}
+                                {country?.country_details?.official_name ? country?.country_details?.official_name?.length > 20 ? country?.country_details?.official_name?.slice(0, 21) + '...' : country?.country_details?.official_name : 'N/A'}
                             </div>
                         </div>
                     </div>
@@ -67,13 +67,13 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                 <td className="p-4 text-sm text-slate-300">{country?.country_details?.continents ? country?.country_details?.continents : 'N/A'}</td>
 
                 {/* CAPITAL */}
-                <td className="p-4 text-sm text-slate-300">{country?.country_details?.capital ? country?.country_details?.capital : 'N/A'}</td>
+                <td className="p-4 text-sm text-slate-300">{country?.country_details?.capital ? country?.country_details?.capital?.length > 10 ? country?.country_details?.capital?.slice(0, 11) + '...' : country?.country_details?.capital : 'N/A'}</td>
 
                 {/* CURRENCY */}
                 <td className="p-4 text-sm text-slate-300">{country?.country_details?.currency &&
-                    Object.keys(country.country_details.currency).length > 0
-                    ? `${country.country_details.currency.code} (${country.country_details.currency.symbol})`
-                    : "N/A"}</td>
+                    Object.keys(country.country_details.currency).length > 0 ? (<>
+                        {country.country_details.currency.code}{country.country_details.currency.symbol ? ` (${country.country_details.currency.symbol})`
+                            : ""}</>) : ("N/A")}</td>
 
                 {/* LANGUAGE */}
                 <td className="p-4 text-sm text-slate-300">{country?.country_details?.languages ? country?.country_details?.languages[0] : 'N/A'}</td>
@@ -105,7 +105,7 @@ const CountryRow = ({ country, setSelectedCountry, setIsModalOpen, setCountries,
                                 setSelectedCountry(country);
                                 setIsModalOpen(true);
                             }}
-                            className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-colors"
+                            className="p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white transition-colors cursor-pointer"
                             title="Edit"
                         >
                             <Edit className="w-4 h-4" />

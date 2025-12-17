@@ -174,12 +174,22 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
         // console.log('Received data in slice', countryData);
 
         try {
-            let apiData = {};
+            let apiData = {}, flagUrl = null, countryDetailsRow = null, countryDetailsErr = null;
 
-            // Call fetchCountryDetails to get missing fields
+            // check already exist or not
+            const normalizedName = countryData.name.trim().toLowerCase();
+            const { data: existingCountry, error } = await supabase.from("countries").select("id").ilike("name", normalizedName).maybeSingle();
+
+            if (error) return rejectWithValue(error.message);
+
+            if (existingCountry && !countryData.id) {
+                return rejectWithValue("Country already exists");
+            }
+
+            // check country exists in present or not
             if (countryData.name) {
                 try {
-                    apiData = await fetchCountryDetails({ queryKey: ["country", countryData.name] });
+                    apiData = await fetchCountryDetails(countryData.name);
                 } catch (err) {
                     return rejectWithValue(`Invalid country name: ${countryData.name}`);
                 }
@@ -195,31 +205,35 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                 imageFile: countryData.image || null,
                 is_blocked: countryData.is_blocked ?? true,
                 is_approved: countryData.is_approved ?? "pending",
-                code: countryData.code || apiData?.currency?.code || "",
-                official_name: countryData.official_name || apiData.officialName,
-                capital: countryData.capital || apiData.capital,
-                continents: countryData.continents || apiData.continents,
-                latlng: [countryData.latlng[0] || apiData.latlng[0], countryData.latlng[1] || apiData.latlng[1]],
+                code: countryData?.code || apiData?.currency?.code || "",
+                official_name: countryData?.official_name || apiData?.officialName,
+                capital: countryData?.capital || apiData?.capital,
+                continents: countryData?.continents || apiData?.continents,
+                latlng: [countryData.latlng?.[0] || apiData.latlng?.[0], countryData.latlng?.[1] || apiData.latlng?.[1]],
                 zoom: 5,
-                area: countryData.area || apiData.area,
-                population: countryData.population || apiData.population,
-                flagFile: countryData.flag_url[0] || null,
-                languages: countryData.languages || apiData.languages,
-                currency: { "name": countryData.currency.name || apiData.currency.name, "symbol": countryData.currency.symbol || apiData.currency.symbol, "code": countryData.currency.code || apiData.currency.code }
+                area: countryData?.area || apiData?.area,
+                population: countryData?.population || apiData?.population,
+                flagFile: countryData?.flag_url?.[0] || null,
+                languages: countryData?.languages || apiData?.languages,
+                currency: { "name": countryData?.currency?.name || apiData?.currency?.name, "symbol": countryData?.currency?.symbol || apiData?.currency?.symbol, "code": countryData?.currency?.code || apiData?.currency?.code }
             };
 
             // console.log(typeof (finalData.imageFile), finalData.imageFile);
+            // console.log("final data", finalData);
 
             // Upload images
-            const flagUrl = typeof (finalData.flagFile) != 'string' ? await uploadFile(finalData.flagFile, finalData.name, 'flag', "flag") : finalData.flagFile;
+            if (countryData.user_type == 'admin') {
+
+                flagUrl = typeof (finalData.flagFile) != 'string' ? await uploadFile(finalData.flagFile, finalData.name, 'flag', "flag") : finalData.flagFile;
+
+                if (typeof (finalData.flagFile) != 'string') {
+                    deleteFile(finalData.id, "country_details", "flag");
+                }
+            }
+
             const countryImageUrl = !finalData.imageFile?.isOld ? await uploadFile(finalData.imageFile, finalData.name, 'place', "important_place") : finalData.imageFile;
 
             // console.log(flagUrl, countryImageUrl);
-            // console.log("final data", finalData);
-
-            if (typeof (finalData.flagFile) != 'string') {
-                deleteFile(finalData.id, "country_details", "flag");
-            }
 
             if (!finalData.imageFile?.isOld) {
                 deleteFile(finalData.id, "countries", "important_place");
@@ -234,6 +248,7 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                     image_name: countryImageUrl?.docName || null,
                     image_url: countryImageUrl?.url || null,
                     is_blocked: finalData.is_blocked,
+                    is_approved: finalData.is_approved,
                 },
                 { onConflict: "name" }
             ).select().single();
@@ -242,34 +257,36 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
 
             if (countryErr) throw countryErr;
 
-            // Upsert country_details table
-            const { data: countryDetailsRow, error: countryDetailsErr } = await supabase.from("country_details").upsert(
-                [
-                    {
-                        country_id: countryRow?.id,
-                        code: finalData.code.toUpperCase(),
-                        official_name: finalData.official_name,
-                        capital: finalData.capital,
-                        continents: finalData.continents,
-                        latlng: finalData.latlng,
-                        zoom: finalData.zoom,
-                        area: finalData.area,
-                        population: finalData.population,
-                        flag: flagUrl || null,
-                        flag_url: flagUrl?.url || apiData?.flag,
-                        flag_name: flagUrl?.docName || null,
-                        languages: finalData.languages,
-                        currency: finalData.currency,
-                    },
-                ],
-                { onConflict: ["country_id"], returning: "representation" }
-            );
+            if (countryData.user_type == 'admin') {
+                // Upsert country_details table
+                let { data: countryDetailsRow, error: countryDetailsErr } = await supabase.from("country_details").upsert(
+                    [
+                        {
+                            country_id: countryRow?.id,
+                            code: finalData.code.toUpperCase(),
+                            official_name: finalData.official_name,
+                            capital: finalData.capital,
+                            continents: finalData.continents,
+                            latlng: finalData.latlng,
+                            zoom: finalData.zoom,
+                            area: finalData.area,
+                            population: finalData.population,
+                            flag: flagUrl || null,
+                            flag_url: flagUrl?.url || apiData?.flag,
+                            flag_name: flagUrl?.docName || null,
+                            languages: finalData.languages,
+                            currency: finalData.currency,
+                        },
+                    ],
+                    { onConflict: ["country_id"], returning: "representation" }
+                );
 
-            // console.log('Response for adding country details', countryDetailsRow);
+                // console.log('Response for adding country details', countryDetailsRow);
 
-            if (countryDetailsErr) throw countryDetailsErr;
+                if (countryDetailsErr) throw countryDetailsErr;
+            }
 
-            return { countryRow, countryDetailsRow };
+            return countryData.user_type == 'admin' ? { countryRow, countryDetailsRow } : { countryRow };
 
         } catch (error) {
             console.error("Error adding/updating country:", error);

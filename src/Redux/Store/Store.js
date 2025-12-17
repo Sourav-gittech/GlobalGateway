@@ -11,6 +11,7 @@ import checkUserAuthSliceReducer from '../Slice/auth/checkAuthSlice';
 import userProfileSliceReducer from '../Slice/userSlice';
 import activitySliceReducer from '../Slice/activitySlice';
 import adminProfileSliceReducer from '../Slice/adminSlice';
+import embassySliceReducer from '../Slice/embassySlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,7 +25,8 @@ export const store = configureStore({
     charge: fetchChargesReducer,
     transaction: transactionSliceReducer,
     contact: contactSliceReducer,
-    activity: activitySliceReducer
+    activity: activitySliceReducer,
+    embassy: embassySliceReducer
   }
 });
 

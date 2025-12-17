@@ -3,7 +3,7 @@ import { FileCheck, Globe, Loader2, TrendingUp, Users } from 'lucide-react'
 import MetricCard from './MetricCard'
 import { useApplicationStats, useApplicationStatusStats } from '../../../tanstack/query/getDashboardStats';
 import { useAverageProcessingTimes } from '../../../tanstack/query/getTotalAverageProcessingTimes';
-import { useCountriesStats } from '../../../tanstack/query/getCountriesCountjs';
+import { useCountriesStats } from '../../../tanstack/query/getCountriesCount';
 
 const AnalyticsStats = () => {
         const { data: applicationStats, isLoading: isApplicationStatsLoading } = useApplicationStats();

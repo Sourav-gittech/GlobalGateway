@@ -13,11 +13,11 @@ const ContentSection = ({ SettingsSection, FormField, register, errors }) => {
                 },
                 maxLength: {
                     value: 600,
-                    message: "Description should be between 500–600 characters",
+                    message: "Description should be between 400–600 characters",
                 },
                 pattern: {
-                    value: /^[A-Za-z0-9,.\-()\[\]{}'" ]+$/,
-                    message: "Only letters, numbers, spaces, and characters , . - ( ) [ ] { } ' \" are allowed",
+                    value: /^[A-Za-z0-9,.;\-()\[\]{}'" ]+$/,
+                    message: "Only letters, numbers, spaces, and characters , ; . - ( ) [ ] { } ' \" are allowed",
                 },
             })} error={errors.description} helper="Full description" />
 

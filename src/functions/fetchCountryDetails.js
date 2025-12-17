@@ -1,30 +1,51 @@
-export const fetchCountryDetails = async ({ queryKey }) => {
-    const countryName = queryKey[1];
+import { endPoint_Country } from "../api/api_url/apiUrl";
+import axiosInstance from "../api/axiosInstance/axiosInstance";
 
-    const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
-    const data = await response.json();
-    const country = data[data.length - 1];
+export const fetchCountryDetails = async (countryName, fullText = true) => {
+    // console.log('Request data for country named', countryName);
 
-    // console.log(data);
+    try {
+        const response = await axiosInstance.get(`${endPoint_Country}/${encodeURIComponent(countryName)}`,
+            { params: { fullText } }
+        );
 
-    // console.log('Country details response', country);
+        const data = response.data;
 
-    const currencyKey = Object.keys(country.currencies)[0];
-    const currency = country.currencies[currencyKey];
-
-    return {
-        officialName: country.name.official,
-        capital: country.capital?.[0] || "No capital",
-        continents: country?.continents?.[0],
-        latlng: country.latlng,
-        area: country.area,
-        population: country.population,
-        flag: country.flags.png,
-        languages: Object.values(country.languages),
-        currency: {
-            code: currencyKey,
-            name: currency.name,
-            symbol: currency.symbol
+        if (!Array.isArray(data) || data.length === 0) {
+            throw new Error("Country not found");
         }
-    };
+
+        // console.log(data);
+
+        const country = data[data.length - 1];
+
+        // console.log('Country details response', country);
+
+        const currencyKey = Object.keys(country.currencies || {})[0];
+        const currency = country.currencies?.[currencyKey];
+
+        return {
+            officialName: country.name?.official,
+            capital: country.capital?.[0] || "No capital",
+            continents: country.continents?.[0],
+            latlng: country.latlng,
+            area: country.area,
+            population: country.population,
+            flag: country.flags?.png,
+            languages: Object.values(country.languages || {}),
+            currency: currency ? {
+                code: currencyKey,
+                name: currency.name,
+                symbol: currency.symbol,
+            } : null,
+        };
+    } catch (error) {
+        if (error.response?.status === 404) {
+            throw new Error("Country not found");
+        }
+
+        throw new Error(
+            error.response?.data?.message || "Failed to fetch country"
+        );
+    }
 };

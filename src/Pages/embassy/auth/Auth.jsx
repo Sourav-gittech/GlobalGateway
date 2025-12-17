@@ -5,7 +5,7 @@ import getSweetAlert from "../../../util/alert/sweetAlert";
 import { updateLastSignInAt } from "../../../Redux/Slice/userSlice";
 import toastifyAlert from "../../../util/alert/toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { InputField } from "./InputField";
+import { EmbassyAuthInputField } from "../../../Components/Embassy/auth/EmbassyAuthInputField";
 import hotToast from "../../../util/alert/hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +34,7 @@ const EmbassyAuth = () => {
     if (isSignup) {
 
       auth_obj = {
-        country_name: data.country,
+        country_name: data.country.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
         country_id: null,
         email: data.email,
         password: data.password,
@@ -57,7 +57,7 @@ const EmbassyAuth = () => {
             setIsSignup(!isSignup);
           }
           else {
-            getSweetAlert('Oops...', res.payload, 'info');
+            getSweetAlert('Oops...', res.payload, 'error');
           }
         })
         .catch(err => {
@@ -170,12 +170,11 @@ const EmbassyAuth = () => {
               : "Enter your credentials to continue"}
           </p>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
+          <form onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-6"
           >
             {isSignup && (
-              <InputField
+              <EmbassyAuthInputField
                 label="Country"
                 {...register("country", { required: "Country is required" })}
                 error={!!errors.country}
@@ -183,7 +182,7 @@ const EmbassyAuth = () => {
               />
             )}
 
-            <InputField
+            <EmbassyAuthInputField
               label="Email"
               type="email"
               {...register("email", {
@@ -197,7 +196,7 @@ const EmbassyAuth = () => {
               helperText={errors.email?.message}
             />
 
-            <InputField
+            <EmbassyAuthInputField
               label="Password"
               type={showPassword ? 'text' : 'password'}
               {...register("password", {

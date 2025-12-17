@@ -39,7 +39,7 @@ const AuthForm = () => {
 
           if (res.meta.requestStatus === "fulfilled") {
 
-            dispatch(updateLastSignInAt({id:res?.payload?.user?.id,user_type: 'user' }))
+            dispatch(updateLastSignInAt({ id: res?.payload?.user?.id, user_type: 'user' }))
               .then(res => {
                 // console.log('Response for  update login time', res);
 

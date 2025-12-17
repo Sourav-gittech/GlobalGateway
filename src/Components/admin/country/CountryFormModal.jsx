@@ -13,43 +13,11 @@ import { useDispatch } from "react-redux";
 import { addOrUpdateCountry, fetchAllCountryDetails } from "../../../Redux/Slice/countrySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { useCountryWiseVisaDetails } from "../../../tanstack/query/getCountryWiseVisaDetails";
+import hotToast from "../../../util/alert/hot-toast";
+import SettingsSection from "./countryFormConfig/SettingsSection";
+import FormField from "./countryFormConfig/FormField";
+import SelectField from "./countryFormConfig/SelectField";
 
-const SettingsSection = ({ title, description, icon: Icon, children }) => (
-    <div className="p-5 sm:p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
-        <div className="flex items-start gap-3 mb-4 sm:mb-5">
-            <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-500/30"><Icon className="w-5 h-5 text-blue-400" /></div>
-            <div className="flex-1">
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-1">{title}</h3>
-                {description && <p className="text-sm text-slate-400">{description}</p>}
-            </div>
-        </div>
-        <div className="space-y-4">{children}</div>
-    </div>
-);
-
-const FormField = ({ label, id, type = "text", placeholder, register, helper, error, rows, readOnly, maxLength }) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-slate-300 mb-2">{label}</label>
-        {type === "textarea" ? (
-            <textarea id={id} readOnly={readOnly} rows={rows || 3} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-none`} />
-        ) : (
-            <input id={id} readOnly={readOnly} type={type} placeholder={placeholder} maxLength={maxLength} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm`} />
-        )}
-        {error && <p className="mt-1 text-xs text-red-400">{error.message}</p>}
-        {helper && <p className="mt-1 text-xs text-slate-400">{helper}</p>}
-    </div>
-);
-
-const SelectField = ({ label, id, register, options, error }) => (
-    <div>
-        <label htmlFor={id} className="block text-sm font-medium text-slate-300 mb-2">{label}</label>
-        <select id={id} {...register} className={`w-full px-4 py-2.5 bg-slate-700/30 border ${error ? 'border-red-500/50' : 'border-slate-600/50'} rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm appearance-none cursor-pointer`}>
-            <option value="">Select {label}</option>
-            {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        {error && <p className="mt-1 text-xs text-red-400">{error.message}</p>}
-    </div>
-);
 
 const CountryFormModal = ({ isOpen, onClose, country }) => {
     const initialValuesRef = useRef(null);
@@ -149,25 +117,29 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
             population: data.population,
             flag_url: data.flagImage,
             languages: data.language,
-            currency: { "name": data.currency, "symbol": data.currencySymbol, "code": data.currencyCode }
+            currency: { "name": data.currency, "symbol": data.currencySymbol, "code": data.currencyCode },
+
+            user_type: 'admin'
         };
-        // console.log('Received data from form', data);
+        // console.log('Received data from form', countryData);
 
         dispatch(addOrUpdateCountry(countryData))
             .then(res => {
                 // console.log('Response for adding or updating country', res);
 
-                setShowSuccess(true);
-                reset();
-                setImageFile(null);
-                setTimeout(() => {
+                if (res?.meta?.requestStatus == "fulfilled") {
+                    hotToast(`Country ${country ? 'updated' : 'added'} successfully!`, "success")
+                    setShowSuccess(true);
+                    reset();
+                    setImageFile(null);
+                    setTimeout(() => {
 
-                    setShowSuccess(false);
-                    onClose();
-                    dispatch(fetchAllCountryDetails());
-                }, 1500);
-
-                if (res?.meta?.requestStatus == "rejected") {
+                        setShowSuccess(false);
+                        onClose();
+                        dispatch(fetchAllCountryDetails());
+                    }, 1500);
+                }
+                else {
                     getSweetAlert('Oops...', res?.payload, 'error');
                 }
             })

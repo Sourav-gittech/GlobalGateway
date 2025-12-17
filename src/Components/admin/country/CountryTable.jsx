@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Globe, Loader2, Plus } from 'lucide-react';
 import CountryRow from './CountryRow';
 import CountryFormModal from './CountryFormModal';
@@ -7,12 +7,13 @@ import { fetchAllCountryDetails, toggleCountryStatus } from '../../../Redux/Slic
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import hotToast from '../../../util/alert/hot-toast';
 import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
+import { useEmbassyByCountryId } from '../../../tanstack/query/getEmbassyByCountryId';
 
 const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filterContinent, setCountries }) => {
     const [expandedCountryId, setExpandedCountryId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(null);
-
+    const [blockCountryId, setBlockCountryId] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
     const [setStatus, setSetStatus] = useState(null);
     const [currentStatus, setCurrentStatus] = useState(false);
@@ -20,6 +21,27 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
     const dispatch = useDispatch();
 
     //   console.log('All available country', filteredCountry);
+
+    const { data: embassyData, isLoading: embassyLoading } = useEmbassyByCountryId(blockCountryId);
+
+    useEffect(() => {
+        if (blockCountryId === null) return;
+
+        if (embassyLoading) return;
+
+        if (!embassyData) {
+            getSweetAlert("Oops...", "No embassy available right now", "error");
+            setBlockCountryId(null);
+            return;
+        }
+
+        const status = !currentStatus ? "blocked" : "unblocked";
+
+        setBlockCountryId(null);
+        setSelectedCountryId(blockCountryId);
+        setSetStatus(status);
+        setAlertModalOpen(true);
+    }, [embassyData, embassyLoading]);
 
     const handleSaveCountry = (countryData) => {
         if (selectedCountry) {
@@ -37,13 +59,10 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
     };
 
     const handleBlock = (countryId, recentStatus) => {
-        console.log("ID:", countryId, "Status:", recentStatus);
-        const status = !recentStatus ? 'blocked' : 'unblocked';
+        // console.log("ID:", countryId, "Status:", recentStatus);
 
+        setBlockCountryId(countryId);
         setCurrentStatus(recentStatus);
-        setSelectedCountryId(countryId);
-        setSetStatus(status);
-        setAlertModalOpen(true);
     }
 
     const confirmUnblockBlock = () => {

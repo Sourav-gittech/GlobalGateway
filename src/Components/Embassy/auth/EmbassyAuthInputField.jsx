@@ -1,7 +1,7 @@
 import React from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export const InputField = React.forwardRef(
+export const EmbassyAuthInputField = React.forwardRef(
     ({ label, error, helperText, showPassword, setShowPassword, ...inputProps }, ref) => {
         const isPassword = inputProps.name === "password";
 
@@ -14,7 +14,7 @@ export const InputField = React.forwardRef(
                     placeholder=" "
                     className={`w-full px-4 py-3 rounded-md bg-transparent text-white border
             ${error ? "border-red-500" : "border-white/50 focus:border-white"} peer`}
-                    {...inputProps} 
+                    {...inputProps}
                 />
 
                 <label
@@ -45,4 +45,4 @@ export const InputField = React.forwardRef(
     }
 );
 
-InputField.displayName = "InputField";
+EmbassyAuthInputField.displayName = "InputField";

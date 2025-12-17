@@ -9,9 +9,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const navLinks = [
-  { label: 'Home', to: '/embessy/home' },
-  { label: 'About', to: '/embessy/about' },
-  { label: 'Get in Touch', to: '/embessy/contact' },
+  { label: 'Home', to: '/embassy/home' },
+  { label: 'About', to: '/embassy/about' },
+  { label: 'Get in Touch', to: '/embassy/contact' },
 ];
 
 const dropdownVariants = {
@@ -77,7 +77,7 @@ const Navbar = () => {
         console.log('Error occured', err);
       });
     handleClose();
-    navigate('/embessy/home');
+    navigate('/embassy/home');
   };
 
   const handleRightClick = (e, label) => {
@@ -176,7 +176,7 @@ const Navbar = () => {
                 {anchorEl && (
                   <div className="absolute right-0 mt-2 min-w-[150px] bg-white rounded shadow-lg py-1 z-50">
                     <Link
-                      to="/embessy/dashboard"
+                      to="/embassy/dashboard"
                       onClick={handleClose}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
@@ -193,7 +193,7 @@ const Navbar = () => {
               </div>
             ) : (
               <Link
-                to="/embessy/auth"
+                to="/embassy/auth"
                 className="text-white font-normal normal-case"
               >
                 Get Started
@@ -280,7 +280,7 @@ const Navbar = () => {
                 {userAuthData ? (
                   <div className="mt-4 pt-4 border-t border-[#eee]">
                     <Link
-                      to="/embessy/dashboard"
+                      to="/embassy/dashboard"
                       onClick={handleDrawerToggle}
                       className="flex items-start w-full mb-2 text-white normal-case py-2"
                     >
@@ -298,7 +298,7 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <Link
-                    to="/embessy/auth"
+                    to="/embassy/auth"
                     onClick={handleDrawerToggle}
                     className="block w-full mt-4 text-center normal-case bg-[#e53935] text-white font-semibold py-[9.6px] rounded-[10px] shadow-[0_4px_14px_rgba(229,57,53,0.3)] hover:bg-[#c62828] hover:shadow-[0_6px_18px_rgba(229,57,53,0.4)]"
                   >

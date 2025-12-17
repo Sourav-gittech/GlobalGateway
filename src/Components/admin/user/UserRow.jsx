@@ -13,7 +13,7 @@ const UserRow = ({ user, onBlock }) => {
             <tr className="hover:bg-slate-700/20 transition-colors border-b border-slate-700/50">
                 <td className="px-4 sm:px-6 py-4">
                     <button onClick={() => setIsExpanded(!isExpanded)}
-                        className="p-1 hover:bg-slate-700/50 rounded transition-colors">
+                        className="p-1 hover:bg-slate-700/50 rounded transition-colors cursor-pointer">
                         {isExpanded ? (
                             <ChevronUp className="w-4 h-4 text-slate-400" />
                         ) : (

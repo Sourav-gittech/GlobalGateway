@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import supabase from "../../../util/Supabase/supabase";
 import { fetchCountryByName } from "../countrySlice";
+import { fetchCountryDetails } from "../../../functions/fetchCountryDetails";
 
 // register slice 
 export const registerUser = createAsyncThunk("authSlice/registerUser",
@@ -8,7 +9,16 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
     // console.log('Received register data', data);
 
     try {
+      let apiData = {};
       const redirectUrl = `${import.meta.env.VITE_CHECKOUT_ENDPOINT}/verification/${data.email}/${data.role || "user"}`;
+
+      if (data.role === "embassy" && data.country_name) {
+        try {
+          apiData = await fetchCountryDetails(data.country_name);
+        } catch (err) {
+          return rejectWithValue(`Invalid country name: ${data.country_name}`);
+        }
+      }
 
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
@@ -98,7 +108,7 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
       return rejectWithValue(err.message);
     }
   }
-);
+)
 
 // login slice 
 export const loginUser = createAsyncThunk("authSlice/loginUser",
@@ -125,7 +135,7 @@ export const loginUser = createAsyncThunk("authSlice/loginUser",
       }
 
       if (!userData)
-        return rejectWithValue("User record not found");
+        return rejectWithValue("Invalid Login Credentials");
 
       if (userData.is_verified === "pending")
         return rejectWithValue("Please verify your email first");
