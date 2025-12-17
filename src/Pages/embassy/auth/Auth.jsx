@@ -57,15 +57,11 @@ const EmbassyAuth = () => {
 
     if (isSignup) {
       auth_obj = {
-        country_name: data.country
-          .toLowerCase()
-          .split(" ")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" "),
+        country_name: data.country.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
         country_id: null,
         email: data.email,
         password: data.password,
-        embassy_doc: data.embassy_doc, // ✅ PDF FILE
+        embassy_doc: data.embassy_doc,
         is_verified: "pending",
         is_country_available: false,
         is_blocked: false,
@@ -107,10 +103,7 @@ const EmbassyAuth = () => {
                 user_type: "embassy",
               })
             ).then((res) => {
-              sessionStorage.setItem(
-                "embassy_token",
-                res.payload.accessToken
-              );
+              sessionStorage.setItem("embassy_token", res.payload.accessToken);
 
               if (!res?.payload[0]?.is_country_available) {
                 navigate("/embassy/country-setup");
@@ -191,26 +184,22 @@ const EmbassyAuth = () => {
                   }}
                   onDragLeave={() => setDragActive(false)}
                   onDrop={handleFileDrop}
-                  className={`border-2 border-dashed rounded-md p-6 text-center transition ${
-                    dragActive
-                      ? "border-white bg-white/10"
-                      : "border-white/30"
-                  }`}
+                  className={`border-2 border-dashed rounded-md p-6 text-center transition ${dragActive
+                    ? "border-white bg-white/10"
+                    : "border-white/30"
+                    }`}
                 >
                   <input
                     type="file"
                     accept="application/pdf"
                     className="hidden"
                     id="embassyDoc"
-                    {...register("embassy_doc", {
-                      required: "Embassy document is required",
-                    })}
-                    onChange={(e) =>
-                      setValue("embassy_doc", e.target.files[0], {
-                        shouldValidate: true,
-                      })
-                    }
-                  />
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setValue("embassy_doc", file, { shouldValidate: true });
+                      }
+                    }} />
 
                   <label
                     htmlFor="embassyDoc"
@@ -220,6 +209,26 @@ const EmbassyAuth = () => {
                       ? `${uploadedFile.name}`
                       : "Drag & Drop Embassy Proof (PDF) or click to upload"}
                   </label>
+
+                  <input
+                    type="hidden"
+                    {...register("embassy_doc", {
+                      required: "Country image is required",
+                      validate: (file) => {
+                        if (!file) return "Country image is required";
+
+                        if (!file.type?.match(/application\/pdf/)) {
+                          return "Only PDF files are allowed";
+                        }
+
+                        if (file.size > 200 * 1024) {
+                          return "Maximum file size is 200 KB";
+                        }
+
+                        return true;
+                      },
+                    })}
+                  />
 
                   {errors.embassy_doc && (
                     <p className="text-xs text-red-400 mt-2">
@@ -265,8 +274,11 @@ const EmbassyAuth = () => {
 
             <button
               type="submit"
-              className="py-3 rounded-md font-semibold bg-black hover:bg-black/80 transition"
+              className={`py-3 rounded-md font-semibold hover:bg-black/80 transition ${isUserAuthLoading ? 'cursor-not-allowed bg-black/80' : 'cursor-pointer bg-black'}`}
             >
+              {isUserAuthLoading && (
+                <div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin inline-block mr-2" />
+              )}
               {isSignup ? "SIGN UP" : "SIGN IN"}
             </button>
           </form>

@@ -61,6 +61,23 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
 
       if (data.role === "embassy") {
 
+        //upload doc
+        const pdfFile = data.embassy_doc;
+        fileName = `${userId}_${Date.now()}.${pdfFile.name.split(".").pop()}`;
+
+        const { error: pdfUploadError } = await supabase.storage.from("embassy")
+          .upload(fileName, pdfFile, {
+            upsert: true,
+          });
+
+        if (pdfUploadError) return rejectWithValue(pdfUploadError.message);
+
+        const { data: pdfUrlData } = supabase.storage.from("embassy").getPublicUrl(fileName);
+        // console.log('Response for upload doc', pdfUrlData);
+
+        publicUrl = pdfUrlData.publicUrl;
+
+        // fetch country by country name
         const countryResult = await dispatch(fetchCountryByName(data.country_name)).unwrap();
         // console.log('Country fetching result', countryResult);
 
@@ -81,6 +98,7 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
             last_sign_in_at: null,
             providers: signUpData.user.app_metadata.provider,
             role: data.role,
+            document: publicUrl
           });
       }
       else {

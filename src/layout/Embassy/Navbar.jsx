@@ -9,7 +9,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const navLinks = [
-  { label: 'Home', to: '/embassy/home' },
+  { label: 'Home', to: '/embassy/' },
   { label: 'About', to: '/embassy/about' },
   { label: 'Get in Touch', to: '/embassy/contact' },
 ];

@@ -39,7 +39,7 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy ---------- */
-import EmbassyLayout from "../layout/Embassy/EmbassyLayout";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout.jsx";
 
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";

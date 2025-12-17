@@ -28,7 +28,7 @@ export default function CountryAdminPanel() {
 
   // console.log('All available country details', getAllCountryList);
 
-  const filteredCountry = getAllCountryList.filter(
+  const filteredCountry = getAllCountryList.filter(country => country.is_approved == "fulfilled").filter(
     (c) =>
       (c?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c?.country_details?.code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,7 +78,7 @@ export default function CountryAdminPanel() {
         </div>
 
         {/* TABLE */}
-        <CountryTable searchQuery={searchQuery} isLoading={isAllCountryListLoading} filteredCountry={filteredCountry} countries={getAllCountryList} filterContinent={filterContinent} setCountries={setSelectedCountry} />
+        <CountryTable searchQuery={searchQuery} isLoading={isAllCountryListLoading} filteredCountry={filteredCountry} countries={getAllCountryList.filter(country => country.is_approved == "fulfilled")} filterContinent={filterContinent} setCountries={setSelectedCountry} />
 
         <CountryFormModal
           isOpen={isModalOpen}

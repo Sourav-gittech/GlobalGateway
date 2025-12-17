@@ -1,9 +1,10 @@
 import React from 'react'
-import { Globe, MapPin, Users, DollarSign, Languages, Plane, CheckCircle, Map, Building2, FileText, XCircle, CircleOff, ChartNetwork, Signature, CalendarCheck2 } from 'lucide-react'
+import { Globe, MapPin, Users, DollarSign, Languages, Plane, CheckCircle, Map, Building2, FileText, XCircle, CircleOff, ChartNetwork, Signature, CalendarCheck2, AlignEndHorizontal, CircleCheck, CircleSlash } from 'lucide-react'
 import CountryDetailsContent from './countryDetails/CountryDetailsContent'
 import CountryDetailsStats from './countryDetails/CountryDetailsStats'
 import CountryDetailsHero from './countryDetails/CountryDetailsHero'
 import { useCountryWiseVisaDetails } from '../../../tanstack/query/getCountryWiseVisaDetails'
+import { useAvailableEmbassyCount } from '../../../tanstack/query/getCountryWiseEmbassyCount'
 
 const CountryDetailsExpanded = ({ country }) => {
 
@@ -11,6 +12,9 @@ const CountryDetailsExpanded = ({ country }) => {
 
     const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(country?.id);
     // console.log("Country wise visa details", countryWiseVisaDetails);
+
+    const { data: count, isLoading, isError } = useAvailableEmbassyCount(country?.id);
+    console.log("Embassy count", count);
 
     const fmt = (n) => n ? n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A'
 
@@ -100,15 +104,28 @@ const CountryDetailsExpanded = ({ country }) => {
                     )
                 },
                 {
+                    label: 'Embassy',
+                    icon: AlignEndHorizontal,
+                    value: count > 0 ? (
+                        <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                            <CheckCircle className="w-4 h-4" /> Available
+                        </span>
+                    ) : (
+                        <span className="flex items-center gap-1 text-red-400 font-semibold">
+                            <CircleOff className="w-4 h-4" /> Not available
+                        </span>
+                    )
+                },
+                {
                     label: 'Status',
                     icon: ChartNetwork,
                     value: !country?.is_blocked ? (
                         <span className="flex items-center gap-1 text-green-400 font-semibold">
-                            <CheckCircle className="w-4 h-4" /> Active
+                            <CircleCheck className="w-4 h-4" /> Active
                         </span>
                     ) : (
                         <span className="flex items-center gap-1 text-red-400 font-semibold">
-                            <XCircle className="w-4 h-4" /> Inactive
+                            <CircleSlash className="w-4 h-4" /> Inactive
                         </span>
                     )
                 }
