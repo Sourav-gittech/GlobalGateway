@@ -94,7 +94,7 @@ const CountrySetup = () => {
 
         if (res?.meta?.requestStatus == "fulfilled") {
 
-          const updatedEmbassyObj = { ...newEmbassyObj, country_id: res?.payload?.countryRow?.id };
+          const updatedEmbassyObj = { ...newEmbassyObj, is_country_available: true, country_id: res?.payload?.countryRow?.id };
           // console.log('New embassy obj', updatedEmbassyObj);
 
           dispatch(updateEmbassyById({ id: embassyData?.id, updateData: updatedEmbassyObj }))
