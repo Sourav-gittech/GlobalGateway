@@ -69,6 +69,7 @@ const Routing = () => {
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/payment") ||
     location.pathname.startsWith("/admin") ||
+    location.pathname.startsWith("/embassy") ||
     location.pathname.startsWith("/embassy/auth") ||
     location.pathname.startsWith("/embassy/country-setup") ||
     location.pathname.startsWith("/embassy/review") ||

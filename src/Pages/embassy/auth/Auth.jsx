@@ -9,106 +9,124 @@ import { EmbassyAuthInputField } from "../../../Components/Embassy/auth/EmbassyA
 import hotToast from "../../../util/alert/hot-toast";
 import { useNavigate } from "react-router-dom";
 
-
 const EmbassyAuth = () => {
   const dispatch = useDispatch(),
     navigate = useNavigate(),
-    { isUserAuthLoading, userAuthData, userAuthError } = useSelector(state => state.auth);
+    { isUserAuthLoading } = useSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm({
     mode: "onTouched",
     defaultValues: {
       email: "",
       password: "",
       country: "",
+      embassy_doc: null,
     },
   });
 
+  const uploadedFile = watch("embassy_doc");
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      getSweetAlert("Invalid File", "Only PDF files are allowed", "warning");
+      return;
+    }
+
+    setValue("embassy_doc", file, { shouldValidate: true });
+  };
+
   const onSubmit = (data) => {
-    // console.log("Embassy Auth Data:", data);
-
     let auth_obj;
-    if (isSignup) {
 
+    if (isSignup) {
       auth_obj = {
-        country_name: data.country.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
+        country_name: data.country
+          .toLowerCase()
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" "),
         country_id: null,
         email: data.email,
         password: data.password,
+        embassy_doc: data.embassy_doc, // ✅ PDF FILE
         is_verified: "pending",
         is_country_available: false,
         is_blocked: false,
-        is_approved: 'pending',
+        is_approved: "pending",
         last_sign_in_at: null,
         providers: null,
-        role: 'embassy'
-      }
+        role: "embassy",
+      };
 
       dispatch(registerUser(auth_obj))
-        .then(res => {
-          // console.log('Response for register embassy', res);
-
+        .then((res) => {
           if (res.meta.requestStatus === "fulfilled") {
-            hotToast('Registration successfull. Please verify email ID', "success");
+            hotToast(
+              "Registration successful. Please verify your email",
+              "success"
+            );
             reset();
-            setIsSignup(!isSignup);
-          }
-          else {
-            getSweetAlert('Oops...', res.payload, 'error');
+            setIsSignup(false);
+          } else {
+            getSweetAlert("Oops...", res.payload, "error");
           }
         })
-        .catch(err => {
-          console.log('Error occured', err);
-          getSweetAlert('Oops...', 'Something went wrong!', 'error');
-        })
-    }
-    else {
-
+        .catch(() => {
+          getSweetAlert("Oops...", "Something went wrong!", "error");
+        });
+    } else {
       auth_obj = {
         email: data.email,
         password: data.password,
-        role: 'embassy'
-      }
+        role: "embassy",
+      };
 
       dispatch(loginUser(auth_obj))
-        .then(res => {
-          // console.log('Response for login', res);
-
+        .then((res) => {
           if (res.meta.requestStatus === "fulfilled") {
-
-            dispatch(updateLastSignInAt({ id: res?.payload?.user?.id, user_type: 'embassy' }))
-              .then(res => {
-                // console.log('Response for  update login time', res);
-
-                //toastifyAlert.success('Logged In Successfully');
-                sessionStorage.setItem('embassy_token', res.payload.accessToken);
-
-                if (!res?.payload[0]?.is_country_available) {
-                  navigate('/embassy/country-setup');
-                }
-                else if (res?.payload[0]?.is_approved == "pending") {
-                  navigate('/embassy/review');
-                }
-                else {
-                  navigate('/embassy/dashboard');
-                }
+            dispatch(
+              updateLastSignInAt({
+                id: res?.payload?.user?.id,
+                user_type: "embassy",
               })
-              .catch(err => {
-                console.log('Error occured', err);
-                getSweetAlert('Oops...', 'Something went wrong!', 'error');
-              })
-          }
-          else {
-            getSweetAlert('Oops...', res.payload, 'info');
+            ).then((res) => {
+              sessionStorage.setItem(
+                "embassy_token",
+                res.payload.accessToken
+              );
+
+              if (!res?.payload[0]?.is_country_available) {
+                navigate("/embassy/country-setup");
+              } else if (res?.payload[0]?.is_approved === "pending") {
+                navigate("/embassy/review");
+              } else {
+                navigate("/embassy/dashboard");
+              }
+            });
+          } else {
+            getSweetAlert("Oops...", res.payload, "info");
           }
         })
-        .catch(err => {
-          console.log('Error occured', err);
-          getSweetAlert('Oops...', 'Something went wrong!', 'error');
-        })
+        .catch(() => {
+          getSweetAlert("Oops...", "Something went wrong!", "error");
+        });
     }
   };
 
@@ -135,51 +153,81 @@ const EmbassyAuth = () => {
           </video>
 
           <div className="relative z-10 text-white h-full px-10 flex flex-col justify-center bg-black/50">
-            <h4 className="text-3xl font-bold mb-4">
-              Embassy Portal
-            </h4>
-
+            <h4 className="text-3xl font-bold mb-4">Embassy Portal</h4>
             <p className="text-base mb-6">
               {isSignup
                 ? "Register your embassy to begin visa operations"
                 : "Access your embassy dashboard securely"}
             </p>
-
-            <div className="flex items-center gap-2 text-sm text-white/70">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Secure Embassy Access Only</span>
-            </div>
           </div>
         </div>
 
         {/* RIGHT FORM SECTION */}
         <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-12 py-8 flex flex-col justify-center">
-          <h4 className="text-3xl font-bold text-white mb-2">
+          <h4 className="text-3xl font-bold mb-2">
             {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
           </h4>
 
-          <p className="text-sm text-white/60 mb-8">
-            {isSignup
-              ? "Create your embassy account"
-              : "Enter your credentials to continue"}
-          </p>
-
-          <form onSubmit={handleSubmit(onSubmit)}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-6"
           >
             {isSignup && (
-              <EmbassyAuthInputField
-                label="Country"
-                {...register("country", { required: "Country is required" })}
-                error={!!errors.country}
-                helperText={errors.country?.message}
-              />
+              <>
+                <EmbassyAuthInputField
+                  label="Country"
+                  {...register("country", {
+                    required: "Country is required",
+                  })}
+                  error={!!errors.country}
+                  helperText={errors.country?.message}
+                />
+
+                {/* DRAG & DROP PDF UPLOAD */}
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragActive(true);
+                  }}
+                  onDragLeave={() => setDragActive(false)}
+                  onDrop={handleFileDrop}
+                  className={`border-2 border-dashed rounded-md p-6 text-center transition ${
+                    dragActive
+                      ? "border-white bg-white/10"
+                      : "border-white/30"
+                  }`}
+                >
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    className="hidden"
+                    id="embassyDoc"
+                    {...register("embassy_doc", {
+                      required: "Embassy document is required",
+                    })}
+                    onChange={(e) =>
+                      setValue("embassy_doc", e.target.files[0], {
+                        shouldValidate: true,
+                      })
+                    }
+                  />
+
+                  <label
+                    htmlFor="embassyDoc"
+                    className="cursor-pointer text-sm text-white/80"
+                  >
+                    {uploadedFile
+                      ? `${uploadedFile.name}`
+                      : "Drag & Drop Embassy Proof (PDF) or click to upload"}
+                  </label>
+
+                  {errors.embassy_doc && (
+                    <p className="text-xs text-red-400 mt-2">
+                      {errors.embassy_doc.message}
+                    </p>
+                  )}
+                </div>
+              </>
             )}
 
             <EmbassyAuthInputField
@@ -188,7 +236,8 @@ const EmbassyAuth = () => {
               {...register("email", {
                 required: "Email is required",
                 pattern: {
-                  value: /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-zA-Z.]{2,}$/,
+                  value:
+                    /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-zA-Z.]{2,}$/,
                   message: "Enter a valid email",
                 },
               })}
@@ -198,11 +247,12 @@ const EmbassyAuth = () => {
 
             <EmbassyAuthInputField
               label="Password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               {...register("password", {
                 required: "Password is required",
                 pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
                   message:
                     "Password must contain 8+ characters, uppercase, lowercase, number & special character",
                 },
@@ -215,37 +265,20 @@ const EmbassyAuth = () => {
 
             <button
               type="submit"
-              className={`py-3 mt-2 rounded-md font-semibold text-white bg-black hover:bg-black/80 transition duration-300 ${isUserAuthLoading ? 'cursor-not-allowed bg-black/80' : 'cursor-pointer'}`}
+              className="py-3 rounded-md font-semibold bg-black hover:bg-black/80 transition"
             >
-              {isUserAuthLoading && (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block mr-2" />
-              )}
               {isSignup ? "SIGN UP" : "SIGN IN"}
             </button>
           </form>
 
           <p
-            className="text-xs mt-4 text-white/70 cursor-pointer hover:text-white transition duration-200"
+            className="text-xs mt-4 text-white/70 cursor-pointer hover:text-white"
             onClick={() => setIsSignup(!isSignup)}
           >
             {isSignup
               ? "Already have an account? Sign In"
               : "New Embassy? Sign Up"}
           </p>
-
-          {/* MOBILE SECURITY NOTICE (UNCHANGED) */}
-          <div className="md:hidden mt-8 pt-6 border-t border-white/20">
-            <div className="flex items-center gap-2 text-xs text-white/70">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Secure Embassy Access Only</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
