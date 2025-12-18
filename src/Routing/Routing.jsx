@@ -46,7 +46,8 @@ import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/embassy-dashboard/EmbassyDashboardLayout.jsx";
+import EmbassyDashboardLayout from "../layout/EmbassyDashboard/EmbassyDashboardLayout.jsx";
+
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
@@ -54,7 +55,7 @@ import Rejected from "../Pages/embassy/status/Rejected.jsx";
 import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
 
 /* ---------- Embassy Dashboard Pages ---------- */
-import EmbassyDashboard from "../Pages/embassy/dashboard/EmbassyDashboard.jsx";
+import EmbassyDashboard from "../Pages/embassy/embassy-dashboard/EmbassyDashboard.jsx";
 import EmbassyProfile from "../Pages/embassy/dashboard/Profile.jsx";
 import EmbassyApplications from "../Pages/embassy/dashboard/applications/Applications.jsx";
 import EmbassyApplicationView from "../Pages/embassy/dashboard/applications/ApplicationView.jsx";
