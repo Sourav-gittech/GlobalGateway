@@ -54,10 +54,10 @@ import Rejected from "../Pages/embassy/status/Rejected.jsx";
 import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
 
 /* ---------- Embassy Dashboard Pages ---------- */
-import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
-import EmbassyProfile from "../Pages/embassy/Dashboard/Profile";
-import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications";
-import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView";
+import EmbassyDashboard from "../Pages/embassy/dashboard/EmbassyDashboard.jsx";
+import EmbassyProfile from "../Pages/embassy/dashboard/Profile.jsx";
+import EmbassyApplications from "../Pages/embassy/dashboard/applications/Applications.jsx";
+import EmbassyApplicationView from "../Pages/embassy/dashboard/applications/ApplicationView.jsx";
 // import EmbassyApplicationActions from "../Pages/embassy/Dashboard/Applications/ApplicationActions";
 // import EmbassyAppointments from "../Pages/embassy/Dashboard/Appointments/Appointments";
 // import EmbassySchedule from "../Pages/embassy/Dashboard/Appointments/Schedule";

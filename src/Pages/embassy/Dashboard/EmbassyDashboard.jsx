@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { FileText, CheckCircle, Clock, Calendar, BarChart2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import StatsCard from "../../../Components/embassy/dashboard/dashboard/StatsCard";
 import ApplicationVolumeChart from "../../../Components/embassy/dashboard/dashboard/application-volume/ApplicationVolumeChart";
 import ApplicationVolumeHeader from "../../../Components/embassy/dashboard/dashboard/application-volume/ApplicationVolumeHeader";
@@ -10,16 +9,10 @@ import QuickLinks from "../../../Components/embassy/dashboard/dashboard/quick-li
 import UpcommingAppointmtnt from "../../../Components/embassy/dashboard/dashboard/Upcomming-appointmtnt/UpcommingAppointmtnt";
 import AvgProcessingTime from "../../../Components/embassy/dashboard/dashboard/avg-processing-time/AvgProcessingTime";
 import DashboardHeader from "../../../Components/embassy/dashboard/dashboard/DashboardHeader";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
-import { checkLoggedInUser } from "../../../Redux/Slice/auth/checkAuthSlice";
-import getSweetAlert from "../../../util/alert/sweetAlert";
-import { fetchEmbassyById } from "../../../Redux/Slice/embassySlice";
 
 export default function EmbassyDashboard() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [filterStatus, setFilterStatus] = useState("all");
 
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
