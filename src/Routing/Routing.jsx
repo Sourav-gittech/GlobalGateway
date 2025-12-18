@@ -46,7 +46,7 @@ import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout.jsx";
+import EmbassyDashboardLayout from "../layout/embassy/embassy-dashboard/EmbassyDashboardLayout.jsx";
 
 /* ---------- Embassy Dashboard Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
