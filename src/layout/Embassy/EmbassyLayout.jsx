@@ -1,14 +1,14 @@
 import { Outlet, useLocation } from "react-router-dom";
-
-// Embassy layout components (same folder)
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 const EmbassyLayout = () => {
   const location = useLocation();
 
-  // 🔹 Hide navbar & footer on embassy auth pages
-  const hideLayout = location.pathname.startsWith("/embassy/auth");
+  // 🔹 Routes where Navbar & Footer should be hidden
+  const hideLayout =
+    location.pathname.startsWith("/embassy/auth") ||
+    location.pathname.startsWith("/embassy/dashboard");
 
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">

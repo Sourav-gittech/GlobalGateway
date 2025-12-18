@@ -38,18 +38,27 @@ import AddAdmin from "../Pages/admin/ManageAdmin.jsx";
 import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
-/* ---------- Embassy ---------- */
-import EmbassyLayout from "../layout/embassy/EmbassyLayout.jsx";
-
+/* ---------- Embassy Public Layout ---------- */
+import EmbassyLayout from "../layout/Embassy/EmbassyLayout.jsx";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
-import EmbassyDashboard from "../Pages/embassy/Dashboard";
-import CountrySetUp from "../Pages/embassy/CountrySetup";
-import Review from "../Pages/embassy/Review";
-import Approved from "../Pages/embassy/Approved";
-import Rejected from "../Pages/embassy/Rejected";
+
+/* ---------- Embassy Dashboard Layout ---------- */
+import EmbassyDashboardLayout from "../layout/Embassy/EmbassyDashboard/EmbassyDashboardLayout";
+
+/* ---------- Embassy Dashboard Pages ---------- */
+import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
+import EmbassyProfile from "../Pages/embassy/Dashboard/Profile";
+import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications";
+import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView";
+// import EmbassyApplicationActions from "../Pages/embassy/Dashboard/Applications/ApplicationActions";
+// import EmbassyAppointments from "../Pages/embassy/Dashboard/Appointments/Appointments";
+// import EmbassySchedule from "../Pages/embassy/Dashboard/Appointments/Schedule";
+// import EmbassyAnalytics from "../Pages/embassy/Dashboard/Analytics/Analytics";
+// import EmbassyMessages from "../Pages/embassy/Dashboard/Messages";
+// import EmbassySettings from "../Pages/embassy/Dashboard/Settings";
 
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404.jsx";
@@ -70,9 +79,6 @@ const Routing = () => {
     location.pathname.startsWith("/payment") ||
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/embassy") ||
-    location.pathname.startsWith("/embassy/auth") ||
-    location.pathname.startsWith("/embassy/country-setup") ||
-    location.pathname.startsWith("/embassy/review") ||
     location.pathname.startsWith("/auth");
 
   return (
@@ -91,13 +97,19 @@ const Routing = () => {
           <Route path="/country" element={<CountryGrid />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/authentication" element={<AuthForm />} />
-          <Route path="/verification/:email/:user_type" element={<EmailVerification />}/>
+          <Route
+            path="/verification/:email/:user_type"
+            element={<EmailVerification />}
+          />
 
           <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/country/:country_id" element={<CountryDetails />} />
           <Route path="/policy/:country_id" element={<VisaPolicies />} />
-          <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
+          <Route
+            path="/application-form/:country_id"
+            element={<VisaApplicationForm />}
+          />
           <Route path="/payment-preview" element={<PaymentPreview />} />
           <Route path="/payment-status" element={<PaymentStatus />} />
 
@@ -118,17 +130,38 @@ const Routing = () => {
             <Route path="adminProfile" element={<AdminProfile />} />
           </Route>
 
-          {/* ================= EMBASSY ================= */}
+          {/* ================= EMBASSY PUBLIC ================= */}
           <Route path="/embassy" element={<EmbassyLayout />}>
             <Route index element={<EmbassyHome />} />
             <Route path="about" element={<EmbassyAbout />} />
             <Route path="contact" element={<EmbassyContact />} />
-            <Route path="auth" element={<EmbassyAuth />} />
-            <Route path="dashboard" element={<EmbassyDashboard />} />
-            <Route path="country-setup" element={<CountrySetUp />} />
-            <Route path="review" element={<Review />} />
-            <Route path="approved" element={<Approved />} />
-            <Route path="rejected" element={<Rejected />} />
+          </Route>
+
+          {/* ================= EMBASSY AUTH (No Layout) ================= */}
+          <Route path="/embassy/auth" element={<EmbassyAuth />} />
+
+          {/* ================= EMBASSY DASHBOARD ================= */}
+          <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
+            <Route index element={<EmbassyDashboard />} />
+            <Route path="profile" element={<EmbassyProfile />} />
+            
+            {/* Applications Routes */}
+            <Route path="applications" element={<EmbassyApplications />} />
+            <Route path="applications/:id" element={<EmbassyApplicationView />} />
+            {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
+            
+         
+            <Route path="appointments" element={<EmbassyAppointments />} />
+            <Route path="appointments/schedule" element={<EmbassySchedule />} />
+            
+         
+            <Route path="analytics" element={<EmbassyAnalytics />} />
+            
+        
+            <Route path="messages" element={<EmbassyMessages />} />
+            
+           
+            <Route path="settings" element={<EmbassySettings />} /> */}
           </Route>
 
           {/* ================= FALLBACK ================= */}

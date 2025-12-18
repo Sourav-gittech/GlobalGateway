@@ -1,5 +1,4 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material'
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,92 +52,43 @@ const ContactForm = ({ setShowToast }) => {
     }
 
     return (
-        <Box
-            sx={{
-                flex: '0 0 50%',
-                display: 'flex',
-                alignItems: 'stretch',
-            }}
-        >
+        <div className="flex-none w-1/2 flex items-stretch">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                style={{ width: '100%' }}
+                className="w-full"
             >
-                <Box
-                    sx={{
-                        background: 'linear-gradient(135deg, rgba(50, 132, 209, 0.95), rgba(50, 132, 209, 0.8))',
-                        border: '1px solid rgba(50, 132, 209, 0.3)',
-                        p: { xs: 4, sm: 5, md: 6 },
-                        borderRadius: '24px',
-                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-                        width: '100%',
-                    }}
-                >
-                    <Typography
-                        variant="h4"
-                        sx={{
-                            fontWeight: 600,
-                            mb: 2,
-                            color: 'white',
-                            textAlign: 'center',
-                            fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
-                        }}
-                    >
+                <div className="bg-gradient-to-br from-[rgba(50,132,209,0.95)] to-[rgba(50,132,209,0.8)] border border-[rgba(50,132,209,0.3)] p-6 xs:p-8 sm:p-10 md:p-12 rounded-3xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] w-full">
+                    <h4 className="font-semibold mb-4 text-white text-center text-2xl sm:text-3xl md:text-4xl">
                         Send Us Message
-                    </Typography>
-                    <Typography
-                        sx={{
-                            color: 'rgba(255, 255, 255, 0.9)',
-                            mb: { xs: 4, md: 5 },
-                            textAlign: 'center',
-                            fontSize: { xs: '0.875rem', md: '1rem' }
-                        }}
-                    >
+                    </h4>
+                    <p className="text-white/90 mb-8 md:mb-10 text-center text-sm md:text-base">
                         Let us know how we can help by filling out the form below.
-                    </Typography>
+                    </p>
 
-                    <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 3 }}>
-                            <Box sx={{ flex: 1 }}>
-                                <Box
-                                    component="input"
+                    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                            <div className="flex-1">
+                                <input
                                     type="text"
                                     placeholder="Your Name"
                                     autoComplete="name"
                                     {...register("name", {
                                         required: "Name is required",
                                     })}
-                                    sx={{
-                                        width: '100%',
-                                        padding: '14px 16px',
-                                        borderRadius: '12px',
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        backdropFilter: 'blur(12px)',
-                                        border: errors.name ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.2)',
-                                        outline: 'none',
-                                        color: 'white',
-                                        fontSize: '0.95rem',
-                                        transition: 'all 0.3s',
-                                        '&::placeholder': {
-                                            color: 'rgba(255, 255, 255, 0.6)'
-                                        },
-                                        '&:focus': {
-                                            border: '1px solid rgba(255, 255, 255, 0.4)',
-                                            boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.2)'
-                                        }
-                                    }}
+                                    className={`w-full py-3.5 px-4 rounded-xl bg-white/10 backdrop-blur-xl ${
+                                        errors.name ? 'border border-red-500' : 'border border-white/20'
+                                    } outline-none text-white text-[0.95rem] transition-all duration-300 placeholder:text-white/60 focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]`}
                                 />
                                 {errors.name && (
-                                    <Typography sx={{ color: '#fecaca', fontSize: '0.75rem', mt: 0.5 }}>
+                                    <p className="text-red-200 text-xs mt-1">
                                         {errors.name.message}
-                                    </Typography>
+                                    </p>
                                 )}
-                            </Box>
+                            </div>
 
-                            <Box sx={{ flex: 1 }}>
-                                <Box
-                                    component="input"
+                            <div className="flex-1">
+                                <input
                                     type="email"
                                     placeholder="Your Email"
                                     autoComplete="email"
@@ -149,72 +99,38 @@ const ContactForm = ({ setShowToast }) => {
                                             message: "Enter a valid email",
                                         },
                                     })}
-                                    sx={{
-                                        width: '100%',
-                                        padding: '14px 16px',
-                                        borderRadius: '12px',
-                                        background: 'rgba(255, 255, 255, 0.1)',
-                                        backdropFilter: 'blur(12px)',
-                                        border: errors.email ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.2)',
-                                        outline: 'none',
-                                        color: 'white',
-                                        fontSize: '0.95rem',
-                                        transition: 'all 0.3s',
-                                        '&::placeholder': {
-                                            color: 'rgba(255, 255, 255, 0.6)'
-                                        },
-                                        '&:focus': {
-                                            border: '1px solid rgba(255, 255, 255, 0.4)',
-                                            boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.2)'
-                                        }
-                                    }}
+                                    className={`w-full py-3.5 px-4 rounded-xl bg-white/10 backdrop-blur-xl ${
+                                        errors.email ? 'border border-red-500' : 'border border-white/20'
+                                    } outline-none text-white text-[0.95rem] transition-all duration-300 placeholder:text-white/60 focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]`}
                                 />
                                 {errors.email && (
-                                    <Typography sx={{ color: '#fecaca', fontSize: '0.75rem', mt: 0.5 }}>
+                                    <p className="text-red-200 text-xs mt-1">
                                         {errors.email.message}
-                                    </Typography>
+                                    </p>
                                 )}
-                            </Box>
-                        </Box>
+                            </div>
+                        </div>
 
-                        <Box sx={{ mb: 3 }}>
-                            <Box
-                                component="input"
+                        <div className="mb-6">
+                            <input
                                 type="text"
                                 placeholder="Your Subject"
                                 {...register("subject", {
                                     required: "Subject is required"
                                 })}
-                                sx={{
-                                    width: '100%',
-                                    padding: '14px 16px',
-                                    borderRadius: '12px',
-                                    background: 'rgba(255, 255, 255, 0.1)',
-                                    backdropFilter: 'blur(12px)',
-                                    border: errors.subject ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.2)',
-                                    outline: 'none',
-                                    color: 'white',
-                                    fontSize: '0.95rem',
-                                    transition: 'all 0.3s',
-                                    '&::placeholder': {
-                                        color: 'rgba(255, 255, 255, 0.6)'
-                                    },
-                                    '&:focus': {
-                                        border: '1px solid rgba(255, 255, 255, 0.4)',
-                                        boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.2)'
-                                    }
-                                }}
+                                className={`w-full py-3.5 px-4 rounded-xl bg-white/10 backdrop-blur-xl ${
+                                    errors.subject ? 'border border-red-500' : 'border border-white/20'
+                                } outline-none text-white text-[0.95rem] transition-all duration-300 placeholder:text-white/60 focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]`}
                             />
                             {errors.subject && (
-                                <Typography sx={{ color: '#fecaca', fontSize: '0.75rem', mt: 0.5 }}>
+                                <p className="text-red-200 text-xs mt-1">
                                     {errors.subject.message}
-                                </Typography>
+                                </p>
                             )}
-                        </Box>
+                        </div>
 
-                        <Box sx={{ mb: 4 }}>
-                            <Box
-                                component="textarea"
+                        <div className="mb-8">
+                            <textarea
                                 rows={5}
                                 placeholder="Your Message"
                                 {...register("message", {
@@ -224,72 +140,34 @@ const ContactForm = ({ setShowToast }) => {
                                         message: "Message should under 150 characters"
                                     }
                                 })}
-                                sx={{
-                                    width: '100%',
-                                    padding: '14px 16px',
-                                    borderRadius: '12px',
-                                    background: 'rgba(255, 255, 255, 0.1)',
-                                    backdropFilter: 'blur(12px)',
-                                    border: errors.message ? '1px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.2)',
-                                    outline: 'none',
-                                    color: 'white',
-                                    fontSize: '0.95rem',
-                                    resize: 'none',
-                                    transition: 'all 0.3s',
-                                    fontFamily: 'inherit',
-                                    '&::placeholder': {
-                                        color: 'rgba(255, 255, 255, 0.6)'
-                                    },
-                                    '&:focus': {
-                                        border: '1px solid rgba(255, 255, 255, 0.4)',
-                                        boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.2)'
-                                    }
-                                }}
+                                className={`w-full py-3.5 px-4 rounded-xl bg-white/10 backdrop-blur-xl ${
+                                    errors.message ? 'border border-red-500' : 'border border-white/20'
+                                } outline-none text-white text-[0.95rem] resize-none transition-all duration-300 font-[inherit] placeholder:text-white/60 focus:border-white/40 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.2)]`}
                             />
                             {errors.message && (
-                                <Typography sx={{ color: '#fecaca', fontSize: '0.75rem', mt: 0.5 }}>
+                                <p className="text-red-200 text-xs mt-1">
                                     {errors.message.message}
-                                </Typography>
+                                </p>
                             )}
-                        </Box>
+                        </div>
 
-                        <Box
-                            component="button"
+                        <button
                             type="submit"
                             disabled={isSubmitting}
-                            sx={{
-                                width: '100%',
-                                background: 'rgba(255, 255, 255, 0.15)',
-                                backdropFilter: 'blur(12px)',
-                                border: '1px solid rgba(255, 255, 255, 0.3)',
-                                padding: '14px 32px',
-                                borderRadius: '9999px',
-                                color: 'white',
-                                fontWeight: 600,
-                                fontSize: '0.95rem',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                                opacity: isSubmitting ? 0.5 : 1,
-                                transition: 'all 0.3s',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                '&:hover': {
-                                    background: isSubmitting ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.25)',
-                                    transform: isSubmitting ? 'none' : 'translateY(-2px)',
-                                    boxShadow: isSubmitting ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                                }
-                            }}
+                            className={`w-full bg-white/15 backdrop-blur-xl border border-white/30 py-3.5 px-8 rounded-full text-white font-semibold text-[0.95rem] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] ${
+                                isSubmitting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                            } transition-all duration-300 flex items-center justify-center gap-2 ${
+                                !isSubmitting && 'hover:bg-white/25 hover:-translate-y-0.5 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)]'
+                            }`}
                         >
-                            <MdArrowOutward style={{ fontSize: '18px' }} />
+                            <MdArrowOutward className="text-lg" />
                             {isSubmitting ? 'Sending...' : 'Send Message'}
-                        </Box>
-                    </Box>
-                </Box>
+                        </button>
+                    </form>
+                </div>
             </motion.div>
-        </Box>
+        </div>
     )
 }
 
-export default ContactForm
+export default ContactForm;
