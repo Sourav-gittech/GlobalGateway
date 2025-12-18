@@ -39,15 +39,14 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout from "../layout/Embassy/EmbassyLayout.jsx";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout.jsx";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/Embassy/EmbassyDashboard/EmbassyDashboardLayout.jsx";
-
+import EmbassyDashboardLayout from "../layout/embassy/embassyDashboard/EmbassyDashboardLayout.jsx";
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
@@ -55,19 +54,14 @@ import Rejected from "../Pages/embassy/status/Rejected.jsx";
 import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
 
 /* ---------- Embassy Dashboard Pages ---------- */
-import EmbassyDashboard from "../Pages/embassy/embassy-dashboard/EmbassyDashboard.jsx";
-import EmbassyProfile from "../Pages/embassy/dashboard/Profile.jsx";
-import EmbassyApplications from "../Pages/embassy/dashboard/applications/Applications.jsx";
-import EmbassyApplicationView from "../Pages/embassy/dashboard/applications/ApplicationView.jsx";
-// import EmbassyApplicationActions from "../Pages/embassy/Dashboard/Applications/ApplicationActions";
-// import EmbassyAppointments from "../Pages/embassy/Dashboard/Appointments/Appointments";
-// import EmbassySchedule from "../Pages/embassy/Dashboard/Appointments/Schedule";
-// import EmbassyAnalytics from "../Pages/embassy/Dashboard/Analytics/Analytics";
-// import EmbassyMessages from "../Pages/embassy/Dashboard/Messages";
-// import EmbassySettings from "../Pages/embassy/Dashboard/Settings";
+import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
+import EmbassyProfile from "../Pages/embassy/Dashboard/Profile.jsx";
+import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications.jsx";
+import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView.jsx";
 
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404.jsx";
+import Approved from "../Pages/embassy/status/Approved.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -148,6 +142,7 @@ const Routing = () => {
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
           <Route path="/embassy/reject" element={<Rejected />} />
+           <Route path="/embassy/approved" element={<Approved/>} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
@@ -157,20 +152,6 @@ const Routing = () => {
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
             <Route path="applications/:id" element={<EmbassyApplicationView />} />
-            {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
-            
-         
-            <Route path="appointments" element={<EmbassyAppointments />} />
-            <Route path="appointments/schedule" element={<EmbassySchedule />} />
-            
-         
-            <Route path="analytics" element={<EmbassyAnalytics />} />
-            
-        
-            <Route path="messages" element={<EmbassyMessages />} />
-            
-           
-            <Route path="settings" element={<EmbassySettings />} /> */}
           </Route>
 
           {/* ================= FALLBACK ================= */}

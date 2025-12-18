@@ -14,8 +14,8 @@ import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails
 
 export default function EmbassyDashboard() {
 
-  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
-  const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
+  const { userAuthData } = useSelector(state => state.checkAuth);
+  const { embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
   const { data: countryDetails, isLoading: isCountryLoading, isError } = useFullCountryDetails(embassyData?.country_id);
 
   // Stats data - Real embassy metrics
