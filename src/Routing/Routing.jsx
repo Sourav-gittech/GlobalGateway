@@ -39,7 +39,7 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout from "../layout/Embassy/EmbassyLayout.jsx";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout.jsx";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
@@ -48,10 +48,12 @@ import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 /* ---------- Embassy Dashboard Layout ---------- */
 import EmbassyDashboardLayout from "../layout/embassy/embassy-dashboard/EmbassyDashboardLayout.jsx";
 
+/* ---------- Embassy Status Pages ---------- */
+import Review from "../Pages/embassy/status/Review.jsx";
+import Rejected from "../Pages/embassy/status/Rejected.jsx";
+import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
+
 /* ---------- Embassy Dashboard Pages ---------- */
-// import Review from "../Pages/embassy/status/Review.jsx";
-// import Rejected from "../Pages/embassy/status/Rejected.jsx";
-// import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
 import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
 import EmbassyProfile from "../Pages/embassy/Dashboard/Profile";
 import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications";
@@ -142,9 +144,9 @@ const Routing = () => {
 
           {/* ================= EMBASSY AUTH (No Layout) ================= */}
           <Route path="/embassy/auth" element={<EmbassyAuth />} />
-          {/* <Route path="/embassy/country-setup" element={<CountrySetup />} />
+          <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
-          <Route path="/embassy/reject" element={<Rejected />} /> */}
+          <Route path="/embassy/reject" element={<Rejected />} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
