@@ -105,11 +105,14 @@ const EmbassyAuth = () => {
             ).then((res) => {
               sessionStorage.setItem("embassy_token", res.payload.accessToken);
 
-              if (!res?.payload[0]?.is_country_available) {
+              if (!res?.payload?.[0]?.is_country_available) {
                 navigate("/embassy/country-setup");
-              } else if (res?.payload[0]?.is_approved === "pending") {
+              } else if (res?.payload?.[0]?.is_approved === "pending") {
                 navigate("/embassy/review");
+              } else if (res?.payload?.[0]?.is_approved === "rejected") {
+                navigate("/embassy/reject");
               } else {
+                toastifyAlert.success('Logged in Successfully');
                 navigate("/embassy/dashboard");
               }
             });

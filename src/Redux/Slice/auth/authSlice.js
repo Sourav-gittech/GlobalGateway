@@ -164,7 +164,7 @@ export const loginUser = createAsyncThunk("authSlice/loginUser",
       if (role !== "embassy" && userData?.is_approved == 'pending')
         return rejectWithValue("Your application still processing");
 
-      if (userData?.is_approved == 'rejected')
+      if (role !== "embassy" && userData?.is_approved == 'rejected')
         return rejectWithValue("Your application is rejected");
 
       if (userData.is_blocked)

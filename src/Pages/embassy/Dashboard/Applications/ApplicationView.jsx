@@ -42,7 +42,7 @@ export default function ApplicationView() {
     status: appointmentSet ? "approved" : "pending",
     submittedDate: "2024-12-15T10:30:00",
     lastUpdated: "2024-12-16T14:20:00",
-    
+
     personal: {
       firstName: "John",
       lastName: "Doe",
@@ -53,7 +53,7 @@ export default function ApplicationView() {
       phone: "+1 (555) 123-4567",
       maritalStatus: "Single"
     },
-    
+
     address: {
       street: "123 Main Street",
       city: "New York",
@@ -61,7 +61,7 @@ export default function ApplicationView() {
       zipCode: "10001",
       country: "United States"
     },
-    
+
     passport: {
       number: "P123456789",
       issueDate: "2020-01-15",
@@ -69,7 +69,7 @@ export default function ApplicationView() {
       issuePlace: "New York",
       issueCountry: "United States"
     },
-    
+
     visa: {
       type: "Tourist Visa",
       purpose: "Tourism and sightseeing",
@@ -78,7 +78,7 @@ export default function ApplicationView() {
       travelDate: "2025-02-15",
       returnDate: "2025-03-15"
     },
-    
+
     employment: {
       status: "Employed",
       occupation: "Software Engineer",
@@ -87,13 +87,13 @@ export default function ApplicationView() {
       monthlyIncome: "$8,000",
       yearsEmployed: "5 years"
     },
-    
+
     travelHistory: [
       { country: "Canada", year: "2023", purpose: "Tourism" },
       { country: "Mexico", year: "2022", purpose: "Business" },
       { country: "UK", year: "2021", purpose: "Tourism" }
     ],
-    
+
     documents: [
       { name: "Passport Copy", type: "PDF", size: "2.4 MB", status: "verified" },
       { name: "Photograph", type: "JPG", size: "1.2 MB", status: "verified" },
@@ -101,7 +101,7 @@ export default function ApplicationView() {
       { name: "Employment Letter", type: "PDF", size: "0.8 MB", status: "verified" },
       { name: "Travel Insurance", type: "PDF", size: "1.5 MB", status: "pending" }
     ],
-    
+
     payment: {
       amount: "$160",
       method: "Credit Card",
@@ -109,7 +109,7 @@ export default function ApplicationView() {
       status: "Completed",
       date: "2024-12-15T10:30:00"
     },
-    
+
     timeline: [
       {
         action: "Application Submitted",
@@ -257,22 +257,22 @@ Status: Approved
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
-    
+
     return { daysInMonth, startingDayOfWeek };
   };
 
   const generateCalendarDays = () => {
     const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
     const days = [];
-    
+
     for (let i = 0; i < startingDayOfWeek; i++) {
       days.push(null);
     }
-    
+
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(day);
     }
-    
+
     return days;
   };
 
@@ -301,11 +301,11 @@ Status: Approved
   const handleSetAppointment = () => {
     if (selectedDate && selectedTime) {
       const details = {
-        date: selectedDate.toLocaleDateString('en-US', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+        date: selectedDate.toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
         }),
         time: selectedTime,
         timestamp: new Date()
@@ -326,7 +326,7 @@ Status: Approved
 
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];
-  
+
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const tabs = [
@@ -355,14 +355,14 @@ Status: Approved
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Printer size={18} />
             <span className="hidden sm:inline">Print</span>
           </button>
-          <button 
+          <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
@@ -427,11 +427,10 @@ Status: Approved
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
                       ? "border-blue-600 text-blue-600 bg-blue-50"
                       : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                    }`}
                 >
                   <Icon size={18} />
                   {tab.label}
@@ -708,11 +707,10 @@ Status: Approved
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      doc.status === "verified" 
-                        ? "bg-green-100 text-green-700" 
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${doc.status === "verified"
+                        ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
-                    }`}>
+                      }`}>
                       {doc.status === "verified" ? "✓ Verified" : "⏳ Pending"}
                     </span>
                     <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -763,178 +761,178 @@ Status: Approved
         </div>
       </div>
 
-      
 
-     {/* Appointment Modal */}
-{showAppointmentModal && (
-  <div className="fixed inset-0 bg-white/10 backdrop-blur-md bg-opacity-50 flex items-center justify-center p-4 z-50">
 
-    {/* Modal */}
-    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
+      {/* Appointment Modal */}
+      {showAppointmentModal && (
+        <div className="fixed inset-0 bg-white/10 backdrop-blur-md bg-opacity-50 flex items-center justify-center p-4 z-50">
 
-      {/* ===== Header (UNCHANGED UI, now fixed) ===== */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-        <h2 className="text-2xl font-bold text-gray-900">Set Appointment</h2>
-        <button
-          onClick={() => {
-            setShowAppointmentModal(false);
-            setSelectedDate(null);
-            setSelectedTime("");
-          }}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <X size={24} />
-        </button>
-      </div>
+          {/* Modal */}
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
 
-      {/* ===== Body (NO PAGE SCROLL) ===== */}
-      <div className="flex-1 overflow-hidden p-6">
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-
-          {/* ================= LEFT : CALENDAR ================= */}
-          <div className="space-y-4 h-full flex flex-col">
-
-            {/* unchanged */}
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Calendar size={20} className="text-blue-600" />
-              Select Date
-            </h3>
-
-            {/* unchanged */}
-            <div className="flex items-center justify-between bg-blue-50 rounded-lg p-3">
-              <button onClick={handlePreviousMonth} className="p-2 hover:bg-blue-100 rounded-lg">
-                <ChevronLeft size={20} className="text-blue-600" />
-              </button>
-              <span className="text-lg font-semibold text-gray-900">
-                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-              </span>
-              <button onClick={handleNextMonth} className="p-2 hover:bg-blue-100 rounded-lg">
-                <ChevronRight size={20} className="text-blue-600" />
+            {/* ===== Header (UNCHANGED UI, now fixed) ===== */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
+              <h2 className="text-2xl font-bold text-gray-900">Set Appointment</h2>
+              <button
+                onClick={() => {
+                  setShowAppointmentModal(false);
+                  setSelectedDate(null);
+                  setSelectedTime("");
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={24} />
               </button>
             </div>
 
-            {/* unchanged UI, now stretches correctly */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1">
-              <div className="grid grid-cols-7 gap-2 mb-2">
-                {dayNames.map(day => (
-                  <div key={day} className="text-center text-sm font-semibold text-gray-600 py-2">
-                    {day}
+            {/* ===== Body (NO PAGE SCROLL) ===== */}
+            <div className="flex-1 overflow-hidden p-6">
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+
+                {/* ================= LEFT : CALENDAR ================= */}
+                <div className="space-y-4 h-full flex flex-col">
+
+                  {/* unchanged */}
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Calendar size={20} className="text-blue-600" />
+                    Select Date
+                  </h3>
+
+                  {/* unchanged */}
+                  <div className="flex items-center justify-between bg-blue-50 rounded-lg p-3">
+                    <button onClick={handlePreviousMonth} className="p-2 hover:bg-blue-100 rounded-lg">
+                      <ChevronLeft size={20} className="text-blue-600" />
+                    </button>
+                    <span className="text-lg font-semibold text-gray-900">
+                      {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                    </span>
+                    <button onClick={handleNextMonth} className="p-2 hover:bg-blue-100 rounded-lg">
+                      <ChevronRight size={20} className="text-blue-600" />
+                    </button>
                   </div>
-                ))}
-              </div>
 
-              <div className="grid grid-cols-7 gap-2">
-                {generateCalendarDays().map((day, idx) => {
-                  const isSelected =
-                    selectedDate &&
-                    day === selectedDate.getDate() &&
-                    currentMonth.getMonth() === selectedDate.getMonth() &&
-                    currentMonth.getFullYear() === selectedDate.getFullYear();
+                  {/* unchanged UI, now stretches correctly */}
+                  <div className="bg-white rounded-lg border border-gray-200 p-4 flex-1">
+                    <div className="grid grid-cols-7 gap-2 mb-2">
+                      {dayNames.map(day => (
+                        <div key={day} className="text-center text-sm font-semibold text-gray-600 py-2">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
 
-                  const isDisabled = isDateDisabled(day);
+                    <div className="grid grid-cols-7 gap-2">
+                      {generateCalendarDays().map((day, idx) => {
+                        const isSelected =
+                          selectedDate &&
+                          day === selectedDate.getDate() &&
+                          currentMonth.getMonth() === selectedDate.getMonth() &&
+                          currentMonth.getFullYear() === selectedDate.getFullYear();
 
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => handleDateSelect(day)}
-                      disabled={isDisabled}
-                      className={`
+                        const isDisabled = isDateDisabled(day);
+
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => handleDateSelect(day)}
+                            disabled={isDisabled}
+                            className={`
                         aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-all
                         ${!day ? 'invisible' : ''}
                         ${isDisabled ? 'text-gray-300 cursor-not-allowed' : ''}
                         ${isSelected ? 'bg-blue-600 text-white shadow-md scale-105' : ''}
                         ${!isSelected && !isDisabled ? 'hover:bg-blue-50 text-gray-900' : ''}
                       `}
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                          >
+                            {day}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-            {/* unchanged */}
-            {selectedDate && (
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <p className="text-sm text-blue-600 font-medium mb-1">Selected Date</p>
-                <p className="text-lg font-semibold text-blue-900">
-                  {selectedDate.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-            )}
-          </div>
+                  {/* unchanged */}
+                  {selectedDate && (
+                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                      <p className="text-sm text-blue-600 font-medium mb-1">Selected Date</p>
+                      <p className="text-lg font-semibold text-blue-900">
+                        {selectedDate.toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  )}
+                </div>
 
-          {/* ================= RIGHT : TIME ================= */}
-          <div className="space-y-4 h-full flex flex-col">
+                {/* ================= RIGHT : TIME ================= */}
+                <div className="space-y-4 h-full flex flex-col">
 
-            {/* unchanged */}
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <Clock size={20} className="text-blue-600" />
-              Select Time
-            </h3>
+                  {/* unchanged */}
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Clock size={20} className="text-blue-600" />
+                    Select Time
+                  </h3>
 
-            {/* 🔧 ONLY FIX: inner scroll */}
-            <div className="flex-1 overflow-y-auto pr-2">
-              <div className="grid grid-cols-2 gap-3">
-                {timeSlots.map(time => (
-                  <button
-                    key={time}
-                    onClick={() => setSelectedTime(time)}
-                    disabled={!selectedDate}
-                    className={`
+                  {/* 🔧 ONLY FIX: inner scroll */}
+                  <div className="flex-1 overflow-y-auto pr-2">
+                    <div className="grid grid-cols-2 gap-3">
+                      {timeSlots.map(time => (
+                        <button
+                          key={time}
+                          onClick={() => setSelectedTime(time)}
+                          disabled={!selectedDate}
+                          className={`
                       px-4 py-3 rounded-lg text-sm font-medium transition-all border-2
                       ${!selectedDate ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : ''}
                       ${selectedTime === time ? 'bg-blue-600 text-white border-blue-600 shadow-md' : ''}
                       ${selectedTime !== time && selectedDate ? 'bg-white text-gray-900 border-gray-200 hover:border-blue-600 hover:bg-blue-50' : ''}
                     `}
-                  >
-                    {time}
-                  </button>
-                ))}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* unchanged */}
+                  {selectedTime && (
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                      <p className="text-sm text-green-600 font-medium mb-1">Selected Time</p>
+                      <p className="text-lg font-semibold text-green-900">{selectedTime}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* unchanged */}
-            {selectedTime && (
-              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                <p className="text-sm text-green-600 font-medium mb-1">Selected Time</p>
-                <p className="text-lg font-semibold text-green-900">{selectedTime}</p>
-              </div>
-            )}
+            {/* ===== Footer (UNCHANGED UI, fixed position) ===== */}
+            <div className="border-t border-gray-200 px-6 py-4 flex gap-3">
+              <button
+                onClick={() => {
+                  setShowAppointmentModal(false);
+                  setSelectedDate(null);
+                  setSelectedTime("");
+                }}
+                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSetAppointment}
+                disabled={!selectedDate || !selectedTime}
+                className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <CheckCircle size={20} />
+                Confirm Appointment
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* ===== Footer (UNCHANGED UI, fixed position) ===== */}
-      <div className="border-t border-gray-200 px-6 py-4 flex gap-3">
-        <button
-          onClick={() => {
-            setShowAppointmentModal(false);
-            setSelectedDate(null);
-            setSelectedTime("");
-          }}
-          className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleSetAppointment}
-          disabled={!selectedDate || !selectedTime}
-          className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          <CheckCircle size={20} />
-          Confirm Appointment
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
 
 
       {/* Reject Modal */}

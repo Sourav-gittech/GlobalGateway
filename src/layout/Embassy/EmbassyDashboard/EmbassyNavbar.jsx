@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, LogOut, Settings, ChevronDown, Moon, Sun, Menu, X } from "lucide-react";
+import { Bell, LogOut, Settings, ChevronDown, Moon, Sun, X } from "lucide-react";
 import { useSidebarStore } from "../../../util/useSidebarStore";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
 
 // Constants
 const NOTIFICATIONS = [
@@ -10,18 +12,22 @@ const NOTIFICATIONS = [
   { id: 3, title: "Interview scheduled for tomorrow", time: "3 hours ago", unread: false },
 ];
 
-export default function EmbassyNavbar({ embassyData }) {
+export default function EmbassyNavbar({ embassyData, countryDetails }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const collapsed = useSidebarStore((s) => s.collapsed);
-  
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(2);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   const notificationRef = useRef(null);
   const userMenuRef = useRef(null);
+
+  // console.log('Embassy details', embassyData);
+  // console.log('Country details', countryDetails);
 
   // Detect screen size
   useEffect(() => {
@@ -69,8 +75,7 @@ export default function EmbassyNavbar({ embassyData }) {
   }, []);
 
   const handleLogout = async () => {
-    // TODO: Add your logout logic here
-    // await dispatch(logoutUser('embassy'));
+    await dispatch(logoutUser("embassy"));
     navigate('/embassy/');
   };
 
@@ -85,10 +90,9 @@ export default function EmbassyNavbar({ embassyData }) {
   }, []);
 
   return (
-    <header 
-      className={`fixed top-0 right-0 left-0 z-40 transition-all duration-300 bg-white border-b border-gray-200 ${
-        collapsed ? "md:left-20" : "md:left-64"
-      }`}
+    <header
+      className={`fixed top-0 right-0 left-0 z-40 transition-all duration-300 bg-white border-b border-gray-200 ${collapsed ? "md:left-20" : "md:left-64"
+        }`}
     >
       <div className="flex items-center justify-between px-4 h-16 md:h-18 lg:h-18 md:px-6">
         {/* Left Section - Logo & Title */}
@@ -151,9 +155,8 @@ export default function EmbassyNavbar({ embassyData }) {
                     <button
                       key={notification.id}
                       onClick={() => handleNotificationClick(notification.id)}
-                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${
-                        notification.unread ? "bg-blue-50" : ""
-                      }`}
+                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${notification.unread ? "bg-blue-50" : ""
+                        }`}
                     >
                       <div className="flex items-start gap-3">
                         {notification.unread && (
@@ -193,17 +196,17 @@ export default function EmbassyNavbar({ embassyData }) {
               className="flex items-center gap-2 md:gap-3 p-1.5 md:p-2 pr-2 md:pr-3 rounded-lg bg-transparent hover:bg-gray-100 transition-all group"
               aria-label="User menu"
             >
-              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-xs md:text-sm border border-blue-700">
-                {embassyData?.name?.charAt(0) || 'E'}
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border border-blue-700 overflow-hidden">
+                <img src={countryDetails?.details?.flag_url} alt="E" className="w-full h-full object-cover rounded-full" />
               </div>
+
               <div className="hidden lg:block text-left">
-                <p className="text-gray-900 text-sm font-medium">Embassy</p>
+                <p className="text-gray-900 text-sm font-medium">{countryDetails?.name?.length > 15 ? countryDetails?.name?.slice(0, 16) + '...' : countryDetails?.name}</p>
                 <p className="text-gray-500 text-xs">{embassyData?.email || 'embassy@global.com'}</p>
               </div>
               <ChevronDown
-                className={`hidden md:block text-gray-500 transition-transform ${
-                  showUserMenu ? "rotate-180" : ""
-                }`}
+                className={`hidden md:block text-gray-500 transition-transform ${showUserMenu ? "rotate-180" : ""
+                  }`}
                 size={16}
               />
             </button>

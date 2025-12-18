@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Users, FileText, Calendar, MessageSquare, BarChart2, Settings, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Building2, Clock, CheckCircle } from "lucide-react";
+import { Home, FileText, Menu, LogOut, X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
+import { useDispatch } from "react-redux";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
-  <NavLink 
-    to={to} 
-    end 
+  <NavLink
+    to={to}
+    end
     onClick={onClick}
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
@@ -44,6 +46,7 @@ export default function EmbassySidebar({ embassyData }) {
   const collapsed = useSidebarStore((s) => s.collapsed);
   const toggle = useSidebarStore((s) => s.toggle);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const sidebarRef = useRef(null);
 
@@ -75,11 +78,13 @@ export default function EmbassySidebar({ embassyData }) {
     setMobileOpen(false);
   }, [location.pathname]);
 
+  // logged out embassy 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+
     try {
-      
-      // await dispatch(logoutUser('embassy'));
+      await dispatch(logoutUser("embassy"));
+
       await new Promise(resolve => setTimeout(resolve, 1000));
       navigate("/embassy/");
     } catch (error) {
@@ -91,9 +96,9 @@ export default function EmbassySidebar({ embassyData }) {
 
   const navItems = [
     { to: "/embassy/dashboard", label: "Dashboard", icon: Home },
-    { 
-      to: "/embassy/dashboard/applications", 
-      label: "Applications", 
+    {
+      to: "/embassy/dashboard/applications",
+      label: "Applications",
       icon: FileText,
       badge: pendingApplications
     },
@@ -127,24 +132,20 @@ export default function EmbassySidebar({ embassyData }) {
       )}
 
       {/* Sidebar */}
-      <aside
-        ref={sidebarRef}
-        className={`
+      <aside ref={sidebarRef} className={`
           fixed top-0 left-0 h-screen z-50 flex flex-col transition-all duration-300
           bg-gradient-to-br from-cyan-700 to-blue-600/80 backdrop-blur-md
           border-r border-white/10
           ${collapsed ? "w-20" : "w-64"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `}
-        style={{ boxShadow: "inset 0 0 40px rgba(255,255,255,0.02)" }}
-      >
+        `} style={{ boxShadow: "inset 0 0 40px rgba(255,255,255,0.02)" }}>
+          
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {/* Logo + Title */}
           <div
-            className={`flex items-center gap-3 transition-all duration-300 ${
-              collapsed ? "w-14" : "w-48"
-            } min-w-0`}
+            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "w-14" : "w-48"
+              } min-w-0`}
           >
             <div className="w-10 h-10 shrink-0 rounded-xl bg-white/10 backdrop-blur-sm
               flex items-center justify-center text-white font-bold text-lg shadow-lg 
@@ -224,7 +225,7 @@ export default function EmbassySidebar({ embassyData }) {
         {/* Footer */}
         <div className="p-4 border-t border-white/10 space-y-3">
           <button
-            onClick={handleLogout}
+            onClick={() => handleLogout()}
             disabled={isLoggingOut}
             className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg bg-white/10 text-white/90 hover:bg-red-500/20 hover:text-white cursor-pointer transition-all duration-200"
           >
