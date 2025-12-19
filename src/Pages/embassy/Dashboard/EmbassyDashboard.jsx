@@ -21,6 +21,7 @@ import getSweetAlert from "../../../util/alert/sweetAlert";
 export default function EmbassyDashboard() {
   const dispatch = useDispatch();
 
+<<<<<<< HEAD
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
   const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
@@ -39,6 +40,11 @@ export default function EmbassyDashboard() {
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
   }, [embassyData?.country_id]);
+=======
+  const { userAuthData } = useSelector(state => state.checkAuth);
+  const { embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
+  const { data: countryDetails, isLoading: isCountryLoading, isError } = useFullCountryDetails(embassyData?.country_id);
+>>>>>>> 329126d77af734b0fc5d0fe4d5f26c6660bce0d5
 
   // Stats data - Real embassy metrics
   const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });

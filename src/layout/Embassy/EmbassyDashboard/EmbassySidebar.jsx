@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle , X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -93,9 +93,15 @@ export default function EmbassySidebar({ embassyData }) {
       setIsLoggingOut(false);
     }
   };
-
+  
   const navItems = [
     { to: "/embassy/dashboard", label: "Dashboard", icon: Home },
+    { 
+      to: "/embassy/dashboard/profile", 
+      label: "Profile", 
+      icon: UserCircle ,
+      badge: unreadMessages
+    },
     {
       to: "/embassy/dashboard/applications",
       label: "Applications",
@@ -109,12 +115,7 @@ export default function EmbassySidebar({ embassyData }) {
     //   badge: upcomingInterviews
     // },
     // { to: "/embassy/dashboard/approvals", label: "Approvals", icon: CheckCircle },
-    // { 
-    //   to: "/embassy/dashboard/messages", 
-    //   label: "Messages", 
-    //   icon: MessageSquare,
-    //   badge: unreadMessages
-    // },
+    
     // { to: "/embassy/dashboard/users", label: "Manage Users", icon: Users },
     // { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 },
     // { to: "/embassy/dashboard/processing", label: "Processing Times", icon: Clock },

@@ -46,7 +46,7 @@ import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/embassy-dashboard/EmbassyDashboardLayout.jsx";
+import EmbassyDashboardLayout from "../layout/embassy/embassyDashboard/EmbassyDashboardLayout.jsx";
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
@@ -54,19 +54,14 @@ import Rejected from "../Pages/embassy/status/Rejected.jsx";
 import CountrySetup from "../Pages/embassy/CountrySetup.jsx";
 
 /* ---------- Embassy Dashboard Pages ---------- */
-import EmbassyDashboard from "../Pages/embassy/dashboard/EmbassyDashboard.jsx";
-import EmbassyProfile from "../Pages/embassy/dashboard/Profile.jsx";
-import EmbassyApplications from "../Pages/embassy/dashboard/applications/Applications.jsx";
-import EmbassyApplicationView from "../Pages/embassy/dashboard/applications/ApplicationView.jsx";
-// import EmbassyApplicationActions from "../Pages/embassy/Dashboard/Applications/ApplicationActions";
-// import EmbassyAppointments from "../Pages/embassy/Dashboard/Appointments/Appointments";
-// import EmbassySchedule from "../Pages/embassy/Dashboard/Appointments/Schedule";
-// import EmbassyAnalytics from "../Pages/embassy/Dashboard/Analytics/Analytics";
-// import EmbassyMessages from "../Pages/embassy/Dashboard/Messages";
-// import EmbassySettings from "../Pages/embassy/Dashboard/Settings";
+import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
+import EmbassyProfile from "../Pages/embassy/Dashboard/Profile.jsx";
+import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications.jsx";
+import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView.jsx";
 
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404.jsx";
+import Approved from "../Pages/embassy/status/Approved.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -147,6 +142,7 @@ const Routing = () => {
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
           <Route path="/embassy/reject" element={<Rejected />} />
+           <Route path="/embassy/approved" element={<Approved/>} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
@@ -155,6 +151,7 @@ const Routing = () => {
             
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
+<<<<<<< HEAD
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
             
@@ -170,6 +167,9 @@ const Routing = () => {
             
            
             <Route path="settings" element={<EmbassySettings />} /> */}
+=======
+            <Route path="applications/:id" element={<EmbassyApplicationView />} />
+>>>>>>> 329126d77af734b0fc5d0fe4d5f26c6660bce0d5
           </Route>
 
           {/* ================= FALLBACK ================= */}
