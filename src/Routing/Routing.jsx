@@ -46,7 +46,7 @@ import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout";
+import EmbassyDashboardLayout1 from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout1.jsx";
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
@@ -142,7 +142,7 @@ const Routing = () => {
            <Route path="/embassy/approved" element={<Approved/>} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
-          <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
+          <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout1 />}>
             <Route index element={<EmbassyDashboard />} />
             <Route path="profile" element={<EmbassyProfile />} />
             
