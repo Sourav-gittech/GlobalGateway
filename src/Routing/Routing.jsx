@@ -151,7 +151,6 @@ const Routing = () => {
             
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
-<<<<<<< HEAD
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
             
@@ -167,9 +166,7 @@ const Routing = () => {
             
            
             <Route path="settings" element={<EmbassySettings />} /> */}
-=======
-            <Route path="applications/:id" element={<EmbassyApplicationView />} />
->>>>>>> 329126d77af734b0fc5d0fe4d5f26c6660bce0d5
+
           </Route>
 
           {/* ================= FALLBACK ================= */}
