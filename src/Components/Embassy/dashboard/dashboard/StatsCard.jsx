@@ -15,13 +15,13 @@ const StatsCard = ({ stat }) => {
                     <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                         <div className="flex items-center gap-1">
-                            {stat.trend === "up" ? (
-                                <TrendingUp size={16} className="text-green-600" />
-                            ) : (
+                            {stat.trend === "down" ? (
                                 <TrendingDown size={16} className="text-red-600" />
+
+                            ) : (
+                                <TrendingUp size={16} className={`${stat.trend === "up" ? "text-green-600" : "text-orange-400"}`} />
                             )}
-                            <span className={`text-sm font-semibold ${stat.trend === "up" ? "text-green-600" : "text-red-600"
-                                }`}>
+                            <span className={`text-sm font-semibold ${stat.trend === "up" ? "text-green-600" : stat.trend === "down" ? "text-red-600" : "text-orange-400"}`}>
                                 {stat.change}
                             </span>
                         </div>

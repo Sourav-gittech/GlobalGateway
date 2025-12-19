@@ -363,9 +363,53 @@ export const getAllApplication_specificUser = createAsyncThunk("applicationSlice
   }
 )
 
+// fetch all application for specific country
+export const fetchApplicationsByCountry = createAsyncThunk("applicationSlice/fetchByCountry",
+  async ({ countryId, statusFilter = "all" }, { rejectWithValue }) => {
+    try {
+
+      let statuses = [];
+
+      if (statusFilter === "all") {
+        statuses = ["processing", "fulfilled", "rejected"];
+      } else {
+        statuses = [statusFilter];
+      }
+
+      const { data, error } = await supabase.from("applications").select(`*,
+          application_personal_info (*), application_visa_details (*), application_documents (*), application_payment (*)`)
+        .eq("country_id", countryId).in("status", statuses).order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+)
+
+// fetch application details for specific application
+export const fetchSpecificationApplicationsById = createAsyncThunk("applicationSlice/fetchSpecificationApplicationsById",
+  async (application_id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase.from("applications").select(`*,
+          application_personal_info (*), application_visa_details (*), application_documents (*), application_payment (*)`)
+        .eq("id", application_id);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+)
+
 const initialState = {
   isApplicationLoading: false,
   isApplicationError: null,
+  allApplications: [],
   application: {},
   personalInfo: {},
   passport: {},
@@ -517,7 +561,7 @@ export const applicationSlice = createSlice({
         state.isApplicationError = action.error.message;
       })
 
-      // fetch all applications
+      // fetch applications per user
       .addCase(getAllApplication_specificUser.pending, (state, action) => {
         state.isApplicationLoading = true;
       })
@@ -528,7 +572,33 @@ export const applicationSlice = createSlice({
       .addCase(getAllApplication_specificUser.rejected, (state, action) => {
         state.isApplicationLoading = false;
         state.isApplicationError = action.error.message;
-      });
+      })
+
+      // fetch applications per country
+      .addCase(fetchApplicationsByCountry.pending, (state) => {
+        state.isApplicationLoading = true;
+      })
+      .addCase(fetchApplicationsByCountry.fulfilled, (state, action) => {
+        state.isApplicationLoading = false;
+        state.allApplications = action.payload;
+      })
+      .addCase(fetchApplicationsByCountry.rejected, (state, action) => {
+        state.isApplicationLoading = false;
+        state.isApplicationError = action.payload || "Failed to fetch applications";
+      })
+      
+      // fetch specific applications 
+      .addCase(fetchSpecificationApplicationsById.pending, (state) => {
+        state.isApplicationLoading = true;
+      })
+      .addCase(fetchSpecificationApplicationsById.fulfilled, (state, action) => {
+        state.isApplicationLoading = false;
+        state.application = action.payload;
+      })
+      .addCase(fetchSpecificationApplicationsById.rejected, (state, action) => {
+        state.isApplicationLoading = false;
+        state.isApplicationError = action.payload || "Failed to fetch applications";
+      })
   },
 });
 

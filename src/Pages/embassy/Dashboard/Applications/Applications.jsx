@@ -5,6 +5,7 @@ import StatsCard from "../../../../Components/embassy/dashboard/applications/Sta
 import ApplicationTable from "../../../../Components/embassy/dashboard/applications/application-table/ApplicationTable";
 
 export default function Applications() {
+  
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");

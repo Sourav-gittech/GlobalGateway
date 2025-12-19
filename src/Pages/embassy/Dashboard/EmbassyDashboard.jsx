@@ -9,23 +9,53 @@ import QuickLinks from "../../../Components/embassy/dashboard/dashboard/quick-li
 import UpcommingAppointmtnt from "../../../Components/embassy/dashboard/dashboard/Upcomming-appointmtnt/UpcommingAppointmtnt";
 import AvgProcessingTime from "../../../Components/embassy/dashboard/dashboard/avg-processing-time/AvgProcessingTime";
 import DashboardHeader from "../../../Components/embassy/dashboard/dashboard/DashboardHeader";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
+import { useApplicationsByCountryId } from "../../../tanstack/query/getApplicationsByCountryId";
+import { useApplicationStats } from "../../../tanstack/query/getApplicationStatsForEmbassy";
+import { getMonthlyChange } from "../../../util/embassy-stats/calcMonthlyChange";
+import { buildMonthlyApplicationVolume } from "../../../util/embassy-stats/applicationVolumeChart";
+import { fetchApplicationsByCountry } from "../../../Redux/Slice/applicationSlice";
+import getSweetAlert from "../../../util/alert/sweetAlert";
 
 export default function EmbassyDashboard() {
+  const dispatch = useDispatch();
 
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
-  const { data: countryDetails, isLoading: isCountryLoading, isError } = useFullCountryDetails(embassyData?.country_id);
+  const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
+  const { data: allTypeApplications, isLoading: isAllTypeApplicationLoading, error: allTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'all');
+  const { data: fulfilledTypeApplications, isLoading: isFulfilledTypeApplicationLoading, error: fulfilledTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'fulfilled');
+  const { data: processingTypeApplications, isLoading: isProcessingTypeApplicationLoading, error: processingTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'processing');
+  const { allApplications, isApplicationLoading: isAllApplicationLoading, isApplicationError: allApplicationLsError } = useSelector(state => state.application);
+
+  useEffect(() => {
+    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'pending' }))
+      .then(res => {
+        // console.log('Response for fetching all applications', res);
+      })
+      .catch(err => {
+        console.log('Error occures', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, [embassyData?.country_id]);
 
   // Stats data - Real embassy metrics
+  const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
+  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
+  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
+
+  const totalChange = getMonthlyChange(allStats);
+  const fulfilledChange = getMonthlyChange(fulfilledStats);
+  const processingChange = getMonthlyChange(processingStats);
+
   const stats = [
     {
       icon: FileText,
       title: "Total Applications",
-      value: "247",
-      change: "+12.5%",
-      trend: "up",
+      value: allTypeApplications?.length,
+      change: totalChange?.changeText,
+      trend: totalChange?.trend,
       bgColor: "bg-blue-100",
       iconColor: "text-blue-600",
       subtext: "This month"
@@ -33,19 +63,19 @@ export default function EmbassyDashboard() {
     {
       icon: CheckCircle,
       title: "Approved Visas",
-      value: "189",
-      change: "+8.3%",
-      trend: "up",
+      value: fulfilledTypeApplications?.length,
+      change: fulfilledChange?.changeText,
+      trend: fulfilledChange?.trend,
       bgColor: "bg-green-100",
       iconColor: "text-green-600",
-      subtext: "76% approval rate"
+      subtext: "Approval rate"
     },
     {
       icon: Clock,
       title: "Pending Review",
-      value: "42",
-      change: "-5.2%",
-      trend: "down",
+      value: processingTypeApplications?.length,
+      change: processingChange?.changeText,
+      trend: processingChange?.trend,
       bgColor: "bg-yellow-100",
       iconColor: "text-yellow-600",
       subtext: "Avg. 3 days wait"
@@ -63,73 +93,8 @@ export default function EmbassyDashboard() {
   ];
 
   // Chart data - Application volume
-  const chartData = [
-    { month: "Jan", value: 185 },
-    { month: "Feb", value: 210 },
-    { month: "Mar", value: 195 },
-    { month: "Apr", value: 235 },
-    { month: "May", value: 220 },
-    { month: "Jun", value: 260 },
-    { month: "Jul", value: 245 },
-    { month: "Aug", value: 275 },
-    { month: "Sep", value: 255 },
-    { month: "Oct", value: 290 },
-    { month: "Nov", value: 270 },
-    { month: "Dec", value: 247 }
-  ];
-
-  const maxValue = Math.max(...chartData.map(d => d.value));
-
-  // Recent applications - Table format
-  const recentApplications = [
-    {
-      id: "#APP-45467",
-      name: "John Anderson",
-      type: "Tourist Visa",
-      country: "United States",
-      date: "Dec 15, 2025",
-      status: "pending",
-      priority: "normal"
-    },
-    {
-      id: "#APP-45468",
-      name: "Sarah Williams",
-      type: "Student Visa",
-      country: "Canada",
-      date: "Dec 15, 2025",
-      status: "approved",
-      priority: "high"
-    },
-    {
-      id: "#APP-45469",
-      name: "Michael Chen",
-      type: "Work Visa",
-      country: "Australia",
-      date: "Dec 14, 2025",
-      status: "review",
-      priority: "urgent"
-    },
-    {
-      id: "#APP-45470",
-      name: "Emma Thompson",
-      type: "Business Visa",
-      country: "United Kingdom",
-      date: "Dec 14, 2025",
-      status: "approved",
-      priority: "normal"
-    },
-    {
-      id: "#APP-45471",
-      name: "David Martinez",
-      type: "Family Visa",
-      country: "Spain",
-      date: "Dec 13, 2025",
-      status: "rejected",
-      priority: "normal"
-    }
-  ];
-
-
+  const chartData = buildMonthlyApplicationVolume(allTypeApplications || []);
+  const maxValue = Math.max(1, ...chartData.map(d => d.value));
 
   // Processing times
   const processingTimes = [
@@ -169,7 +134,7 @@ export default function EmbassyDashboard() {
     {
       icon: FileText,
       label: "Review Applications",
-      count: "42 pending",
+      count: processingTypeApplications?.length + " pending",
       path: "/embassy/dashboard/applications",
       color: "bg-blue-500 hover:bg-blue-600"
     },
@@ -199,9 +164,11 @@ export default function EmbassyDashboard() {
     return styles[priority] || styles.normal;
   };
 
-  console.log('User data',userAuthData);
-  console.log('Embassy data',embassyData);
-  console.log('Country data',countryDetails);
+  // console.log('User data', userAuthData);
+  // console.log('Embassy data', embassyData);
+  // console.log('Country data', countryDetails);
+  // console.log('Application data', allTypeApplications);
+  // console.log('All Application data', allApplications);
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -221,7 +188,7 @@ export default function EmbassyDashboard() {
         <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Application Volume Chart */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <ApplicationVolumeHeader />
+            <ApplicationVolumeHeader change={fulfilledChange?.changeText} trend={fulfilledChange?.trend} />
 
             {/* Chart */}
             <ApplicationVolumeChart chartData={chartData} maxValue={maxValue} />
@@ -231,7 +198,7 @@ export default function EmbassyDashboard() {
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-[710px]">
             <RecentApplicationHeader />
 
-            <ApplicationTable recentApplications={recentApplications} />
+            <ApplicationTable recentApplications={allApplications} />
           </div>
         </div>
 

@@ -155,7 +155,7 @@ const Routing = () => {
             
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
-            <Route path="applications/:id" element={<EmbassyApplicationView />} />
+            <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
             
          

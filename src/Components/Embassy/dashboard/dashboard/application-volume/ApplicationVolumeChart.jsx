@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ApplicationVolumeChart = ({chartData,maxValue}) => {
+const ApplicationVolumeChart = ({ chartData, maxValue }) => {
     return (
         <div className="relative h-64">
             <div className="absolute inset-0 flex items-end justify-between gap-2">

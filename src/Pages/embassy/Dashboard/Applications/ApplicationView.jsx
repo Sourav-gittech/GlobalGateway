@@ -1,30 +1,17 @@
 import React, { useState } from "react";
-import {
-  ArrowLeft,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  FileText,
-  Download,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertCircle,
-  Briefcase,
-  Globe,
-  CreditCard,
-  Shield,
-  Eye,
-  MessageSquare,
-  Printer,
-  X,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { ArrowLeft, User, Mail, Phone, MapPin, Calendar, FileText, Download, CheckCircle, XCircle, Clock, AlertCircle, Briefcase, Globe, CreditCard, Shield, Eye, Printer, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useApplicationById } from "../../../../tanstack/query/getApplicationAllDetailsById";
+import ApplicationViewHeader from "../../../../Components/embassy/dashboard/application-view/ApplicationViewHeader";
 
 export default function ApplicationView() {
+
+  const { application_id } = useParams();
+  const dispatch = useDispatch();
+  const applicationId = decodeBase64Url(application_id);
+
   const [activeTab, setActiveTab] = useState("personal");
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -33,6 +20,8 @@ export default function ApplicationView() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [appointmentSet, setAppointmentSet] = useState(false);
   const [appointmentDetails, setAppointmentDetails] = useState(null);
+
+  const { data: application1, isLoading, isError, error, } = useApplicationById(applicationId);
 
   const id = "APP-001";
 
@@ -136,78 +125,6 @@ export default function ApplicationView() {
         description: "Application moved to review queue"
       }
     ]
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const handleDownload = () => {
-    const content = `
-VISA APPLICATION DETAILS
-========================
-
-Application ID: ${application.id}
-Status: ${application.status}
-Submitted: ${new Date(application.submittedDate).toLocaleString()}
-
-PERSONAL INFORMATION
--------------------
-Name: ${application.personal.firstName} ${application.personal.lastName}
-Date of Birth: ${new Date(application.personal.dateOfBirth).toLocaleDateString()}
-Gender: ${application.personal.gender}
-Nationality: ${application.personal.nationality}
-Email: ${application.personal.email}
-Phone: ${application.personal.phone}
-Marital Status: ${application.personal.maritalStatus}
-
-ADDRESS
--------
-${application.address.street}
-${application.address.city}, ${application.address.state} ${application.address.zipCode}
-${application.address.country}
-
-PASSPORT INFORMATION
-------------------
-Passport Number: ${application.passport.number}
-Issue Date: ${new Date(application.passport.issueDate).toLocaleDateString()}
-Expiry Date: ${new Date(application.passport.expiryDate).toLocaleDateString()}
-Issue Place: ${application.passport.issuePlace}
-
-VISA INFORMATION
---------------
-Type: ${application.visa.type}
-Purpose: ${application.visa.purpose}
-Duration: ${application.visa.duration}
-Entry Type: ${application.visa.entryType}
-Travel Date: ${new Date(application.visa.travelDate).toLocaleDateString()}
-Return Date: ${new Date(application.visa.returnDate).toLocaleDateString()}
-
-EMPLOYMENT
----------
-Status: ${application.employment.status}
-Occupation: ${application.employment.occupation}
-Company: ${application.employment.company}
-Monthly Income: ${application.employment.monthlyIncome}
-
-${appointmentSet && appointmentDetails ? `
-APPOINTMENT DETAILS
------------------
-Date: ${appointmentDetails.date}
-Time: ${appointmentDetails.time}
-Status: Approved
-` : ''}
-    `;
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Application-${application.id}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
   };
 
   const getStatusBadge = (status) => {
@@ -336,41 +253,12 @@ Status: Approved
     { id: "timeline", label: "Timeline", icon: Clock }
   ];
 
+  console.log('Specific application details', application1);
+
   return (
     <div className="space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => window.history.back()}
-            className="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Application Details
-            </h1>
-            <p className="text-gray-600 mt-1">Application ID: {application.id}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Printer size={18} />
-            <span className="hidden sm:inline">Print</span>
-          </button>
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Download size={18} />
-            <span className="hidden sm:inline">Download</span>
-          </button>
-        </div>
-      </div>
+      <ApplicationViewHeader application={application} />
 
       {/* Status Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -428,8 +316,8 @@ Status: Approved
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                      ? "border-blue-600 text-blue-600 bg-blue-50"
-                      : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "border-blue-600 text-blue-600 bg-blue-50"
+                    : "border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                 >
                   <Icon size={18} />
@@ -708,8 +596,8 @@ Status: Approved
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${doc.status === "verified"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
                       }`}>
                       {doc.status === "verified" ? "✓ Verified" : "⏳ Pending"}
                     </span>
