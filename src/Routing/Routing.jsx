@@ -39,14 +39,14 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout1 from "../layout/embassy/EmbassyLayout1.jsx";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout1 from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout1.jsx";
+import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout";
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
@@ -128,7 +128,7 @@ const Routing = () => {
           </Route>
 
           {/* ================= EMBASSY PUBLIC ================= */}
-          <Route path="/embassy" element={<EmbassyLayout1 />}>
+          <Route path="/embassy" element={<EmbassyLayout />}>
             <Route index element={<EmbassyHome />} />
             <Route path="about" element={<EmbassyAbout />} />
             <Route path="contact" element={<EmbassyContact />} />
@@ -142,7 +142,7 @@ const Routing = () => {
            <Route path="/embassy/approved" element={<Approved/>} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
-          <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout1 />}>
+          <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
             <Route index element={<EmbassyDashboard />} />
             <Route path="profile" element={<EmbassyProfile />} />
             
