@@ -62,7 +62,6 @@ import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/Appl
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404.jsx";
 import Approved from "../Pages/embassy/status/Approved.jsx";
-import AuthCallback from "../Pages/verification/AuthCallback.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -99,8 +98,6 @@ const Routing = () => {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/authentication" element={<AuthForm />} />
           <Route path="/verification/:email/:user_type"element={<EmailVerification />}/>
-
-          <Route path="/auth/callback" element={<AuthCallback />} />
 
           <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
           <Route path="/dashboard" element={<Dashboard />} />
