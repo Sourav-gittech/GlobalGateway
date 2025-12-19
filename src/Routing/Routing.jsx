@@ -39,14 +39,14 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout from "../layout/embassy/EmbassyLayout.jsx";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
 
 /* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout.jsx";
+import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout";
 
 /* ---------- Embassy Status Pages ---------- */
 import Review from "../Pages/embassy/status/Review.jsx";
