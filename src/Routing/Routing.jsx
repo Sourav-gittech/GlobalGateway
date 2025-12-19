@@ -39,7 +39,7 @@ import VisaManage from "../Pages/admin/ManageVisa.jsx";
 import AdminProfile from "../Pages/admin/AdminProfile.jsx";
 
 /* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout from "../layout/embassy/EmbassyLayout";
+import EmbassyLayout1 from "../layout/embassy/EmbassyLayout1.jsx";
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
@@ -128,7 +128,7 @@ const Routing = () => {
           </Route>
 
           {/* ================= EMBASSY PUBLIC ================= */}
-          <Route path="/embassy" element={<EmbassyLayout />}>
+          <Route path="/embassy" element={<EmbassyLayout1 />}>
             <Route index element={<EmbassyHome />} />
             <Route path="about" element={<EmbassyAbout />} />
             <Route path="contact" element={<EmbassyContact />} />
