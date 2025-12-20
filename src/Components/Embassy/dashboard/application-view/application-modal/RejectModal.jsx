@@ -5,12 +5,10 @@ import { useDispatch } from 'react-redux';
 import { updateApplicationStatus } from '../../../../../Redux/Slice/applicationSlice';
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import hotToast from '../../../../../util/alert/hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 const RejectModal = ({ application, setShowRejectModal }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
         defaultValues: {

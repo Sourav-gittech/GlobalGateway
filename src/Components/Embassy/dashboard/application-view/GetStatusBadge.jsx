@@ -21,7 +21,7 @@ const GetStatusBadge = (status) => {
             icon: XCircle,
             label: "Rejected"
         },
-        under_review: {
+        processing: {
             bg: "bg-blue-100",
             text: "text-blue-700",
             icon: AlertCircle,
@@ -30,12 +30,12 @@ const GetStatusBadge = (status) => {
     };
 
     const config = statusConfig[status];
-    const Icon = config.icon;
+    const Icon = config?.icon;
 
     return (
-        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${config.bg} ${config.text}`}>
+        <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${config?.bg} ${config?.text}`}>
             <Icon size={18} />
-            {config.label}
+            {config?.label}
         </span>
     );
 };

@@ -2,7 +2,7 @@ import React from 'react'
 import { CheckCircle, CreditCard, FileText, Globe, Shield } from 'lucide-react'
 import { getYear } from '../../../../../util/dateFormat/dateFormatConvertion'
 
-const VisaDetails = ({ application, visaDetails,travelHistoryDetails }) => {
+const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
 
     return (
         <div className="space-y-6">
@@ -78,7 +78,7 @@ const VisaDetails = ({ application, visaDetails,travelHistoryDetails }) => {
                     Travel History
                 </h3>
                 <div className="space-y-3">
-                    {travelHistoryDetails?.length==0?'No Data Available': travelHistoryDetails?.map((travel, idx) => (
+                    {travelHistoryDetails?.length == 0 ? 'No Data Available' : travelHistoryDetails?.map((travel, idx) => (
                         <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -103,21 +103,21 @@ const VisaDetails = ({ application, visaDetails,travelHistoryDetails }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="text-sm text-gray-600">Amount</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment=>payment.status=="success")?.amount}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">RS. {application?.application_payment?.find(payment => payment.status == "success")?.amount?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Payment Provider</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment=>payment.status=="success")?.provider}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.provider}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Transaction ID</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment=>payment.status=="success")?.transaction_id}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.transaction_id}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Status</label>
                         <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium mt-1">
                             <CheckCircle size={14} />
-                            {application?.application_payment?.find(payment=>payment.status=="success")?.status}
+                            {application?.application_payment?.find(payment => payment.status == "success")?.status}
                         </span>
                     </div>
                 </div>

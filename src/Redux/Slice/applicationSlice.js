@@ -329,11 +329,12 @@ export const saveStepProgress = createAsyncThunk("applicationSlice/saveStepProgr
 
 // update application status
 export const updateApplicationStatus = createAsyncThunk("applicationSlice/updateApplicationStatus",
-  async ({ applicationId, status, rejection_reason = null }) => {
+  async ({ applicationId, status, appointment_date = null, rejection_reason = null }) => {
     // console.log('Received data for updating application status', applicationId, status);
 
     const res = await supabase.from("applications").update({
       status: status,
+      appointment_date: appointment_date,
       rejection_reason: rejection_reason,
       updated_at: new Date().toISOString(),
     }).eq("id", applicationId);

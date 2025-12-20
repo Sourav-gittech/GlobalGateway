@@ -22,7 +22,7 @@ export const formatDateDDMMYYYY = (dateString) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
 };
 
 
@@ -58,9 +58,47 @@ export const formatDateTimeMeridian = (dateString) => {
     });
 };
 
+
+// dd/mm/yyyy at  hh:mm AM format
+export const formatDateTimeMeridianWithoutSecond = (dateString) => {
+    if (!dateString) return "N/A";
+
+    const date = new Date(dateString);
+
+    const formattedDate = date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+    });
+
+    const formattedTime = date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+
+    return `${formattedDate} at ${formattedTime}`;
+};
+
+
 // yyyy format 
 export const getYear = (dateString) => {
     if (!dateString) return "N/A";
 
     return new Date(dateString).getFullYear();
 }
+
+
+// ISO format
+export const buildISOFormat = (date, time) => {
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    const appointment = new Date(date);
+    appointment.setHours(hours, minutes, 0, 0);
+
+    return appointment.toISOString();
+};

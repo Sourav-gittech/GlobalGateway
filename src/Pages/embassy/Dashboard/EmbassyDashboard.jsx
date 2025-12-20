@@ -21,7 +21,6 @@ import getSweetAlert from "../../../util/alert/sweetAlert";
 export default function EmbassyDashboard() {
   const dispatch = useDispatch();
 
-<<<<<<< HEAD
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
   const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
@@ -30,8 +29,13 @@ export default function EmbassyDashboard() {
   const { data: processingTypeApplications, isLoading: isProcessingTypeApplicationLoading, error: processingTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'processing');
   const { allApplications, isApplicationLoading: isAllApplicationLoading, isApplicationError: allApplicationLsError } = useSelector(state => state.application);
 
+  // Stats data - Real embassy metrics
+  const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
+  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
+  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
+
   useEffect(() => {
-    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'pending' }))
+    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'processing' }))
       .then(res => {
         // console.log('Response for fetching all applications', res);
       })
@@ -40,16 +44,6 @@ export default function EmbassyDashboard() {
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
   }, [embassyData?.country_id]);
-=======
-  const { userAuthData } = useSelector(state => state.checkAuth);
-  const { embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
-  const { data: countryDetails, isLoading: isCountryLoading, isError } = useFullCountryDetails(embassyData?.country_id);
->>>>>>> 329126d77af734b0fc5d0fe4d5f26c6660bce0d5
-
-  // Stats data - Real embassy metrics
-  const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
-  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
-  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
 
   const totalChange = getMonthlyChange(allStats);
   const fulfilledChange = getMonthlyChange(fulfilledStats);
