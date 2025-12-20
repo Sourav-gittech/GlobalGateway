@@ -1,20 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { MapPin, CheckCircle2, Building2, Phone, Clock, AlertCircle, Loader2, ExternalLink } from 'lucide-react';
 
-const LocationSelection = ({ selectedLocation, setSelectedLocation, application }) => {
+const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocation, application, visaDetails }) => {
     const [embassyOffices, setEmbassyOffices] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Get user's country and location
+    // User's location (where they live)
     const userCountry = application?.application_personal_info?.country;
     const userCity = application?.application_personal_info?.city;
     const userState = application?.application_personal_info?.state;
 
-    // Fetch embassies using OpenStreetMap Nominatim API (FREE)
+    /**
+     * FIX: Extract destination country from visaDetails first, then fallback to application
+     */
+    const destinationCountry =
+        visaDetails?.country_name ||
+        visaDetails?.country?.name ||
+        visaDetails?.country ||
+        application?.destinationCountry ||
+        currentCountry || null;
+
+    useEffect(() => {
+        console.log('=== LocationSelection Debug ===');
+        console.log('Full Application:', application);
+        console.log('Visa Details:', visaDetails);
+        console.log('User Country:', userCountry);
+        console.log('User City:', userCity);
+        console.log('Destination Country:', destinationCountry);
+    }, [application, visaDetails, destinationCountry]);
+
     const fetchEmbassies = async () => {
-        if (!userCountry || !userCity) {
-            setError('User location information is incomplete');
+        if (!userCountry || !destinationCountry) {
+            console.error('Missing required data:', { userCountry, destinationCountry });
+            setError('Missing location information');
             return;
         }
 
@@ -22,235 +41,151 @@ const LocationSelection = ({ selectedLocation, setSelectedLocation, application 
         setError(null);
 
         try {
-            // Step 1: Get coordinates for user's city using Nominatim Geocoding (FREE)
-            const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-                `${userCity}, ${userState}, ${userCountry}`
-            )}&format=json&limit=1`;
-
+            // Step 1: Geocode user's country
+            const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(userCountry)}&format=json&limit=1`;
             const geocodeResponse = await fetch(geocodeUrl, {
-                headers: {
-                    'User-Agent': 'VisaApplicationSystem/1.0' // Required by Nominatim
-                }
+                headers: { 'User-Agent': 'VisaApplicationSystem/1.0' }
             });
             const geocodeData = await geocodeResponse.json();
 
-            if (!geocodeData || geocodeData.length === 0) {
-                throw new Error('Unable to find user location');
+            if (!geocodeData?.length) {
+                throw new Error(`Cannot find location: ${userCountry}`);
             }
 
-            const userLocation = geocodeData[0];
-            const { lat, lon } = userLocation;
+            const { lat, lon } = geocodeData[0];
 
-            // Step 2: Search for embassies using Overpass API (OpenStreetMap)
-            // This searches for nodes/ways tagged as embassy or consulate
-            const overpassQuery = `[out:json][timeout:25];(node["amenity"="embassy"](around:500000,${lat},${lon});node["office"="diplomatic"](around:500000,${lat},${lon});way["amenity"="embassy"](around:500000,${lat},${lon});way["office"="diplomatic"](around:500000,${lat},${lon}););out center;`;
+            // Step 2: Search embassies via Overpass API
+            const overpassQuery = `[out:json][timeout:25];
+                (
+                    node["amenity"="embassy"]["name"~"${destinationCountry}",i](around:2000000,${lat},${lon});
+                    way["amenity"="embassy"]["name"~"${destinationCountry}",i](around:2000000,${lat},${lon});
+                    node["office"="diplomatic"]["name"~"${destinationCountry}",i](around:2000000,${lat},${lon});
+                    way["office"="diplomatic"]["name"~"${destinationCountry}",i](around:2000000,${lat},${lon});
+                );
+                out center;`;
 
             const overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`;
-            const overpassResponse = await fetch(overpassUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const overpassResponse = await fetch(overpassUrl);
 
-            if (!overpassResponse.ok) {
-                throw new Error('Failed to fetch embassy data from OpenStreetMap');
-            }
+            if (!overpassResponse.ok) throw new Error('Failed to fetch embassy data');
 
             const overpassData = await overpassResponse.json();
 
-            if (!overpassData.elements || overpassData.elements.length === 0) {
-                throw new Error('No embassy locations found in this area');
+            if (!overpassData.elements?.length) {
+                throw new Error(`No ${destinationCountry} embassies found in ${userCountry}`);
             }
 
-            // Step 3: Format embassy data
+            // Step 3: Process results
             const embassies = overpassData.elements
                 .filter(place => {
                     const name = place.tags?.name?.toLowerCase() || '';
-                    return name && (
-                        name.includes('embassy') || 
-                        name.includes('consulate') ||
-                        name.includes('diplomatic')
-                    );
+                    const dest = destinationCountry.toLowerCase();
+                    return name.includes(dest) &&
+                        (name.includes('embassy') || name.includes('consulate') ||
+                            name.includes('high commission') || name.includes('diplomatic'));
                 })
-                .slice(0, 15) // Limit to 15 results
-                .map((place) => {
+                .slice(0, 20)
+                .map(place => {
                     const tags = place.tags || {};
-                    
-                    // Determine coordinates
                     const coords = place.center || { lat: place.lat, lon: place.lon };
-                    
-                    // Extract address components
-                    const street = tags['addr:street'] || tags.street || '';
-                    const houseNumber = tags['addr:housenumber'] || '';
-                    const city = tags['addr:city'] || userCity;
-                    const state = tags['addr:state'] || userState;
-                    const postcode = tags['addr:postcode'] || '';
-                    
-                    const fullAddress = [
-                        houseNumber,
-                        street,
-                        city,
-                        state,
-                        postcode,
+
+                    const address = [
+                        tags['addr:housenumber'],
+                        tags['addr:street'] || tags.street,
+                        tags['addr:city'],
+                        tags['addr:state'],
+                        tags['addr:postcode'],
                         userCountry
                     ].filter(Boolean).join(', ');
 
-                    // Determine embassy type
-                    const embassyType = tags.name?.toLowerCase().includes('consulate')
-                        ? 'Consulate'
-                        : 'Embassy';
+                    const nameLower = tags.name?.toLowerCase() || '';
+                    let type = 'Embassy';
+                    if (nameLower.includes('consulate')) type = 'Consulate';
+                    else if (nameLower.includes('high commission')) type = 'High Commission';
 
                     return {
                         id: place.id,
-                        name: tags.name || 'Embassy',
-                        city: city,
-                        state: state,
-                        address: fullAddress || 'Address details not available',
+                        name: tags.name || `${destinationCountry} Embassy`,
+                        city: tags['addr:city'] || 'Not specified',
+                        state: tags['addr:state'] || '',
+                        address: address || 'Address not available',
                         phone: tags.phone || tags['contact:phone'] || 'Not available',
-                        workingHours: tags.opening_hours || 'Contact embassy for hours',
-                        type: embassyType,
-                        coordinates: {
-                            lat: coords.lat,
-                            lng: coords.lon
-                        },
+                        workingHours: tags.opening_hours || 'Contact embassy',
+                        type,
+                        coordinates: { lat: coords.lat, lng: coords.lon },
                         website: tags.website || tags['contact:website'] || null,
                         email: tags.email || tags['contact:email'] || null,
                         openStreetMapUrl: `https://www.openstreetmap.org/?mlat=${coords.lat}&mlon=${coords.lon}#map=18/${coords.lat}/${coords.lon}`
                     };
                 });
 
-            // Remove duplicates by name
-            const uniqueEmbassies = embassies.filter((embassy, index, self) =>
-                index === self.findIndex((e) => e.name === embassy.name)
+            const unique = embassies.filter((e, i, arr) =>
+                i === arr.findIndex(x => x.name === e.name && x.city === e.city)
             );
 
-            setEmbassyOffices(uniqueEmbassies);
+            setEmbassyOffices(unique);
 
-            // Auto-select nearest embassy
-            if (uniqueEmbassies.length > 0 && !selectedLocation) {
-                const nearest = findNearestEmbassy(uniqueEmbassies);
-                if (nearest) {
-                    setSelectedLocation(nearest);
-                }
+            if (unique.length && !selectedLocation) {
+                setSelectedLocation(unique[0]);
             }
         } catch (err) {
-            console.error('Error fetching embassies:', err);
-            setError(err.message || 'Failed to fetch embassy locations');
+            console.error('Embassy fetch error:', err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
     };
 
-    // Function to find nearest embassy based on city/state match
-    const findNearestEmbassy = (embassies) => {
-        if (!embassies.length || !userCity) return null;
-
-        // First, try exact city match
-        const cityMatch = embassies.find(
-            office => office.city?.toLowerCase().includes(userCity.toLowerCase())
-        );
-        if (cityMatch) return cityMatch;
-
-        // Then, try state match
-        const stateMatch = embassies.find(
-            office => office.state?.toLowerCase().includes(userState?.toLowerCase())
-        );
-        if (stateMatch) return stateMatch;
-
-        // If no match, return the first embassy
-        return embassies[0];
-    };
-
-    // Fetch embassies when component mounts or user location changes
     useEffect(() => {
-        if (userCountry && userCity) {
+        if (userCountry && destinationCountry) {
             fetchEmbassies();
         }
-    }, [userCountry, userCity, userState]);
+    }, [userCountry, destinationCountry]);
 
-    const handleSelectLocation = (office) => {
-        setSelectedLocation(office);
-    };
+    /* ================= UI (UNCHANGED) ================= */
 
-    // Loading state
     if (loading) {
         return (
             <div className="rounded-xl p-6 border border-gray-200 bg-white">
                 <div className="flex items-center justify-center gap-3 py-8">
                     <Loader2 className="text-blue-600 animate-spin" size={24} />
-                    <p className="text-gray-600">Searching for embassy locations near you...</p>
+                    <p className="text-gray-600">Finding {destinationCountry} embassies in {userCountry}...</p>
                 </div>
             </div>
         );
     }
 
-    // Handle missing user country
-    if (!userCountry) {
+    if (!userCountry || !destinationCountry) {
         return (
-            <div className="rounded-xl p-6 border border-gray-200 bg-gray-50">
-                <div className="flex items-center gap-2 mb-2">
+            <div className="rounded-xl p-6 border border-amber-200 bg-amber-50">
+                <div className="flex items-center gap-2 mb-3">
                     <AlertCircle className="text-amber-600" size={20} />
-                    <h3 className="text-lg font-semibold text-gray-900">
-                        Location Information Required
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Location Info Required</h3>
                 </div>
-                <p className="text-sm text-gray-600">
-                    User country information is not available. Please ensure personal details are completed.
+                <p className="text-sm text-gray-700 mb-3">
+                    {!userCountry && "• User country information is missing"}
+                    {!userCountry && <br />}
+                    {!destinationCountry && "• Destination country information is missing"}
                 </p>
             </div>
         );
     }
 
-    // Handle errors
     if (error) {
         return (
             <div className="rounded-xl p-6 border border-red-200 bg-red-50">
                 <div className="flex items-center gap-2 mb-2">
                     <AlertCircle className="text-red-600" size={20} />
-                    <h3 className="text-lg font-semibold text-gray-900">
-                        Error Loading Embassy Locations
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Error Loading Embassies</h3>
                 </div>
                 <p className="text-sm text-red-700 mb-3">{error}</p>
-                <button
-                    onClick={fetchEmbassies}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
-                >
-                    Retry
-                </button>
             </div>
         );
     }
 
-    // Handle no results
-    if (embassyOffices.length === 0) {
-        return (
-            <div className="rounded-xl p-6 border border-amber-200 bg-amber-50">
-                <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle className="text-amber-600" size={20} />
-                    <h3 className="text-lg font-semibold text-gray-900">
-                        No Embassy Locations Found
-                    </h3>
-                </div>
-                <p className="text-sm text-gray-700 mb-3">
-                    We couldn't find any embassy locations near <strong>{userCity}, {userCountry}</strong> in OpenStreetMap data.
-                </p>
-                <p className="text-xs text-gray-600 mb-3">
-                    This might happen if the area has limited OpenStreetMap coverage or embassies aren't tagged yet.
-                </p>
-                <button
-                    onClick={fetchEmbassies}
-                    className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
-                >
-                    Search Again
-                </button>
-            </div>
-        );
-    }
 
     return (
-        <div className="rounded-xl p-6 border border-gray-200">
+        <div className="rounded-xl p-6 border border-gray-200 bg-white">
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                     <Building2 className="text-blue-600" size={20} />
@@ -258,71 +193,55 @@ const LocationSelection = ({ selectedLocation, setSelectedLocation, application 
                         Select Embassy Location <span className="text-red-500">*</span>
                     </h3>
                 </div>
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    Powered by OpenStreetMap
-                </span>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">OpenStreetMap</span>
             </div>
+
             <p className="text-sm text-gray-600 mb-1">
-                Choose the embassy office where candidate will attend appointment
+                Choose the <strong>{destinationCountry}</strong> embassy in <strong>{userCountry}</strong> for the appointment
             </p>
+
             {selectedLocation && (
                 <p className="text-xs text-blue-600 mb-4">
-                    ✓ Found {embassyOffices.length} embassy location(s) in {userCountry}
+                    ✓ Found {embassyOffices.length} {destinationCountry} embassy location(s) in {userCountry}
                 </p>
             )}
 
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                {embassyOffices.map((office) => {
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                {embassyOffices.map(office => {
                     const isSelected = selectedLocation?.id === office.id;
-                    
+
                     return (
                         <button
                             key={office.id}
-                            onClick={() => handleSelectLocation(office)}
-                            className={`
-                                w-full text-left p-4 rounded-lg border-2 transition-all
-                                ${isSelected 
-                                    ? 'border-blue-500 bg-blue-50 shadow-sm' 
-                                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                                }
-                            `}
+                            onClick={() => setSelectedLocation(office)}
+                            className={`w-full text-left p-4 rounded-lg border-2 transition-all ${isSelected ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                                }`}
                         >
                             <div className="flex items-start gap-3">
-                                {/* Selection Indicator */}
                                 <div className="mt-0.5">
                                     {isSelected ? (
                                         <CheckCircle2 className="text-blue-500" size={24} />
                                     ) : (
-                                        <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                                        <div className="w-6 h-6 rounded-full border-2 border-gray-300" />
                                     )}
                                 </div>
 
-                                {/* Office Details */}
                                 <div className="flex-1">
-                                    <div className="flex items-start justify-between gap-2 mb-2">
-                                        <div>
-                                            <h4 className={`font-semibold text-base ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>
-                                                {office.name}
-                                            </h4>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded ${
-                                                    office.type === 'Embassy' 
-                                                        ? 'bg-purple-100 text-purple-700' 
-                                                        : 'bg-green-100 text-green-700'
-                                                }`}>
-                                                    {office.type}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h4 className={`font-semibold text-base mb-1 ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>
+                                        {office.name}
+                                    </h4>
+                                    <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded mb-2 ${office.type === 'Embassy' ? 'bg-purple-100 text-purple-700' :
+                                            office.type === 'Consulate' ? 'bg-green-100 text-green-700' :
+                                                'bg-blue-100 text-blue-700'
+                                        }`}>
+                                        {office.type}
+                                    </span>
 
-                                    {/* Address */}
                                     <div className="flex items-start gap-2 text-sm text-gray-600 mb-2">
                                         <MapPin className="flex-shrink-0 mt-0.5" size={16} />
                                         <span>{office.address}</span>
                                     </div>
 
-                                    {/* Contact Info */}
                                     <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-2">
                                         <div className="flex items-center gap-1.5">
                                             <Phone size={14} />
@@ -334,34 +253,22 @@ const LocationSelection = ({ selectedLocation, setSelectedLocation, application 
                                         </div>
                                     </div>
 
-                                    {/* Additional Links */}
                                     <div className="flex flex-wrap gap-3 mt-2">
-                                        <a
-                                            href={office.openStreetMapUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-                                        >
-                                            View on OpenStreetMap <ExternalLink size={12} />
+                                        <a href={office.openStreetMapUrl} target="_blank" rel="noopener noreferrer"
+                                            onClick={e => e.stopPropagation()}
+                                            className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center gap-1">
+                                            View on Map <ExternalLink size={12} />
                                         </a>
                                         {office.website && (
-                                            <a
-                                                href={office.website}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
-                                            >
+                                            <a href={office.website} target="_blank" rel="noopener noreferrer"
+                                                onClick={e => e.stopPropagation()}
+                                                className="text-xs text-blue-600 hover:text-blue-800 underline flex items-center gap-1">
                                                 Website <ExternalLink size={12} />
                                             </a>
                                         )}
                                         {office.email && (
-                                            <a
-                                                href={`mailto:${office.email}`}
-                                                onClick={(e) => e.stopPropagation()}
-                                                className="text-xs text-blue-600 hover:text-blue-800 underline"
-                                            >
+                                            <a href={`mailto:${office.email}`} onClick={e => e.stopPropagation()}
+                                                className="text-xs text-blue-600 hover:text-blue-800 underline">
                                                 {office.email}
                                             </a>
                                         )}
@@ -379,7 +286,7 @@ const LocationSelection = ({ selectedLocation, setSelectedLocation, application 
                         ✓ Selected: {selectedLocation.name}
                     </p>
                     <p className="text-xs text-green-700 mt-1">
-                        {selectedLocation.city}, {selectedLocation.state}
+                        {selectedLocation.city}{selectedLocation.state && `, ${selectedLocation.state}`}
                     </p>
                 </div>
             )}

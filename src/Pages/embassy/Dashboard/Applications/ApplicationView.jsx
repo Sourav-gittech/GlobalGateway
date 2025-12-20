@@ -13,6 +13,7 @@ import TimeLine from "../../../../Components/embassy/dashboard/application-view/
 import { useVisaDetails } from "../../../../tanstack/query/getSpecificVisaDetails";
 import { useFulfilledApplicationByUser } from "../../../../tanstack/query/getUserTravelHistory";
 import { fetchFullApplicationDetailsById } from "../../../../tanstack/query/getFullApplicationDetails";
+import { useSelector } from "react-redux";
 
 export default function ApplicationView() {
   const { application_id } = useParams();
@@ -25,6 +26,9 @@ export default function ApplicationView() {
   const [selectedTime, setSelectedTime] = useState("");
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [appointmentSet, setAppointmentSet] = useState(false);
+
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
 
   const {
     data: rawApplication,
@@ -51,13 +55,16 @@ export default function ApplicationView() {
       visaDetails?.country_name ||
       visaDetails?.country?.name ||
       visaDetails?.country ||
-      null;
+      embassyData?.country_name || null;
 
     return {
       ...rawApplication,
-      destinationCountry, // ✅ LocationSelection now works
+      destinationCountry,
     };
   }, [rawApplication, visaDetails]);
+
+  // console.log('User data', userAuthData);
+  // console.log('Embassy data', embassyData);
 
   if (applicationLoading) {
     return (
@@ -116,6 +123,7 @@ export default function ApplicationView() {
           <AppointmentModal
             application={application}
             visaDetails={visaDetails}
+            currentCountry = {embassyData?.country_name}
             setShowAppointmentModal={setShowAppointmentModal}
             setAppointmentSet={setAppointmentSet}
             setSelectedDate={setSelectedDate}
