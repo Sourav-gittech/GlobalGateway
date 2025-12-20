@@ -12,6 +12,7 @@ import userProfileSliceReducer from '../Slice/userSlice';
 import activitySliceReducer from '../Slice/activitySlice';
 import adminProfileSliceReducer from '../Slice/adminSlice';
 import embassySliceReducer from '../Slice/embassySlice';
+import holidaysSliceReducer from '../Slice/holidaySlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +27,8 @@ export const store = configureStore({
     transaction: transactionSliceReducer,
     contact: contactSliceReducer,
     activity: activitySliceReducer,
-    embassy: embassySliceReducer
+    embassy: embassySliceReducer,
+    holiday: holidaysSliceReducer,
   }
 });
 
