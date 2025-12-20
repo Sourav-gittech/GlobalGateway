@@ -32,6 +32,7 @@ import { getMonthlyChange } from "../../../util/embassy-stats/calcMonthlyChange"
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState(null);
 
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
@@ -61,15 +62,59 @@ export default function Profile() {
 
   const [editedData, setEditedData] = useState({ ...profileData });
 
-  const handleSave = () => {
-    setProfileData({ ...editedData });
-    setIsEditing(false);
-    // TODO: Add API call to save data
+  const handleSave = async () => {
+    try {
+      // If a cover photo was selected, upload it to Supabase
+      if (coverPhoto) {
+        // TODO: Implement Supabase upload
+        // Example:
+        // const { data, error } = await supabase.storage
+        //   .from('cover-photos')
+        //   .upload(`${userId}/${Date.now()}-${coverPhoto.file.name}`, coverPhoto.file);
+        // 
+        // if (error) throw error;
+        // const coverUrl = data.path; // Save this URL to your profile
+        
+        console.log('Uploading cover photo to Supabase:', coverPhoto.file);
+      }
+      
+      setProfileData({ ...editedData });
+      setIsEditing(false);
+      // TODO: Add API call to save data
+    } catch (error) {
+      console.error('Error saving:', error);
+      alert('Failed to save changes');
+    }
   };
 
   const handleCancel = () => {
     setIsEditing(false);
     setEditedData({ ...profileData });
+    setCoverPhoto(null); // Reset cover photo on cancel
+  };
+
+  const handleCoverPhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      // Create a local URL for preview
+      const imageUrl = URL.createObjectURL(file);
+      setCoverPhoto({ file, preview: imageUrl });
+      
+      // TODO: Upload to Supabase bucket when handleSave is called
+      console.log('Cover photo selected:', file.name);
+    }
   };
 
   const handleChange = (field, value) => {
@@ -143,24 +188,44 @@ export default function Profile() {
       <div className="relative w-full bg-gray-40">
         {/* Cover Photo - Smaller height */}
         <div className="relative h-48 sm:h-56 md:h-54 -mt-7 w-full overflow-hidden bg-gradient-to-r from-cyan-600 to-blue-500">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              backgroundSize: '30px 30px'
-            }}></div>
-          </div>
+          {coverPhoto ? (
+            // Display uploaded image preview
+            <img 
+              src={coverPhoto.preview} 
+              alt="Cover" 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            // Default pattern background
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                backgroundSize: '30px 30px'
+              }}></div>
+            </div>
+          )}
 
           {/* Edit Cover Button */}
           {isEditing && (
-            <button
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 backdrop-blur-xl border border-gray-300 text-white
+            <>
+              <input
+                type="file"
+                id="coverPhotoInput"
+                accept="image/*"
+                className="hidden"
+                onChange={handleCoverPhotoChange}
+              />
+              <button
+                onClick={() => document.getElementById('coverPhotoInput').click()}
+                className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 backdrop-blur-xl border border-gray-300 text-white
     hover:bg-white/30 transition-all duration-300 ease-out active:scale-95"
-            >
-              <Camera size={18} className="opacity-90" />
-              <span className="hidden sm:inline text-sm font-medium">
-                Change Cover
-              </span>
-            </button>
+              >
+                <Camera size={18} className="opacity-90" />
+                <span className="hidden sm:inline text-sm font-medium">
+                  Change Cover
+                </span>
+              </button>
+            </>
           )}
 
           {/* Action Buttons */}

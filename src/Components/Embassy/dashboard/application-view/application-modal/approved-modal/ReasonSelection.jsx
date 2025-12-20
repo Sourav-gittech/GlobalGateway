@@ -24,9 +24,9 @@ const ReasonSelection = ({ selectedReasons, setSelectedReasons }) => {
             description: 'Face-to-face interview with visa officer'
         },
         {
-            id: 'additional_information',
-            label: 'Additional Information',
-            description: 'Provide clarification or additional details'
+            id: 'supporting_evidence_evaluation',
+            label: 'Supporting Evidence Evaluation',
+            description: 'Provide clarification of submitted supporting evidence'
         },
         {
             id: 'medical_examination',

@@ -309,8 +309,8 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
             <div className="rounded-xl p-6 border border-gray-200 bg-white">
                 <div className="flex items-center justify-center gap-3 py-8">
                     <Loader2 className="text-blue-600 animate-spin" size={24} />
-                    <p className="text-gray-600">Searching for {destinationCountry} embassies in {userCountry}...</p>
-                    <p className="text-xs text-gray-500 mt-2">This may take a few moments...</p>
+                    <p className="text-gray-600">Searching for {destinationCountry} embassies in {userCountry}</p>
+                   
                 </div>
             </div>
         );
