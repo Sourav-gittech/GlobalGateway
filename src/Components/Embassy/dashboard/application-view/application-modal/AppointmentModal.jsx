@@ -12,7 +12,7 @@ import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { buildISOFormat } from '../../../../../util/dateFormat/dateFormatConvertion';
 import hotToast from '../../../../../util/alert/hot-toast';
 
-const AppointmentModal = ({ application, setShowAppointmentModal, setSelectedDate, setAppointmentSet, setSelectedTime, selectedDate, selectedTime, currentMonth, setCurrentMonth }) => {
+const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, setSelectedDate, setAppointmentSet, setSelectedTime, selectedDate, selectedTime, currentMonth, setCurrentMonth }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const [appointmentDetails, setAppointmentDetails] = useState(null);
@@ -119,6 +119,7 @@ const AppointmentModal = ({ application, setShowAppointmentModal, setSelectedDat
                         selectedLocation={selectedLocation}
                         setSelectedLocation={setSelectedLocation}
                         application={application}
+                        visaDetails={visaDetails}
                     />
                 </div>
 

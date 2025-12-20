@@ -32,10 +32,7 @@ const PersonalInfo = ({ application }) => {
                         <label className="text-sm text-gray-600">Nationality</label>
                         <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.nationality??'N/A'}</p>
                     </div>
-                    {/* <div>
-                        <label className="text-sm text-gray-600">Marital Status</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.maritalStatus??'N/A'}</p>
-                    </div> */}
+                    
                 </div>
             </div>
 
