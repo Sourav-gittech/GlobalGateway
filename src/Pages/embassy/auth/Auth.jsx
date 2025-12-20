@@ -160,9 +160,17 @@ const EmbassyAuth = () => {
 
         {/* RIGHT FORM SECTION */}
         <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-12 py-8 flex flex-col justify-center">
-          <h4 className="text-3xl font-bold mb-2">
-            {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
-          </h4>
+          <h4
+  className="
+    font-bold mb-5
+    text-xl sm:text-2xl md:text-3xl
+    ml-0 sm:ml-6 md:ml-30
+    text-center sm:text-left
+  "
+>
+  {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
+</h4>
+
 
           <form
             onSubmit={handleSubmit(onSubmit)}
