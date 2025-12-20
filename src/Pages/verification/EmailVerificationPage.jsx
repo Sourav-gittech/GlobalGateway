@@ -18,7 +18,7 @@ export default function EmailVerificationPage() {
 
   const { data: userId } = useGetIdByEmail(email, user_type);
 
-  console.log('Verifying user details', email, user_type, userId);
+  // console.log('Verifying user details', email, user_type, userId);
 
   useEffect(() => {
     const verifyMagicLink = async () => {

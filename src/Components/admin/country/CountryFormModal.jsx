@@ -128,7 +128,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
                 // console.log('Response for adding or updating country', res);
 
                 if (res?.meta?.requestStatus == "fulfilled") {
-                    hotToast(`Country ${country ? 'updated' : 'added'} successfully!`, "success")
+                    hotToast(`Country ${country ? 'updated' : 'added'} successfully!`, "success");
                     setShowSuccess(true);
                     reset();
                     setImageFile(null);

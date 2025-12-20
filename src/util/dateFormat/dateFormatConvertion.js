@@ -57,3 +57,10 @@ export const formatDateTimeMeridian = (dateString) => {
         hour12: true,
     });
 };
+
+// yyyy format 
+export const getYear = (dateString) => {
+    if (!dateString) return "N/A";
+
+    return new Date(dateString).getFullYear();
+}

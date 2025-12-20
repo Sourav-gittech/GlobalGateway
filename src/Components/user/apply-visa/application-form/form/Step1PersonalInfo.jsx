@@ -112,7 +112,10 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
       current_step: 1,
       is_completed: false,
       status: 'pending',
-      completed_steps: []
+      completed_steps: [],
+      rejection_reason: null,
+      appointment_date: null,
+      approval_date: null
     }
 
     const personalInfo_obj = {
