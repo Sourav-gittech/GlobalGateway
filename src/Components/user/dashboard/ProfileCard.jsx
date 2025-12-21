@@ -106,7 +106,7 @@ const ProfileCard = ({ userAuthData }) => {
                     </div>
 
                     <div className="flex-1 text-center md:text-left">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome, {userAuthData?.name.split(' ')[0]}!</h2>
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome, {userAuthData?.name.split(' ')[0] ?? 'User'}!</h2>
                         <div className="space-y-2">
                             {userAuthData?.email && (
                                 <div className="flex items-center justify-center md:justify-start gap-2 text-gray-600">
