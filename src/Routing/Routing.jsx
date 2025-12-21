@@ -62,6 +62,7 @@ import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/Appl
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404.jsx";
 import Approved from "../Pages/embassy/status/Approved.jsx";
+import ContactSetup from "../Pages/embassy/ContactSetup.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -136,6 +137,7 @@ const Routing = () => {
 
           {/* ================= EMBASSY AUTH (No Layout) ================= */}
           <Route path="/embassy/auth" element={<EmbassyAuth />} />
+           <Route path="/embassy/contact-setup" element={<ContactSetup />} />
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
           <Route path="/embassy/reject" element={<Rejected />} />
