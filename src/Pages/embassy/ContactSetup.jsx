@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 const ContactSetup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm({
     defaultValues: {
       email: "",
       phone: "",
@@ -15,6 +15,38 @@ const ContactSetup = () => {
       workingHoursTo: ""
     }
   });
+
+  const workingHoursFrom = watch("workingHoursFrom");
+
+  // Generate time slots with 30-minute intervals
+  const timeSlots = useMemo(() => {
+    const slots = [];
+    const interval = 30;
+    const startHour = 10; // 10 AM
+    const endHour = 17; // 5 PM
+    
+    for (let hour = startHour; hour <= endHour; hour++) {
+      for (let minute = 0; minute < 60; minute += interval) {
+        if (hour === endHour && minute > 0) break; // Stop at 5:00 PM
+        
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour > 12 ? hour - 12 : hour;
+        const displayMinute = minute.toString().padStart(2, '0');
+        const value = `${hour.toString().padStart(2, '0')}:${displayMinute}`;
+        const label = `${displayHour}:${displayMinute} ${period}`;
+        
+        slots.push({ value, label });
+      }
+    }
+    
+    return slots;
+  }, []);
+
+  // Filter end time slots to only show times after start time
+  const availableEndTimeSlots = useMemo(() => {
+    if (!workingHoursFrom) return timeSlots;
+    return timeSlots.filter(slot => slot.value > workingHoursFrom);
+  }, [workingHoursFrom, timeSlots]);
 
   const handleContactSubmit = (data) => {
     setIsSubmitting(true);
@@ -187,29 +219,74 @@ const ContactSetup = () => {
             {/* WORKING HOURS */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">
-                Working Hours
+                Working Hours <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <input
-                    type="time"
-                    {...register("workingHoursFrom")}
+                  <select
+                    {...register("workingHoursFrom", {
+                      required: "Start time is required"
+                    })}
                     className="w-full px-4 py-2.5 rounded-md bg-white/10 text-white
                     border border-white/30 focus:border-white transition duration-300
-                    focus:outline-none focus:ring-2 focus:ring-white/20"
-                  />
+                    focus:outline-none focus:ring-2 focus:ring-white/20 appearance-none cursor-pointer"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem',
+                      colorScheme: 'dark'
+                    }}
+                  >
+                    <option value="" style={{ backgroundColor: '#1a1a1a', color: 'white' }}>Select start time</option>
+                    {timeSlots.map((slot) => (
+                      <option key={`from-${slot.value}`} value={slot.value} style={{ backgroundColor: '#1a1a1a', color: 'white' }}>
+                        {slot.label}
+                      </option>
+                    ))}
+                  </select>
                   <p className="text-xs text-white/60 mt-1">From</p>
+                  {errors.workingHoursFrom && (
+                    <p className="text-red-400 text-xs mt-1">{errors.workingHoursFrom.message}</p>
+                  )}
                 </div>
 
                 <div>
-                  <input
-                    type="time"
-                    {...register("workingHoursTo")}
+                  <select
+                    {...register("workingHoursTo", {
+                      required: "End time is required",
+                      validate: (value, formValues) => {
+                        if (!formValues.workingHoursFrom || !value) return true;
+                        return value > formValues.workingHoursFrom || "End time must be after start time";
+                      }
+                    })}
                     className="w-full px-4 py-2.5 rounded-md bg-white/10 text-white
                     border border-white/30 focus:border-white transition duration-300
-                    focus:outline-none focus:ring-2 focus:ring-white/20"
-                  />
+                    focus:outline-none focus:ring-2 focus:ring-white/20 appearance-none cursor-pointer"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem',
+                      colorScheme: 'dark'
+                    }}
+                    disabled={!workingHoursFrom}
+                  >
+                    <option value="" style={{ backgroundColor: '#1a1a1a', color: 'white' }}>
+                      {workingHoursFrom ? 'Select end time' : 'Select start time first'}
+                    </option>
+                    {availableEndTimeSlots.map((slot) => (
+                      <option key={`to-${slot.value}`} value={slot.value} style={{ backgroundColor: '#1a1a1a', color: 'white' }}>
+                        {slot.label}
+                      </option>
+                    ))}
+                  </select>
                   <p className="text-xs text-white/60 mt-1">To</p>
+                  {errors.workingHoursTo && (
+                    <p className="text-red-400 text-xs mt-1">{errors.workingHoursTo.message}</p>
+                  )}
                 </div>
               </div>
             </div>
