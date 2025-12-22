@@ -18,14 +18,7 @@ const EmbassyAuth = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
     mode: "onTouched",
     defaultValues: {
       email: "",
@@ -87,36 +80,51 @@ const EmbassyAuth = () => {
         .catch(() => {
           getSweetAlert("Oops...", "Something went wrong!", "error");
         });
-    } else {
+    }
+    else {
       auth_obj = {
         email: data.email,
         password: data.password,
         role: "embassy",
       };
+      // console.log('auth', auth_obj);
 
       dispatch(loginUser(auth_obj))
         .then((res) => {
-          if (res.meta.requestStatus === "fulfilled") {
-            dispatch(
-              updateLastSignInAt({
-                id: res?.payload?.user?.id,
-                user_type: "embassy",
-              })
-            ).then((res) => {
-              sessionStorage.setItem("embassy_token", res.payload.accessToken);
+          // console.log('Response for logged in', res);
 
-              if (!res?.payload?.[0]?.is_country_available) {
-                navigate("/embassy/country-setup");
-              } else if (res?.payload?.[0]?.is_approved === "pending") {
-                navigate("/embassy/review");
-              } else if (res?.payload?.[0]?.is_approved === "rejected") {
-                navigate("/embassy/reject");
-              } else {
-                toastifyAlert.success('Logged in Successfully');
-                navigate("/embassy/dashboard");
-              }
-            });
-          } else {
+          if (res.meta.requestStatus === "fulfilled") {
+            sessionStorage.setItem("embassy_token", res.payload.accessToken);
+
+            if (!res?.payload?.user?.is_country_available) {
+              navigate("/embassy/country-setup");
+            } else if (res?.payload?.user?.is_approved === "pending") {
+              navigate("/embassy/review");
+            } else if (res?.payload?.user?.is_approved === "rejected") {
+              navigate("/embassy/reject");
+            } else if (res?.payload?.user?.last_sign_in_at == null) {
+              navigate("/embassy/approved");
+            } else {
+              dispatch(
+                updateLastSignInAt({
+                  id: res?.payload?.user?.id,
+                  user_type: "embassy",
+                })
+              ).then((res) => {
+                if (res.meta.requestStatus === "fulfilled") {
+                  toastifyAlert.success('Logged in Successfully');
+                  navigate("/embassy/dashboard");
+                }
+                else {
+                  getSweetAlert("Oops...", res.payload, "info");
+                }
+              })
+                .catch(() => {
+                  getSweetAlert("Oops...", "Something went wrong!", "error");
+                })
+            }
+          }
+          else {
             getSweetAlert("Oops...", res.payload, "info");
           }
         })
@@ -161,15 +169,15 @@ const EmbassyAuth = () => {
         {/* RIGHT FORM SECTION */}
         <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-12 py-8 flex flex-col justify-center">
           <h4
-  className="
+            className="
     font-bold mb-5
     text-xl sm:text-2xl md:text-3xl
     ml-0 sm:ml-6 md:ml-30
     text-center sm:text-left
   "
->
-  {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
-</h4>
+          >
+            {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
+          </h4>
 
 
           <form

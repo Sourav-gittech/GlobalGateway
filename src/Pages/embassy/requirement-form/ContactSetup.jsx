@@ -1,12 +1,22 @@
 import React, { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { decodeBase64Url } from "../../../util/encodeDecode/base64";
+import { useDispatch } from "react-redux";
+import { updateEmbassyByEmail } from "../../../Redux/Slice/embassySlice";
+import getSweetAlert from "../../../util/alert/sweetAlert";
+import hotToast from "../../../util/alert/hot-toast";
 
 const ContactSetup = () => {
+  const { embassyEmail } = useParams();
+  const emailId = decodeBase64Url(embassyEmail);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm({
     defaultValues: {
-      email: "",
       phone: "",
       physicalAddress: "",
       website: "",
@@ -18,29 +28,24 @@ const ContactSetup = () => {
 
   const workingHoursFrom = watch("workingHoursFrom");
 
-  // Generate time slots with 30-minute intervals
   const timeSlots = useMemo(() => {
     const slots = [];
-    const interval = 30;
     const startHour = 10; // 10 AM
-    const endHour = 17; // 5 PM
-    
+    const endHour = 17;   // 5 PM
+
     for (let hour = startHour; hour <= endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += interval) {
-        if (hour === endHour && minute > 0) break; // Stop at 5:00 PM
-        
-        const period = hour >= 12 ? 'PM' : 'AM';
-        const displayHour = hour > 12 ? hour - 12 : hour;
-        const displayMinute = minute.toString().padStart(2, '0');
-        const value = `${hour.toString().padStart(2, '0')}:${displayMinute}`;
-        const label = `${displayHour}:${displayMinute} ${period}`;
-        
-        slots.push({ value, label });
-      }
+      const period = hour >= 12 ? "PM" : "AM";
+      const displayHour = hour > 12 ? hour - 12 : hour;
+
+      const value = `${hour.toString().padStart(2, "0")}:00`;
+      const label = `${displayHour}:00 ${period}`;
+
+      slots.push({ value, label });
     }
-    
+
     return slots;
   }, []);
+
 
   // Filter end time slots to only show times after start time
   const availableEndTimeSlots = useMemo(() => {
@@ -50,13 +55,35 @@ const ContactSetup = () => {
 
   const handleContactSubmit = (data) => {
     setIsSubmitting(true);
-    console.log("Form Data:", data);
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
-      alert("Contact information submitted successfully!");
-    }, 2000);
-  };
+    // console.log("Additional embassy Data:", data);
+
+    const updateData = {
+      address: data?.physicalAddress,
+      contact_no: data?.phone,
+      website_url: data?.website,
+      establish_date: data?.establishedDate,
+      starting_hours: data?.workingHoursFrom,
+      ending_hours: data?.workingHoursTo
+    }
+
+    dispatch(updateEmbassyByEmail({ email: emailId, updateData }))
+      .then(res => {
+        // console.log('Response for adding additional data', res);
+
+        if (res.meta.requestStatus === "fulfilled") {
+          navigate("/embassy/auth");
+          hotToast('Profile created successfully', "success");
+          reset();
+        }
+        else {
+          getSweetAlert('Oops...', 'Something went wrong!', 'info');
+        }
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }
 
   return (
     <div
@@ -99,7 +126,7 @@ const ContactSetup = () => {
         </div>
 
         {/* RIGHT FORM (ALL DEVICES) */}
-        <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-6 sm:px-8 md:px-12 py-6 md:py-8 flex flex-col overflow-y-auto">
+        <form onSubmit={handleSubmit(handleContactSubmit)} className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-6 sm:px-8 md:px-12 py-6 md:py-8 flex flex-col overflow-y-auto glass-scrollbar" noValidate>
 
           <div className="mb-6 text-center">
             <h4 className="text-2xl sm:text-3xl font-bold mb-2">
@@ -117,35 +144,26 @@ const ContactSetup = () => {
                 Email Address <span className="text-red-400">*</span>
               </label>
               <input
-                type="email"
-                {...register("email", {
-                  required: "Email address is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address"
-                  }
-                })}
-                placeholder="contact@embassy.com"
+                type="email" value={emailId}
+                placeholder="contact@embassy.com" readOnly
                 className="w-full px-4 py-2.5 rounded-md bg-white/10 text-white placeholder-white/50
                 border border-white/30 focus:border-white transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-white/20"
+                focus:outline-none focus:ring-2 focus:ring-white/20 disabled cursor-not-allowed"
               />
-              {errors.email && (
-                <p className="text-red-400 text-xs mt-1.5">{errors.email.message}</p>
-              )}
             </div>
 
             {/* PHONE NUMBER */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">
-                Phone Number
+                Contact Number
               </label>
               <input
                 type="tel"
                 {...register("phone", {
+                  required: "Contact number is required",
                   pattern: {
-                    value: /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
-                    message: "Invalid phone number format"
+                    value: /^[6-9]\d{9}$/,
+                    message: "Enter a valid contact number"
                   }
                 })}
                 placeholder="+1 (555) 123-4567"
@@ -165,7 +183,7 @@ const ContactSetup = () => {
               </label>
               <textarea
                 rows={2}
-                {...register("physicalAddress")}
+                {...register("physicalAddress", { required: "Address is required" })}
                 placeholder="123 Embassy Street, City, Country"
                 className="w-full px-4 py-2.5 rounded-md bg-white/10 text-white placeholder-white/50
                 border border-white/30 focus:border-white transition duration-300
@@ -182,8 +200,9 @@ const ContactSetup = () => {
                 Official Website
               </label>
               <input
-                type="url"
+                type="url" inputMode="url"
                 {...register("website", {
+                  required: "Website is required",
                   pattern: {
                     value: /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
                     message: "Invalid website URL"
@@ -204,12 +223,31 @@ const ContactSetup = () => {
               <label className="block text-sm font-medium text-white mb-2">
                 Established Date
               </label>
-              <input
-                type="date"
-                {...register("establishedDate")}
+              <input type="date"
+                max={new Date().toISOString().split("T")[0]}
+                {...register("establishedDate", {
+                  required: "Established date is required",
+                  validate: (value) => {
+                    // Enforce 4-digit year
+                    const year = value?.split("-")[0];
+                    if (!year || year.length !== 4) {
+                      return "Year must be 4 digits";
+                    }
+
+                    // Prevent future date (extra safety)
+                    const selected = new Date(value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (selected > today) {
+                      return "Established date cannot be in the future";
+                    }
+                    return true;
+                  },
+                })}
                 className="w-full px-4 py-2.5 rounded-md bg-white/10 text-white
-                border border-white/30 focus:border-white transition duration-300
-                focus:outline-none focus:ring-2 focus:ring-white/20"
+                    border border-white/30 focus:border-white transition duration-300
+                    focus:outline-none focus:ring-2 focus:ring-white/20"
               />
               {errors.establishedDate && (
                 <p className="text-red-400 text-xs mt-1.5">{errors.establishedDate.message}</p>
@@ -292,15 +330,14 @@ const ContactSetup = () => {
             </div>
           </div>
 
-          <button 
-            type="button"
-            onClick={handleSubmit(handleContactSubmit)}
+          <button
+            type="submit"
             disabled={isSubmitting}
             className={`w-full py-3 mt-6 rounded-md font-semibold text-white bg-black hover:bg-black/80 transition duration-300 ${isSubmitting ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
           >
             {isSubmitting ? 'Processing...' : 'Continue'}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

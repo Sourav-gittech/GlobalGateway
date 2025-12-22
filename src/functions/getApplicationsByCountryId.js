@@ -5,7 +5,7 @@ export const getApplicationsByCountryId = async ({ countryId, applicationStatus 
 
     let statuses = [];
     if (applicationStatus === "all") {
-        statuses = ["processing", "fulfilled", "rejected"];
+        statuses = ["processing", "approved", "rejected"];
     } else if (Array.isArray(applicationStatus)) {
         statuses = applicationStatus;
     } else {

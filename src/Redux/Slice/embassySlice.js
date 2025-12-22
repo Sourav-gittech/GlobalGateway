@@ -62,6 +62,31 @@ export const updateEmbassyById = createAsyncThunk("embassySlice/updateEmbassyByI
     }
 )
 
+// update embassy details via email
+export const updateEmbassyByEmail = createAsyncThunk("embassySlice/updateEmbassyByEmail",
+    async ({ email, updateData }, { rejectWithValue }) => {
+        // console.log('Received data for add embassy additional details', email, updateData);
+
+        try {
+            if (!email) { return rejectWithValue("Embassy email is required"); }
+
+            const res = await supabase.from("embassy").update({
+                ...updateData,
+                updated_at: new Date().toISOString(),
+            }).eq("email", email).select().single();
+            // console.log('Response for adding embassy additional details', res);
+
+            if (res?.error) {
+                return rejectWithValue(res?.error.message);
+            }
+
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
 
 const initialState = {
     embassyData: null,
@@ -72,7 +97,12 @@ const initialState = {
 export const embassySlice = createSlice({
     name: "embassySlice",
     initialState,
-    reducers: {},
+    reducers: {
+        clearEmbassies: (state) => {
+            state.embassyData = [];
+            state.hasEmbassyerror = null;
+        }
+    },
     extraReducers: (builder) => {
         builder
 
@@ -111,6 +141,19 @@ export const embassySlice = createSlice({
                 state.embassyData = action.payload;
             })
             .addCase(updateEmbassyById.rejected, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.hasEmbassyerror = action.payload;
+            })
+
+            // adding embassy additional details
+            .addCase(updateEmbassyByEmail.pending, (state) => {
+                state.isEmbassyLoading = true;
+            })
+            .addCase(updateEmbassyByEmail.fulfilled, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.embassyData = action.payload;
+            })
+            .addCase(updateEmbassyByEmail.rejected, (state, action) => {
                 state.isEmbassyLoading = false;
                 state.hasEmbassyerror = action.payload;
             })

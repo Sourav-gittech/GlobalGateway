@@ -1,7 +1,10 @@
 import React from 'react'
 import { ArrowRight, Filter } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const RecentApplicationHeader = () => {
+    const navigate = useNavigate();
+    
     return (
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
             <h2 className="text-lg font-semibold text-gray-900">Recent Applications</h2>

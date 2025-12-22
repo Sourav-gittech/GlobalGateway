@@ -25,7 +25,7 @@ export default function EmbassyDashboard() {
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
   const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
   const { data: allTypeApplications, isLoading: isAllTypeApplicationLoading, error: allTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'all');
-  const { data: fulfilledTypeApplications, isLoading: isFulfilledTypeApplicationLoading, error: fulfilledTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'fulfilled');
+  const { data: fulfilledTypeApplications, isLoading: isFulfilledTypeApplicationLoading, error: fulfilledTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'approved');
   const { data: processingTypeApplications, isLoading: isProcessingTypeApplicationLoading, error: processingTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'processing');
   const { allApplications, isApplicationLoading: isAllApplicationLoading, isApplicationError: allApplicationLsError } = useSelector(state => state.application);
 
@@ -35,7 +35,7 @@ export default function EmbassyDashboard() {
   const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
 
   useEffect(() => {
-    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'processing' }))
+    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'all' }))
       .then(res => {
         // console.log('Response for fetching all applications', res);
       })

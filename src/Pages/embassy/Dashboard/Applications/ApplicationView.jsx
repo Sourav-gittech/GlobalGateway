@@ -43,11 +43,6 @@ export default function ApplicationView() {
   const { data: travelHistoryDetails } =
     useFulfilledApplicationByUser(rawApplication?.user_id, "fulfilled");
 
-  /**
-   *  FINAL PRODUCTION FIX
-   * Inject destinationCountry from visaDetails
-   * (NO UI CHANGE, NO BREAKING CHANGE)
-   */
   const application = useMemo(() => {
     if (!rawApplication) return null;
 
@@ -132,6 +127,7 @@ export default function ApplicationView() {
             selectedTime={selectedTime}
             setCurrentMonth={setCurrentMonth}
             currentMonth={currentMonth}
+            embassyId={embassyData?.id}
           />
         </div>
       )}

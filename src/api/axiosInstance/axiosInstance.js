@@ -1,11 +1,17 @@
 import axios from "axios";
-import baseUrl from "../api_url/apiUrl";
+import baseUrl_country, { baseUrl_embassy } from "../api_url/apiUrl";
 
-const axiosInstance = axios.create({
-    baseURL: baseUrl,
-     headers: {
+const axiosInstance_country = axios.create({
+    baseURL: baseUrl_country,
+    headers: {
         "Content-Type": "application/json",
     },
 })
 
-export default axiosInstance;
+const axiosInstance_embassy = axios.create({
+    baseURL: baseUrl_embassy,
+    timeout: 5000,
+});
+
+export default axiosInstance_country;
+export { axiosInstance_embassy };

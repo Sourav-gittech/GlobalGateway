@@ -53,7 +53,7 @@ const FooterPart = ({
                             setSelectedDate(null);
                             setSelectedTime("");
                         }}
-                        className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                     >
                         Clear
                     </button>
@@ -61,7 +61,7 @@ const FooterPart = ({
                         onClick={handleSetAppointment}
                         disabled={!isValid}
                         className={`
-                            px-6 py-2 rounded-lg font-medium transition-all
+                            px-6 py-2 rounded-lg font-medium transition-all cursor-pointer
                             ${isValid
                                 ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'

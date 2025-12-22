@@ -70,12 +70,12 @@ const RejectModal = ({ application, setShowRejectModal }) => {
                 <div className="flex gap-3">
                     <button
                         onClick={() => setShowRejectModal(false)}
-                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                     >
                         Cancel
                     </button>
                     <button disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
                     >
                         Reject Application
                     </button>

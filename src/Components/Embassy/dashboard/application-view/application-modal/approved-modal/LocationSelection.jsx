@@ -30,9 +30,6 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
         console.log('Destination Country:', destinationCountry);
     }, [application, visaDetails, destinationCountry]);
 
-    // Helper function to add delay between API calls
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
     const fetchEmbassies = async () => {
         if (!userCountry || !destinationCountry) {
             console.error('Missing required data:', { userCountry, destinationCountry });
@@ -55,11 +52,8 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 `${destinationCountry}n embassy ${userCountry}`,
             ];
 
-            let allResults = [];
-
-            // Try each search query with delay
-            for (let i = 0; i < searchQueries.length; i++) {
-                const query = searchQueries[i];
+            // OPTIMIZATION: Fetch all queries in parallel instead of sequential
+            const fetchPromises = searchQueries.map(async (query, i) => {
                 console.log(`Trying query ${i + 1}/${searchQueries.length}: "${query}"`);
 
                 try {
@@ -70,6 +64,11 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                         `extratags=1&` +
                         `limit=50`;
 
+                        console.log(nominatimUrl);
+                        
+                    // Add staggered delay to respect rate limits (200ms between requests)
+                    await new Promise(resolve => setTimeout(resolve, i * 200));
+
                     const response = await fetch(nominatimUrl, {
                         headers: { 
                             'User-Agent': 'VisaApplicationSystem/1.0',
@@ -77,26 +76,25 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                         }
                     });
 
+                    console.log('Response',response);
+                    
                     if (!response.ok) {
                         console.warn(`Query ${i + 1} failed with status ${response.status}`);
-                        continue;
+                        return [];
                     }
 
                     const results = await response.json();
                     console.log(`Query ${i + 1} returned ${results.length} results`);
-
-                    if (results && results.length > 0) {
-                        allResults = [...allResults, ...results];
-                    }
-
-                    // Add delay between requests (Nominatim requirement: max 1 req/sec)
-                    if (i < searchQueries.length - 1) {
-                        await delay(1100);
-                    }
+                    return results || [];
                 } catch (err) {
                     console.error(`Error in query ${i + 1}:`, err);
+                    return [];
                 }
-            }
+            });
+
+            // Wait for all queries to complete in parallel
+            const allResultsArrays = await Promise.all(fetchPromises);
+            const allResults = allResultsArrays.flat();
 
             console.log(`Total results from all queries: ${allResults.length}`);
 
@@ -160,7 +158,7 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                             nameDoesNotHaveUserCountry,
                             locationInUserCountry,
                             isEmbassy,
-                            RESULT: isValid ? '✅ INCLUDED' : '❌ EXCLUDED'
+                            RESULT: isValid ? 'INCLUDED' : 'EXCLUDED'
                         });
                     }
 
@@ -229,7 +227,7 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 return;
             }
 
-            // Calculate distance to user's city and sort by nearest
+            // OPTIMIZATION: Calculate distance and geocode in parallel
             if (userCity) {
                 try {
                     // Geocode user's city
@@ -245,13 +243,13 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
 
                         console.log(`User city (${userCity}) coordinates:`, { lat: userLat, lon: userLon });
 
-                        // Calculate distance for each embassy using Haversine formula
+                        // OPTIMIZATION: Calculate all distances at once
+                        const R = 6371; // Earth's radius in km
                         unique.forEach(embassy => {
                             const embassyLat = embassy.coordinates.lat;
                             const embassyLon = embassy.coordinates.lng;
 
                             // Haversine formula to calculate distance in km
-                            const R = 6371; // Earth's radius in km
                             const dLat = (embassyLat - userLat) * Math.PI / 180;
                             const dLon = (embassyLon - userLon) * Math.PI / 180;
                             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +

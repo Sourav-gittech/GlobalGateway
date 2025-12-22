@@ -47,7 +47,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                         {!application?.appointment_date && application.status === "processing" && (
                             <button
                                 onClick={() => setShowRejectModal(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-sm hover:shadow"
+                                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-sm hover:shadow cursor-pointer"
                             >
                                 <XCircle size={18} />
                                 Reject
@@ -55,7 +55,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                         )}
                         <button
                             onClick={() => setShowAppointmentModal(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-cyan-700 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium shadow-sm hover:shadow"
+                            className="flex items-center gap-2 px-4 py-2 bg-cyan-700 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium shadow-sm hover:shadow cursor-pointer"
                         >
                             <Calendar size={18} />
                             {!application?.appointment_date ? 'Set' : 'Change'} Appointment

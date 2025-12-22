@@ -38,14 +38,18 @@ const AuthForm = () => {
           // console.log('Response for login', res);
 
           if (res.meta.requestStatus === "fulfilled") {
+            sessionStorage.setItem('user_token', res.payload.accessToken);
 
             dispatch(updateLastSignInAt({ id: res?.payload?.user?.id, user_type: 'user' }))
               .then(res => {
-                // console.log('Response for  update login time', res);
-
-                toastifyAlert.success('Logged In Successfully');
-                sessionStorage.setItem('user_token', res.payload.accessToken);
-                navigate('/dashboard');
+                // console.log('Response for update login time', res);
+                if (res.meta.requestStatus === "fulfilled") {
+                  toastifyAlert.success('Logged In Successfully');
+                  navigate('/dashboard');
+                }
+                else {
+                  getSweetAlert('Oops...', res.payload, 'info');
+                }
               })
               .catch(err => {
                 console.log('Error occured', err);

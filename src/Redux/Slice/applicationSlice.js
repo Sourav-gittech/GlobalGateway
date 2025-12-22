@@ -391,7 +391,7 @@ export const fetchApplicationsByCountry = createAsyncThunk("applicationSlice/fet
       let statuses = [];
 
       if (statusFilter === "all") {
-        statuses = ["processing", "fulfilled", "rejected"];
+        statuses = ["processing", "approved", "rejected"];
       } else {
         statuses = [statusFilter];
       }

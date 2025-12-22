@@ -6,7 +6,7 @@ import { fetchCountryDetails } from "../../../functions/fetchCountryDetails";
 // register slice 
 export const registerUser = createAsyncThunk("authSlice/registerUser",
   async (data, { rejectWithValue, dispatch }) => {
-    // console.log('Received register data', data);
+    console.log('Received register data', data);
 
     try {
       let apiData = {};
@@ -43,7 +43,7 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
       let fileName = null, publicUrl = null;
       let insertData = null, insertError = null;
 
-      // insert into bucket
+      // insert pic for user 
       if (data.role == 'user') {
         const file = data.avatar[0];
         fileName = `${userId}_${Date.now()}.${file.name.split(".").pop()}`;
@@ -61,9 +61,9 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
 
       if (data.role === "embassy") {
 
-        //upload doc
+        // upload doc for embassy
         const pdfFile = data.embassy_doc;
-        fileName = `${userId}_${Date.now()}.${pdfFile.name.split(".").pop()}`;
+        fileName = `verification_doc/${userId}_${Date.now()}.${pdfFile.name.split(".").pop()}`;
 
         const { error: pdfUploadError } = await supabase.storage.from("embassy")
           .upload(fileName, pdfFile, {
@@ -131,18 +131,21 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
 // login slice 
 export const loginUser = createAsyncThunk("authSlice/loginUser",
   async ({ email, password, role }, { rejectWithValue }) => {
+    // console.log('Received data for login', email, password, role);
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const authRes = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      // console.log('Response for login embassy', authRes);
 
-      if (error) return rejectWithValue(error.message);
+      if (authRes?.error) return rejectWithValue(authRes?.error.message);
 
-      const accessToken = data.session?.access_token;
-      const refreshToken = data.session?.refresh_token;
+      const accessToken = authRes?.data?.session?.access_token;
+      const refreshToken = authRes?.data?.session?.refresh_token;
 
-      const userId = data.user.id;
+      const userId = authRes?.data.user.id;
       let userData = null, userError = null;
 
       if (role === "embassy") {

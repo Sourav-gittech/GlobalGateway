@@ -81,13 +81,13 @@ const AdminLoginForm = () => {
         dispatch(loginUser(auth_obj)).unwrap()
             .then(res => {
                 // console.log('Response for login', res);
+                sessionStorage.setItem('admin_token', res.accessToken);
 
-                dispatch(updateLastSignInAt({id:res?.user?.id,user_type: 'admin' }))
+                dispatch(updateLastSignInAt({ id: res?.user?.id, user_type: 'admin' }))
                     .then(res => {
                         // console.log('Response for  update login time', res);
 
                         toastifyAlert.success('Admin Login Successful');
-                        sessionStorage.setItem('admin_token', res.accessToken);
                         navigate('/admin/dashboard');
                     })
                     .catch(err => {

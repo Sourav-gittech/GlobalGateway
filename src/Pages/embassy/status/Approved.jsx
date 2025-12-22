@@ -1,6 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { checkLoggedInUser } from "../../../Redux/Slice/auth/checkAuthSlice";
+import getSweetAlert from "../../../util/alert/sweetAlert";
+import { updateLastSignInAt } from "../../../Redux/Slice/userSlice";
+import { Link } from "react-router-dom";
 
 const Approved = () => {
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+
+  useEffect(() => {
+    dispatch(checkLoggedInUser())
+      .then((res) => {
+        console.log('Response for fetching embassy profile', res);
+      })
+      .catch((err) => {
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+        console.log("Error occurred", err);
+      });
+  }, [dispatch]);
+
+  useEffect(() => {
+
+    // Update last_sign_in_at ONCE
+    if (userAuthData?.id) {
+      dispatch(
+        updateLastSignInAt({
+          id: userAuthData.id,
+          user_type: "embassy",
+        })
+      );
+    }
+
+    // Redirect after 3.5 seconds
+    // const timer = setTimeout(() => {
+    //   navigate("/embassy/dashboard", { replace: true });
+    // }, 3500);
+
+    // return () => clearTimeout(timer);
+  }, [dispatch, navigate, userAuthData?.id]);
+
+  // console.log('User data', userAuthData);
+
   return (
     <div
       className="min-h-screen flex justify-center items-center px-4 py-8"
@@ -67,12 +112,12 @@ const Approved = () => {
             applications and appointments.
           </p>
 
-          <button
+          <Link to='/embassy/dashboard'
             className="mt-4 px-6 py-3 rounded-md bg-black hover:bg-black/80
             transition font-semibold"
           >
             Go to Dashboard
-          </button>
+          </Link>
         </div>
       </div>
     </div>

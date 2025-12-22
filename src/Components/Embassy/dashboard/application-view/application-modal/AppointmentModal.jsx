@@ -1,23 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react';
 import CalenderPart from './approved-modal/CalenderPart';
 import ClockPart from './approved-modal/ClockPart';
 import FooterPart from './approved-modal/FooterPart';
 import ReasonSelection from './approved-modal/ReasonSelection';
 import LocationSelection from './approved-modal/LocationSelection';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { updateApplicationStatus } from '../../../../../Redux/Slice/applicationSlice';
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { buildISOFormat } from '../../../../../util/dateFormat/dateFormatConvertion';
 import hotToast from '../../../../../util/alert/hot-toast';
+import { fetchAppointmentReasons } from '../../../../../Redux/Slice/appointmentReasonSlice';
 
-const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal,currentCountry, setSelectedDate, setAppointmentSet, setSelectedTime, selectedDate, selectedTime, currentMonth, setCurrentMonth }) => {
+const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, currentCountry, setSelectedDate, setAppointmentSet, setSelectedTime, selectedDate, selectedTime, currentMonth, setCurrentMonth, embassyId }) => {
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const [appointmentDetails, setAppointmentDetails] = useState(null);
     const [selectedReasons, setSelectedReasons] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const { isReasonsLoading, reasonsData, hasReasonerror } = useSelector(state => state.appointmentReason);
+
+    useEffect(() => {
+        dispatch(fetchAppointmentReasons('active'))
+            .then(res => {
+                // console.log('Response for fetching appointment', res);
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    }, [dispatch]);
 
     // Calendar functions
     const handleSetAppointment = () => {
@@ -42,17 +55,19 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal,cu
             setSelectedReasons([]);
             setSelectedLocation(null);
 
-            console.log(selectedDate, selectedTime, selectedReasons, selectedLocation);
+            // console.log(selectedDate, selectedTime, selectedReasons, selectedLocation);
             const appointmentDate = buildISOFormat(selectedDate, selectedTime);
-            
-            dispatch(updateApplicationStatus({ 
-                applicationId: application?.id, 
-                status: 'processing', 
+
+            dispatch(updateApplicationStatus({
+                applicationId: application?.id,
+                status: 'processing',
                 appointment_date: appointmentDate,
                 appointment_reasons: selectedReasons,
                 appointment_location_id: selectedLocation.id
             }))
                 .then(res => {
+                    // console.log('Response for updating application',res);
+
                     if (res.meta.requestStatus === "fulfilled") {
                         queryClient.invalidateQueries(["application", application?.id]);
                         hotToast(`Appointment set successfully!`, "success");
@@ -72,6 +87,15 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal,cu
         }
     }
 
+    if (isReasonsLoading) {
+        return (
+            <div className='flex flex-col h-screen items-center justify-center bg-transparent'>
+                <div className="w-12 h-12 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                <span className='mt-5 text-blue-600'>Loading...</span>
+            </div>
+        )
+    }
+
     return (
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[90vh] flex flex-col">
 
@@ -88,34 +112,35 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal,cu
                     }}
                     className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                    <X size={24} />
+                    <X size={24} className=' cursor-pointer' />
                 </button>
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 glass-scrollbar">
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                     {/* LEFT : CALENDAR */}
-                    <CalenderPart 
-                        currentMonth={currentMonth} 
-                        setCurrentMonth={setCurrentMonth} 
-                        selectedDate={selectedDate} 
-                        setSelectedDate={setSelectedDate} 
+                    <CalenderPart
+                        currentMonth={currentMonth}
+                        setCurrentMonth={setCurrentMonth}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
                     />
 
                     {/* RIGHT : TIME */}
-                    <ClockPart 
-                        selectedDate={selectedDate} 
-                        selectedTime={selectedTime} 
-                        setSelectedTime={setSelectedTime} 
+                    <ClockPart
+                        selectedDate={selectedDate}
+                        selectedTime={selectedTime}
+                        setSelectedTime={setSelectedTime}
+                        embassyId={embassyId}
                     />
                 </div>
 
                 {/* LOCATION SELECTION - Full Width */}
                 <div className="mt-6">
-                    <LocationSelection 
+                    <LocationSelection
                         selectedLocation={selectedLocation}
                         setSelectedLocation={setSelectedLocation}
                         application={application}
@@ -126,22 +151,23 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal,cu
 
                 {/* REASON SELECTION - Full Width */}
                 <div className="mt-6">
-                    <ReasonSelection 
+                    <ReasonSelection
                         selectedReasons={selectedReasons}
+                        appointmentReasons={reasonsData}
                         setSelectedReasons={setSelectedReasons}
                     />
                 </div>
             </div>
 
             {/* Footer */}
-            <FooterPart 
-                handleSetAppointment={handleSetAppointment} 
-                selectedDate={selectedDate} 
+            <FooterPart
+                handleSetAppointment={handleSetAppointment}
+                selectedDate={selectedDate}
                 selectedTime={selectedTime}
                 selectedReasons={selectedReasons}
                 selectedLocation={selectedLocation}
-                setSelectedDate={setSelectedDate} 
-                setSelectedTime={setSelectedTime} 
+                setSelectedDate={setSelectedDate}
+                setSelectedTime={setSelectedTime}
             />
         </div>
     )

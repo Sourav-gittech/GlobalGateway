@@ -1,39 +1,42 @@
 import React from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 
-const ReasonSelection = ({ selectedReasons, setSelectedReasons }) => {
-    const appointmentReasons = [
-        {
-            id: 'physical_verification',
-            label: 'Physical Verification',
-            description: 'In-person verification of applicant identity and documents'
-        },
-        {
-            id: 'biometric_test',
-            label: 'Biometric Test',
-            description: 'Fingerprint and photograph capture'
-        },
-        {
-            id: 'document_verification',
-            label: 'Document Verification',
-            description: 'Original document inspection and validation'
-        },
-        {
-            id: 'interview',
-            label: 'Interview',
-            description: 'Face-to-face interview with visa officer'
-        },
-        {
-            id: 'supporting_evidence_evaluation',
-            label: 'Supporting Evidence Evaluation',
-            description: 'Provide clarification of submitted supporting evidence'
-        },
-        {
-            id: 'medical_examination',
-            label: 'Medical Examination',
-            description: 'Health screening and medical certificate submission'
-        }
-    ];
+const ReasonSelection = ({ selectedReasons, appointmentReasons, setSelectedReasons }) => {
+
+    // console.log('Appointment reasons',appointmentReasons);
+
+    // const appointmentReasons = [
+    //     {
+    //         id: 'physical_verification',
+    //         label: 'Physical Verification',
+    //         description: 'In-person verification of applicant identity and documents'
+    //     },
+    //     {
+    //         id: 'biometric_test',
+    //         label: 'Biometric Test',
+    //         description: 'Fingerprint and photograph capture'
+    //     },
+    //     {
+    //         id: 'document_verification',
+    //         label: 'Document Verification',
+    //         description: 'Original document inspection and validation'
+    //     },
+    //     {
+    //         id: 'interview',
+    //         label: 'Interview',
+    //         description: 'Face-to-face interview with visa officer'
+    //     },
+    //     {
+    //         id: 'supporting_evidence_evaluation',
+    //         label: 'Supporting Evidence Evaluation',
+    //         description: 'Provide clarification of submitted supporting evidence'
+    //     },
+    //     {
+    //         id: 'medical_examination',
+    //         label: 'Medical Examination',
+    //         description: 'Health screening and medical certificate submission'
+    //     }
+    // ];
 
     const toggleReason = (reasonId) => {
         setSelectedReasons(prev => {
@@ -56,16 +59,16 @@ const ReasonSelection = ({ selectedReasons, setSelectedReasons }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {appointmentReasons.map((reason) => {
-                    const isSelected = selectedReasons.includes(reason.id);
-                    
+                    const isSelected = selectedReasons.includes(reason?.reason_id);
+
                     return (
                         <button
                             key={reason.id}
-                            onClick={() => toggleReason(reason.id)}
+                            onClick={() => toggleReason(reason.reason_id)}
                             className={`
                                 flex items-start gap-3 p-4 rounded-lg border-2 text-left transition-all
-                                ${isSelected 
-                                    ? 'border-blue-500 bg-blue-50' 
+                                ${isSelected
+                                    ? 'border-blue-500 bg-blue-50'
                                     : 'border-gray-200 bg-white hover:border-gray-300'
                                 }
                             `}
@@ -77,13 +80,13 @@ const ReasonSelection = ({ selectedReasons, setSelectedReasons }) => {
                                     <Circle className="text-gray-400" size={20} />
                                 )}
                             </div>
-                            
+
                             <div className="flex-1">
                                 <div className={`font-medium ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>
-                                    {reason.label}
+                                    {reason?.type}
                                 </div>
                                 <div className="text-xs text-gray-500 mt-1">
-                                    {reason.description}
+                                    {reason?.description}
                                 </div>
                             </div>
                         </button>

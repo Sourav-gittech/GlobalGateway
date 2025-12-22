@@ -1,11 +1,11 @@
 import { endPoint_Country } from "../api/api_url/apiUrl";
-import axiosInstance from "../api/axiosInstance/axiosInstance";
+import axiosInstance_country from "../api/axiosInstance/axiosInstance";
 
 export const fetchCountryDetails = async (countryName, fullText = true) => {
     // console.log('Request data for country named', countryName);
 
     try {
-        const response = await axiosInstance.get(`${endPoint_Country}/${encodeURIComponent(countryName)}`,
+        const response = await axiosInstance_country.get(`${endPoint_Country}/${encodeURIComponent(countryName)}`,
             { params: { fullText } }
         );
 
