@@ -43,31 +43,44 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
         try {
             console.log(`Searching for ${destinationCountry} embassies in ${userCountry}...`);
 
-            // Multiple search queries to try
+            // OPTIMIZATION 1: Start geocoding user city immediately in parallel
+            const userCityGeocodePromise = userCity ? (async () => {
+                try {
+                    const cityGeocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(userCity + ', ' + userCountry)}&format=json&limit=1`;
+                    const cityResponse = await fetch(cityGeocodeUrl, {
+                        headers: { 'User-Agent': 'VisaApplicationSystem/1.0' }
+                    });
+                    const cityData = await cityResponse.json();
+                    if (cityData && cityData.length > 0) {
+                        return { lat: parseFloat(cityData[0].lat), lon: parseFloat(cityData[0].lon) };
+                    }
+                } catch (err) {
+                    console.error('Error geocoding user city:', err);
+                }
+                return null;
+            })() : Promise.resolve(null);
+
+            // OPTIMIZATION 2: Reduce to 3 most effective queries
             const searchQueries = [
                 `${destinationCountry} embassy ${userCountry}`,
                 `${destinationCountry} consulate ${userCountry}`,
-                `${destinationCountry} high commission ${userCountry}`,
                 `embassy of ${destinationCountry} ${userCountry}`,
-                `${destinationCountry}n embassy ${userCountry}`,
             ];
 
-            // OPTIMIZATION: Fetch all queries in parallel instead of sequential
+            // OPTIMIZATION 3: Truly parallel fetch with minimal stagger (100ms)
             const fetchPromises = searchQueries.map(async (query, i) => {
-                console.log(`Trying query ${i + 1}/${searchQueries.length}: "${query}"`);
-
                 try {
                     const nominatimUrl = `https://nominatim.openstreetmap.org/search?` +
                         `q=${encodeURIComponent(query)}&` +
                         `format=json&` +
                         `addressdetails=1&` +
                         `extratags=1&` +
-                        `limit=50`;
-
-                        console.log(nominatimUrl);
+                        `limit=30`;
                         
-                    // Add staggered delay to respect rate limits (200ms between requests)
-                    await new Promise(resolve => setTimeout(resolve, i * 200));
+                    // Minimal stagger to respect rate limits (100ms instead of 200ms)
+                    if (i > 0) {
+                        await new Promise(resolve => setTimeout(resolve, i * 100));
+                    }
 
                     const response = await fetch(nominatimUrl, {
                         headers: { 
@@ -75,16 +88,12 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                             'Accept': 'application/json'
                         }
                     });
-
-                    console.log('Response',response);
                     
                     if (!response.ok) {
-                        console.warn(`Query ${i + 1} failed with status ${response.status}`);
                         return [];
                     }
 
                     const results = await response.json();
-                    console.log(`Query ${i + 1} returned ${results.length} results`);
                     return results || [];
                 } catch (err) {
                     console.error(`Error in query ${i + 1}:`, err);
@@ -104,12 +113,9 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 return;
             }
 
-            // Process and filter results with BALANCED filtering
+            // OPTIMIZATION 4: Streamlined filtering with minimal logging
             const destLower = destinationCountry.toLowerCase();
             const userCountryLower = userCountry.toLowerCase();
-            
-            console.log(`Filtering for: ${destinationCountry} embassies in ${userCountry}`);
-            console.log(`Total results to filter: ${allResults.length}`);
             
             const embassies = allResults
                 .filter(place => {
@@ -119,25 +125,18 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                     const address = place.address || {};
                     const addressCountry = (address.country || '').toLowerCase();
                     
-                    // Get just the main name (first part before comma)
                     const mainName = displayName.split(',')[0].trim();
                     
-                    // CHECK 1: Name must contain DESTINATION country (what the embassy represents)
                     const nameHasDestination = mainName.includes(destLower) || 
                                                mainName.includes(destLower + 'n') ||
                                                mainName.includes(destLower + 'ian');
                     
-                    // CHECK 2: Name must NOT contain user's country in the embassy name itself
-                    // This prevents "Indian Embassy" or "Embassy of India" from showing
                     const nameDoesNotHaveUserCountry = !mainName.includes(userCountryLower);
                     
-                    // CHECK 3: The location (address) should be in the user's country
-                    // Check if the full address mentions the user's country
                     const locationInUserCountry = displayName.includes(`, ${userCountryLower}`) ||
                                                    displayName.endsWith(userCountryLower) ||
                                                    addressCountry.includes(userCountryLower);
                     
-                    // CHECK 4: Must be embassy-related
                     const isEmbassy = mainName.includes('embassy') || 
                                      mainName.includes('consulate') || 
                                      mainName.includes('high commission') ||
@@ -145,24 +144,10 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                                      type === 'embassy' ||
                                      placeClass === 'amenity';
 
-                    const isValid = nameHasDestination && 
-                                   nameDoesNotHaveUserCountry && 
-                                   locationInUserCountry &&
-                                   isEmbassy;
-
-                    if (isValid || mainName.includes('embassy') || mainName.includes('consulate')) {
-                        console.log('Filter Check:', {
-                            mainName: mainName.substring(0, 50),
-                            location: displayName.split(',').slice(-2).join(',').trim(),
-                            nameHasDestination,
-                            nameDoesNotHaveUserCountry,
-                            locationInUserCountry,
-                            isEmbassy,
-                            RESULT: isValid ? 'INCLUDED' : 'EXCLUDED'
-                        });
-                    }
-
-                    return isValid;
+                    return nameHasDestination && 
+                           nameDoesNotHaveUserCountry && 
+                           locationInUserCountry &&
+                           isEmbassy;
                 })
                 .map(place => {
                     const address = place.address || {};
@@ -170,14 +155,12 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                     const nameParts = displayName.split(',');
                     const mainName = nameParts[0] || `${destinationCountry} Embassy`;
 
-                    // Determine type from name
                     const nameLower = mainName.toLowerCase();
                     let type = 'Embassy';
                     if (nameLower.includes('consulate general')) type = 'Consulate General';
                     else if (nameLower.includes('consulate')) type = 'Consulate';
                     else if (nameLower.includes('high commission')) type = 'High Commission';
 
-                    // Build full address
                     const fullAddress = [
                         address.house_number,
                         address.road || address.street,
@@ -208,16 +191,15 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                     };
                 });
 
-            // Remove duplicates based on coordinates (within 100m)
-            const unique = embassies.filter((embassy, index, arr) => {
-                return index === arr.findIndex(e => {
-                    const distance = Math.sqrt(
-                        Math.pow(e.coordinates.lat - embassy.coordinates.lat, 2) +
-                        Math.pow(e.coordinates.lng - embassy.coordinates.lng, 2)
-                    );
-                    return distance < 0.001; // ~100 meters
-                });
+            // OPTIMIZATION 5: Efficient deduplication using Map
+            const uniqueMap = new Map();
+            embassies.forEach(embassy => {
+                const key = `${Math.round(embassy.coordinates.lat * 1000)},${Math.round(embassy.coordinates.lng * 1000)}`;
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, embassy);
+                }
             });
+            const unique = Array.from(uniqueMap.values());
 
             console.log(`Processed ${unique.length} unique embassies`);
 
@@ -227,62 +209,37 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 return;
             }
 
-            // OPTIMIZATION: Calculate distance and geocode in parallel
-            if (userCity) {
-                try {
-                    // Geocode user's city
-                    const cityGeocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(userCity + ', ' + userCountry)}&format=json&limit=1`;
-                    const cityResponse = await fetch(cityGeocodeUrl, {
-                        headers: { 'User-Agent': 'VisaApplicationSystem/1.0' }
-                    });
-                    const cityData = await cityResponse.json();
+            // OPTIMIZATION 6: Parallel distance calculation with user city geocode
+            const userCoords = await userCityGeocodePromise;
+            
+            if (userCoords) {
+                console.log(`User city (${userCity}) coordinates:`, userCoords);
 
-                    if (cityData && cityData.length > 0) {
-                        const userLat = parseFloat(cityData[0].lat);
-                        const userLon = parseFloat(cityData[0].lon);
+                // Calculate all distances at once using optimized haversine
+                const R = 6371; // Earth's radius in km
+                unique.forEach(embassy => {
+                    const lat1 = userCoords.lat * Math.PI / 180;
+                    const lat2 = embassy.coordinates.lat * Math.PI / 180;
+                    const dLat = (embassy.coordinates.lat - userCoords.lat) * Math.PI / 180;
+                    const dLon = (embassy.coordinates.lng - userCoords.lon) * Math.PI / 180;
+                    
+                    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.cos(lat1) * Math.cos(lat2) *
+                            Math.sin(dLon/2) * Math.sin(dLon/2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    embassy.distanceFromUser = R * c;
+                });
 
-                        console.log(`User city (${userCity}) coordinates:`, { lat: userLat, lon: userLon });
-
-                        // OPTIMIZATION: Calculate all distances at once
-                        const R = 6371; // Earth's radius in km
-                        unique.forEach(embassy => {
-                            const embassyLat = embassy.coordinates.lat;
-                            const embassyLon = embassy.coordinates.lng;
-
-                            // Haversine formula to calculate distance in km
-                            const dLat = (embassyLat - userLat) * Math.PI / 180;
-                            const dLon = (embassyLon - userLon) * Math.PI / 180;
-                            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                                    Math.cos(userLat * Math.PI / 180) * Math.cos(embassyLat * Math.PI / 180) *
-                                    Math.sin(dLon/2) * Math.sin(dLon/2);
-                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                            const distance = R * c;
-
-                            embassy.distanceFromUser = distance;
-                            console.log(`Distance to ${embassy.name}: ${distance.toFixed(2)} km`);
-                        });
-
-                        // Sort by nearest distance
-                        unique.sort((a, b) => (a.distanceFromUser || Infinity) - (b.distanceFromUser || Infinity));
-                        console.log('Sorted by distance. Nearest:', unique[0]?.name);
-                    } else {
-                        // Fallback: sort by importance if city geocoding fails
-                        unique.sort((a, b) => b.importance - a.importance);
-                    }
-                } catch (err) {
-                    console.error('Error calculating distances:', err);
-                    // Fallback: sort by importance
-                    unique.sort((a, b) => b.importance - a.importance);
-                }
+                unique.sort((a, b) => (a.distanceFromUser || Infinity) - (b.distanceFromUser || Infinity));
+                console.log('Sorted by distance. Nearest:', unique[0]?.name);
             } else {
-                // No user city provided, sort by importance
                 unique.sort((a, b) => b.importance - a.importance);
             }
 
             setEmbassyOffices(unique);
             setError(null);
 
-            // Auto-select the nearest embassy (first in sorted list)
+            // Auto-select the nearest embassy
             if (unique.length && !selectedLocation) {
                 setSelectedLocation(unique[0]);
                 console.log('Auto-selected nearest embassy:', unique[0].name);
@@ -308,7 +265,6 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 <div className="flex items-center justify-center gap-3 py-8">
                     <Loader2 className="text-blue-600 animate-spin" size={24} />
                     <p className="text-gray-600">Searching for {destinationCountry} embassies in {userCountry}</p>
-                   
                 </div>
             </div>
         );
