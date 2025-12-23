@@ -4,11 +4,11 @@ import supabase from '../../util/Supabase/supabase';
 // fetch embassy timing by embassy id
 export const fetchEmbassyTiming = createAsyncThunk('timingSlice/fetchEmbassyTiming',
     async (embassyId) => {
-        console.log('Fetch timing for embassy', embassyId);
+        // console.log('Fetch timing for embassy', embassyId);
 
         const res = await supabase.from('embassy').select('starting_hours, ending_hours').eq('id', embassyId).single();
 
-        console.log('Response for fetching timing', res);
+        // console.log('Response for fetching timing', res);
 
         if (res?.error) throw res?.error;
         return res?.data;

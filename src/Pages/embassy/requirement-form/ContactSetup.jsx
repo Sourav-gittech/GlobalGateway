@@ -30,8 +30,8 @@ const ContactSetup = () => {
 
   const timeSlots = useMemo(() => {
     const slots = [];
-    const startHour = 10; // 10 AM
-    const endHour = 17;   // 5 PM
+    const startHour = 9; // 09 AM
+    const endHour = 18;   // 06 PM
 
     for (let hour = startHour; hour <= endHour; hour++) {
       const period = hour >= 12 ? "PM" : "AM";

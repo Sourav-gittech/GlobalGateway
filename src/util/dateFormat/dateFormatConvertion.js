@@ -65,19 +65,19 @@ export const formatDateTimeMeridianWithoutSecond = (dateString) => {
 
     const date = new Date(dateString);
 
-    const formattedDate = date.toLocaleDateString("en-US", {
-        month: "2-digit",
+    const options = {
+        timeZone: "Asia/Kolkata",
         day: "2-digit",
+        month: "2-digit",
         year: "numeric",
-    });
-
-    const formattedTime = date.toLocaleTimeString("en-US", {
         hour: "2-digit",
         minute: "2-digit",
         hour12: true,
-    });
+    };
 
-    return `${formattedDate} at ${formattedTime}`;
+    const formatted = new Intl.DateTimeFormat("en-IN", options).format(date);
+
+    return formatted.replace(",", " at");
 };
 
 
@@ -101,4 +101,20 @@ export const buildISOFormat = (date, time) => {
     appointment.setHours(hours, minutes, 0, 0);
 
     return appointment.toISOString();
+};
+
+
+export const getDateAndTimeFromISO = (isoString) => {
+  const date = new Date(isoString);
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHour = hours % 12 || 12;
+
+  return {
+    selectedDate: date,
+    selectedTime: `${displayHour}:${minutes} ${period}`,
+  };
 };

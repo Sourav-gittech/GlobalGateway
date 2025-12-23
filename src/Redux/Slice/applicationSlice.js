@@ -329,13 +329,16 @@ export const saveStepProgress = createAsyncThunk("applicationSlice/saveStepProgr
 
 // update application status
 export const updateApplicationStatus = createAsyncThunk("applicationSlice/updateApplicationStatus",
-  async ({ applicationId, status, appointment_date = null, rejection_reason = null }) => {
-    // console.log('Received data for updating application status', applicationId, status);
+  async ({ applicationId, status, appointment_date = null, previous_appointment_date = null, rejection_reason = null, appointment_reason = null, embassy_location = null }) => {
+    // console.log('Received data for updating application status', applicationId, status, appointment_reason, embassy_location);
 
     const res = await supabase.from("applications").update({
       status: status,
       appointment_date: appointment_date,
+      previous_appointment_date: previous_appointment_date,
       rejection_reason: rejection_reason,
+      appointment_reason: appointment_reason,
+      embassy_location: embassy_location,
       updated_at: new Date().toISOString(),
     }).eq("id", applicationId);
     // console.log('Response for updating application status', res);
@@ -577,8 +580,7 @@ export const applicationSlice = createSlice({
       })
       .addCase(updateApplicationStatus.fulfilled, (state, action) => {
         state.isApplicationLoading = false;
-        state.steps.current = action.payload.step;
-        state.steps.completed = action.payload.completed;
+        state.application = action.payload;
       })
       .addCase(updateApplicationStatus.rejected, (state, action) => {
         state.isApplicationLoading = false;

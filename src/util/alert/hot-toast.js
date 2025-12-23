@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-const hotToast = (message, type = "success") => {
+const hotToast = (message, icon = null, type = "success") => {
     if (type === "success") {
         toast.success(message, {
             className: "text-center",
@@ -8,6 +8,10 @@ const hotToast = (message, type = "success") => {
     } else if (type === "error") {
         toast.error(message, {
             className: "text-center",
+        });
+    } else if (type === "info") {
+        toast(message, {
+            icon: icon, className: "text-center"
         });
     } else {
         toast(message, {
