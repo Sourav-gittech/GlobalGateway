@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, UserCircle , X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle , X, ChevronLeft, ChevronRight, Building2, BarChart2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -108,17 +108,11 @@ export default function EmbassySidebar({ embassyData }) {
       icon: FileText,
       badge: pendingApplications
     },
-    // { 
-    //   to: "/embassy/dashboard/appointments", 
-    //   label: "Appointments", 
-    //   icon: Calendar,
-    //   badge: upcomingInterviews
-    // },
-    // { to: "/embassy/dashboard/approvals", label: "Approvals", icon: CheckCircle },
-    
-    // { to: "/embassy/dashboard/users", label: "Manage Users", icon: Users },
+    { to: "/embassy/dashboard/visa-policy-manage", label: "Manage Visa", icon: FileText },
+    { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 }
+   
     // { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 },
-    // { to: "/embassy/dashboard/processing", label: "Processing Times", icon: Clock },
+  
     // { to: "/embassy/dashboard/settings", label: "Settings", icon: Settings },
   ];
 

@@ -63,6 +63,8 @@ import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/Appl
 import Error_404 from "../Pages/Error_404.jsx";
 import Approved from "../Pages/embassy/status/Approved.jsx";
 import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup.jsx";
+import VisaPolicyManage from "../Pages/embassy/Dashboard/VisaPolicyManage.jsx";
+import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -151,20 +153,10 @@ const Routing = () => {
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
-            {/* <Route path="applications/:id/actions" element={<EmbassyApplicationActions />} />
-            
-         
-            <Route path="appointments" element={<EmbassyAppointments />} />
-            <Route path="appointments/schedule" element={<EmbassySchedule />} />
-            
+
+              <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
          
             <Route path="analytics" element={<EmbassyAnalytics />} />
-            
-        
-            <Route path="messages" element={<EmbassyMessages />} />
-            
-           
-            <Route path="settings" element={<EmbassySettings />} /> */}
 
           </Route>
 
