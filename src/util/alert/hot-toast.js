@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-const hotToast = (message, icon = null, type = "success") => {
+const hotToast = (message, type = "success", icon = null) => {
     if (type === "success") {
         toast.success(message, {
             className: "text-center",

@@ -124,7 +124,7 @@ const uploadFile = async (file, country, type, folder) => {
     const filePath = `${folder}/${fileName}`;
 
     const res = await supabase.storage.from('country').upload(filePath, file);
-    console.log('Response for uploading image in bucket', res);
+    // console.log('Response for uploading image in bucket', res);
 
     if (res?.uploadError) throw res?.uploadError;
 

@@ -1,6 +1,59 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import supabase from "../../util/Supabase/supabase";
 
+// upload cover photo in bucket
+const uploadCoverPhoto = async (file, country, folder) => {
+    // console.log(file, country, folder);
+    
+    if (!file) return null;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${country}_${Date.now()}.${fileExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    const res = await supabase.storage.from('embassy').upload(filePath, file);
+    // console.log('Response for uploading cover photo in bucket', res);
+
+    if (res?.uploadError) throw res?.uploadError;
+
+    const { data: urlData } = supabase.storage.from('embassy').getPublicUrl(filePath);
+
+    const bucketData = {
+        file: { url: urlData.publicUrl },
+        url: urlData.publicUrl,
+        docName: res.data.path.split('/')[1]
+    }
+    return bucketData;
+};
+
+// delete cover photo from bucket
+async function deleteCoverPhoto(embassy_id, folder) {
+    // console.log("Image deletion country I'd", country_id, " from", folder," of",dbName);
+
+    try {
+        // Fetch existing country images
+        const { data: img, error: fetchErr } = await supabase.from('embassy').select("*").eq('id', embassy_id).single();
+        console.log('Fetched image', img);
+
+        if (fetchErr) throw fetchErr;
+
+        const deleted_img = img?.cover_photo_name;
+
+        // delete old documents from bucket
+        if (deleted_img) {
+            // console.log('Cover photo id', deleted_img);
+
+            const res = await supabase.storage.from("embassy").remove(`${folder}/${deleted_img}`);
+            // console.log('Response for deleting cover photo', res);
+
+        }
+
+        return deleted_img;
+
+    } catch (err) {
+        console.error("Error deleting document:", err);
+    }
+}
+
 // Fetch embassy by country_id
 export const fetchEmbassyByCountryId = createAsyncThunk("embassySlice/fetchEmbassyByCountryId",
     async (countryId, { rejectWithValue }) => {
@@ -41,16 +94,35 @@ export const fetchEmbassyById = createAsyncThunk("embassySlice/fetchById",
 export const updateEmbassyById = createAsyncThunk("embassySlice/updateEmbassyById",
     async ({ id, updateData }, { rejectWithValue }) => {
         // console.log('Received data for updating embassy', id, updateData);
+        const { coverPhoto, ...updatedObj } = updateData;
 
         try {
             if (!id) { return rejectWithValue("Embassy ID is required"); }
 
             const res = await supabase.from("embassy").update({
-                ...updateData,
+                ...updatedObj,
                 updated_at: new Date().toISOString(),
             }).eq("id", id).select().single();
             // console.log('Response for updating embassy details', res);
 
+            if (coverPhoto && !coverPhoto?.isOld) {
+                // console.log(coverPhoto);
+                
+                deleteCoverPhoto(updatedObj?.id, "cover_photo");
+
+                const photoUrl = await uploadCoverPhoto(coverPhoto.file, updatedObj?.country_name, 'cover_photo')
+
+                const { data: embassyRow, error: embassyErr } = await supabase.from("embassy").update({
+                    ...updatedObj,
+                    cover_photo: photoUrl,
+                    cover_photo_name: photoUrl?.docName || null,
+                    cover_photo_url: photoUrl?.url || null
+                }).eq("id", id).select().single();
+
+                if (embassyErr) {
+                    return rejectWithValue(embassyErr);
+                }
+            }
             if (res?.error) {
                 return rejectWithValue(res?.error.message);
             }
