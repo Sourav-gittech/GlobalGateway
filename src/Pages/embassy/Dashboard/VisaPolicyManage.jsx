@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Edit2, Trash2, Save, X, Clock, Calendar, IndianRupee, CheckCircle, XCircle, ChevronDown, ChevronUp, GraduationCap, Plane, Users, Briefcase, HardHat, Home, AlertCircle, Lock, Unlock, GripVertical } from 'lucide-react';
+import { Plus, Ban, Edit2, Trash2, Save, X, Clock, Calendar, IndianRupee, CheckCircle, XCircle, ChevronDown, ChevronUp, GraduationCap, Plane, Users, Briefcase, HardHat, Home, AlertCircle, Lock, Unlock, GripVertical } from 'lucide-react';
 
 // Mock countries - Replace with your actual country data from Supabase
 const mockCountries = [
@@ -390,30 +390,72 @@ export default function VisaPolicyManage() {
         </div>
       </div>
 
-      {/* Country Selector */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Select Country</label>
-        <select
-          value={selectedCountry.id}
-          onChange={(e) => {
-            setSelectedCountry(mockCountries.find(c => c.id === parseInt(e.target.value)));
-            resetForm();
-            setIsAddingVisaType(false);
-          }}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          {mockCountries.map((country) => {
-            const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
-            const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
-            const hasBlocked = Object.values(policies[country.id] || {}).some(p => p.blocked);
-            return (
-              <option key={country.id} value={country.id}>
-                {country.name} {countryVisaCount > 0 ? `(${countryPolicyCount}/${countryVisaCount} configured)` : '(No visa types)'} {hasBlocked ? '🔒' : ''}
-              </option>
-            );
-          })}
-        </select>
-      </div>
+    {/* Country Selector */}
+<div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 md:p-5 w-full">
+  <label
+    htmlFor="country-select"
+    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+  >
+    Select Country
+  </label>
+
+  <div className="relative w-full">
+    <select
+      id="country-select"
+      value={selectedCountry.id}
+      onChange={(e) => {
+        setSelectedCountry(
+          mockCountries.find(c => c.id === Number(e.target.value))
+        );
+        resetForm();
+        setIsAddingVisaType(false);
+      }}
+      className="
+        w-full appearance-none rounded-lg border border-gray-300 bg-white
+        px-3 sm:px-4 py-2.5 sm:py-3
+        text-sm sm:text-base text-gray-900
+        focus:outline-none focus:ring-2 focus:ring-blue-500
+        transition
+      "
+    >
+      {mockCountries.map((country) => {
+        const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
+        const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
+        const hasBlocked = Object.values(policies[country.id] || {}).some(
+          p => p.blocked
+        );
+
+        return (
+          <option key={country.id} value={country.id}>
+            {country.name}
+            {countryVisaCount > 0
+              ? ` (${countryPolicyCount}/${countryVisaCount} configured)`
+              : " (No visa types)"}
+            {hasBlocked ? " ⛔" : ""}
+          </option>
+        );
+      })}
+    </select>
+
+    {/* Dropdown arrow */}
+    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+      <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fillRule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </div>
+  </div>
+
+  {/* Blocked Legend */}
+  <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-red-600">
+    <Ban size={14} className="sm:size-4" />
+    <span>Blocked country</span>
+  </div>
+</div>
+
 
       {/* Add Visa Type Form */}
       {isAddingVisaType && (
@@ -663,19 +705,7 @@ export default function VisaPolicyManage() {
         </div>
       )}
 
-      {/* Drag & Drop Info */}
-      {currentCountryVisaTypes.length > 1 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <GripVertical className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-blue-900">Drag to Reorder</p>
-              <p className="text-xs text-blue-700 mt-1">Click and drag the grip icon on any visa card to reorder them</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+     
       {/* Visa Types Grid with Drag & Drop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {currentCountryVisaTypes.map((visaType, index) => {
