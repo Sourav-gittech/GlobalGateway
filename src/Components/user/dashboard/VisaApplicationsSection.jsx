@@ -130,7 +130,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                 </div>
             )}
 
-            <style jsx>{`
+            <style>{`
                 @keyframes fadeIn {
                     from {
                         opacity: 0;
