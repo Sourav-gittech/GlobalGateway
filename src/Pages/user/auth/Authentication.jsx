@@ -152,11 +152,7 @@ const AuthForm = () => {
 
         {/* LEFT VIDEO SECTION */}
         <div className="w-full md:w-1/2 relative bg-black/80 h-[300px] md:h-full">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
+          <video autoPlay loop muted playsInline
             preload="auto"
             className="absolute top-0 left-0 w-full h-full object-cover"
           >
@@ -186,7 +182,7 @@ const AuthForm = () => {
         {/* RIGHT FORM SECTION - Glassmorphic Dark */}
         <div className="w-full md:w-1/2 h-[300px] md:h-full bg-black/40 backdrop-blur-xl border-l border-white/10 overflow-hidden">
 
-    <style>{`
+          <style>{`
     .custom-scrollbar {
       scrollbar-width: thin;
       scrollbar-color: rgba(255,255,255,0.25) transparent;
@@ -277,10 +273,10 @@ const AuthForm = () => {
                     <label className="text-sm font-medium text-white/90 mb-2">Profile Picture</label>
                     <div
                       className={`relative border-2  border-dotted rounded-xl p-6 transition-all backdrop-blur-sm ${dragActive
-                          ? 'border-blue-400 bg-blue-500/20'
-                          : errors.avatar
-                            ? 'border-red-400 bg-red-500/20'
-                            : 'border-white/30 bg-white/5 hover:border-white/50'
+                        ? 'border-blue-400 bg-blue-500/20'
+                        : errors.avatar
+                          ? 'border-red-400 bg-red-500/20'
+                          : 'border-white/30 bg-white/5 hover:border-white/50'
                         }`}
                       onDragEnter={handleDrag}
                       onDragLeave={handleDrag}
@@ -464,8 +460,8 @@ const AuthForm = () => {
                 type="submit"
                 disabled={isUserAuthLoading}
                 className={`w-full py-3.5 rounded-full font-semibold flex items-center justify-center gap-2 transition-all duration-300 text-base mt-2 uppercase tracking-wider ${isUserAuthLoading
-                    ? 'bg-white/20 cursor-not-allowed text-white/50'
-                    : 'bg-transparent hover:bg-black text-white shadow-lg hover:shadow-xl backdrop-blur-sm'
+                  ? 'bg-white/20 cursor-not-allowed text-white/50'
+                  : 'bg-transparent hover:bg-black text-white shadow-lg hover:shadow-xl backdrop-blur-sm'
                   }`}
               >
                 {isUserAuthLoading && (

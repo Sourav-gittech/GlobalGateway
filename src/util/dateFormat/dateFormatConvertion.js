@@ -141,3 +141,27 @@ export const formatAppointmentDateTime = (dateTimeString) => {
         date: formattedDate
     };
 };
+
+// Time → 12-hour format & Date → "Dec 20"
+export const formatAppointmentDateTimeWithYear = (dateTimeString) => {
+    if (!dateTimeString) return { time: "", date: "" };
+
+    const date = new Date(dateTimeString);
+
+    const time = date.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    const formattedDate = date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit"
+    });
+
+    return {
+        time,
+        date: formattedDate
+    };
+};
