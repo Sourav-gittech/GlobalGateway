@@ -29,6 +29,11 @@ export default function VisaApplicationForm() {
   const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(countryId);
   const finalAppId = applicationId || application?.id;
 
+  // Scroll to top whenever step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   useEffect(() => {
     dispatch(checkLoggedInUser())
       .then(res => {
@@ -53,7 +58,6 @@ export default function VisaApplicationForm() {
     if (application && application.status === "pending" && !application?.is_completed) {
       setStep(Number.parseInt(application?.current_step));
       stepSetOnce.current = true;
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [application]);
 
@@ -80,10 +84,10 @@ export default function VisaApplicationForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-white">
 
       {step !== 6 && (
-        <header className="bg-white border-b border-gray-200 shadow-sm">
+        <header className="bg-white">
           <div className="max-w-6xl mx-auto px-4 py-6 flex items-center justify-between">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Visa Application</h1>
@@ -106,7 +110,7 @@ export default function VisaApplicationForm() {
 
       {/* Progress bar*/}
       {step !== 6 && (
-        <div className="bg-white border-b border-gray-100">
+        <div className="bg-white">
           <div className="max-w-6xl mx-auto px-4">
             <ProgressBar step={Math.min(step, 6)} />
           </div>
@@ -114,11 +118,11 @@ export default function VisaApplicationForm() {
       )}
 
       {/* Main Content Container */}
-      <div className={`${step === 6 ? "w-full" : "max-w-6xl mx-auto px-4 py-8"}`}>
+      <div className={`${step === 6 ? "w-full" : "max-w-6xl mx-auto -mt-10 px-10 py-8"}`}>
         <div
           className={`transition-all duration-300 ${step === 6
             ? ""
-            : "bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+            : "bg-white rounded-2xl overflow-hidden"
             }`}
         >
           {step === 1 && <Step1PersonalInfo onNext={next} onApplicationCreated={(id) => setApplicationId(id)} country_id={countryId} application_id={finalAppId} user_data={userAuthData} />}
