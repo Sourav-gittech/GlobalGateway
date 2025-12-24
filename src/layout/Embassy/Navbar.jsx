@@ -77,7 +77,7 @@ const Navbar = () => {
         console.log('Error occured', err);
       });
     handleClose();
-    navigate('/embassy/home');
+    navigate('/embassy');
   };
 
   const handleRightClick = (e, label) => {
