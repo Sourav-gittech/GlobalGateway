@@ -8,6 +8,7 @@ export const fetchFullApplicationDetailsById = (applicationId) => {
         queryKey: ["application", applicationId],
         queryFn: () => fetchFullApplicationDetails(applicationId),
         enabled: !!applicationId,
-        staleTime: 5 * 60 * 1000,
+        staleTime: 0,
+        refetchOnMount: "always",
     });
 }

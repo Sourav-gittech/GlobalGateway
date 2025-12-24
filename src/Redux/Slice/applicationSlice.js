@@ -349,6 +349,25 @@ export const updateApplicationStatus = createAsyncThunk("applicationSlice/update
   }
 );
 
+// update application status approve/reject
+export const updateApplicationApproveReject = createAsyncThunk("applicationSlice/updateApplicationApproveReject",
+  async ({ applicationId, status, approval_date = null, rejection_reason = null }) => {
+    // console.log('Received data for updating application status', applicationId, status, appointment_reason, embassy_location);
+
+    const res = await supabase.from("applications").update({
+      status: status,
+      approval_date: approval_date,
+      rejection_reason: rejection_reason,
+      updated_at: new Date().toISOString(),
+    }).eq("id", applicationId);
+    // console.log('Response for updating application status', res);
+
+    if (res.error) throw res.error;
+
+    return { applicationId, status };
+  }
+);
+
 
 // fetch latest application 
 export const getActiveApplication_specificCountry_specificUser = createAsyncThunk("applicationSlice/getActiveApplication_specificCountry_specificUser",
@@ -583,6 +602,19 @@ export const applicationSlice = createSlice({
         state.application = action.payload;
       })
       .addCase(updateApplicationStatus.rejected, (state, action) => {
+        state.isApplicationLoading = false;
+        state.isApplicationError = action.error.message;
+      })
+
+      // update Status
+      .addCase(updateApplicationApproveReject.pending, (state, action) => {
+        state.isApplicationLoading = true;
+      })
+      .addCase(updateApplicationApproveReject.fulfilled, (state, action) => {
+        state.isApplicationLoading = false;
+        state.application = action.payload;
+      })
+      .addCase(updateApplicationApproveReject.rejected, (state, action) => {
         state.isApplicationLoading = false;
         state.isApplicationError = action.error.message;
       })

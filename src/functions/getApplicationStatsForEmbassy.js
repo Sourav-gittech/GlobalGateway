@@ -6,7 +6,7 @@ export const getApplicationStatsByMonth = async ({ countryId, statusFilter = "al
     let statuses = [];
 
     if (statusFilter === "all") {
-        statuses = ["processing", "fulfilled", "rejected"];
+        statuses = ["processing", "approved", "rejected"];
     } else {
         statuses = [statusFilter];
     }
