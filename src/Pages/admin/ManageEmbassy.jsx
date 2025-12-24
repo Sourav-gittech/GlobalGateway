@@ -48,7 +48,7 @@ const ManageEmbassy = () => {
 
   // Reusable stat card component for dashboard metrics
   const StatCard = ({ label, value, icon: Icon, color = 'text-white' }) => (
-    <div className="bg-white/5 backdrop-blur-md rounded-lg p-5 border border-white/10">
+    <div className="bg-white/5 backdrop-blur-sm rounded-lg p-5 border border-white/10">
       <div className="flex items-center justify-between mb-2">
         <span className="text-gray-400 text-sm">{label}</span>
         <Icon className={`w-5 h-5 ${color}`} />
@@ -69,7 +69,7 @@ const ManageEmbassy = () => {
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white">Manage Embassies</h1>
-        <p className="text-gray-400 text-sm">Review and manage embassy registrations</p>
+        <p className="text-slate-400 text-sm">Review and manage embassy registrations</p>
       </div>
 
       {/* Statistics Dashboard Cards */}
@@ -81,17 +81,17 @@ const ManageEmbassy = () => {
       </div>
 
       {/* Search and Filter Section */}
-      <div className="bg-white/5 backdrop-blur-md rounded-lg border border-white/10 p-4 mb-6">
+      <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Search Input */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input 
               type="text" 
               placeholder="Search embassies..." 
               value={searchTerm} 
               onChange={(e) => setSearchTerm(e.target.value)} 
-              className="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-blue-400 backdrop-blur-sm" 
+              className="w-full bg-slate-700/30 border border-slate-600/50 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 backdrop-blur-sm" 
             />
           </div>
           
@@ -100,31 +100,31 @@ const ManageEmbassy = () => {
             <select 
               value={selectedStatus} 
               onChange={(e) => setSelectedStatus(e.target.value)} 
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-400 backdrop-blur-sm"
+              className="w-full bg-slate-700/30 border border-slate-600/50 rounded-lg px-4 py-2.5 text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 backdrop-blur-sm"
             >
               <option>All Status</option>
               <option>Pending</option>
               <option>Approved</option>
               <option>Rejected</option>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
           </div>
         </div>
       </div>
 
       {/* Main Table Section */}
-      <div className="bg-white/5 backdrop-blur-md rounded-lg border border-white/10 overflow-hidden">
+      <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-700/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Table Header */}
             <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400 w-8"></th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400">Embassy</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400">Email</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400">Registered</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400">Status</th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-400">Actions</th>
+              <tr className="border-b border-slate-700/50">
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400 w-8"></th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400">Embassy</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400">Email</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400">Registered</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400">Status</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400">Actions</th>
               </tr>
             </thead>
             
@@ -133,12 +133,12 @@ const ManageEmbassy = () => {
               {filteredEmbassies.map((embassy) => (
                 <React.Fragment key={embassy.id}>
                   {/* Main Embassy Row */}
-                  <tr className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                  <tr className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors">
                     {/* Expand/Collapse Button */}
                     <td className="px-6 py-4">
                       <button 
                         onClick={() => setExpandedEmbassies(prev => ({ ...prev, [embassy.id]: !prev[embassy.id] }))} 
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-slate-400 hover:text-white transition-colors"
                       >
                         {expandedEmbassies[embassy.id] ? 
                           <ChevronDown className="w-5 h-5" /> : 
@@ -156,22 +156,22 @@ const ManageEmbassy = () => {
                             {embassy.name}
                             {/* Blocked Badge */}
                             {embassy.isBlocked && (
-                              <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-medium rounded flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-medium rounded flex items-center gap-1 border border-red-500/30">
                                 <Ban className="w-3 h-3" />
                                 Blocked
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-gray-500">{embassy.country}</div>
+                          <div className="text-xs text-slate-500">{embassy.country}</div>
                         </div>
                       </div>
                     </td>
                     
                     {/* Email */}
-                    <td className="px-6 py-4 text-gray-300 text-sm">{embassy.email}</td>
+                    <td className="px-6 py-4 text-slate-300 text-sm">{embassy.email}</td>
                     
                     {/* Registration Date */}
-                    <td className="px-6 py-4 text-gray-300 text-sm">{embassy.registeredDate}</td>
+                    <td className="px-6 py-4 text-slate-300 text-sm">{embassy.registeredDate}</td>
                     
                     {/* Status Badge */}
                     <td className="px-6 py-4">
@@ -206,10 +206,10 @@ const ManageEmbassy = () => {
                   
                   {/* Expanded Details Row */}
                   {expandedEmbassies[embassy.id] && (
-                    <tr className="bg-white/5 border-b border-white/10">
+                    <tr className="bg-slate-700/20 border-b border-slate-700/50">
                       <td colSpan="6" className="px-6 py-6">
                         <div className="ml-8">
-                          <h4 className="text-sm font-semibold text-gray-300 mb-4 flex items-center gap-2">
+                          <h4 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                             <Building2 className="w-4 h-4" />
                             Embassy Details
                           </h4>
@@ -217,58 +217,58 @@ const ManageEmbassy = () => {
                           {/* Detail Cards Grid */}
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {/* Contact Information Card */}
-                            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                            <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg p-4 border border-slate-700/50">
                               <h5 className="text-white font-medium mb-3 flex items-center gap-2">
                                 <Mail className="w-4 h-4 text-blue-400" />
                                 Contact Information
                               </h5>
                               <div className="space-y-2 text-sm">
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[60px]">Email:</span>
-                                  <span className="text-gray-300">{embassy.email}</span>
+                                  <span className="text-slate-500 min-w-[60px]">Email:</span>
+                                  <span className="text-slate-300">{embassy.email}</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[60px]">Address:</span>
-                                  <span className="text-gray-300">{embassy.address}</span>
+                                  <span className="text-slate-500 min-w-[60px]">Address:</span>
+                                  <span className="text-slate-300">{embassy.address}</span>
                                 </div>
                               </div>
                             </div>
 
                             {/* Document Information Card */}
-                            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                            <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg p-4 border border-slate-700/50">
                               <h5 className="text-white font-medium mb-3 flex items-center gap-2">
                                 <FileText className="w-4 h-4 text-green-400" />
                                 Document Information
                               </h5>
                               <div className="space-y-2 text-sm">
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[60px]">File:</span>
-                                  <span className="text-gray-300">{embassy.document}</span>
+                                  <span className="text-slate-500 min-w-[60px]">File:</span>
+                                  <span className="text-slate-300">{embassy.document}</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[60px]">Size:</span>
-                                  <span className="text-gray-300">{embassy.documentSize}</span>
+                                  <span className="text-slate-500 min-w-[60px]">Size:</span>
+                                  <span className="text-slate-300">{embassy.documentSize}</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[60px]">Date:</span>
-                                  <span className="text-gray-300">{embassy.registeredDate}</span>
+                                  <span className="text-slate-500 min-w-[60px]">Date:</span>
+                                  <span className="text-slate-300">{embassy.registeredDate}</span>
                                 </div>
                               </div>
                             </div>
 
                             {/* Additional Information Card */}
-                            <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                            <div className="bg-slate-800/40 backdrop-blur-sm rounded-lg p-4 border border-slate-700/50">
                               <h5 className="text-white font-medium mb-3 flex items-center gap-2">
                                 <Shield className="w-4 h-4 text-purple-400" />
                                 Additional Information
                               </h5>
                               <div className="space-y-2 text-sm">
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[80px]">Established:</span>
-                                  <span className="text-gray-300">{embassy.establishedYear}</span>
+                                  <span className="text-slate-500 min-w-[80px]">Established:</span>
+                                  <span className="text-slate-300">{embassy.establishedYear}</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                  <span className="text-gray-500 min-w-[80px]">Status:</span>
+                                  <span className="text-slate-500 min-w-[80px]">Status:</span>
                                   <span className={`capitalize font-medium ${embassy.status === 'approved' ? 'text-green-400' : embassy.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}`}>
                                     {embassy.status}
                                   </span>
@@ -277,13 +277,8 @@ const ManageEmbassy = () => {
                             </div>
                           </div>
 
-                          {/* Verification Notes Section */}
-                          {embassy.verificationNotes && (
-                            <div className="mt-4 bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                              <h5 className="text-white font-medium mb-2 text-sm">Verification Notes</h5>
-                              <p className="text-sm text-gray-400">{embassy.verificationNotes}</p>
-                            </div>
-                          )}
+                         
+                          
                         </div>
                       </td>
                     </tr>
@@ -297,30 +292,29 @@ const ManageEmbassy = () => {
         {/* Empty State */}
         {filteredEmbassies.length === 0 && (
           <div className="text-center py-12">
-            <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400 text-lg">No embassies found</p>
+            <Building2 className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+            <p className="text-slate-400 text-lg">No embassies found</p>
           </div>
         )}
 
         {/* Table Footer - Results Count */}
-        <div className="px-6 py-4 border-t border-white/10 text-center text-sm text-gray-500">
+        <div className="px-6 py-4 border-t border-slate-700/50 text-center text-sm text-slate-500">
           Showing {filteredEmbassies.length} of {embassies.length} embassies
         </div>
       </div>
 
       {/* Document Preview Modal */}
       {selectedDocument && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-slate-800/30 via-slate-900/40 to-slate-800/40 backdrop-blur-2xl rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-slate-700/50 shadow-2xl">
             
             {/* Modal Header with Action Buttons */}
-            <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
+            <div className="p-6 border-b border-slate-700/50 flex items-center justify-between bg-slate-800/50">
               <div className="flex items-center gap-4">
-               
                 {/* Title */}
                 <div>
                   <h3 className="text-2xl font-bold text-white">Document Preview</h3>
-                  <p className="text-gray-400 text-sm mt-0.5">{selectedDocument.name}</p>
+                  <p className="text-slate-400 text-sm mt-0.5">{selectedDocument.name}</p>
                 </div>
               </div>
               
@@ -332,7 +326,7 @@ const ManageEmbassy = () => {
                     {/* Approve Button */}
                     <button 
                       onClick={() => { console.log('Approve', selectedDocument.id); setSelectedDocument(null); }} 
-                      className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500/30 to-emerald-500/30 hover:from-green-500/40 hover:to-emerald-500/40 text-green-300 rounded-xl transition-all duration-300 font-semibold backdrop-blur-sm border border-green-500/40 hover:scale-105 hover:shadow-lg hover:shadow-green-500/20"
+                      className="flex items-center gap-2 px-6 py-2.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-xl transition-all duration-300 font-semibold backdrop-blur-sm border border-green-500/40 hover:scale-105"
                     >
                       <Check className="w-5 h-5" />
                       Approve
@@ -341,7 +335,7 @@ const ManageEmbassy = () => {
                     {/* Reject Button */}
                     <button 
                       onClick={() => { console.log('Reject', selectedDocument.id); setSelectedDocument(null); }} 
-                      className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-red-500/30 to-rose-500/30 hover:from-red-500/40 hover:to-rose-500/40 text-red-300 rounded-xl transition-all duration-300 font-semibold backdrop-blur-sm border border-red-500/40 hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
+                      className="flex items-center gap-2 px-6 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-xl transition-all duration-300 font-semibold backdrop-blur-sm border border-red-500/40 hover:scale-105"
                     >
                       <X className="w-5 h-5" />
                       Reject
@@ -352,9 +346,9 @@ const ManageEmbassy = () => {
                 {/* Close Button */}
                 <button 
                   onClick={() => setSelectedDocument(null)} 
-                  className="p-2.5 hover:bg-white/10 rounded-xl transition-all hover:rotate-90 duration-300"
+                  className="p-2.5 hover:bg-slate-700/50 rounded-xl transition-all hover:rotate-90 duration-300"
                 >
-                  <X className="w-6 h-6 text-gray-400 hover:text-white" />
+                  <X className="w-6 h-6 text-slate-400 hover:text-white" />
                 </button>
               </div>
             </div>
@@ -362,31 +356,31 @@ const ManageEmbassy = () => {
             {/* Modal Body - Document Details */}
             <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
               {/* Document Preview Card */}
-              <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-xl mb-6">
-                <div className="bg-gradient-to-br from-slate-700/40 to-slate-800/40 rounded-xl p-8 border border-white/10">
+              <div className="bg-slate-800/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 shadow-xl mb-6">
+                <div className="bg-slate-700/40 rounded-xl p-8 border border-slate-700/50">
                   <div className="space-y-6 text-sm">
                     {/* Document Header */}
-                    <div className="border-b border-white/10 pb-4">
+                    <div className="border-b border-slate-700/50 pb-4">
                       <h5 className="text-xl font-bold text-white mb-2">Official Embassy Verification</h5>
-                      <p className="text-xs text-gray-400 font-mono">Document ID: {selectedDocument.id}-{Date.now()}</p>
+                      <p className="text-xs text-slate-400 font-mono">Document ID: {selectedDocument.id}-{Date.now()}</p>
                     </div>
                     
                     {/* Document Information Grid */}
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Embassy Name</p>
+                        <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Embassy Name</p>
                         <p className="text-white font-semibold text-base">{selectedDocument.name}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Country</p>
+                        <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Country</p>
                         <p className="text-white font-semibold text-base">{selectedDocument.country}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Registration Date</p>
+                        <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Registration Date</p>
                         <p className="text-white font-semibold text-base">{selectedDocument.registeredDate}</p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">Status</p>
+                        <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Status</p>
                         <p className={`capitalize font-bold text-base ${selectedDocument.status === 'approved' ? 'text-green-400' : selectedDocument.status === 'pending' ? 'text-yellow-400' : 'text-red-400'}`}>
                           {selectedDocument.status}
                         </p>
@@ -394,19 +388,19 @@ const ManageEmbassy = () => {
                     </div>
 
                     {/* Contact Information Section */}
-                    <div className="border-t border-white/10 pt-4">
-                      <p className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-3">Contact Information</p>
+                    <div className="border-t border-slate-700/50 pt-4">
+                      <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-3">Contact Information</p>
                       <div className="space-y-3">
                         {/* Email */}
                         <p className="flex items-center gap-3 text-white">
-                          <span className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                          <span className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center border border-blue-500/30">
                             <Mail className="w-4 h-4 text-blue-400" />
                           </span>
                           <span className="font-medium">{selectedDocument.email}</span>
                         </p>
                         {/* Address */}
                         <p className="flex items-center gap-3 text-white">
-                          <span className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                          <span className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
                             <MapPin className="w-4 h-4 text-purple-400" />
                           </span>
                           <span className="font-medium">{selectedDocument.address}</span>
@@ -422,7 +416,7 @@ const ManageEmbassy = () => {
                 {/* Print Button */}
                 <button 
                   onClick={() => window.print()} 
-                  className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-transparent  text-white-300 rounded-xl transition-all duration-300 backdrop-blur-sm border border-indigo-500/30 font-semibold hover:scale-105 "
+                  className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-slate-700/30 hover:bg-slate-700/40 text-white rounded-xl transition-all duration-300 backdrop-blur-sm border border-slate-600/50 font-semibold hover:scale-105"
                 >
                   <Printer className="w-5 h-5" />
                   <span>Print</span>
@@ -431,7 +425,7 @@ const ManageEmbassy = () => {
                 {/* Open in New Tab Button */}
                 <button 
                   onClick={() => window.open('#', '_blank')} 
-                  className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-slate-600/30 to-slate-700/30 hover:from-slate-600/40 hover:to-slate-700/40 text-gray-300 rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/20 font-semibold hover:scale-105 hover:shadow-lg hover:shadow-slate-500/10"
+                  className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-slate-700/30 hover:bg-slate-700/40 text-slate-300 rounded-xl transition-all duration-300 backdrop-blur-sm border border-slate-600/50 font-semibold hover:scale-105"
                 >
                   <ExternalLink className="w-5 h-5" />
                   <span>Open</span>
