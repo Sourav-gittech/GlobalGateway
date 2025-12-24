@@ -110,7 +110,7 @@ export default function Sidebar({ adminData }) {
     { to: "/admin/dashboard/admin", label: "Manage Admin", icon: UserRoundCog },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
     { to: "/admin/dashboard/visaManage", label: "Manage Visa", icon: IdCard },
-    { to: "/admin/dashboard/ambessyManage", label: "Manage Embassies", icon: Landmark },
+    { to: "/admin/dashboard/embassyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
 
