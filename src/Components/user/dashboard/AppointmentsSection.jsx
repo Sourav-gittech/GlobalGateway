@@ -73,7 +73,7 @@ const AppointmentsSection = ({ appointments = [], getStatusColor, getStatusIcon 
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
                     {countryDetails?.name ?? 'N/A'}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4">{reason?.join(",") ?? 'N/A'}</p>
+                  <p className="text-gray-600 text-sm mb-4">{reason?.join(", ") ?? 'N/A'}</p>
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
