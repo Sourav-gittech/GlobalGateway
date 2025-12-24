@@ -32,7 +32,6 @@ import Analytics from "../Pages/admin/Analytics";
 import ContactMessages from "../Pages/admin/UserContact.jsx";
 import CountryManagement from "../Pages/admin/ManageCountry.jsx";
 import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
-import AmbessyManage from "../Pages/admin/ManageAmbessy.jsx";
 import CourseManage from "../Pages/admin/CourseManage.jsx";
 import AddAdmin from "../Pages/admin/ManageAdmin.jsx";
 import VisaManage from "../Pages/admin/ManageVisa.jsx";
@@ -65,6 +64,7 @@ import Approved from "../Pages/embassy/status/Approved.jsx";
 import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup.jsx";
 import VisaPolicyManage from "../Pages/embassy/Dashboard/VisaPolicyManage.jsx";
 import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
+import EmbassyManage from "../Pages/admin/ManageEmbassy.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -123,7 +123,7 @@ const Routing = () => {
             <Route path="analytics" element={<Analytics />} />
             <Route path="contact" element={<ContactMessages />} />
             <Route path="country" element={<CountryManagement />} />
-            <Route path="ambessyManage" element={<AmbessyManage />} />
+            <Route path="embassyManage" element={<EmbassyManage />} />
             <Route path="courseManage" element={<CourseManage />} />
             <Route path="admin" element={<AddAdmin />} />
             <Route path="visaManage" element={<VisaManage />} />
