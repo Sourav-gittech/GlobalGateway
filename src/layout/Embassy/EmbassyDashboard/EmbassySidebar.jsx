@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-<<<<<<< HEAD
-import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
-=======
-import { Home, FileText, Menu, LogOut, UserCircle , X, ChevronLeft, ChevronRight, Building2, BarChart2 } from "lucide-react";
->>>>>>> f28bac2dab7c7244088d5e707c5eedbedc96ccea
+import {
+  Home,
+  FileText,
+  Menu,
+  LogOut,
+  UserCircle,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Building2,
+  BarChart2
+} from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -12,7 +19,6 @@ import { useDispatch } from "react-redux";
 import { useApplicationStats } from "../../../tanstack/query/getApplicationStatsForEmbassy";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
-
   <NavLink
     to={to}
     end
@@ -20,15 +26,15 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
      ${collapsed ? "justify-center" : ""}
-     ${isActive
-        ? collapsed
-          ? "bg-white/10 text-white shadow-lg rounded-xl"
-          : "bg-white/10 text-white shadow-lg rounded-lg"
-        : collapsed
-          ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl"
-          : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
-      }
-    `
+     ${
+       isActive
+         ? collapsed
+           ? "bg-white/10 text-white shadow-lg rounded-xl"
+           : "bg-white/10 text-white shadow-lg rounded-lg"
+         : collapsed
+         ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl"
+         : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
+     }`
     }
   >
     <div className="flex items-center justify-center w-6 flex-shrink-0">
@@ -39,7 +45,7 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
       <>
         <span className="truncate flex-1">{children}</span>
         {badge && (
-          <span className="bg-white/10  text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+          <span className="bg-white/10 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
             {badge}
           </span>
         )}
@@ -59,9 +65,11 @@ export default function EmbassySidebar({ embassyData }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
+  const { data: processingStats = [] } = useApplicationStats({
+    countryId: embassyData?.country_id,
+    statusFilter: "processing"
+  });
 
-  // Close sidebar on Escape
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") setMobileOpen(false);
@@ -70,28 +78,23 @@ export default function EmbassySidebar({ embassyData }) {
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
-  // Lock scroll when sidebar is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => (document.body.style.overflow = "");
   }, [mobileOpen]);
 
-  // Close mobile sidebar on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // logged out embassy 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-
     try {
       await dispatch(logoutUser("embassy"));
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/embassy/");
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     } finally {
       setIsLoggingOut(false);
     }
@@ -110,29 +113,20 @@ export default function EmbassySidebar({ embassyData }) {
       icon: FileText,
       badge: processingStats?.length
     },
-<<<<<<< HEAD
-    // { 
-    //   to: "/embassy/dashboard/appointments", 
-    //   label: "Appointments", 
-    //   icon: Calendar,
-    //   badge: upcomingInterviews
-    // },
-    // { to: "/embassy/dashboard/approvals", label: "Approvals", icon: CheckCircle },
-
-    // { to: "/embassy/dashboard/users", label: "Manage Users", icon: Users },
-=======
-    { to: "/embassy/dashboard/visa-policy-manage", label: "Manage Visa", icon: FileText },
-    { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 }
-   
->>>>>>> f28bac2dab7c7244088d5e707c5eedbedc96ccea
-    // { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 },
-  
-    // { to: "/embassy/dashboard/settings", label: "Settings", icon: Settings },
+    {
+      to: "/embassy/dashboard/visa-policy-manage",
+      label: "Manage Visa",
+      icon: FileText
+    },
+    {
+      to: "/embassy/dashboard/analytics",
+      label: "Analytics",
+      icon: BarChart2
+    }
   ];
 
   return (
     <>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
@@ -140,25 +134,24 @@ export default function EmbassySidebar({ embassyData }) {
         />
       )}
 
-      {/* Sidebar */}
-      <aside ref={sidebarRef} className={`
+      <aside
+        ref={sidebarRef}
+        className={`
           fixed top-0 left-0 h-screen z-50 flex flex-col transition-all duration-300
           bg-gradient-to-br from-cyan-700 to-blue-600/80 backdrop-blur-md
           border-r border-white/10
           ${collapsed ? "w-20" : "w-64"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        `} style={{ boxShadow: "inset 0 0 40px rgba(255,255,255,0.02)" }}>
-
-        {/* Header */}
+        `}
+        style={{ boxShadow: "inset 0 0 40px rgba(255,255,255,0.02)" }}
+      >
         <div className="flex items-center justify-between p-4 border-b border-white/10">
-          {/* Logo + Title */}
           <div
-            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "w-14" : "w-48"
-              } min-w-0`}
+            className={`flex items-center gap-3 transition-all duration-300 ${
+              collapsed ? "w-14" : "w-48"
+            } min-w-0`}
           >
-            <div className="w-10 h-10 shrink-0 rounded-xl bg-white/10 backdrop-blur-sm
-              flex items-center justify-center text-white font-bold text-lg shadow-lg 
-              border border-white/10">
+            <div className="w-10 h-10 shrink-0 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg border border-white/10">
               <FlightTakeoffIcon fontSize="small" />
             </div>
 
@@ -169,28 +162,23 @@ export default function EmbassySidebar({ embassyData }) {
             )}
           </div>
 
-          {/* Collapse Button */}
           {!collapsed && (
             <button
               onClick={toggle}
-              className="hidden md:flex p-2 rounded-lg hover:bg-white/5 
-                text-white/90 hover:text-white"
+              className="hidden md:flex p-2 rounded-lg hover:bg-white/5 text-white/90 hover:text-white"
             >
               <ChevronLeft size={18} />
             </button>
           )}
 
-          {/* Mobile Close */}
           <button
             onClick={() => setMobileOpen(false)}
-            className="md:hidden p-2 rounded-lg hover:bg-white/5 
-              text-white/90 hover:text-white"
+            className="md:hidden p-2 rounded-lg hover:bg-white/5 text-white/90 hover:text-white"
           >
             <X size={18} />
           </button>
         </div>
 
-        {/* User profile */}
         {!collapsed && (
           <div className="p-4 border-b border-white/10">
             <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
@@ -199,14 +187,17 @@ export default function EmbassySidebar({ embassyData }) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">Embassy Panel</p>
-                <p className="text-white/80 text-xs truncate">{embassyData?.email || 'embassy@global.com'}</p>
+                <p className="text-white text-sm font-medium truncate">
+                  Embassy Panel
+                </p>
+                <p className="text-white/80 text-xs truncate">
+                  {embassyData?.email || "embassy@global.com"}
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Navigation */}
         <nav className="glass-scrollbar flex-1 p-4 space-y-1 overflow-y-auto">
           {collapsed && (
             <button
@@ -231,15 +222,16 @@ export default function EmbassySidebar({ embassyData }) {
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="p-4 border-t border-white/10 space-y-3">
           <button
-            onClick={() => handleLogout()}
+            onClick={handleLogout}
             disabled={isLoggingOut}
             className="w-full flex items-center justify-center gap-3 px-3 py-3 rounded-lg bg-white/10 text-white/90 hover:bg-red-500/20 hover:text-white cursor-pointer transition-all duration-200"
           >
             <LogOut size={18} className={isLoggingOut ? "animate-spin" : ""} />
-            {!collapsed && <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>}
+            {!collapsed && (
+              <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+            )}
           </button>
 
           {!collapsed && (
@@ -250,7 +242,6 @@ export default function EmbassySidebar({ embassyData }) {
         </div>
       </aside>
 
-      {/* Mobile hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
         className="fixed top-4 left-4 z-30 p-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 md:hidden shadow-lg"
@@ -258,7 +249,11 @@ export default function EmbassySidebar({ embassyData }) {
         <Menu size={20} />
       </button>
 
-      <div className={`hidden md:block transition-all duration-300 ${collapsed ? "md:w-20" : "md:w-64"}`} />
+      <div
+        className={`hidden md:block transition-all duration-300 ${
+          collapsed ? "md:w-20" : "md:w-64"
+        }`}
+      />
     </>
   );
 }
