@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FileText, CheckCircle, Clock, Calendar, BarChart2 } from "lucide-react";
 import StatsCard from "../../../Components/embassy/dashboard/dashboard/StatsCard";
 import ApplicationVolumeChart from "../../../Components/embassy/dashboard/dashboard/application-volume/ApplicationVolumeChart";
@@ -9,6 +9,7 @@ import QuickLinks from "../../../Components/embassy/dashboard/dashboard/quick-li
 import UpcommingAppointmtnt from "../../../Components/embassy/dashboard/dashboard/Upcomming-appointmtnt/UpcommingAppointmtnt";
 import AvgProcessingTime from "../../../Components/embassy/dashboard/dashboard/avg-processing-time/AvgProcessingTime";
 import DashboardHeader from "../../../Components/embassy/dashboard/dashboard/DashboardHeader";
+import getSweetAlert from "../../../util/alert/sweetAlert";
 import { useDispatch, useSelector } from "react-redux";
 import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
 import { useApplicationsByCountryId } from "../../../tanstack/query/getApplicationsByCountryId";
@@ -16,7 +17,7 @@ import { useApplicationStats } from "../../../tanstack/query/getApplicationStats
 import { getMonthlyChange } from "../../../util/embassy-stats/calcMonthlyChange";
 import { buildMonthlyApplicationVolume } from "../../../util/embassy-stats/applicationVolumeChart";
 import { fetchApplicationsByCountry } from "../../../Redux/Slice/applicationSlice";
-import getSweetAlert from "../../../util/alert/sweetAlert";
+import { useApplicationsWithAppointment } from "../../../tanstack/query/getApplicationsWithAppointment";
 
 export default function EmbassyDashboard() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ export default function EmbassyDashboard() {
   const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
   const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
   const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
+  const { data: appointmentStats = [], isLoading } = useApplicationsWithAppointment(embassyData?.country_id, "processing", true);
 
   useEffect(() => {
     dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'all' }))
@@ -48,6 +50,7 @@ export default function EmbassyDashboard() {
   const totalChange = getMonthlyChange(allStats);
   const fulfilledChange = getMonthlyChange(fulfilledStats);
   const processingChange = getMonthlyChange(processingStats);
+  const appointmentChange = getMonthlyChange(appointmentStats);
 
   const stats = [
     {
@@ -83,9 +86,9 @@ export default function EmbassyDashboard() {
     {
       icon: Calendar,
       title: "Upcoming Interviews",
-      value: "16",
-      change: "+15%",
-      trend: "up",
+      value: appointmentStats?.length,
+      change: appointmentChange?.changeText,
+      trend: appointmentChange?.trend,
       bgColor: "bg-purple-100",
       iconColor: "text-purple-600",
       subtext: "Next 7 days"
@@ -141,7 +144,7 @@ export default function EmbassyDashboard() {
     {
       icon: Calendar,
       label: "Schedule Interview",
-      count: "16 upcoming",
+      count: appointmentStats.length + " upcoming",
       path: "/embassy/dashboard/appointments/schedule",
       color: "bg-purple-500 hover:bg-purple-600"
     },
@@ -208,7 +211,7 @@ export default function EmbassyDashboard() {
           <QuickLinks quickActions={quickActions} />
 
           {/* Upcoming Appointments */}
-          <UpcommingAppointmtnt upcomingAppointments={upcomingAppointments} />
+          <UpcommingAppointmtnt upcomingAppointments={appointmentStats} />
 
           {/* Processing Times */}
           <AvgProcessingTime processingTimes={processingTimes} />

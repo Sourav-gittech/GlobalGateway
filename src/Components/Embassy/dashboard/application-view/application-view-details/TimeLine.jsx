@@ -40,10 +40,17 @@ const TimeLine = ({ application }) => {
         },
         {
             action: "Set Appointment",
-            timestamp: formatDateTimeMeridian(application?.appointment_date),
+            timestamp: formatDateTimeMeridian(application?.previous_appointment_date ? application?.previous_appointment_date : application?.appointment_date),
             user: "Embassy Officer",
             description: "Appointment has been set",
             show: !!application?.appointment_date,
+        },
+        {
+            action: "Set Re-Appointment",
+            timestamp: formatDateTimeMeridian(application?.appointment_date),
+            user: "Embassy Officer",
+            description: "Appointment has been reset",
+            show: !!application?.previous_appointment_date,
         },
         {
             action: "Visa Decision",

@@ -3,6 +3,9 @@ import { Calendar, Eye, X, Printer } from 'lucide-react';
 import AppointmentLetter from '../../../Components/Embassy/dashboard/application-view/application-modal/AppointmentLetter';
 
 const AppointmentsSection = ({ appointments = [], getStatusColor, getStatusIcon }) => {
+
+  console.log('All appointments',appointments);
+  
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showLetterModal, setShowLetterModal] = useState(false);
   const letterRef = useRef(null);

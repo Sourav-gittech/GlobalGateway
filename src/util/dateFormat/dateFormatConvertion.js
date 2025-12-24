@@ -103,18 +103,41 @@ export const buildISOFormat = (date, time) => {
     return appointment.toISOString();
 };
 
-
+// seperate date and time and return with meridian
 export const getDateAndTimeFromISO = (isoString) => {
-  const date = new Date(isoString);
+    const date = new Date(isoString);
 
-  const hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, "0");
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
 
-  const period = hours >= 12 ? "PM" : "AM";
-  const displayHour = hours % 12 || 12;
+    const period = hours >= 12 ? "PM" : "AM";
+    const displayHour = hours % 12 || 12;
 
-  return {
-    selectedDate: date,
-    selectedTime: `${displayHour}:${minutes} ${period}`,
-  };
+    return {
+        selectedDate: date,
+        selectedTime: `${displayHour}:${minutes} ${period}`,
+    };
+};
+
+// Time → 12-hour format & Date → "Dec 20"
+export const formatAppointmentDateTime = (dateTimeString) => {
+    if (!dateTimeString) return { time: "", date: "" };
+
+    const date = new Date(dateTimeString);
+
+    const time = date.toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    const formattedDate = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit"
+    });
+
+    return {
+        time,
+        date: formattedDate
+    };
 };

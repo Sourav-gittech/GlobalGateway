@@ -19,7 +19,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
         setModalType(null);
     };
 
-    if(visaApplications.length === 0){
+    if (visaApplications.length === 0) {
         return (
             <div className="py-8">
                 <p className="text-center">No visa applications available</p>
@@ -37,7 +37,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                     const countrySpecificVisaDetails = countryWiseVisaDetails?.find(visaType => visaType?.visa_type == visaData?.visa_type);
 
                     const expectedDate = calculateProcessingRange(visa.applied_at, countrySpecificVisaDetails?.visa_details[0]?.visa_processing_time);
-                    
+
                     // Normalize status to lowercase for comparison
                     const normalizedStatus = visa.status?.toLowerCase();
 
@@ -53,7 +53,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                         {getStatusIcon(visa.status)}
                                         {visa.status?.charAt(0).toUpperCase() + visa.status?.slice(1)}
                                     </span>
-                                    
+
                                     {normalizedStatus === 'approved' && (
                                         <button
                                             onClick={() => openModal(visa, 'approved')}
@@ -64,7 +64,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                             <CheckCircle className="w-4 h-4" />
                                         </button>
                                     )}
-                                    
+
                                     {normalizedStatus === 'rejected' && (
                                         <button
                                             onClick={() => openModal(visa, 'rejected')}
@@ -92,15 +92,15 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
 
             {/* Modal */}
             {selectedVisa && (
-                <div 
-                    className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-[fadeIn_0.2s_ease-out]" 
+                <div
+                    className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-[fadeIn_0.2s_ease-out]"
                     onClick={closeModal}
                     style={{
                         animation: 'fadeIn 0.2s ease-out'
                     }}
                 >
-                    <div 
-                        className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 animate-[slideUp_0.3s_ease-out]" 
+                    <div
+                        className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 animate-[slideUp_0.3s_ease-out]"
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             animation: 'slideUp 0.3s ease-out'
@@ -129,7 +129,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                     </div>
                 </div>
             )}
-            
+
             <style jsx>{`
                 @keyframes fadeIn {
                     from {
@@ -233,8 +233,8 @@ const ApprovalTimeline = ({ visa }) => {
                 {timelineSteps.map((step, index) => {
                     const Icon = step.icon;
                     return (
-                        <div 
-                            key={index} 
+                        <div
+                            key={index}
                             className="relative pb-8 last:pb-0 animate-[slideIn_0.4s_ease-out] opacity-0"
                             style={{
                                 animation: `slideIn 0.4s ease-out forwards ${index * 0.15}s`
@@ -262,7 +262,7 @@ const ApprovalTimeline = ({ visa }) => {
                     );
                 })}
             </div>
-            
+
             <style jsx>{`
                 @keyframes slideIn {
                     from {

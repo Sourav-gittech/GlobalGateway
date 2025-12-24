@@ -5,39 +5,6 @@ const ReasonSelection = ({ selectedReasons, appointmentReasons, setSelectedReaso
 
     // console.log('Appointment reasons',appointmentReasons);
 
-    // const appointmentReasons = [
-    //     {
-    //         id: 'physical_verification',
-    //         label: 'Physical Verification',
-    //         description: 'In-person verification of applicant identity and documents'
-    //     },
-    //     {
-    //         id: 'biometric_test',
-    //         label: 'Biometric Test',
-    //         description: 'Fingerprint and photograph capture'
-    //     },
-    //     {
-    //         id: 'document_verification',
-    //         label: 'Document Verification',
-    //         description: 'Original document inspection and validation'
-    //     },
-    //     {
-    //         id: 'interview',
-    //         label: 'Interview',
-    //         description: 'Face-to-face interview with visa officer'
-    //     },
-    //     {
-    //         id: 'supporting_evidence_evaluation',
-    //         label: 'Supporting Evidence Evaluation',
-    //         description: 'Provide clarification of submitted supporting evidence'
-    //     },
-    //     {
-    //         id: 'medical_examination',
-    //         label: 'Medical Examination',
-    //         description: 'Health screening and medical certificate submission'
-    //     }
-    // ];
-
     const toggleReason = (reasonId) => {
         setSelectedReasons(prev => {
             if (prev.includes(reasonId)) {

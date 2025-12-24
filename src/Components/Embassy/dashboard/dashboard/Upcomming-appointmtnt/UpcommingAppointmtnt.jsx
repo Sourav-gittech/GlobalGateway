@@ -3,7 +3,7 @@ import { Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import UpcommingAppointmtntRow from './UpcommingAppointmtntRow';
 
-const UpcommingAppointmtnt = ({upcomingAppointments}) => {
+const UpcommingAppointmtnt = ({ upcomingAppointments }) => {
     const navigate = useNavigate();
 
     return (
@@ -19,8 +19,8 @@ const UpcommingAppointmtnt = ({upcomingAppointments}) => {
             </div>
 
             <div className="space-y-3">
-                {upcomingAppointments.map((apt, idx) => (
-                    <UpcommingAppointmtntRow  key={idx} apt={apt} />
+                {upcomingAppointments?.slice(0, 3)?.map((apt, idx) => (
+                    <UpcommingAppointmtntRow key={idx} apt={apt} />
                 ))}
             </div>
         </div>

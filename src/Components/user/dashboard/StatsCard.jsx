@@ -6,7 +6,7 @@ const StatsCard = ({ visaApplications, payments, appointments }) => {
     const stats = [
         { label: 'Total Applications', value: visaApplications.length, icon: FileText, color: 'bg-red-600' },
         { label: 'Pending Applications', value: payments.filter(p => p.status === 'pending').length, icon: Info, color: 'bg-amber-600' },
-        { label: 'Appointments', value: appointments.filter(a => a.status === 'confirmed').length, icon: Calendar, color: 'bg-violet-600' },
+        { label: 'Appointments', value: appointments.filter(a => a.status === 'processing').length, icon: Calendar, color: 'bg-violet-600' },
         { label: 'Puchase Course', value: '0', icon: CreditCard, color: 'bg-emerald-600' }
     ];
 

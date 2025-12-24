@@ -1,16 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Filter, CheckCircle, XCircle, Clock, ChevronDown, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import StatsCard from "../../../../Components/embassy/dashboard/applications/StatsCard";
 import ApplicationTable from "../../../../Components/embassy/dashboard/applications/application-table/ApplicationTable";
+import { useDispatch, useSelector } from "react-redux";
+import { useFullCountryDetails } from "../../../../tanstack/query/getCountryDetails";
+import { useApplicationsByCountryId } from "../../../../tanstack/query/getApplicationsByCountryId";
+import { useApplicationStats } from "../../../../tanstack/query/getApplicationStatsForEmbassy";
+import { fetchApplicationsByCountry } from "../../../../Redux/Slice/applicationSlice";
+import getSweetAlert from "../../../../util/alert/sweetAlert";
+import { usePersonalInfoByApplicationId } from "../../../../tanstack/query/getApplicationPersonalInfo";
 
 export default function Applications() {
-  
+
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
+  const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
+  const { data: allTypeApplications, isLoading: isAllTypeApplicationLoading, error: allTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'all');
+  const { data: fulfilledTypeApplications, isLoading: isFulfilledTypeApplicationLoading, error: fulfilledTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'approved');
+  const { data: processingTypeApplications, isLoading: isProcessingTypeApplicationLoading, error: processingTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'processing');
+  const { allApplications, isApplicationLoading: isAllApplicationLoading, isApplicationError: allApplicationLsError } = useSelector(state => state.application);
+
+  // Stats data - Real embassy metrics
+  const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
+  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
+  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
+  const { data: rejectedStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "rejected" });
+
+  useEffect(() => {
+    dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'all' }))
+      .then(res => {
+        // console.log('Response for fetching all applications', res);
+      })
+      .catch(err => {
+        console.log('Error occures', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, [embassyData?.country_id]);
 
   // Mock data
   const applications = [
@@ -70,14 +104,17 @@ export default function Applications() {
     }
   ];
 
-  const filteredApplications = applications.filter(app => {
-    const matchesSearch =
-      app.applicantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.email.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredApplications = allApplications?.filter(app => {
 
-    const matchesStatus = filterStatus === "all" || app.status === filterStatus;
-    const matchesType = filterType === "all" || app.visaType === filterType;
+    const fullName = app?.application_personal_info?.first_name + " " + app?.application_personal_info?.last_name;
+
+    const matchesSearch =
+      app?.fullName?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+      app?.id?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+      app?.application_personal_info?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase());
+
+    const matchesStatus = filterStatus === "all" || app?.status === filterStatus;
+    const matchesType = filterType === "all" || app?.application_visa_details?.visa_type === filterType;
 
     return matchesSearch && matchesStatus && matchesType;
   });
@@ -85,29 +122,35 @@ export default function Applications() {
   const stats = [
     {
       label: "Total Applications",
-      value: applications.length,
+      value: allStats?.length,
       icon: FileText,
       color: "bg-blue-100 text-blue-600"
     },
     {
       label: "Pending",
-      value: applications.filter(a => a.status === "pending").length,
+      value: processingStats?.length,
       icon: Clock,
       color: "bg-yellow-100 text-yellow-600"
     },
     {
       label: "Approved",
-      value: applications.filter(a => a.status === "approved").length,
+      value: fulfilledStats?.length,
       icon: CheckCircle,
       color: "bg-green-100 text-green-600"
     },
     {
       label: "Rejected",
-      value: applications.filter(a => a.status === "rejected").length,
+      value: rejectedStats?.length,
       icon: XCircle,
       color: "bg-red-100 text-red-600"
     }
   ];
+
+  // console.log('User data', userAuthData);
+  // console.log('Embassy data', embassyData);
+  // console.log('Country data', countryDetails);
+  // console.log('Application data', allTypeApplications);
+  // console.log('All Application data', allApplications);
 
   return (
     <div className="space-y-6">
@@ -172,7 +215,7 @@ export default function Applications() {
                   <option value="pending">Pending</option>
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
-                  <option value="under_review">Under Review</option>
+                  <option value="processing">Under Review</option>
                 </select>
               </div>
               <div>
@@ -204,8 +247,8 @@ export default function Applications() {
       {filteredApplications.length > 0 && (
         <div className="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-6 py-4">
           <p className="text-sm text-gray-600">
-            Showing <span className="font-medium">{filteredApplications.length}</span> of{" "}
-            <span className="font-medium">{applications.length}</span> applications
+            Showing <span className="font-medium">{filteredApplications?.length}</span> of{" "}
+            <span className="font-medium">{allApplications?.length}</span> applications
           </p>
           <div className="flex gap-2">
             <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">

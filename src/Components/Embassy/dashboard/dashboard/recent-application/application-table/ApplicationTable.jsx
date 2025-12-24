@@ -2,6 +2,8 @@ import React from 'react'
 import ApplicationTableRow from './ApplicationTableRow'
 
 const ApplicationTable = ({ recentApplications }) => {
+    // console.log('Recent applications', recentApplications);
+
     return (
         <div className="flex-1 overflow-y-auto">
             <table className="w-full">
@@ -16,7 +18,7 @@ const ApplicationTable = ({ recentApplications }) => {
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                    {recentApplications?.map((app, idx) => (
+                    {recentApplications?.slice(0, 11)?.map((app, idx) => (
                         <ApplicationTableRow key={idx} app={app} />
                     ))}
                 </tbody>

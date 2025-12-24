@@ -77,7 +77,7 @@ export default function PaymentStatus() {
     }
 
     const activity_obj_success = {
-        title: 'Application under procesing',
+        title: 'Application under processing',
         icon: 'processing'
     }
 

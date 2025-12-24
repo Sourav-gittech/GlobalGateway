@@ -1,7 +1,10 @@
 import React from 'react'
 import { ArrowRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 
 const QuickLinksRow = ({ action }) => {
+    const navigate = useNavigate();
+    
     return (
         <button onClick={() => navigate(action.path)}
             className="w-full group relative overflow-hidden flex items-center gap-3 p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100 border border-blue-200/50 backdrop-blur-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]"

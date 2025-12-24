@@ -118,7 +118,7 @@ export default function ApplicationView() {
           <AppointmentModal
             application={application}
             visaDetails={visaDetails}
-            currentCountry = {embassyData?.country_name}
+            currentCountry={embassyData?.country_name}
             setShowAppointmentModal={setShowAppointmentModal}
             setAppointmentSet={setAppointmentSet}
             setSelectedDate={setSelectedDate}
@@ -128,6 +128,7 @@ export default function ApplicationView() {
             setCurrentMonth={setCurrentMonth}
             currentMonth={currentMonth}
             embassyId={embassyData?.id}
+            country_id={embassyData?.country_id}
           />
         </div>
       )}

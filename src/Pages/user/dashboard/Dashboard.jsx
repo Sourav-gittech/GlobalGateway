@@ -8,14 +8,15 @@ import VisaApplicationsSection from '../../../Components/user/dashboard/VisaAppl
 import PaymentsSection from '../../../Components/user/dashboard/PaymentsSection';
 import AppointmentsSection from '../../../Components/user/dashboard/AppointmentsSection';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
-import { getAllApplication_specificUser } from '../../../Redux/Slice/applicationSlice';
 import { fetchUserTransactionsWithApplications } from '../../../Redux/Slice/transactionSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
+import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/getAvailableAppointmentForUser';
 
 const Dashboard = () => {
   const dispatch = useDispatch(),
     { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth),
-     { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id),
+    { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id),
+    { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true),
     { isTransactionLoading, transactions, hasTransactionError } = useSelector(state => state.transaction);
 
   // console.log('Dashboard user data', userAuthData);
@@ -183,7 +184,7 @@ const Dashboard = () => {
       <ProfileCard userAuthData={userAuthData} />
 
       {/* Stats Cards */}
-      <StatsCard visaApplications={Array.isArray(application) ? application : []} payments={transactions} appointments={appointments} />
+      <StatsCard visaApplications={Array.isArray(application) ? application : []} payments={transactions} appointments={appointment} />
 
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
@@ -215,7 +216,7 @@ const Dashboard = () => {
             )}
 
             {activeTab === 'appointments' && (
-              <AppointmentsSection appointments={appointments} getStatusColor={getStatusColor} getStatusIcon={getStatusIcon} />
+              <AppointmentsSection appointments={appointment} getStatusColor={getStatusColor} getStatusIcon={getStatusIcon} />
             )}
 
             {activeTab === 'payments' && (

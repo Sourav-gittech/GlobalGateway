@@ -34,52 +34,6 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
         return obj;
     }, [countryWiseVisaDetails]);
 
-
-    // const documentRequirements = {
-    //     student: [
-    //         "Passport",
-    //         "Admission/Offer Letter",
-    //         "Bank Statements",
-    //         "Academic Transcripts",
-    //         "English Test Score"
-    //     ],
-    //     family: [
-    //         "Passport",
-    //         "Marriage/Birth Certificate",
-    //         "Sponsor's Resident ID",
-    //         "Sponsor's Bank Statements",
-    //         "Sponsor's Employment Letter"
-    //     ],
-    //     tourist: [
-    //         "Passport",
-    //         "Flight Booking",
-    //         "Hotel Booking",
-    //         "Bank Statements",
-    //         "Travel Itinerary"
-    //     ],
-    //     business: [
-    //         "Passport",
-    //         "Company Invitation Letter",
-    //         "Business Registration Documents",
-    //         "Company Bank Statements",
-    //         "Travel Itinerary"
-    //     ],
-    //     worker: [
-    //         "Passport",
-    //         "Job Offer Letter",
-    //         "Employment Contract",
-    //         "Degree/Experience Certificates",
-    //         "Police Clearance Certificate"
-    //     ],
-    //     resident: [
-    //         "Passport",
-    //         "Educational Certificates",
-    //         "Work Experience Proof",
-    //         "Police Clearance Certificate",
-    //         "Skill Assessment Report"
-    //     ]
-    // };
-
     const [selectedVisaType, setSelectedVisaType] = useState(visaTypeData?.visaType || "");
     const [selectedVisaId, setSelectedVisaId] = useState(visaTypeData?.visaId || "");
     const [visaPurpose, setVisaPurpose] = useState(visaTypeData?.visaPurpose || "");

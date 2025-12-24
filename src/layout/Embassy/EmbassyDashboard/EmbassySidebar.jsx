@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, UserCircle , X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
 import { useDispatch } from "react-redux";
+import { useApplicationStats } from "../../../tanstack/query/getApplicationStatsForEmbassy";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
+
   <NavLink
     to={to}
     end
@@ -53,10 +55,7 @@ export default function EmbassySidebar({ embassyData }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Static counts
-  const pendingApplications = 12;
-  const upcomingInterviews = 5;
-  const unreadMessages = 8;
+  const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
 
   // Close sidebar on Escape
   useEffect(() => {
@@ -93,20 +92,19 @@ export default function EmbassySidebar({ embassyData }) {
       setIsLoggingOut(false);
     }
   };
-  
+
   const navItems = [
     { to: "/embassy/dashboard", label: "Dashboard", icon: Home },
-    { 
-      to: "/embassy/dashboard/profile", 
-      label: "Profile", 
-      icon: UserCircle ,
-      badge: unreadMessages
+    {
+      to: "/embassy/dashboard/profile",
+      label: "Profile",
+      icon: UserCircle
     },
     {
       to: "/embassy/dashboard/applications",
       label: "Applications",
       icon: FileText,
-      badge: pendingApplications
+      badge: processingStats?.length
     },
     // { 
     //   to: "/embassy/dashboard/appointments", 
@@ -115,7 +113,7 @@ export default function EmbassySidebar({ embassyData }) {
     //   badge: upcomingInterviews
     // },
     // { to: "/embassy/dashboard/approvals", label: "Approvals", icon: CheckCircle },
-    
+
     // { to: "/embassy/dashboard/users", label: "Manage Users", icon: Users },
     // { to: "/embassy/dashboard/analytics", label: "Analytics", icon: BarChart2 },
     // { to: "/embassy/dashboard/processing", label: "Processing Times", icon: Clock },
@@ -140,7 +138,7 @@ export default function EmbassySidebar({ embassyData }) {
           ${collapsed ? "w-20" : "w-64"}
           ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `} style={{ boxShadow: "inset 0 0 40px rgba(255,255,255,0.02)" }}>
-          
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           {/* Logo + Title */}

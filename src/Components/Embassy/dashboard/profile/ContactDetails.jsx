@@ -1,7 +1,8 @@
 import React from 'react'
 import { Globe, Mail, MapPin, Phone } from 'lucide-react'
 
-const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) => {
+const ContactDetails = ({ isEditing, profileData, register, errors }) => {
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Email Address */}
@@ -14,7 +15,7 @@ const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) =>
                         Email Address
                     </label>
                     <div className="text-gray-900 font-medium break-all">
-                        {profileData?.email || editedData?.email || 'Not provided'}
+                        {profileData?.email || 'Not provided'}
                     </div>
                 </div>
             </div>
@@ -31,15 +32,23 @@ const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) =>
                     {isEditing ? (
                         <input
                             type="tel"
-                            value={editedData?.phone || ''}
-                            onChange={(e) => handleChange('phone', e.target.value)}
+                            {...register("phone", {
+                                required: "Contact number is required",
+                                pattern: {
+                                    value: /^[6-9]\d{9}$/,
+                                    message: "Enter a valid contact number"
+                                }
+                            })}
                             placeholder="Enter phone number"
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         />
                     ) : (
                         <div className="text-gray-900 font-medium">
-                            {profileData?.phone || 'Not provided'}
+                            {profileData?.contact_no || 'Not provided'}
                         </div>
+                    )}
+                    {errors.phone && (
+                        <p className="text-red-400 text-xs mt-1.5">{errors.phone.message}</p>
                     )}
                 </div>
             </div>
@@ -55,8 +64,7 @@ const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) =>
                     </label>
                     {isEditing ? (
                         <textarea
-                            value={editedData?.address || ''}
-                            onChange={(e) => handleChange('address', e.target.value)}
+                            {...register("physicalAddress", { required: "Address is required" })}
                             placeholder="Enter physical address"
                             rows={2}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
@@ -65,6 +73,9 @@ const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) =>
                         <div className="text-gray-900 font-medium">
                             {profileData?.address || 'Not provided'}
                         </div>
+                    )}
+                    {errors.physicalAddress && (
+                        <p className="text-red-400 text-xs mt-1.5">{errors.physicalAddress.message}</p>
                     )}
                 </div>
             </div>
@@ -81,23 +92,31 @@ const ContactDetails = ({ isEditing, editedData, profileData, handleChange }) =>
                     {isEditing ? (
                         <input
                             type="url"
-                            value={editedData?.website || ''}
-                            onChange={(e) => handleChange('website', e.target.value)}
+                            {...register("website", {
+                                required: "Website is required",
+                                pattern: {
+                                    value: /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
+                                    message: "Invalid website URL"
+                                }
+                            })}
                             placeholder="www.example.com"
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                         />
                     ) : (
                         <a
-                            href={profileData?.website ? (profileData.website.startsWith('http') ? profileData.website : `https://${profileData.website}`) : '#'}
+                            href={profileData?.website_url ? (profileData.website_url.startsWith('http') ? profileData.website_url : `https://${profileData.website_url}`) : '#'}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-700 font-medium hover:underline truncate block"
                             onClick={(e) => {
-                                if (!profileData?.website) e.preventDefault();
+                                if (!profileData?.website_url) e.preventDefault();
                             }}
                         >
-                            {profileData?.website || 'Not provided'}
+                            {profileData?.website_url || 'Not provided'}
                         </a>
+                    )}
+                    {errors.website && (
+                        <p className="text-red-400 text-xs mt-1.5">{errors.website.message}</p>
                     )}
                 </div>
             </div>

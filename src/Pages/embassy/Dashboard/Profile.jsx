@@ -1,124 +1,119 @@
 import React, { useEffect, useState } from "react";
-import {
-  Building2,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  Calendar,
-  Users,
-  Clock,
-  Edit2,
-  Save,
-  X,
-  Camera,
-  CheckCircle,
-  AlertCircle,
-  Award,
-  Shield,
-  FileCheck
-} from "lucide-react";
+import { Camera, CheckCircle, AlertCircle, Award, Shield, FileCheck, Clock } from "lucide-react";
+import { useForm } from "react-hook-form";
 import ProfileSection from "../../../Components/embassy/dashboard/profile/hero-section/ProfileSection";
 import ActionBtn from "../../../Components/embassy/dashboard/profile/hero-section/ActionBtn";
 import StatsCard from "../../../Components/embassy/dashboard/profile/StatsCard";
 import AchievementSection from "../../../Components/embassy/dashboard/profile/AchievementSection";
 import ContactDetails from "../../../Components/embassy/dashboard/profile/ContactDetails";
 import AdditionalInformation from "../../../Components/embassy/dashboard/profile/AdditionalInformation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
 import { useApplicationStats } from "../../../tanstack/query/getApplicationStatsForEmbassy";
 import { useApplicationsByCountryId } from "../../../tanstack/query/getApplicationsByCountryId";
 import { getMonthlyChange } from "../../../util/embassy-stats/calcMonthlyChange";
+import hotToast from "../../../util/alert/hot-toast";
+import getSweetAlert from "../../../util/alert/sweetAlert";
+import { fetchEmbassyById, updateEmbassyById } from "../../../Redux/Slice/embassySlice";
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [coverPhoto, setCoverPhoto] = useState(null);
+  const dispatch = useDispatch();
 
-  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
-  const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
-  const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
-  const { data: allTypeApplications, isLoading: isAllTypeApplicationLoading, error: allTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'all');
-  const { data: processingTypeApplications, isLoading: isProcessingTypeApplicationLoading, error: processingTypeApplicationsError } = useApplicationsByCountryId(embassyData?.country_id, 'processing');
-  // Stats data - Real embassy metrics
+  const { embassyData } = useSelector(state => state.embassy);
+  const { data: countryDetails } = useFullCountryDetails(embassyData?.country_id);
+  const { data: allTypeApplications } = useApplicationsByCountryId(embassyData?.country_id, "all");
+  const { data: processingTypeApplications } = useApplicationsByCountryId(embassyData?.country_id, "processing");
+
   const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
   const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
 
   const totalChange = getMonthlyChange(allStats);
   const processingChange = getMonthlyChange(processingStats);
 
-  const [profileData, setProfileData] = useState({
-    embassyName: "US Embassy",
-    country: "United States",
-    continent: "North America",
-    countryCode: "US",
-    email: "contact@usembassy.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Embassy Lane, Capital City",
-    website: "www.usembassy.com",
-    establishedDate: "January 15, 1985",
-    totalStaff: "45",
-    workingHours: "9:00 AM - 5:00 PM",
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      phone: "",
+      physicalAddress: "",
+      website: ""
+    }
   });
 
-  const [editedData, setEditedData] = useState({ ...profileData });
-
-  const handleSave = async () => {
-    try {
-      // If a cover photo was selected, upload it to Supabase
-      if (coverPhoto) {
-        // TODO: Implement Supabase upload
-        // Example:
-        // const { data, error } = await supabase.storage
-        //   .from('cover-photos')
-        //   .upload(`${userId}/${Date.now()}-${coverPhoto.file.name}`, coverPhoto.file);
-        // 
-        // if (error) throw error;
-        // const coverUrl = data.path; // Save this URL to your profile
-        
-        console.log('Uploading cover photo to Supabase:', coverPhoto.file);
-      }
-      
-      setProfileData({ ...editedData });
-      setIsEditing(false);
-      // TODO: Add API call to save data
-    } catch (error) {
-      console.error('Error saving:', error);
-      alert('Failed to save changes');
+  useEffect(() => {
+    if (embassyData) {
+      reset({
+        phone: embassyData.contact_no || "",
+        physicalAddress: embassyData.address || "",
+        website: embassyData.website_url || ""
+      });
     }
+  }, [embassyData, reset]);
+
+  const onSubmit = async (data) => {
+    // console.log("FORM DATA:", data);
+
+    let updateData = {
+      ...embassyData,
+      address: data?.physicalAddress,
+      contact_no: data?.phone,
+      website_url: data?.website
+    }
+
+    if (coverPhoto) {
+      // console.log("Upload cover photo:", coverPhoto.file);
+      updateData = {
+        ...updateData,
+        coverPhoto: { file: coverPhoto.file, isOld: false }
+      }
+    }
+
+    dispatch(updateEmbassyById({ id: embassyData?.id, updateData }))
+      .then(res => {
+        // console.log('Response for updating embassy contact details', res);
+
+        if (res.meta.requestStatus === "fulfilled") {
+          hotToast("Profile updated successfully", "success");
+          dispatch(fetchEmbassyById(embassyData?.id));
+        } else {
+          getSweetAlert("Oops...", "Something went wrong!", "error");
+        }
+
+      }).catch(err => {
+        getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
+
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditedData({ ...profileData });
-    setCoverPhoto(null); // Reset cover photo on cancel
+    reset();
+    setCoverPhoto(null);
   };
 
   const handleCoverPhotoChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
-        return;
-      }
-      
-      // Validate file size (e.g., max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
-        return;
-      }
+    if (!file) return;
 
-      // Create a local URL for preview
-      const imageUrl = URL.createObjectURL(file);
-      setCoverPhoto({ file, preview: imageUrl });
-      
-      // TODO: Upload to Supabase bucket when handleSave is called
-      console.log('Cover photo selected:', file.name);
+    const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!validTypes.includes(file.type)) {
+      hotToast("Only JPG, JPEG, and PNG files are allowed", "error");
+      return;
     }
-  };
 
-  const handleChange = (field, value) => {
-    setEditedData(prev => ({ ...prev, [field]: value }));
+    if (!file.type.startsWith("image/")) {
+      hotToast("Please select an image file", "error");
+      return;
+    }
+
+    if (file.size > 500 * 1024) {
+      hotToast("File size must be less than 5KB", "error");
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setCoverPhoto({ file, preview });
   };
 
   const stats = [
@@ -178,34 +173,27 @@ export default function Profile() {
     }
   ];
 
-  console.log('User data', userAuthData);
-  console.log('Embassy data', embassyData);
-  console.log('Country data', countryDetails);
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Cover Photo */}
-      <div className="relative w-full bg-gray-40">
-        {/* Cover Photo - Smaller height */}
-        <div className="relative h-48 sm:h-56 md:h-54 -mt-7 w-full overflow-hidden bg-gradient-to-r from-cyan-600 to-blue-500">
+      {/* ---------------- HERO SECTION ---------------- */}
+      <div className="relative w-full">
+        <div className="relative h-48 sm:h-56 -mt-7 w-full overflow-hidden bg-gradient-to-r from-cyan-600 to-blue-500">
           {coverPhoto ? (
-            // Display uploaded image preview
-            <img 
-              src={coverPhoto.preview} 
-              alt="Cover" 
+            <img
+              src={coverPhoto.preview}
+              alt="Cover"
+              className="w-full h-full object-cover"
+            />
+          ) : embassyData?.cover_photo_url ? (
+            <img
+              src={embassyData?.cover_photo_url}
+              alt="Cover"
               className="w-full h-full object-cover"
             />
           ) : (
-            // Default pattern background
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: '30px 30px'
-              }}></div>
-            </div>
+            <div className="absolute inset-0 opacity-10" />
           )}
 
-          {/* Edit Cover Button */}
           {isEditing && (
             <>
               <input
@@ -216,50 +204,59 @@ export default function Profile() {
                 onChange={handleCoverPhotoChange}
               />
               <button
-                onClick={() => document.getElementById('coverPhotoInput').click()}
-                className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 backdrop-blur-xl border border-gray-300 text-white
-    hover:bg-white/30 transition-all duration-300 ease-out active:scale-95"
+                onClick={() =>
+                  document.getElementById("coverPhotoInput").click()
+                }
+                className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/20 text-white"
               >
-                <Camera size={18} className="opacity-90" />
-                <span className="hidden sm:inline text-sm font-medium">
-                  Change Cover
-                </span>
+                <Camera size={18} />
+                Change Cover
               </button>
             </>
           )}
 
-          {/* Action Buttons */}
-          <ActionBtn isEditing={isEditing} setIsEditing={setIsEditing} setEditedData={setEditedData} handleCancel={handleCancel} handleSave={handleSave} profileData={profileData} />
+          {/* FORM (Action Buttons) */}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <ActionBtn
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              handleCancel={handleCancel}
+            />
+          </form>
         </div>
 
-        {/* Profile Info Section - Separated containers */}
         <ProfileSection profileData={countryDetails} />
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Grid */}
+      {/* ---------------- MAIN CONTENT ---------------- */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, idx) => (
             <StatsCard key={idx} stat={stat} />
           ))}
         </div>
 
-        {/* Achievements Section */}
         <AchievementSection achievements={achievements} />
 
-        {/* Contact Information Card */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* ---------------- CONTACT CARD ---------------- */}
+        <div className="bg-white rounded-xl border shadow-sm overflow-hidden border-gray-200">
           <div className="bg-gray-50 px-6 py-5 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">Contact Information</h2>
+            <h2 className="text-2xl font-bold">Contact Information</h2>
           </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
-            {/* Contact Details Grid */}
-            <ContactDetails isEditing={isEditing} editedData={editedData} profileData={embassyData} />
+          <div className="p-6 space-y-6">
+            {/* FORM (Contact Details) */}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <ContactDetails
+                isEditing={isEditing}
+                register={register}
+                errors={errors}
+                profileData={embassyData}
+              />
+            </form>
 
-            {/* Additional Information */}
-            <AdditionalInformation profileData={profileData} isEditing={isEditing} editedData={editedData} />
+            {/* READ ONLY */}
+            <AdditionalInformation profileData={embassyData} />
           </div>
         </div>
       </div>

@@ -5,7 +5,10 @@ import { formatDateDDMMYY } from '../../../../../../util/dateFormat/dateFormatCo
 import { encodeBase64Url } from '../../../../../../util/encodeDecode/base64';
 
 const ApplicationTableRow = ({ app }) => {
+
     const navigate = useNavigate();
+    const fullName = app?.application_personal_info?.first_name + " " + app?.application_personal_info?.last_name;
+
     const getStatusBadge = (status) => {
         const styles = {
             pending: "bg-yellow-100 text-orange-400 border border-yellow-200",
@@ -16,8 +19,6 @@ const ApplicationTableRow = ({ app }) => {
         };
         return styles[status] || styles.pending;
     };
-
-    const fullName = app?.application_personal_info?.first_name + " " + app?.application_personal_info?.last_name;
 
     return (
         <tr className="hover:bg-gray-50/50 transition-colors">
@@ -37,7 +38,7 @@ const ApplicationTableRow = ({ app }) => {
             </td>
             <td className="px-6 py-4 text-right">
                 <button
-                    onClick={() => navigate(`/embassy/dashboard/applications/${encodeBase64Url(String(app.id))}`)}
+                    onClick={() => navigate(`/embassy/dashboard/applications/${encodeBase64Url(String(app?.id))}`)}
                     className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                 >
                     <Eye size={18} />
