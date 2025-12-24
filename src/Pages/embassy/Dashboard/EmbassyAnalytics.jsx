@@ -74,7 +74,6 @@ export default function EmbassyAnalytics() {
             <h1 className="text-3xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
             <p className="text-sm sm:text-base text-gray-600 mt-2">Comprehensive revenue and performance insights</p>
           </div>
-        
         </div>
 
         {/* Key Metrics Grid */}

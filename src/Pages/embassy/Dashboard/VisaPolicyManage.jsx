@@ -358,7 +358,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Countries</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{mockCountries.length}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{mockCountries.length}</p>
               <p className="text-xs text-gray-500 mt-1">All countries</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -371,7 +371,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active Policies</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{activePolicies}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{activePolicies}</p>
               <p className="text-xs text-green-600 mt-1">Currently accepting</p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -384,7 +384,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Blocked Visas</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{blockedPolicies}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{blockedPolicies}</p>
               <p className="text-xs text-red-600 mt-1">Not accepting</p>
             </div>
             <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -397,7 +397,7 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Configured</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{totalConfigured}/{currentCountryVisaTypes.length}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{totalConfigured}/{currentCountryVisaTypes.length}</p>
               <p className="text-xs text-gray-500 mt-1">Visa types setup</p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -750,7 +750,7 @@ useEffect(() => {
       )}
 
      
-      {/* Visa Types Grid with Drag & Drop */}
+      {/* Visa Types Grid with Drag & swap */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {currentCountryVisaTypes.map((visaType, index) => {
           const policy = getVisaPolicy(visaType.id);
