@@ -15,6 +15,9 @@ const mockCountries = [
   { id: 10, name: "Brazil", code: "BR" },
 ];
 
+
+
+
 // Default visa type icons mapping
 const iconMapping = {
   'Student Visa': GraduationCap,
@@ -88,6 +91,9 @@ export default function VisaPolicyManage() {
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverItem, setDragOverItem] = useState(null);
 
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   const editFormRef = useRef(null);
   const addVisaFormRef = useRef(null);
 
@@ -102,6 +108,17 @@ export default function VisaPolicyManage() {
     requiredDocuments: ['']
   });
 
+  // Add this useEffect to close dropdown when clicking outside
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
   // Scroll to form when editing or adding
   useEffect(() => {
     if (editingVisa && editFormRef.current) {
@@ -390,70 +407,97 @@ export default function VisaPolicyManage() {
         </div>
       </div>
 
-    {/* Country Selector */}
-<div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-4 md:p-5 w-full">
+  {/* Country Selector */}
+<div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg p-3 sm:p-4 md:p-5 w-full">
   <label
     htmlFor="country-select"
-    className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2"
+    className="block text-xs sm:text-sm font-medium text-gray-800 mb-1.5 sm:mb-2"
   >
     Select Country
   </label>
 
-  <div className="relative w-full">
-    <select
-      id="country-select"
-      value={selectedCountry.id}
-      onChange={(e) => {
-        setSelectedCountry(
-          mockCountries.find(c => c.id === Number(e.target.value))
-        );
-        resetForm();
-        setIsAddingVisaType(false);
-      }}
-      className="
-        w-full appearance-none rounded-lg border border-gray-300 bg-white
+  <div className="relative w-full" ref={dropdownRef}>
+    {/* Selected Value Display */}
+    <button
+      type="button"
+      onClick={() => setIsOpen(!isOpen)}
+      className="w-full appearance-none rounded-lg border border-white bg-white backdrop-blur-sm
         px-3 sm:px-4 py-2.5 sm:py-3
-        text-sm sm:text-base text-gray-900
-        focus:outline-none focus:ring-2 focus:ring-blue-500
-        transition
-      "
+        text-sm sm:text-base text-gray-900 text-left
+        focus:outline-none focus:ring-2 focus:ring-blue-400/50
+        transition hover:bg-white/30 hover:border-white/40 flex items-center justify-between
+        shadow-sm"
     >
-      {mockCountries.map((country) => {
-        const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
-        const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
-        const hasBlocked = Object.values(policies[country.id] || {}).some(
-          p => p.blocked
-        );
+      <span className="flex items-center gap-2 font-medium">
+        {selectedCountry.name}
+        {Object.keys(policies[selectedCountry.id] || {}).length > 0 &&
+          ` (${Object.keys(policies[selectedCountry.id] || {}).length}/${
+            (visaTypesByCountry[selectedCountry.id] || []).length
+          } configured)`}
+        {(visaTypesByCountry[selectedCountry.id] || []).length === 0 &&
+          " (No visa types)"}
+        {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
+          <span className="text-red-500">⛔</span>
+        )}
+      </span>
+      <ChevronDown 
+        className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-600 transition-transform ${
+          isOpen ? 'transform rotate-180' : ''
+        }`}
+      />
+    </button>
 
-        return (
-          <option key={country.id} value={country.id}>
-            {country.name}
-            {countryVisaCount > 0
-              ? ` (${countryPolicyCount}/${countryVisaCount} configured)`
-              : " (No visa types)"}
-            {hasBlocked ? " ⛔" : ""}
-          </option>
-        );
-      })}
-    </select>
+    {/* Dropdown List */}
+    {isOpen && (
+      <div className="absolute z-50 w-full mt-1 bg-white/80 backdrop-blur-xl border border-white/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
+        {mockCountries.map((country) => {
+          const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
+          const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
+          const hasBlocked = Object.values(policies[country.id] || {}).some(
+            p => p.blocked
+          );
+          const isSelected = selectedCountry.id === country.id;
 
-    {/* Dropdown arrow */}
-    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
-      <svg className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path
-          fillRule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-          clipRule="evenodd"
-        />
-      </svg>
+          return (
+            <button
+              key={country.id}
+              type="button"
+              onClick={() => {
+                setSelectedCountry(country);
+                setIsOpen(false);
+                resetForm();
+                setIsAddingVisaType(false);
+              }}
+              className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base
+                transition flex items-center justify-between font-medium
+                ${isSelected 
+                  ? 'bg-blue-500/80 backdrop-blur-sm text-white hover:bg-blue-600/80' 
+                  : 'text-gray-900 hover:bg-white/40 backdrop-blur-sm'}
+              `}
+            >
+              <span>
+                {country.name}
+                {countryVisaCount > 0
+                  ? ` (${countryPolicyCount}/${countryVisaCount} configured)`
+                  : " (No visa types)"}
+              </span>
+              {hasBlocked && (
+                <span className={isSelected ? 'text-white' : 'text-red-500'}>⛔</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    )}
+  </div>
+
+  {/* Blocked */}
+  {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
+    <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-red-600 bg-red-50/50 backdrop-blur-sm px-2 py-1 rounded">
+      <Ban size={14} className="sm:size-4" />
+      <span className="font-medium">Blocked country</span>
     </div>
-  </div>
-
-  {/* Blocked Legend */}
-  <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-red-600">
-    <Ban size={14} className="sm:size-4" />
-    <span>Blocked country</span>
-  </div>
+  )}
 </div>
 
 
