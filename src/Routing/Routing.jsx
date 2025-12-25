@@ -62,7 +62,7 @@ import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/Appl
 import Error_404 from "../Pages/Error_404.jsx";
 import Approved from "../Pages/embassy/status/Approved.jsx";
 import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup.jsx";
-import VisaPolicyManage from "../Pages/embassy/Dashboard/VisaPolicyManage.jsx";
+import VisaPolicyManage from "../Pages/embassy/dashboard/VisaPolicyManage.jsx";
 import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
 import EmbassyManage from "../Pages/admin/ManageEmbassy.jsx";
 
@@ -100,7 +100,7 @@ const Routing = () => {
           <Route path="/country" element={<CountryGrid />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/authentication" element={<AuthForm />} />
-          <Route path="/verification/:email/:user_type"element={<EmailVerification />}/>
+          <Route path="/verification/:email/:user_type" element={<EmailVerification />} />
 
           <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -139,23 +139,23 @@ const Routing = () => {
 
           {/* ================= EMBASSY AUTH (No Layout) ================= */}
           <Route path="/embassy/auth" element={<EmbassyAuth />} />
-           <Route path="/embassy/contact-setup/:embassyEmail" element={<ContactSetup />} />
+          <Route path="/embassy/contact-setup/:embassyEmail" element={<ContactSetup />} />
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
           <Route path="/embassy/reject" element={<Rejected />} />
-           <Route path="/embassy/approved" element={<Approved/>} />
+          <Route path="/embassy/approved" element={<Approved />} />
 
           {/* ================= EMBASSY DASHBOARD ================= */}
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
             <Route index element={<EmbassyDashboard />} />
             <Route path="profile" element={<EmbassyProfile />} />
-            
+
             {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
 
-              <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
-         
+            <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
+
             <Route path="analytics" element={<EmbassyAnalytics />} />
 
           </Route>

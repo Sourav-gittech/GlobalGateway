@@ -1,5 +1,5 @@
 import React from "react";
-import { Download, Eye, FileText, Shield } from "lucide-react";
+import { CheckCircle2, Download, Eye, FileText, Hourglass, Shield, XCircle } from "lucide-react";
 
 const getFileType = (url) =>
     url ? url.split(".").pop()?.toUpperCase() : "N/A";
@@ -63,8 +63,8 @@ const Documents = ({ application }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-                    ⏳ Pending
+                <span className={`px-3 py-2 rounded-full text-xs font-medium ${(application?.status == 'pending' || application?.status == 'processing') ?'bg-yellow-100 text-yellow-700':application?.status == 'approved'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>
+                    {application?.status == 'pending' || application?.status == 'processing' ? (<><Hourglass className="inline h-3 mb-1" />Pending</>) : application?.status == 'approved' ? (<><CheckCircle2 className="inline h-3 mb-1" /> Verified</>) : (<><XCircle className="inline h-3 mb-1" /> Unverified</>)}
                 </span>
 
                 <button

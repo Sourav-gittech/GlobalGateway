@@ -115,10 +115,10 @@ const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Status</label>
-                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium mt-1">
-                            <CheckCircle size={14} />
+                        <p className="text-green-700 rounded text-sm font-medium mt-1">
+                            <CheckCircle size={14} className='inline mb-1 mr-1'/>
                             {application?.application_payment?.find(payment => payment.status == "success")?.status}
-                        </span>
+                        </p>
                     </div>
                 </div>
             </div>

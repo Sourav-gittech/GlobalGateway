@@ -1,7 +1,7 @@
 import supabase from "../util/Supabase/supabase";
 
 export async function getPendingApplicationsStats() {
-    const { data, error } = await supabase.from("applications").select("id, created_at").eq("status", "pending").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("applications").select("id, created_at").eq("status", "pending").eq("status", "processing").order("created_at", { ascending: false });
 
     if (error) throw error;
 

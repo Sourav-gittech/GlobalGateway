@@ -4,15 +4,15 @@ import { ArrowLeft } from "lucide-react";
 const ApplicationViewHeader = ({ application }) => {
   return (
     <div className="flex flex-col gap-4">
-      
+
       {/* Top Row */}
       <div className="flex items-center justify-between">
-        
+
         {/* Left Section */}
         <div className="flex items-center gap-4">
           <button
             onClick={() => window.history.back()}
-            className="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200"
+            className="p-2 hover:bg-white rounded-lg transition-colors border border-gray-200 cursor-pointer"
           >
             <ArrowLeft size={20} />
           </button>

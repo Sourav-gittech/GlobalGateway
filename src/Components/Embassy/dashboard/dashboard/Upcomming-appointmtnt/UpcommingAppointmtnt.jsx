@@ -1,5 +1,4 @@
 import React from 'react'
-import { Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import UpcommingAppointmtntRow from './UpcommingAppointmtntRow';
 
@@ -12,16 +11,18 @@ const UpcommingAppointmtnt = ({ upcomingAppointments }) => {
                 <h2 className="text-lg font-semibold text-gray-900">Upcoming Interviews</h2>
                 <button
                     onClick={() => navigate("/embassy/dashboard/appointments")}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                 >
                     View All
                 </button>
             </div>
 
             <div className="space-y-3">
-                {upcomingAppointments?.slice(0, 3)?.map((apt, idx) => (
-                    <UpcommingAppointmtntRow key={idx} apt={apt} />
-                ))}
+                {upcomingAppointments?.length > 0 ?
+                    upcomingAppointments?.slice(0, 3)?.map((apt, idx) => (
+                        <UpcommingAppointmtntRow key={idx} apt={apt} />
+                    ))
+                    : 'No appointment availabe'}
             </div>
         </div>
     )

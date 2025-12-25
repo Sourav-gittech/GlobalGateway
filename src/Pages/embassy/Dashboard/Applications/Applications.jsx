@@ -31,7 +31,7 @@ export default function Applications() {
 
   // Stats data - Real embassy metrics
   const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
-  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
+  const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "approved" });
   const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
   const { data: rejectedStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "rejected" });
 
@@ -45,64 +45,6 @@ export default function Applications() {
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
   }, [embassyData?.country_id]);
-
-  // Mock data
-  const applications = [
-    {
-      id: "APP-001",
-      applicantName: "John Doe",
-      email: "john.doe@email.com",
-      visaType: "Tourist Visa",
-      status: "pending",
-      submittedDate: "2024-12-15",
-      country: "United States"
-    },
-    {
-      id: "APP-002",
-      applicantName: "Sarah Smith",
-      email: "sarah.smith@email.com",
-      visaType: "Student Visa",
-      status: "approved",
-      submittedDate: "2024-12-14",
-      country: "United States"
-    },
-    {
-      id: "APP-003",
-      applicantName: "Michael Johnson",
-      email: "michael.j@email.com",
-      visaType: "Work Visa",
-      status: "under_review",
-      submittedDate: "2024-12-13",
-      country: "United States"
-    },
-    {
-      id: "APP-004",
-      applicantName: "Emma Wilson",
-      email: "emma.wilson@email.com",
-      visaType: "Business Visa",
-      status: "rejected",
-      submittedDate: "2024-12-12",
-      country: "United States"
-    },
-    {
-      id: "APP-005",
-      applicantName: "James Brown",
-      email: "james.brown@email.com",
-      visaType: "Family Visa",
-      status: "pending",
-      submittedDate: "2024-12-11",
-      country: "United States"
-    },
-    {
-      id: "APP-006",
-      applicantName: "Olivia Davis",
-      email: "olivia.davis@email.com",
-      visaType: "Tourist Visa",
-      status: "approved",
-      submittedDate: "2024-12-10",
-      country: "United States"
-    }
-  ];
 
   const filteredApplications = allApplications?.filter(app => {
 

@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Ban, Edit2, Trash2, Save, X, Clock, Calendar, IndianRupee, CheckCircle, XCircle, ChevronDown, ChevronUp, GraduationCap, Plane, Users, Briefcase, HardHat, Home, AlertCircle, Lock, Unlock, GripVertical } from 'lucide-react';
+import { Plus, Calendar, GraduationCap, Plane, Users, Briefcase, HardHat, Home, Lock, HeartPulse, Ship, Landmark, Globe, ShieldCheck, BookOpen, Stethoscope, Building2, AlertTriangle, Scroll, Navigation, BadgeCheck, FlaskConical, Theater, Trophy, Star } from 'lucide-react';
+import StatsGrid from '../../../Components/embassy/dashboard/manage-visa/stats-section/StatsGrid';
+import CountrySelector from '../../../Components/embassy/dashboard/manage-visa/country-selector-section/CountrySelector';
+import AddVisa from '../../../Components/embassy/dashboard/manage-visa/new-visa/AddVisa';
+import EditVisaDetails from '../../../Components/embassy/dashboard/manage-visa/edit-visa/EditVisaDetails';
+import VisaTypeCard from '../../../Components/embassy/dashboard/manage-visa/visa-type-grid/VisaTypeCard';
+import EmptyVisa from '../../../Components/embassy/dashboard/manage-visa/EmptyVisa';
 
 // Mock countries - Replace with your actual country data from Supabase
 const mockCountries = [
@@ -15,17 +21,32 @@ const mockCountries = [
   { id: 10, name: "Brazil", code: "BR" },
 ];
 
-
-
-
 // Default visa type icons mapping
 const iconMapping = {
-  'Student Visa': GraduationCap,
-  'Tourist Visa': Plane,
-  'Family Visa': Users,
-  'Business Visa': Briefcase,
-  'Worker Visa': HardHat,
-  'Resident Visa': Home,
+  "Student": GraduationCap,
+  "Exchange": BookOpen,
+  "Tourist": Plane,
+  "Visitor": Globe,
+  "Transit": Ship,
+  "Family": Users,
+  "Spouse": HeartPulse,
+  "Business": Briefcase,
+  "Work": HardHat,
+  "Resident": Home,
+  "Medical": Stethoscope,
+  "Diplomatic": Landmark,
+  "Official": BadgeCheck,
+  "Conference": Building2,
+  "Research": FlaskConical,
+  "Journalist": Scroll,
+  "Temporary": Calendar,
+  "Emergency": AlertTriangle,
+  "Restricted": Lock,
+  "Airport Transit": Navigation,
+  "Government": ShieldCheck,
+  "Cultural": Theater,
+  "Sports": Trophy,
+  "Talent": Star
 };
 
 // Mock visa types per country - Each country can have different visa types
@@ -109,16 +130,16 @@ export default function VisaPolicyManage() {
   });
 
   // Add this useEffect to close dropdown when clicking outside
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setIsOpen(false);
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   // Scroll to form when editing or adding
   useEffect(() => {
     if (editingVisa && editFormRef.current) {
@@ -148,51 +169,6 @@ useEffect(() => {
       requiredDocuments: ['']
     });
     setEditingVisa(null);
-  };
-
-  const handleDragStart = (e, index) => {
-    setDraggedItem(index);
-    e.currentTarget.style.opacity = '0.5';
-  };
-
-  const handleDragEnd = (e) => {
-    e.currentTarget.style.opacity = '1';
-    setDraggedItem(null);
-    setDragOverItem(null);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDragEnter = (e, index) => {
-    setDragOverItem(index);
-  };
-
-  const handleDrop = (e, dropIndex) => {
-    e.preventDefault();
-    
-    if (draggedItem === null || draggedItem === dropIndex) {
-      return;
-    }
-
-    const currentVisaTypes = [...(visaTypesByCountry[selectedCountry.id] || [])];
-    const draggedItemContent = currentVisaTypes[draggedItem];
-    
-    // Remove dragged item
-    currentVisaTypes.splice(draggedItem, 1);
-    
-    // Insert at new position
-    const finalDropIndex = draggedItem < dropIndex ? dropIndex - 1 : dropIndex;
-    currentVisaTypes.splice(finalDropIndex, 0, draggedItemContent);
-
-    setVisaTypesByCountry(prev => ({
-      ...prev,
-      [selectedCountry.id]: currentVisaTypes
-    }));
-
-    setDraggedItem(null);
-    setDragOverItem(null);
   };
 
   const handleEditVisa = (visaTypeId) => {
@@ -229,9 +205,54 @@ useEffect(() => {
         [editingVisa]: { ...formData }
       }
     }));
-    
+
     resetForm();
     alert('Visa policy saved successfully!');
+  };
+
+  const handleDragStart = (e, index) => {
+    setDraggedItem(index);
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    e.currentTarget.style.opacity = '1';
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDragEnter = (e, index) => {
+    setDragOverItem(index);
+  };
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault();
+
+    if (draggedItem === null || draggedItem === dropIndex) {
+      return;
+    }
+
+    const currentVisaTypes = [...(visaTypesByCountry[selectedCountry.id] || [])];
+    const draggedItemContent = currentVisaTypes[draggedItem];
+
+    // Remove dragged item
+    currentVisaTypes.splice(draggedItem, 1);
+
+    // Insert at new position
+    const finalDropIndex = draggedItem < dropIndex ? dropIndex - 1 : dropIndex;
+    currentVisaTypes.splice(finalDropIndex, 0, draggedItemContent);
+
+    setVisaTypesByCountry(prev => ({
+      ...prev,
+      [selectedCountry.id]: currentVisaTypes
+    }));
+
+    setDraggedItem(null);
+    setDragOverItem(null);
   };
 
   const handleDeleteVisa = (visaTypeId) => {
@@ -254,7 +275,7 @@ useEffect(() => {
         ...prev,
         [selectedCountry.id]: (prev[selectedCountry.id] || []).filter(v => v.id !== visaTypeId)
       }));
-      
+
       // Remove policy if exists
       setPolicies(prev => {
         const countryPolicies = { ...prev[selectedCountry.id] };
@@ -294,8 +315,8 @@ useEffect(() => {
     }
 
     const countryVisaTypes = visaTypesByCountry[selectedCountry.id] || [];
-    const newId = countryVisaTypes.length > 0 
-      ? Math.max(...countryVisaTypes.map(v => v.id)) + 1 
+    const newId = countryVisaTypes.length > 0
+      ? Math.max(...countryVisaTypes.map(v => v.id)) + 1
       : 1;
 
     const newVisaType = {
@@ -320,9 +341,9 @@ useEffect(() => {
   };
 
   const removeArrayField = (field, index) => {
-    setFormData({ 
-      ...formData, 
-      [field]: formData[field].filter((_, i) => i !== index) 
+    setFormData({
+      ...formData,
+      [field]: formData[field].filter((_, i) => i !== index)
     });
   };
 
@@ -338,9 +359,7 @@ useEffect(() => {
 
   const currentCountryVisaTypes = visaTypesByCountry[selectedCountry.id] || [];
   const countryPolicies = policies[selectedCountry.id] || {};
-  const activePolicies = Object.values(countryPolicies).filter(p => p.status === 'active' && !p.blocked).length;
-  const blockedPolicies = Object.values(countryPolicies).filter(p => p.blocked).length;
-  const totalConfigured = Object.keys(countryPolicies).length;
+
 
   return (
     <div className="space-y-6">
@@ -353,381 +372,19 @@ useEffect(() => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Countries</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{mockCountries.length}</p>
-              <p className="text-xs text-gray-500 mt-1">All countries</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
+      <StatsGrid countryPolicies={countryPolicies} currentCountryVisaTypes={currentCountryVisaTypes} mockCountries={mockCountries} />
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Active Policies</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{activePolicies}</p>
-              <p className="text-xs text-green-600 mt-1">Currently accepting</p>
-            </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Blocked Visas</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{blockedPolicies}</p>
-              <p className="text-xs text-red-600 mt-1">Not accepting</p>
-            </div>
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <Lock className="w-6 h-6 text-red-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Configured</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{totalConfigured}/{currentCountryVisaTypes.length}</p>
-              <p className="text-xs text-gray-500 mt-1">Visa types setup</p>
-            </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-purple-600" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-  {/* Country Selector */}
-<div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg p-3 sm:p-4 md:p-5 w-full">
-  <label
-    htmlFor="country-select"
-    className="block text-xs sm:text-sm font-medium text-gray-800 mb-1.5 sm:mb-2"
-  >
-    Select Country
-  </label>
-
-  <div className="relative w-full" ref={dropdownRef}>
-    {/* Selected Value Display */}
-    <button
-      type="button"
-      onClick={() => setIsOpen(!isOpen)}
-      className="w-full appearance-none rounded-lg border border-white bg-white backdrop-blur-sm
-        px-3 sm:px-4 py-2.5 sm:py-3
-        text-sm sm:text-base text-gray-900 text-left
-        focus:outline-none focus:ring-2 focus:ring-blue-400/50
-        transition hover:bg-white/30 hover:border-white/40 flex items-center justify-between
-        shadow-sm"
-    >
-      <span className="flex items-center gap-2 font-medium">
-        {selectedCountry.name}
-        {Object.keys(policies[selectedCountry.id] || {}).length > 0 &&
-          ` (${Object.keys(policies[selectedCountry.id] || {}).length}/${
-            (visaTypesByCountry[selectedCountry.id] || []).length
-          } configured)`}
-        {(visaTypesByCountry[selectedCountry.id] || []).length === 0 &&
-          " (No visa types)"}
-        {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
-          <span className="text-red-500">⛔</span>
-        )}
-      </span>
-      <ChevronDown 
-        className={`h-4 w-4 sm:h-5 sm:w-5 text-gray-600 transition-transform ${
-          isOpen ? 'transform rotate-180' : ''
-        }`}
-      />
-    </button>
-
-    {/* Dropdown List */}
-    {isOpen && (
-      <div className="absolute z-50 w-full mt-1 bg-white/80 backdrop-blur-xl border border-white/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
-        {mockCountries.map((country) => {
-          const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
-          const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
-          const hasBlocked = Object.values(policies[country.id] || {}).some(
-            p => p.blocked
-          );
-          const isSelected = selectedCountry.id === country.id;
-
-          return (
-            <button
-              key={country.id}
-              type="button"
-              onClick={() => {
-                setSelectedCountry(country);
-                setIsOpen(false);
-                resetForm();
-                setIsAddingVisaType(false);
-              }}
-              className={`w-full text-left px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base
-                transition flex items-center justify-between font-medium
-                ${isSelected 
-                  ? 'bg-blue-500/80 backdrop-blur-sm text-white hover:bg-blue-600/80' 
-                  : 'text-gray-900 hover:bg-white/40 backdrop-blur-sm'}
-              `}
-            >
-              <span>
-                {country.name}
-                {countryVisaCount > 0
-                  ? ` (${countryPolicyCount}/${countryVisaCount} configured)`
-                  : " (No visa types)"}
-              </span>
-              {hasBlocked && (
-                <span className={isSelected ? 'text-white' : 'text-red-500'}>⛔</span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    )}
-  </div>
-
-  {/* Blocked */}
-  {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
-    <div className="mt-2 flex items-center gap-1 text-xs sm:text-sm text-red-600 bg-red-50/50 backdrop-blur-sm px-2 py-1 rounded">
-      <Ban size={14} className="sm:size-4" />
-      <span className="font-medium">Blocked country</span>
-    </div>
-  )}
-</div>
-
+      {/* Country Selector */}
+      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} selectedCountry={selectedCountry} visaTypesByCountry={visaTypesByCountry} mockCountries={mockCountries} policies={policies} resetForm={resetForm} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
 
       {/* Add Visa Type Form */}
       {isAddingVisaType && (
-        <div ref={addVisaFormRef} className="bg-white rounded-xl border-2 border-blue-500 shadow-lg p-6 animate-slideIn">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Add New Visa Type</h2>
-              <p className="text-sm text-gray-600">Create a new visa type for {selectedCountry.name}</p>
-            </div>
-            <button onClick={() => setIsAddingVisaType(false)} className="text-gray-400 hover:text-gray-600">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Visa Type Name *</label>
-              <input
-                type="text"
-                value={newVisaTypeName}
-                onChange={(e) => setNewVisaTypeName(e.target.value)}
-                placeholder="e.g., Medical Visa, Transit Visa, etc."
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Select Icon *</label>
-              <select
-                value={newVisaTypeIcon}
-                onChange={(e) => setNewVisaTypeIcon(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                {Object.keys(iconMapping).map((iconName) => (
-                  <option key={iconName} value={iconName}>{iconName}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={handleAddVisaType}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm inline-flex items-center justify-center gap-2"
-              >
-                <Plus className="w-5 h-5" />
-                Add Visa Type
-              </button>
-              <button
-                onClick={() => {
-                  setIsAddingVisaType(false);
-                  setNewVisaTypeName('');
-                  setNewVisaTypeIcon('Business Visa');
-                }}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <AddVisa addVisaFormRef={addVisaFormRef} selectedCountry={selectedCountry} setIsAddingVisaType={setIsAddingVisaType} iconMapping={iconMapping} />
       )}
 
       {/* Edit Form */}
       {editingVisa && (
-        <div ref={editFormRef} className="bg-white rounded-xl border-2 border-blue-500 shadow-lg p-6 animate-slideIn">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">
-                {currentCountryVisaTypes.find(v => v.id === editingVisa)?.name}
-              </h2>
-              <p className="text-sm text-gray-600">Configure policy for {selectedCountry.name}</p>
-            </div>
-            <button onClick={resetForm} className="text-gray-400 hover:text-gray-600">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            {/* Block Toggle */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <label className="flex items-center justify-between cursor-pointer">
-                <div className="flex items-center gap-3">
-                  <Lock className="w-5 h-5 text-red-600" />
-                  <div>
-                    <p className="font-semibold text-red-900">Block this visa type</p>
-                    <p className="text-sm text-red-700">Citizens from {selectedCountry.name} cannot apply</p>
-                  </div>
-                </div>
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={formData.blocked}
-                    onChange={(e) => setFormData({ ...formData, blocked: e.target.checked, status: e.target.checked ? 'inactive' : formData.status })}
-                    className="sr-only peer"
-                  />
-                  <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-red-600"></div>
-                </div>
-              </label>
-            </div>
-
-            {!formData.blocked && (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Processing Time *</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        value={formData.processingTime}
-                        onChange={(e) => setFormData({ ...formData, processingTime: e.target.value })}
-                        placeholder="45"
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <select
-                        value={formData.processingUnit}
-                        onChange={(e) => setFormData({ ...formData, processingUnit: e.target.value })}
-                        className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Validity Period *</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        value={formData.validityPeriod}
-                        onChange={(e) => setFormData({ ...formData, validityPeriod: e.target.value })}
-                        placeholder="1"
-                        className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      <select
-                        value={formData.validityUnit}
-                        onChange={(e) => setFormData({ ...formData, validityUnit: e.target.value })}
-                        className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="months">Months</option>
-                        <option value="years">Years</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Application Fees (₹) *</label>
-                    <input
-                      type="number"
-                      value={formData.applicationFees}
-                      onChange={(e) => setFormData({ ...formData, applicationFees: e.target.value })}
-                      placeholder="10000"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Enter 0 to make this visa free
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Required Documents */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-medium text-gray-700">Required Documents *</label>
-                    <button
-                      onClick={() => addArrayField('requiredDocuments')}
-                      className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      + Add Document
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {formData.requiredDocuments.map((doc, idx) => (
-                      <div key={idx} className="flex gap-2">
-                        <input
-                          type="text"
-                          value={doc}
-                          onChange={(e) => updateArrayField('requiredDocuments', idx, e.target.value)}
-                          placeholder="e.g., Passport copy"
-                          className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                        {formData.requiredDocuments.length > 1 && (
-                          <button
-                            onClick={() => removeArrayField('requiredDocuments', idx)}
-                            className="px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={handleSaveVisa}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm inline-flex items-center justify-center gap-2"
-              >
-                <Save className="w-5 h-5" />
-                Save Policy
-              </button>
-              <button
-                onClick={resetForm}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditVisaDetails editFormRef={editFormRef} currentCountryVisaTypes={currentCountryVisaTypes} selectedCountry={selectedCountry} editingVisa={editingVisa} setFormData={setFormData} formData={formData} handleSaveVisa={handleSaveVisa} resetForm={resetForm} addArrayField={addArrayField} removeArrayField={removeArrayField} />
       )}
 
       {/* Add Visa Type Button */}
@@ -749,198 +406,22 @@ useEffect(() => {
         </div>
       )}
 
-     
+
       {/* Visa Types Grid with Drag & swap */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {currentCountryVisaTypes.map((visaType, index) => {
-          const policy = getVisaPolicy(visaType.id);
-          const isConfigured = !!policy;
-          const isExpanded = expandedVisa === visaType.id;
-          const Icon = iconMapping[visaType.icon] || Briefcase;
-
-          return (
-            <div
-              key={visaType.id}
-              draggable
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={handleDragOver}
-              onDragEnter={(e) => handleDragEnter(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-              className={`bg-white rounded-xl border shadow-sm overflow-hidden transition-all cursor-move ${
-                policy?.blocked ? 'border-red-300' : 'border-gray-200'
-              } ${dragOverItem === index ? 'border-blue-500 border-2 scale-105' : ''} ${
-                draggedItem === index ? 'opacity-50' : ''
-              }`}
-            >
-              <div className="p-5">
-                {/* Drag Handle */}
-                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-100">
-                  <GripVertical className="w-5 h-5 text-gray-400 cursor-grab active:cursor-grabbing" />
-                  <span className="text-xs font-medium text-gray-500">Drag to reorder</span>
-                </div>
-
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                    policy?.blocked ? 'bg-red-100' : 'bg-blue-100'
-                  }`}>
-                    <Icon className={`w-6 h-6 ${policy?.blocked ? 'text-red-600' : 'text-blue-600'}`} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{visaType.name}</h3>
-                    {isConfigured && (
-                      <span className={`inline-flex items-center gap-1 text-xs font-medium mt-1 ${
-                        policy.blocked ? 'text-red-600' : policy.status === 'active' ? 'text-green-600' : 'text-orange-600'
-                      }`}>
-                        {policy.blocked ? (
-                          <><Lock className="w-3 h-3" />Blocked</>
-                        ) : policy.status === 'active' ? (
-                          <><CheckCircle className="w-3 h-3" />Active</>
-                        ) : (
-                          <><XCircle className="w-3 h-3" />Inactive</>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {isConfigured ? (
-                  <div className="space-y-3">
-                    {!policy.blocked && (
-                      <>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <div className="flex items-center gap-2 text-gray-600 mb-1">
-                              <Clock className="w-4 h-4" />
-                              <span className="text-xs font-medium">Processing</span>
-                            </div>
-                            <p className="text-sm font-bold text-gray-900">{policy.processingTime} {policy.processingUnit}</p>
-                          </div>
-                          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                            <div className="flex items-center gap-2 text-gray-600 mb-1">
-                              <Calendar className="w-4 h-4" />
-                              <span className="text-xs font-medium">Validity</span>
-                            </div>
-                            <p className="text-sm font-bold text-gray-900">{policy.validityPeriod} {policy.validityUnit}</p>
-                          </div>
-                        </div>
-
-                        <div className={`rounded-lg p-3 border ${
-                          policy.applicationFees == 0 
-                            ? 'bg-green-50 border-green-200' 
-                            : 'bg-gray-50 border-gray-200'
-                        }`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            <IndianRupee className={`w-4 h-4 ${policy.applicationFees == 0 ? 'text-green-600' : 'text-gray-600'}`} />
-                            <span className={`text-xs font-medium ${policy.applicationFees == 0 ? 'text-green-600' : 'text-gray-600'}`}>
-                              Fees {policy.applicationFees == 0 && '(FREE)'}
-                            </span>
-                          </div>
-                          <p className={`text-sm font-bold ${policy.applicationFees == 0 ? 'text-green-700' : 'text-gray-900'}`}>
-                            {policy.applicationFees == 0 ? 'No charge' : `₹${parseInt(policy.applicationFees).toLocaleString()}`}
-                          </p>
-                        </div>
-
-                        <button
-                          onClick={() => setExpandedVisa(isExpanded ? null : visaType.id)}
-                          className="w-full py-2 text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-1"
-                        >
-                          {isExpanded ? <><ChevronUp className="w-4 h-4" />Hide</> : <><ChevronDown className="w-4 h-4" />Details</>}
-                        </button>
-
-                        {isExpanded && (
-                          <div className="pt-3 border-t border-gray-200">
-                            <p className="text-xs font-semibold text-gray-700 mb-2">Required Documents:</p>
-                            <ul className="space-y-1">
-                              {policy.requiredDocuments.map((doc, idx) => (
-                                <li key={idx} className="text-xs text-gray-600 flex items-start gap-2">
-                                  <CheckCircle className="w-3 h-3 text-green-600 mt-0.5 flex-shrink-0" />
-                                  {doc}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </>
-                    )}
-
-                    {policy.blocked && (
-                      <div className="bg-red-50 rounded-lg p-3 border border-red-200">
-                        <p className="text-sm text-red-800 font-medium">Blocked for {selectedCountry.name}</p>
-                      </div>
-                    )}
-
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        onClick={() => handleEditVisa(visaType.id)}
-                        className="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleBlockVisa(visaType.id)}
-                        className={`py-2 px-3 text-sm font-medium rounded-lg transition-colors ${
-                          policy.blocked
-                            ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                            : 'bg-red-50 text-red-700 hover:bg-red-100'
-                        }`}
-                      >
-                        {policy.blocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                      </button>
-                      <button
-                        onClick={() => handleDeleteVisa(visaType.id)}
-                        className="py-2 px-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => handleEditVisa(visaType.id)}
-                      className="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-600 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Configure Policy
-                    </button>
-                    <button
-                      onClick={() => handleDeleteVisaType(visaType.id)}
-                      className="w-full py-3 px-4 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Remove Visa Type
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {currentCountryVisaTypes.map((visaType, index) => (
+          <VisaTypeCard key={index} index={index} visaType={visaType} getVisaPolicy={getVisaPolicy} expandedVisa={expandedVisa} iconMapping={iconMapping} handleDeleteVisaType={handleDeleteVisaType} handleEditVisa={handleEditVisa}
+            dragOverItem={dragOverItem} draggedItem={draggedItem} selectedCountry={selectedCountry} handleBlockVisa={handleBlockVisa} handleDeleteVisa={handleDeleteVisa} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd}
+            handleDragOver={handleDragOver} handleDragEnter={handleDragEnter} handleDrop={handleDrop} setExpandedVisa={setExpandedVisa} />
+        ))}
       </div>
 
       {/* Empty State */}
       {currentCountryVisaTypes.length === 0 && (
-        <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-gray-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Visa Types Yet</h3>
-          <p className="text-sm text-gray-600 mb-6">
-            Get started by adding visa types for {selectedCountry.name}
-          </p>
-          <button
-            onClick={() => setIsAddingVisaType(true)}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm inline-flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Add First Visa Type
-          </button>
-        </div>
+        <EmptyVisa selectedCountry={selectedCountry} setIsAddingVisaType={setIsAddingVisaType} />
       )}
 
-      <style jsx>{`
+      <style>{`
         @keyframes slideIn {
           from {
             opacity: 0;

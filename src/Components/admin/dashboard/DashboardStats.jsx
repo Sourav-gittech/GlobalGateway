@@ -31,32 +31,22 @@ const DashboardStats = () => {
     const { data: applicationApprovedStats, isLoading: isApplicationApprovedLoading } = useApprovedApplicationsStats();
     const { data: applicationStatusStats, isLoading: isApplicationStatusLoading } = useApplicationStatusStats();
 
+    const stats = [
+        { id: 1, title: "Total Applications", isValueLoading: isApplicationStatsLoading, value: applicationStats?.totalApplications, icon: FileText, isTrendLoading: isApplicationStatsLoading, trend: `${applicationStats?.rate}%` },
+        { id: 2, title: "Approved Visas", isValueLoading: isApplicationApprovedLoading, value: applicationApprovedStats?.totalApproved, icon: CheckCircle, isTrendLoading: isApplicationApprovedLoading, trend: `${applicationApprovedStats?.isIncrease ? '+' : '-'}${applicationApprovedStats?.rate}%` },
+        { id: 3, title: "Pending Visas", isValueLoading: isApplicationPendingLoading, value: `${applicationPendingStats?.totalPending}%`, icon: Clock, isTrendLoading: isApplicationPendingLoading, trend: `${applicationPendingStats?.isIncrease ? '+' : '-'}${applicationPendingStats?.rate}%` },
+        { id: 4, title: "Success Rate", isValueLoading: isApplicationPendingLoading, value: `${applicationStatusStats?.successRate}%`, icon: TrendingUp, isTrendLoading: isApplicationStatusLoading, trend: `${applicationStatusStats?.approvedStats.isIncrease ? "+" : "-"}${applicationStatusStats?.approvedStats.rate}%` },
+    ]
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <SmallCard
-                title="Total Applications"
-                value={isApplicationStatsLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : applicationStats?.totalApplications}
-                Icon={FileText}
-                trend={isApplicationStatsLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationStats?.rate}%`}
-            />
-            <SmallCard
-                title="Approved Visas"
-                value={isApplicationApprovedLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : applicationApprovedStats?.totalApproved}
-                Icon={CheckCircle}
-                trend={isApplicationApprovedLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationApprovedStats?.isIncrease ? '+' : '-'}${applicationApprovedStats?.rate}%`}
-            />
-            <SmallCard
-                title="Pending Visas"
-                value={isApplicationPendingLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationPendingStats?.totalPending}%`}
-                Icon={Clock}
-                trend={isApplicationPendingLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationPendingStats?.isIncrease ? '+' : '-'}${applicationPendingStats?.rate}%`}
-            />
-            <SmallCard
-                title="Success Rate"
-                value={isApplicationStatusLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationStatusStats?.successRate}%`}
-                Icon={TrendingUp}
-                trend={isApplicationStatusLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : `${applicationStatusStats?.approvedStats.isIncrease ? "+" : "-"}${applicationStatusStats?.approvedStats.rate}%`}
-            />
+            {stats?.map(stat => (
+                <SmallCard key={stat?.id}
+                    title={stat?.title}
+                    value={stat?.isValueLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : stat?.value}
+                    Icon={stat?.icon}
+                    trend={stat?.isTrendLoading ? <Loader2 className="w-8 h-8 text-white animate-spin mb-4" /> : stat?.trend}
+                />
+            ))}
         </div>
     )
 }

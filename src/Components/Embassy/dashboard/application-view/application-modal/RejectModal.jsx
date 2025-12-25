@@ -2,7 +2,7 @@ import React from 'react'
 import { XCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { updateApplicationStatus } from '../../../../../Redux/Slice/applicationSlice';
+import { updateApplicationApproveReject } from '../../../../../Redux/Slice/applicationSlice';
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import hotToast from '../../../../../util/alert/hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
@@ -17,9 +17,9 @@ const RejectModal = ({ application, setShowRejectModal }) => {
     });
 
     const onSubmit = (data) => {
-        dispatch(updateApplicationStatus({ applicationId: application?.id, status: 'rejected', rejection_reason: data?.reason }))
+        dispatch(updateApplicationApproveReject({ applicationId: application?.id, status: 'rejected', rejection_reason: data?.reason }))
             .then(res => {
-                console.log('Response after updating the application status', res);
+                // console.log('Response after updating the application status', res);
 
                 if (res.meta.requestStatus === "fulfilled") {
                     queryClient.invalidateQueries(["application", application?.id]);

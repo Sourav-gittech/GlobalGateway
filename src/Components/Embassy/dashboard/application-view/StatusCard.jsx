@@ -1,9 +1,62 @@
 import React from 'react'
-import { Calendar, XCircle } from 'lucide-react';
+import { Calendar, CheckCircle2, XCircle } from 'lucide-react';
 import GetStatusBadge from './GetStatusBadge';
 import { formatDateDDMMYYYY, formatDateTimeMeridianWithoutSecond } from '../../../../util/dateFormat/dateFormatConvertion';
+import hotToast from '../../../../util/alert/hot-toast';
+import { updateApplicationApproveReject } from '../../../../Redux/Slice/applicationSlice';
+import { useQueryClient } from '@tanstack/react-query';
+import getSweetAlert from '../../../../util/alert/sweetAlert';
+import { useDispatch } from 'react-redux';
 
 const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }) => {
+    const dispatch = useDispatch();
+    const queryClient = useQueryClient();
+
+    const isWithin24HoursBeforeAppointment = (appointmentDate) => {
+        if (!appointmentDate) return false;
+
+        const now = new Date();
+        const appointmentTime = new Date(appointmentDate);
+        const diffMs = appointmentTime - now;
+
+        return diffMs > 0 && diffMs <= 24 * 60 * 60 * 1000;
+    };
+
+    const isAppointmentExpired = (appointmentDate) => {
+        if (!appointmentDate) return false;
+        return new Date() > new Date(appointmentDate);
+    };
+
+    const isWithin24Hr = isWithin24HoursBeforeAppointment(application?.appointment_date);
+    const isExpired = isAppointmentExpired(application?.appointment_date);
+
+    const handleChangeAppointment = () => {
+        if (isWithin24Hr) {
+            hotToast("You cannot change the appointment within 24 hours of the scheduled time.", "error");
+            return;
+        }
+        setShowAppointmentModal(true);
+    };
+
+    const setApplicationApprove = () => {
+        dispatch(updateApplicationApproveReject({ applicationId: application?.id, status: 'approved', approval_date: new Date().toISOString() }))
+            .then(res => {
+                // console.log('Response after updating the application status', res);
+
+                if (res.meta.requestStatus === "fulfilled") {
+                    queryClient.invalidateQueries(["application", application?.id]);
+                    hotToast(`Application approved successfully!`, "success");
+                }
+                else {
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                }
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    };
+
     return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             {/* Main Status Section */}
@@ -53,14 +106,31 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                 Reject
                             </button>
                         )}
-                        {application.status === "processing" && (
+                        {application.status === "processing" && !isExpired && (
                             <button
-                                onClick={() => setShowAppointmentModal(true)}
+                                onClick={handleChangeAppointment}
                                 className="flex items-center gap-2 px-4 py-2 bg-cyan-700 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium shadow-sm hover:shadow cursor-pointer"
                             >
                                 <Calendar size={18} />
                                 {!application?.appointment_date ? 'Set' : 'Change'} Appointment
                             </button>
+                        )}
+                        {isExpired && application.status === "processing" && (
+                            <>
+                                <button
+                                    onClick={() => setShowRejectModal(true)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer"
+                                >
+                                    <XCircle size={18} /> Reject
+                                </button>
+
+                                <button
+                                    onClick={() => setApplicationApprove()}
+                                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 cursor-pointer"
+                                >
+                                    <CheckCircle2 size={18} /> Approve
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>

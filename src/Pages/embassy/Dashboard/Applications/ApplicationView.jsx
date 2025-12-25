@@ -30,10 +30,7 @@ export default function ApplicationView() {
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
 
-  const {
-    data: rawApplication,
-    isLoading: applicationLoading,
-  } = fetchFullApplicationDetailsById(applicationId);
+  const { data: rawApplication, isLoading: applicationLoading } = fetchFullApplicationDetailsById(applicationId);
 
   const { data: visaDetails } = useVisaDetails({
     country_id: rawApplication?.country_id,

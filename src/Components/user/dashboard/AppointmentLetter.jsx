@@ -30,7 +30,7 @@ const AppointmentLetter = forwardRef(({ appointment, countryDetails, reason }, r
             {/* Header */}
             <div className="text-center mb-6 pb-4 border-b-2 border-red-800">
                 <div className="w-16 h-16 border-3 border-red-800 rounded-full mx-auto mb-3 flex items-center justify-center">
-                    <div className="text-red-800 font-bold text-xs">{countryDetails?.details?.currency?.code ?? <Plane />}</div>
+                    <div className="text-red-800 font-bold text-xs"><Plane /></div>
                 </div>
                 <h1 className="text-xl font-bold uppercase tracking-wide mb-1">Appointment Letter</h1>
                 <p className="text-sm text-gray-700">{countryDetails?.name} Embassy - Consular Section</p>

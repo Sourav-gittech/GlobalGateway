@@ -34,7 +34,7 @@ export default function EmbassyDashboard() {
   const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
   const { data: fulfilledStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "fulfilled" });
   const { data: processingStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "processing" });
-  const { data: appointmentStats = [], isLoading } = useApplicationsWithAppointment(embassyData?.country_id, "processing", true);
+  const { data: appointmentStats = [], isLoading } = useApplicationsWithAppointment(embassyData?.country_id, "processing", true, true);
 
   useEffect(() => {
     dispatch(fetchApplicationsByCountry({ countryId: embassyData?.country_id, statusFilter: 'all' }))

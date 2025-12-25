@@ -45,25 +45,29 @@ const CalenderPart = ({ currentMonth, setCurrentMonth, selectedDate, setSelected
     const isDateDisabled = (day) => {
         if (!day) return true;
 
-        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day, 0, 0, 0, 0);
 
-        // ALLOW already selected date
+        const now = new Date();
+        const minSelectableDateTime = new Date(
+            now.getTime() + 24 * 60 * 60 * 1000
+        );
+
+        // allow already selected date
         if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
             return false;
         }
 
-        // block today & past dates
-        if (date <= today) return true;
+        // block only if the entire date starts within next 24 hours
+        if (date < minSelectableDateTime) return true;
 
         // block weekends
         if (date.getDay() === 0 || date.getDay() === 6) return true;
 
         // block holidays dynamically
-        if (holidayData && holidayData.length > 0) {
+        if (holidayData?.length) {
             for (const holiday of holidayData) {
                 const [monthMatch, dayMatch] = holiday.date.match(/month:(\d+),day:(\d+)/).slice(1).map(Number);
+
                 if (monthMatch === date.getMonth() + 1 && dayMatch === date.getDate()) {
                     return true;
                 }
@@ -72,6 +76,7 @@ const CalenderPart = ({ currentMonth, setCurrentMonth, selectedDate, setSelected
 
         return false;
     };
+
 
     const handleDateSelect = (day) => {
         if (!day || isDateDisabled(day)) return;

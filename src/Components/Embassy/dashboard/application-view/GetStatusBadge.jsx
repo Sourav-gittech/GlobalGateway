@@ -32,6 +32,14 @@ const GetStatusBadge = (status) => {
     const config = statusConfig[status];
     const Icon = config?.icon;
 
+    if (!config) {
+        return (
+            <span className="inline-flex items-center px-4 py-2 rounded-lg text-sm bg-gray-100 text-gray-600">
+                N/A
+            </span>
+        );
+    }
+
     return (
         <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${config?.bg} ${config?.text}`}>
             <Icon size={18} />
