@@ -19,7 +19,7 @@ import FormField from "./countryFormConfig/FormField";
 import SelectField from "./countryFormConfig/SelectField";
 
 
-const CountryFormModal = ({ isOpen, onClose, country }) => {
+const CountryFormModal = ({ isOpen, onClose, country, embassyCountryData }) => {
     const initialValuesRef = useRef(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [imageFile, setImageFile] = useState(null);
@@ -28,13 +28,36 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
     const dispatch = useDispatch();
 
     // console.log('Editable country details', country);
+    // console.log('Embassy country data', embassyCountryData);
 
     const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(country?.id);
 
     const { register, handleSubmit, control, watch, reset, setValue, formState: { errors, isSubmitting } } = useForm({ defaultValues: { name: "", code: "", officialName: "", continent: "", region: "", capital: "", flagImage: "", countryImage: "", area: "", population: "", latitude: "", longitude: "", currency: "", currencyCode: "", currencySymbol: "", language: "", description: "" } });
 
     useEffect(() => {
-        const values = country
+        // If embassyCountryData exists (from approved embassy), use that data
+        const values = embassyCountryData
+            ? {
+                name: embassyCountryData.countryName || "",
+                description: embassyCountryData.countryDescription || "",
+                countryImage: embassyCountryData.countryImage || "",
+                code: "",
+                officialName: "",
+                continent: "",
+                capital: "",
+                flagImage: "",
+                area: "",
+                population: "",
+                latitude: "",
+                longitude: "",
+                currency: "",
+                currencyCode: "",
+                currencySymbol: "",
+                language: "",
+                visaRequired: true,
+                isActive: false,
+            }
+            : country
             ? {
                 name: country.name || "",
                 code: country.country_details?.code || "",
@@ -84,7 +107,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
 
         setImageFile(null);
         setUploadError(null);
-    }, [country, reset]);
+    }, [country, embassyCountryData, reset]);
 
     const handleReset = () => {
         if (initialValuesRef.current) {
@@ -93,6 +116,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
             setUploadError(null);
         }
     };
+    
     const onSubmit = async (data) => {
 
         const countryData = {
@@ -100,8 +124,8 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
             name: data.name,
             description: data.description,
             image: typeof (data.countryImage) == 'string' ? {
-                docName: country.image_name,
-                url: country.image_url,
+                docName: country?.image_name || embassyCountryData?.countryImageName || 'country-image',
+                url: data.countryImage,
                 isOld: true
             } : data.countryImage[0],
             is_blocked: true,
@@ -155,7 +179,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
             <div className="relative bg-black/60 rounded-2xl border border-slate-700 w-full max-w-6xl max-h-[90vh] flex flex-col shadow-2xl">
-                <FormHeader country={country} onClose={onClose} />
+                <FormHeader country={country} onClose={onClose} embassyCountryData={embassyCountryData} />
 
                 <div className="scroll-bar flex-1 overflow-y-auto p-6">
                     {showSuccess && <div className="mb-6 p-4 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center gap-3"><Check className="w-5 h-5 text-green-400 flex-shrink-0" /><span className="text-sm text-green-400">Country {country ? 'updated' : 'added'} successfully!</span></div>}
@@ -165,7 +189,7 @@ const CountryFormModal = ({ isOpen, onClose, country }) => {
 
                         <BasicFormSection SettingsSection={SettingsSection} FormField={FormField} register={register} errors={errors} country={country} />
 
-                        <ImageMediaSection SettingsSection={SettingsSection} FormField={FormField} country={country} uploading={uploading} setValue={setValue} setImageFile={setImageFile} imageFile={imageFile} register={register} watch={watch} errors={errors} />
+                        <ImageMediaSection SettingsSection={SettingsSection} FormField={FormField} country={country} uploading={uploading} setValue={setValue} setImageFile={setImageFile} imageFile={imageFile} register={register} watch={watch} errors={errors} embassyCountryData={embassyCountryData} />
 
                         <GeographicalDetailsSection SettingsSection={SettingsSection} SelectField={SelectField} FormField={FormField} register={register} errors={errors} />
 

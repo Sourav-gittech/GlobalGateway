@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Eye, Check, X, ChevronDown, ChevronRight, Ban, ShieldCheck, Printer, ExternalLink, Building2, Clock, Mail, MapPin, FileText, Shield, Loader2 } from 'lucide-react';
+import { Search, Eye, Check, X, ChevronDown, ChevronRight, Ban, ShieldCheck, Printer, ExternalLink, Building2, Clock, Mail, MapPin, FileText, Shield, Loader2, Globe, Image as ImageIcon } from 'lucide-react';
 
 const ManageEmbassy = () => {
-  // State management for filters and UI interactions
   const [selectedStatus, setSelectedStatus] = useState('All Status');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedEmbassies, setExpandedEmbassies] = useState({});
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  // Embassy data array containing all embassy information
   const embassies = [
     { 
       id: 1, 
@@ -24,7 +22,11 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1568992687947-868a62a9f521?w=800',
       verificationNotes: '', 
       isBlocked: false, 
-      establishedYear: '1867' 
+      establishedYear: '1867',
+      workingHours: 'Mon-Fri: 9:00 AM - 5:00 PM',
+      isNewCountry: true,
+      countryDescription: 'Canada is a country in North America. Its ten provinces and three territories extend from the Atlantic Ocean to the Pacific Ocean and northward into the Arctic Ocean, making it the world\'s second-largest country by total area. Canada is known for its vast wilderness, multicultural cities, and natural beauty including mountains, forests, and lakes. The country has a strong economy, high quality of life, and is recognized globally for its welcoming immigration policies and commitment to diversity.',
+      countryImage: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?w=800'
     },
     { 
       id: 2, 
@@ -40,7 +42,9 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800',
       verificationNotes: 'All documents verified successfully', 
       isBlocked: false, 
-      establishedYear: '1971' 
+      establishedYear: '1971',
+      workingHours: 'Sun-Thu: 8:00 AM - 3:00 PM',
+      isNewCountry: false
     },
     { 
       id: 3, 
@@ -56,7 +60,9 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800',
       verificationNotes: 'Verified and active', 
       isBlocked: true, 
-      establishedYear: '1947' 
+      establishedYear: '1947',
+      workingHours: 'Mon-Fri: 9:30 AM - 5:30 PM',
+      isNewCountry: false
     },
     { 
       id: 4, 
@@ -72,7 +78,9 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1547448415-e9f5b28e570d?w=800',
       verificationNotes: 'Invalid document format. Please resubmit with official letterhead.', 
       isBlocked: false, 
-      establishedYear: '1991' 
+      establishedYear: '1991',
+      workingHours: 'Mon-Fri: 9:00 AM - 6:00 PM',
+      isNewCountry: false
     },
     { 
       id: 5, 
@@ -88,7 +96,11 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=800',
       verificationNotes: '', 
       isBlocked: false, 
-      establishedYear: '1971' 
+      establishedYear: '1971',
+      workingHours: 'Mon-Fri: 9:00 AM - 5:00 PM',
+      isNewCountry: true,
+      countryDescription: 'Bangladesh is a country in South Asia, known for its lush greenery and many waterways. The country has a rich cultural heritage, vibrant arts scene, and is home to the world\'s largest river delta. Bangladesh has made significant progress in economic development and poverty reduction. The nation is famous for its textile industry, agricultural production, and natural beauty including the Sundarbans mangrove forest and Cox\'s Bazar, the longest natural sea beach in the world.',
+      countryImage: 'https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=800'
     },
     { 
       id: 6, 
@@ -104,7 +116,9 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
       verificationNotes: 'Approved for visa processing operations', 
       isBlocked: false, 
-      establishedYear: '1948' 
+      establishedYear: '1948',
+      workingHours: 'Mon-Fri: 9:00 AM - 4:30 PM',
+      isNewCountry: false
     },
     { 
       id: 7, 
@@ -120,11 +134,12 @@ const ManageEmbassy = () => {
       documentUrl: 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800',
       verificationNotes: 'Verified and approved', 
       isBlocked: false, 
-      establishedYear: '1810' 
+      establishedYear: '1810',
+      workingHours: 'Mon-Fri: 10:00 AM - 4:00 PM',
+      isNewCountry: false
     }
   ];
 
-  // Function to return appropriate color classes based on status
   const getStatusColor = (status) => {
     const colors = { 
       approved: 'bg-green-500/20 text-green-400', 
@@ -134,7 +149,6 @@ const ManageEmbassy = () => {
     return colors[status] || 'bg-gray-500/20 text-gray-400';
   };
 
-  // Filter embassies based on search term and selected status
   const filteredEmbassies = embassies.filter(e => {
     const matchesSearch = e.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          e.country.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -143,7 +157,6 @@ const ManageEmbassy = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate statistics for dashboard cards
   const stats = {
     total: embassies.length,
     pending: embassies.filter(e => e.status === 'pending').length,
@@ -151,7 +164,6 @@ const ManageEmbassy = () => {
     rejected: embassies.filter(e => e.status === 'rejected').length
   };
 
-  // Reusable stat card component for dashboard metrics
   const StatCard = ({ label, value, icon: Icon, color = 'text-white' }) => (
     <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-5 h-30 border border-slate-600/50">
       <div className="flex items-center justify-between mb-2">
@@ -162,7 +174,6 @@ const ManageEmbassy = () => {
     </div>
   );
 
-  // Reusable action button component for table actions
   const ActionButton = ({ onClick, icon: Icon, color, title }) => (
     <button 
       onClick={onClick} 
@@ -174,14 +185,12 @@ const ManageEmbassy = () => {
   );
 
   return (
-    <div className="min-h-screen w-full">
-      {/* Page Header */}
+    <div className="min-h-screen">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white">Manage Embassies</h1>
         <p className="text-slate-400 text-sm mt-1">Review and manage embassy registrations</p>
       </div>
 
-      {/* Statistics Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Total Embassies" value={stats.total} icon={Building2} color="text-white" />
         <StatCard label="Pending Review" value={stats.pending} icon={Clock} color="text-yellow-400" />
@@ -189,9 +198,7 @@ const ManageEmbassy = () => {
         <StatCard label="Rejected" value={stats.rejected} icon={X} color="text-red-400" />
       </div>
 
-      {/* Search and Filter Section */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        {/* Search Input */}
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input 
@@ -203,7 +210,6 @@ const ManageEmbassy = () => {
           />
         </div>
         
-        {/* Status Filter Dropdown */}
         <select 
           value={selectedStatus} 
           onChange={(e) => setSelectedStatus(e.target.value)} 
@@ -216,11 +222,9 @@ const ManageEmbassy = () => {
         </select>
       </div>
 
-      {/* Main Table Section */}
       <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg border border-slate-600/50 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            {/* Table Header */}
             <thead>
               <tr className="border-b border-slate-600/50">
                 <th className="text-left px-6 py-4 text-sm font-semibold text-slate-400 w-8"></th>
@@ -232,13 +236,10 @@ const ManageEmbassy = () => {
               </tr>
             </thead>
             
-            {/* Table Body */}
             <tbody>
               {filteredEmbassies.map((embassy) => (
                 <React.Fragment key={embassy.id}>
-                  {/* Main Embassy Row */}
                   <tr className="border-b border-slate-600/50 hover:bg-slate-700/30 transition-colors">
-                    {/* Expand/Collapse Button */}
                     <td className="px-6 py-4">
                       <button 
                         onClick={() => setExpandedEmbassies(prev => ({ ...prev, [embassy.id]: !prev[embassy.id] }))} 
@@ -251,18 +252,22 @@ const ManageEmbassy = () => {
                       </button>
                     </td>
                     
-                    {/* Embassy Name and Flag */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{embassy.flag}</span>
                         <div>
                           <div className="text-white font-medium flex items-center gap-2">
                             {embassy.name}
-                            {/* Blocked Badge */}
                             {embassy.isBlocked && (
                               <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-xs font-medium rounded flex items-center gap-1 border border-red-500/30">
                                 <Ban className="w-3 h-3" />
                                 Blocked
+                              </span>
+                            )}
+                            {embassy.isNewCountry && (
+                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-medium rounded flex items-center gap-1 border border-blue-500/30">
+                                <Globe className="w-3 h-3" />
+                                New Country
                               </span>
                             )}
                           </div>
@@ -271,26 +276,19 @@ const ManageEmbassy = () => {
                       </div>
                     </td>
                     
-                    {/* Email */}
                     <td className="px-6 py-4 text-slate-300 text-sm">{embassy.email}</td>
-                    
-                    {/* Registration Date */}
                     <td className="px-6 py-4 text-slate-300 text-sm">{embassy.registeredDate}</td>
                     
-                    {/* Status Badge */}
                     <td className="px-6 py-4">
                       <span className={`inline-block px-3 py-1 rounded text-xs font-medium capitalize ${getStatusColor(embassy.status)}`}>
                         {embassy.status}
                       </span>
                     </td>
                     
-                    {/* Action Buttons */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        {/* View Document Button */}
                         <ActionButton onClick={() => setSelectedDocument(embassy)} icon={Eye} color="blue" title="View Document" />
                         
-                        {/* Block/Unblock Button */}
                         {embassy.isBlocked ? 
                           <ActionButton onClick={() => console.log('Unblock', embassy.id)} icon={ShieldCheck} color="green" title="Unblock" /> :
                           <ActionButton onClick={() => console.log('Block', embassy.id)} icon={Ban} color="red" title="Block" />
@@ -299,7 +297,6 @@ const ManageEmbassy = () => {
                     </td>
                   </tr>
                   
-                  {/* Expanded Details Row */}
                   {expandedEmbassies[embassy.id] && (
                     <tr className="bg-slate-700/20 border-b border-slate-600/50">
                       <td colSpan="6" className="px-6 py-6">
@@ -309,55 +306,22 @@ const ManageEmbassy = () => {
                             Embassy Details
                           </h4>
                           
-                          {/* Detail Cards Grid */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {/* Contact Information Card */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {/* Contact & Additional Information Combined */}
                             <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-4 border border-slate-600/50">
                               <h5 className="text-white font-medium mb-3 flex items-center gap-2">
                                 <Mail className="w-4 h-4 text-blue-400" />
-                                Contact Information
+                                Contact & General Information
                               </h5>
                               <div className="space-y-2 text-sm">
                                 <div className="flex items-start gap-2">
-                                  <span className="text-slate-500 min-w-[60px]">Email:</span>
+                                  <span className="text-slate-500 min-w-[80px]">Email:</span>
                                   <span className="text-slate-300">{embassy.email}</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                  <span className="text-slate-500 min-w-[60px]">Address:</span>
+                                  <span className="text-slate-500 min-w-[80px]">Address:</span>
                                   <span className="text-slate-300">{embassy.address}</span>
                                 </div>
-                              </div>
-                            </div>
-
-                            {/* Document Information Card */}
-                            <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-4 border border-slate-600/50">
-                              <h5 className="text-white font-medium mb-3 flex items-center gap-2">
-                                <FileText className="w-4 h-4 text-green-400" />
-                                Document Information
-                              </h5>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex items-start gap-2">
-                                  <span className="text-slate-500 min-w-[60px]">File:</span>
-                                  <span className="text-slate-300">{embassy.document}</span>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                  <span className="text-slate-500 min-w-[60px]">Size:</span>
-                                  <span className="text-slate-300">{embassy.documentSize}</span>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                  <span className="text-slate-500 min-w-[60px]">Date:</span>
-                                  <span className="text-slate-300">{embassy.registeredDate}</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Additional Information Card */}
-                            <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-4 border border-slate-600/50">
-                              <h5 className="text-white font-medium mb-3 flex items-center gap-2">
-                                <Shield className="w-4 h-4 text-purple-400" />
-                                Additional Information
-                              </h5>
-                              <div className="space-y-2 text-sm">
                                 <div className="flex items-start gap-2">
                                   <span className="text-slate-500 min-w-[80px]">Established:</span>
                                   <span className="text-slate-300">{embassy.establishedYear}</span>
@@ -370,7 +334,64 @@ const ManageEmbassy = () => {
                                 </div>
                               </div>
                             </div>
+
+                            {/* Working Hours */}
+                            <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-4 border border-slate-600/50">
+                              <h5 className="text-white font-medium mb-3 flex items-center gap-2">
+                                <Clock className="w-4 h-4 text-purple-400" />
+                                Working Hours
+                              </h5>
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-start gap-2">
+                                  <span className="text-slate-500 min-w-[80px]">Schedule:</span>
+                                  <span className="text-slate-300">{embassy.workingHours}</span>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+
+                          {/* Country Setup Data - Only for New Countries */}
+                          {embassy.isNewCountry && (
+                            <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-4 border border-slate-600/50">
+                              <h5 className="text-white font-medium mb-3 flex items-center gap-2">
+                                <Globe className="w-4 h-4 text-green-400" />
+                                Country Setup Information
+                              </h5>
+                              
+                              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                {/* Country Image */}
+                                <div className="lg:col-span-1">
+                                  <div className="aspect-video rounded-lg overflow-hidden border border-slate-600/50">
+                                    <img 
+                                      src={embassy.countryImage} 
+                                      alt={embassy.country}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.target.src = 'https://via.placeholder.com/400x300?text=Country+Image';
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="mt-2 text-xs text-slate-400 flex items-center gap-1">
+                                    <ImageIcon className="w-3 h-3" />
+                                    Country Image
+                                  </div>
+                                </div>
+
+                                {/* Country Info */}
+                                <div className="lg:col-span-2 space-y-3">
+                                  <div>
+                                    <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Country Name</p>
+                                    <p className="text-white font-semibold text-lg">{embassy.country}</p>
+                                  </div>
+                                  
+                                  <div>
+                                    <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Country Description</p>
+                                    <p className="text-slate-300 text-sm leading-relaxed">{embassy.countryDescription}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -381,7 +402,6 @@ const ManageEmbassy = () => {
           </table>
         </div>
 
-        {/* Empty State */}
         {filteredEmbassies.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-slate-600 mx-auto mb-4" />
@@ -389,27 +409,22 @@ const ManageEmbassy = () => {
           </div>
         )}
 
-        {/* Table Footer - Results Count */}
         <div className="px-6 py-4 border-t border-slate-600/50 text-center text-sm text-slate-500">
           Showing {filteredEmbassies.length} of {embassies.length} embassies
         </div>
       </div>
 
-      {/* Document Preview Modal */}
       {selectedDocument && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-slate-800/95 backdrop-blur-xl rounded-lg max-w-5xl w-full max-h-[90vh] overflow-hidden border border-slate-600/50 shadow-2xl">
             
-            {/* Modal Header */}
             <div className="p-6 border-b border-slate-600/50 flex items-center justify-between bg-slate-800/70">
               <div>
                 <h3 className="text-2xl font-bold text-white">Document Preview</h3>
                 <p className="text-slate-400 text-sm mt-0.5">{selectedDocument.name}</p>
               </div>
               
-              {/* Header Action Buttons */}
               <div className="flex items-center gap-3">
-                {/* Approve/Reject Buttons for Pending Status */}
                 {selectedDocument.status === 'pending' && (
                   <>
                     <button 
@@ -430,7 +445,6 @@ const ManageEmbassy = () => {
                   </>
                 )}
                 
-                {/* Close Button */}
                 <button 
                   onClick={() => setSelectedDocument(null)} 
                   className="p-2.5 hover:bg-slate-700/50 rounded-lg transition-all"
@@ -440,9 +454,7 @@ const ManageEmbassy = () => {
               </div>
             </div>
 
-            {/* Modal Body - Document Preview */}
             <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
-              {/* Document Image Preview */}
               <div className="bg-slate-700/30 rounded-lg p-4 mb-6 border border-slate-600/50">
                 <img 
                   src={selectedDocument.documentUrl} 
@@ -454,7 +466,6 @@ const ManageEmbassy = () => {
                 />
               </div>
 
-              {/* Document Details */}
               <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-6 border border-slate-600/50 mb-6">
                 <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-blue-400" />
@@ -495,7 +506,6 @@ const ManageEmbassy = () => {
                   </div>
                 </div>
 
-                {/* Contact Information */}
                 <div className="mt-6 pt-6 border-t border-slate-600/50">
                   <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-3">Contact Information</p>
                   <div className="space-y-3">
@@ -514,7 +524,6 @@ const ManageEmbassy = () => {
                   </div>
                 </div>
 
-                {/* Verification Notes (if rejected) */}
                 {selectedDocument.verificationNotes && (
                   <div className="mt-6 pt-6 border-t border-slate-600/50">
                     <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-2">Verification Notes</p>
@@ -523,7 +532,6 @@ const ManageEmbassy = () => {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="flex gap-4">
                 <button 
                   onClick={() => window.print()} 
