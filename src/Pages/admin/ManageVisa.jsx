@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { 
-  Search, 
-  ChevronDown, 
+import {
+  Search,
+  ChevronDown,
   ChevronRight,
   Lock,
   Unlock,
@@ -99,14 +99,14 @@ const ManageVisa = () => {
       ]
     }
   ];
-   const getVisaStatus = (visaId, defaultStatus) => {
+  const getVisaStatus = (visaId, defaultStatus) => {
     return visaStatuses[visaId] || defaultStatus;
   };
 
   const filteredVisas = visaData.filter(visa => {
     const currentStatus = getVisaStatus(visa.id, visa.globalStatus);
     const matchesSearch = visa.visaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         visa.visaType.toLowerCase().includes(searchTerm.toLowerCase());
+      visa.visaType.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || currentStatus === filterStatus;
     return matchesSearch && matchesStatus;
   });
@@ -117,7 +117,7 @@ const ManageVisa = () => {
       ...prev,
       [visaId]: newStatus
     }));
-    
+
     if (newStatus === 'blocked') {
       alert('Visa globally blocked from the platform');
     } else {
@@ -125,7 +125,7 @@ const ManageVisa = () => {
     }
   };
 
- 
+
   const getStatusColor = (status) => {
     return status === 'active' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10';
   };
@@ -175,7 +175,9 @@ const ManageVisa = () => {
               <Unlock className="w-5 h-5 text-emerald-400" />
             </div>
             <p className="text-3xl font-bold text-white">
-              {visaData.filter(v => v.globalStatus === 'active').length}
+              {visaData.filter(
+                v => getVisaStatus(v.id, v.globalStatus) === 'active'
+              ).length}
             </p>
             <p className="text-xs text-slate-500 mt-1">Currently accepting</p>
           </div>
@@ -186,7 +188,9 @@ const ManageVisa = () => {
               <Lock className="w-5 h-5 text-red-400" />
             </div>
             <p className="text-3xl font-bold text-white">
-              {visaData.filter(v => v.globalStatus === 'blocked').length}
+              {visaData.filter(
+                v => getVisaStatus(v.id, v.globalStatus) === 'blocked'
+              ).length}
             </p>
             <p className="text-xs text-slate-500 mt-1">Currently disabled</p>
           </div>
@@ -253,109 +257,108 @@ const ManageVisa = () => {
                 {filteredVisas.map((visa) => {
                   const currentStatus = getVisaStatus(visa.id, visa.globalStatus);
                   return (
-                  <React.Fragment key={visa.id}>
-                    <tr className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
-                      <td className="px-4 py-4">
-                        <button
-                          onClick={() => setExpandedVisa(expandedVisa === visa.id ? null : visa.id)}
-                          className="text-slate-400 hover:text-white transition-colors"
-                        >
-                          {expandedVisa === visa.id ? (
-                            <ChevronDown className="w-5 h-5" />
-                          ) : (
-                            <ChevronRight className="w-5 h-5" />
-                          )}
-                        </button>
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="font-semibold text-white text-sm">{visa.visaName}</div>
-                        <div className="text-xs text-slate-400">{visa.visaType}</div>
-                      </td>
-                      <td className="px-4 py-4 text-slate-300 text-sm hidden lg:table-cell">
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-slate-500" />
-                          {getAverageProcessing(visa)}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 text-slate-300 text-sm hidden xl:table-cell">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-slate-500" />
-                          {getAverageValidity(visa)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 hidden lg:table-cell">
-                        <div className="text-white font-semibold text-sm text-center">
-                          {visa.totalApplications.toLocaleString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center">
-                          {currentStatus === 'active' ? (
+                    <React.Fragment key={visa.id}>
+                      <tr className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
+                        <td className="px-4 py-4">
+                          <button
+                            onClick={() => setExpandedVisa(expandedVisa === visa.id ? null : visa.id)}
+                            className="text-slate-400 hover:text-white transition-colors"
+                          >
+                            {expandedVisa === visa.id ? (
+                              <ChevronDown className="w-5 h-5" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5" />
+                            )}
+                          </button>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="font-semibold text-white text-sm">{visa.visaName}</div>
+                          <div className="text-xs text-slate-400">{visa.visaType}</div>
+                        </td>
+                        <td className="px-4 py-4 text-slate-300 text-sm hidden lg:table-cell">
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-slate-500" />
+                            {getAverageProcessing(visa)}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-slate-300 text-sm hidden xl:table-cell">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-slate-500" />
+                            {getAverageValidity(visa)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 hidden lg:table-cell">
+                          <div className="text-white font-semibold text-sm text-center">
+                            {visa.totalApplications.toLocaleString()}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex justify-center">
+                            {currentStatus === 'active' ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium whitespace-nowrap">
+                                <Unlock className="w-3 h-3" />
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-400 rounded-full text-xs font-medium whitespace-nowrap">
+                                <Lock className="w-3 h-3" />
+                                Not Active
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          {getBlockedCountries(visa) === 'Open' ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium whitespace-nowrap">
                               <Unlock className="w-3 h-3" />
-                              Active
+                              Open
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-400 rounded-full text-xs font-medium whitespace-nowrap">
-                              <Lock className="w-3 h-3" />
-                              Not Active
-                            </span>
+                            <div className="text-red-400 text-xs font-medium">
+                              {getBlockedCountries(visa)}
+                            </div>
                           )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        {getBlockedCountries(visa) === 'Open' ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium whitespace-nowrap">
-                            <Unlock className="w-3 h-3" />
-                            Open
-                          </span>
-                        ) : (
-                          <div className="text-red-400 text-xs font-medium">
-                            {getBlockedCountries(visa)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex justify-center">
+                            <button
+                              onClick={() => toggleVisaStatus(visa.id, currentStatus)}
+                              className={`p-2 hover:bg-slate-700/30 rounded-lg transition-colors ${currentStatus === 'active' ? 'text-red-400 hover:text-red-300' : 'text-emerald-400 hover:text-emerald-300'
+                                }`}
+                              title={currentStatus === 'active' ? 'Block Visa Globally' : 'Activate Visa Globally'}
+                            >
+                              {currentStatus === 'active' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                            </button>
                           </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center">
-                          <button
-                            onClick={() => toggleVisaStatus(visa.id, currentStatus)}
-                            className={`p-2 hover:bg-slate-700/30 rounded-lg transition-colors ${
-                              currentStatus === 'active' ? 'text-red-400 hover:text-red-300' : 'text-emerald-400 hover:text-emerald-300'
-                            }`}
-                            title={currentStatus === 'active' ? 'Block Visa Globally' : 'Activate Visa Globally'}
-                          >
-                            {currentStatus === 'active' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    
-                    {/* Expanded Country-wise Details */}
-                    {expandedVisa === visa.id && (
-                      <tr className="bg-slate-800/30">
-                        <td colSpan="8" className="px-4 py-5">
-                          <div className="space-y-5">
-                            {/* Global Status Message */}
-                            {currentStatus === 'blocked' && (
-                              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-                                <div className="flex items-center gap-2">
-                                  <Lock className="w-5 h-5 text-red-400" />
-                                  <p className="text-red-400 font-semibold text-sm">
-                                    This visa is not available right at this moment
-                                  </p>
-                                </div>
-                              </div>
-                            )}
+                        </td>
+                      </tr>
 
-                            {/* Country-wise Status */}
-                            <div>
-                              <h4 className="text-slate-300 font-semibold mb-3 flex items-center gap-2 text-sm">
-                                <Globe className="w-4 h-4" />
-                                Country-wise Details
-                              </h4>
-                              <div className="bg-slate-700/30 rounded-lg border border-slate-600/50 overflow-hidden">
-                                <div className="overflow-auto" style={{ maxHeight: '280px' }}>
-                                  <style>{`
+                      {/* Expanded Country-wise Details */}
+                      {expandedVisa === visa.id && (
+                        <tr className="bg-slate-800/30">
+                          <td colSpan="8" className="px-4 py-5">
+                            <div className="space-y-5">
+                              {/* Global Status Message */}
+                              {currentStatus === 'blocked' && (
+                                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+                                  <div className="flex items-center gap-2">
+                                    <Lock className="w-5 h-5 text-red-400" />
+                                    <p className="text-red-400 font-semibold text-sm">
+                                      This visa is not available right at this moment
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Country-wise Status */}
+                              <div>
+                                <h4 className="text-slate-300 font-semibold mb-3 flex items-center gap-2 text-sm">
+                                  <Globe className="w-4 h-4" />
+                                  Country-wise Details
+                                </h4>
+                                <div className="bg-slate-700/30 rounded-lg border border-slate-600/50 overflow-hidden">
+                                  <div className="overflow-auto" style={{ maxHeight: '280px' }}>
+                                    <style>{`
                                     .country-scroll-container::-webkit-scrollbar {
                                       width: 6px;
                                       height: 6px;
@@ -371,92 +374,92 @@ const ManageVisa = () => {
                                       background: rgba(148, 163, 184, 0.6);
                                     }
                                   `}</style>
-                                  <table className="w-full">
-                                    <thead className="bg-slate-800/50 border-b border-slate-600/50 sticky top-0 z-10">
-                                      <tr>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Country</th>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Processing</th>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Validity</th>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Fees</th>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Applications</th>
-                                        <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Visa Status in Country</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="country-scroll-container">
-                                      {visa.countryStatus.map((country, idx) => (
-                                        <tr key={idx} className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
-                                          <td className="px-4 py-3 text-white font-medium text-sm">{country.country}</td>
-                                          <td className="px-4 py-3 text-slate-300 text-sm">
-                                            <div className="flex items-center gap-1.5">
-                                              <Clock className="w-3.5 h-3.5 text-slate-500" />
-                                              {country.processing}
-                                            </div>
-                                          </td>
-                                          <td className="px-4 py-3 text-slate-300 text-sm">
-                                            <div className="flex items-center gap-1.5">
-                                              <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                                              {country.validity}
-                                            </div>
-                                          </td>
-                                          <td className="px-4 py-3 text-slate-300 text-sm font-medium">
-                                            ₹{country.fees.toLocaleString()}
-                                          </td>
-                                          <td className="px-4 py-3 text-slate-300 text-sm font-medium">{country.applications.toLocaleString()}</td>
-                                          <td className="px-4 py-3">
-                                            {country.status === 'active' ? (
-                                              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium text-emerald-400 bg-emerald-500/10">
-                                                <Unlock className="w-3 h-3" />
-                                                Open
-                                              </span>
-                                            ) : (
-                                              <div className="text-red-400 text-xs font-medium">
-                                                <div className="flex items-start gap-1.5">
-                                                  <Lock className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                                  <span>
-                                                    Blocked for: {country.blockedFor.length > 0 ? country.blockedFor.join(', ') : 'All countries'}
-                                                  </span>
-                                                </div>
-                                              </div>
-                                            )}
-                                          </td>
+                                    <table className="w-full">
+                                      <thead className="bg-slate-800/50 border-b border-slate-600/50 sticky top-0 z-10">
+                                        <tr>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Country</th>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Processing</th>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Validity</th>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Fees</th>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Applications</th>
+                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Visa Status in Country</th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
+                                      </thead>
+                                      <tbody className="country-scroll-container">
+                                        {visa.countryStatus.map((country, idx) => (
+                                          <tr key={idx} className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
+                                            <td className="px-4 py-3 text-white font-medium text-sm">{country.country}</td>
+                                            <td className="px-4 py-3 text-slate-300 text-sm">
+                                              <div className="flex items-center gap-1.5">
+                                                <Clock className="w-3.5 h-3.5 text-slate-500" />
+                                                {country.processing}
+                                              </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-300 text-sm">
+                                              <div className="flex items-center gap-1.5">
+                                                <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                                                {country.validity}
+                                              </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-300 text-sm font-medium">
+                                              ₹{country.fees.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-300 text-sm font-medium">{country.applications.toLocaleString()}</td>
+                                            <td className="px-4 py-3">
+                                              {country.status === 'active' ? (
+                                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium text-emerald-400 bg-emerald-500/10">
+                                                  <Unlock className="w-3 h-3" />
+                                                  Open
+                                                </span>
+                                              ) : (
+                                                <div className="text-red-400 text-xs font-medium">
+                                                  <div className="flex items-start gap-1.5">
+                                                    <Lock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                                                    <span>
+                                                      Blocked for: {country.blockedFor.length > 0 ? country.blockedFor.join(', ') : 'All countries'}
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            {/* Summary Cards */}
-                            <div className="pt-4 border-t border-slate-600/50">
-                              <h4 className="text-slate-300 font-semibold mb-3 text-sm">Summary</h4>
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                  <div className="text-slate-400 text-xs mb-1.5 font-medium">Active Countries</div>
-                                  <div className="text-white text-2xl font-bold">
-                                    {visa.countryStatus.filter(c => c.status === 'active').length}
+                              {/* Summary Cards */}
+                              <div className="pt-4 border-t border-slate-600/50">
+                                <h4 className="text-slate-300 font-semibold mb-3 text-sm">Summary</h4>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
+                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Active Countries</div>
+                                    <div className="text-white text-2xl font-bold">
+                                      {visa.countryStatus.filter(c => c.status === 'active').length}
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                  <div className="text-slate-400 text-xs mb-1.5 font-medium">Blocked Countries</div>
-                                  <div className="text-white text-2xl font-bold">
-                                    {visa.countryStatus.filter(c => c.status === 'blocked').length}
+                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
+                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Blocked Countries</div>
+                                    <div className="text-white text-2xl font-bold">
+                                      {visa.countryStatus.filter(c => c.status === 'blocked').length}
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                  <div className="text-slate-400 text-xs mb-1.5 font-medium">Total Applications</div>
-                                  <div className="text-white text-2xl font-bold">
-                                    {visa.totalApplications.toLocaleString()}
+                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
+                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Total Applications</div>
+                                    <div className="text-white text-2xl font-bold">
+                                      {visa.totalApplications.toLocaleString()}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                );
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
                 })}
               </tbody>
             </table>
