@@ -1,14 +1,13 @@
+import { Ban } from 'lucide-react';
 import React from 'react'
 
-const DropdownList = ({ mockCountries, policies, visaTypesByCountry,resetForm, selectedCountry, setSelectedCountry, setIsOpen, setIsAddingVisaType }) => {
+const DropdownList = ({ mockCountries, policies, visaTypesByCountry, resetForm, selectedCountry, setSelectedCountry, setIsOpen, setIsAddingVisaType }) => {
     return (
         <div className="absolute z-50 w-full mt-1 bg-white/80 backdrop-blur-xl border border-white/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto glass-scrollbar">
             {mockCountries.map((country) => {
                 const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
                 const countryVisaCount = (visaTypesByCountry[country.id] || []).length;
-                const hasBlocked = Object.values(policies[country.id] || {}).some(
-                    p => p.blocked
-                );
+                const hasBlocked = Object.values(policies[country.id] || {}).some(p => p.blocked);
                 const isSelected = selectedCountry.id === country.id;
 
                 return (
@@ -35,7 +34,7 @@ const DropdownList = ({ mockCountries, policies, visaTypesByCountry,resetForm, s
                                 : " (No visa types)"}
                         </span>
                         {hasBlocked && (
-                            <span className={isSelected ? 'text-white' : 'text-red-500'}>⛔</span>
+                            <span className={isSelected ? 'text-white' : 'text-red-500'}><Ban size={14} className="sm:size-4 text-red-600 outline-amber-50 outline-2 rounded-full bg-amber-50" /></span>
                         )}
                     </button>
                 );

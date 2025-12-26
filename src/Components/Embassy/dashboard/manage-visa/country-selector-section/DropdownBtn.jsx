@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronDown } from 'lucide-react'
+import { Ban, ChevronDown } from 'lucide-react'
 
 const DropdownBtn = ({ setIsOpen, isOpen,policies, selectedCountry, visaTypesByCountry }) => {
   return (
@@ -21,7 +21,7 @@ const DropdownBtn = ({ setIsOpen, isOpen,policies, selectedCountry, visaTypesByC
         {(visaTypesByCountry[selectedCountry.id] || []).length === 0 &&
           " (No visa types)"}
         {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
-          <span className="text-red-500">⛔</span>
+          <span className="text-red-500"><Ban size={14} className="sm:size-4" /></span>
         )}
       </span>
       <ChevronDown

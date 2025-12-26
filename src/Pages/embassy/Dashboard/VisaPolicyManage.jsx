@@ -52,21 +52,21 @@ const iconMapping = {
 // Mock visa types per country - Each country can have different visa types
 const mockVisaTypesByCountry = {
   1: [ // India
-    { id: 1, name: "Student Visa", icon: "Student Visa" },
-    { id: 2, name: "Tourist Visa", icon: "Tourist Visa" },
-    { id: 3, name: "Family Visa", icon: "Family Visa" },
-    { id: 4, name: "Business Visa", icon: "Business Visa" },
-    { id: 5, name: "Worker Visa", icon: "Worker Visa" },
-    { id: 6, name: "Resident Visa", icon: "Resident Visa" },
-    { id: 7, name: "Medical Visa", icon: "Business Visa" },
+    { id: 1, name: "Student Visa", icon: "Student" },
+    { id: 2, name: "Tourist Visa", icon: "Tourist" },
+    { id: 3, name: "Family Visa", icon: "Family" },
+    { id: 4, name: "Business Visa", icon: "Business" },
+    { id: 5, name: "Worker Visa", icon: "Worker" },
+    { id: 6, name: "Resident Visa", icon: "Resident" },
+    { id: 7, name: "Medical Visa", icon: "Business" },
   ],
   2: [ // United States
-    { id: 1, name: "Student Visa", icon: "Student Visa" },
-    { id: 2, name: "Tourist Visa", icon: "Tourist Visa" },
-    { id: 4, name: "Business Visa", icon: "Business Visa" },
+    { id: 1, name: "Student Visa", icon: "Student" },
+    { id: 2, name: "Tourist Visa", icon: "Tourist" },
+    { id: 4, name: "Business Visa", icon: "Business" },
   ],
   // Other countries will start with empty arrays
-};
+}
 
 // Mock visa policies data
 const mockVisaPolicies = {
@@ -107,8 +107,6 @@ export default function VisaPolicyManage() {
   const [policies, setPolicies] = useState(mockVisaPolicies);
   const [visaTypesByCountry, setVisaTypesByCountry] = useState(mockVisaTypesByCountry);
   const [isAddingVisaType, setIsAddingVisaType] = useState(false);
-  const [newVisaTypeName, setNewVisaTypeName] = useState('');
-  const [newVisaTypeIcon, setNewVisaTypeIcon] = useState('Business Visa');
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverItem, setDragOverItem] = useState(null);
 
@@ -306,35 +304,9 @@ export default function VisaPolicyManage() {
         }
       }));
     }
-  };
+  }
 
-  const handleAddVisaType = () => {
-    if (!newVisaTypeName.trim()) {
-      alert('Please enter a visa type name');
-      return;
-    }
-
-    const countryVisaTypes = visaTypesByCountry[selectedCountry.id] || [];
-    const newId = countryVisaTypes.length > 0
-      ? Math.max(...countryVisaTypes.map(v => v.id)) + 1
-      : 1;
-
-    const newVisaType = {
-      id: newId,
-      name: newVisaTypeName.trim(),
-      icon: newVisaTypeIcon
-    };
-
-    setVisaTypesByCountry(prev => ({
-      ...prev,
-      [selectedCountry.id]: [...(prev[selectedCountry.id] || []), newVisaType]
-    }));
-
-    setNewVisaTypeName('');
-    setNewVisaTypeIcon('Business Visa');
-    setIsAddingVisaType(false);
-    alert('Visa type added successfully! Now configure its policy.');
-  };
+  // alert('Visa type added successfully! Now configure its policy.');
 
   const addArrayField = (field) => {
     setFormData({ ...formData, [field]: [...formData[field], ''] });
@@ -345,12 +317,6 @@ export default function VisaPolicyManage() {
       ...formData,
       [field]: formData[field].filter((_, i) => i !== index)
     });
-  };
-
-  const updateArrayField = (field, index, value) => {
-    const updated = [...formData[field]];
-    updated[index] = value;
-    setFormData({ ...formData, [field]: updated });
   };
 
   const getVisaPolicy = (visaTypeId) => {
