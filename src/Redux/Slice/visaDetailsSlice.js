@@ -53,6 +53,8 @@ export const updateVisaDetail = createAsyncThunk('visaDetailsSlice/updateVisaDet
 // Delete a visa detail
 export const deleteVisaDetail = createAsyncThunk('visaDetailsSlice/deleteVisaDetail',
     async (id, { rejectWithValue }) => {
+        // console.log('Deleted visa id', id);
+
         try {
             const { error } = await supabase.from('visa_details').delete().eq('id', id);
 
