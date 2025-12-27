@@ -4,6 +4,7 @@ import authSliceReducer from '../Slice/auth/authSlice';
 import countrySliceReducer from '../Slice/countrySlice';
 import applicationSliceReducer from '../Slice/applicationSlice';
 import visaSliceReducer from '../Slice/visaSlice';
+import visaDetailsSliceReducer from '../Slice/VisaDetailsSlice';
 import fetchChargesReducer from '../Slice/chargesSlice';
 import transactionSliceReducer from '../Slice/transactionSlice';
 import contactSliceReducer from '../Slice/contactSlice';
@@ -25,6 +26,7 @@ export const store = configureStore({
     admin: adminProfileSliceReducer,
     application: applicationSliceReducer,
     visa: visaSliceReducer,
+    visaDetails: visaDetailsSliceReducer,
     charge: fetchChargesReducer,
     transaction: transactionSliceReducer,
     contact: contactSliceReducer,
@@ -32,7 +34,7 @@ export const store = configureStore({
     embassy: embassySliceReducer,
     holiday: holidaysSliceReducer,
     timing: timingSliceReducer,
-    appointmentReason: appointmentReasonSliceReducer,
+    appointmentReason: appointmentReasonSliceReducer
   }
 });
 

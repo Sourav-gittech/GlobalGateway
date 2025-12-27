@@ -15,7 +15,7 @@ const DropdownList = ({ mockCountries, policies, countryDetails,visaData, visaTy
                 const countryVisaCount = visaRow?.visa_id?.length ?? 0;
                 const countryPolicyCount = Object.keys(policies[country.id] || {}).length;
                 const hasBlocked = Object.values(policies[country.id] || {}).some(p => p.blocked);
-                const isSelected = selectedCountry.id === country.id;
+                const isSelected = selectedCountry?.id === country?.id;
 
                 return (
                     <button

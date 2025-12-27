@@ -2,7 +2,7 @@ import React from 'react'
 import VisaForm from './VisaForm'
 import { X } from 'lucide-react'
 
-const AddVisa = ({ selectedCountry, setIsAddingVisaType, iconMapping,countryDetails }) => {
+const AddVisa = ({ selectedCountry, setIsAddingVisaType, iconMapping, countryDetails }) => {
     return (
         <div className="bg-white rounded-xl border-2 border-blue-500 shadow-lg p-6 animate-slideIn">
             <div className="flex items-center justify-between mb-6">

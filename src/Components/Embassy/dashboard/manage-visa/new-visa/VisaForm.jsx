@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { addVisa, addVisaToCountry, fetchCountryVisa, fetchVisaByType, updateCountryVisa } from '../../../../../Redux/Slice/visaSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import hotToast from '../../../../../util/alert/hot-toast'
 import getSweetAlert from '../../../../../util/alert/sweetAlert'
+import { useQueryClient } from "@tanstack/react-query";
 
 const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDetails }) => {
+    const queryClient = useQueryClient();
     const dispatch = useDispatch();
     const [selectedIconKey, setSelectedIconKey] = useState("");
     const SelectedIcon = iconMapping[selectedIconKey];
+    const { visaListData, isVisaListloading, isVisaListerror } = useSelector(state => state?.visa);
 
     const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm({
         mode: "onTouched",
@@ -26,7 +29,6 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
 
     const handleVisa = async (data) => {
         // console.log("FORM DATA:", data)
-
         const visaType = data?.visaType?.split(" ")?.map(w => w?.charAt(0)?.toUpperCase() + w?.slice(1)?.toLowerCase()).join(" ");
 
         const visaData = {
@@ -36,7 +38,7 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
 
         const visaObj = {
             visaName: visaType?.toLowerCase()?.includes('visa') ? visaType : visaType + " Visa",
-            visaIcon: iconMapping[data?.visaIcon]?.render?.displayName,
+            visaIcon: data?.visaIcon,
             visitor_country: selectedCountry?.id
         }
 
@@ -61,6 +63,10 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                     hotToast("Visa type added successfully", "success");
                     reset();
                     setIsAddingVisaType(false);
+                    queryClient.invalidateQueries({
+                        queryKey: ["countryVisa", countryDetails.id],
+                    });
+
                 } else {
                     getSweetAlert("Oops...", res.payload, "error");
                 }
@@ -80,6 +86,10 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                     hotToast("Visa type added successfully", "success");
                     reset();
                     setIsAddingVisaType(false);
+                    queryClient.invalidateQueries({
+                        queryKey: ["countryVisa", countryDetails.id],
+                    });
+
                 } else {
                     getSweetAlert("Oops...", res.payload, "error");
                 }
@@ -104,7 +114,7 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                         required: "Visa type required"
                     })}
                     placeholder="e.g., Medical Visa, Transit Visa"
-                    className="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
                 />
                 {errors.visaType && (
                     <p className="text-xs text-red-400 mt-2">
@@ -159,8 +169,8 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
 
             {/* Buttons */}
             <div className="flex gap-3 pt-4">
-                <button type="submit" className="px-6 py-2.5 bg-blue-600 text-white rounded-lg flex items-center gap-2">
-                    <Plus className="w-5 h-5" />
+                <button type="submit" className={`px-6 py-2.5 hover:bg-blue-800 text-white rounded-lg flex items-center gap-2 ${isVisaListloading ? 'cursor-not-allowed bg-blue-800' : 'cursor-pointer bg-blue-600'}`}>
+                    {isVisaListloading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Plus className="w-5 h-5" />}
                     Add Visa Type
                 </button>
 

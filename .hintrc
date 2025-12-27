@@ -9,7 +9,8 @@
         "ignore": [
           "backdrop-filter",
           "scrollbar-width",
-          "scrollbar-color"
+          "scrollbar-color",
+          "-moz-appearance"
         ]
       }
     ]

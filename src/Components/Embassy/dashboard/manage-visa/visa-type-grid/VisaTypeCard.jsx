@@ -1,20 +1,37 @@
 import React from 'react'
-import { Briefcase, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, Edit2, IndianRupee, Lock, Plus, Trash2, Unlock } from 'lucide-react';
+import { Briefcase } from 'lucide-react';
 import VisaCardHeader from './VisaCardHeader';
 import VisaCardActiveBody from './VisaCardActiveBody';
 import VisaCardFooter from './VisaCardFooter';
 import VisaCardConfigBtn from './VisaCardConfigBtn';
+import { useVisaDetailsViaId } from '../../../../../tanstack/query/getVisaDetailsViaId';
+import { useVisaDetailsForCountry } from '../../../../../tanstack/query/getVisaDetailsForCountry';
+import { useVisaDetails } from '../../../../../tanstack/query/getVisaDetails';
 
-const VisaTypeCard = ({ visaType, getVisaPolicy, expandedVisa, iconMapping, handleDeleteVisaType, handleEditVisa, dragOverItem, index, draggedItem, selectedCountry,
+const VisaTypeCard = ({ visaType, getVisaPolicy, country_id, expandedVisa, iconMapping, handleDeleteVisaType, handleEditVisa, dragOverItem, index, draggedItem, selectedCountry,
     handleBlockVisa, handleDeleteVisa, handleDragStart, handleDragEnd, handleDragOver, handleDragEnter, handleDrop, setExpandedVisa }) => {
 
-    const policy = getVisaPolicy(visaType.id);
-    const isConfigured = !!policy;
-    const Icon = iconMapping[visaType.icon] || Briefcase;
+    const { data: visaData, isLoading: isVisaDataLoading } = useVisaDetailsViaId(Object.keys(visaType)[0]);
+    const { data: specificVisaDetails, isLoading: isSpecificVisaDetails } = useVisaDetails({countryId:country_id, visitorCountryId:selectedCountry?.id, visaId:Object.keys(visaType)[0]});
 
+    // console.log(Object.keys(visaType)[0],selectedCountry?.id,country_id);
+
+    const policy = getVisaPolicy(visaType.id);
+    const { data: visaDetails, isLoading: isVisaDetailsLoading, isError } = useVisaDetailsForCountry({ countryId: country_id, visitorCountryId: selectedCountry?.id, visaId: Object.keys(visaType)[0] });
+    const isConfigured = !!policy;
+    const Icon = iconMapping[Object.values(visaType)[0]];
+    // console.log(visaDetails);
+
+    if (isVisaDataLoading || isVisaDetailsLoading || isSpecificVisaDetails) {
+        return (
+            <div className="flex flex-col h-screen items-center justify-center bg-transparent">
+                <div className="w-18 h-18 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <span className="mt-5 text-black">Loading...</span>
+            </div>
+        );
+    }
     return (
         <div
-            key={visaType.id}
             draggable
             onDragStart={(e) => handleDragStart(e, index)}
             onDragEnd={handleDragEnd}
@@ -27,15 +44,15 @@ const VisaTypeCard = ({ visaType, getVisaPolicy, expandedVisa, iconMapping, hand
         >
             <div className="p-5">
                 {/* Drag Handle */}
-                <VisaCardHeader policy={policy} visaType={visaType} isConfigured={isConfigured} Icon={Icon} />
+                <VisaCardHeader policy={policy} iconMapping={iconMapping} visaType={visaType} visaData={visaData} isConfigured={isConfigured} Icon={Icon} />
 
-                {isConfigured ? (
+                {visaDetails ? (
                     <div className="space-y-3">
-                        {!policy.blocked && (
-                            <VisaCardActiveBody policy={policy} expandedVisa={expandedVisa} visaType={visaType} setExpandedVisa={setExpandedVisa} />
+                        {!policy?.blocked && (
+                            <VisaCardActiveBody specificVisaDetails={specificVisaDetails} expandedVisa={expandedVisa} visaType={visaType} setExpandedVisa={setExpandedVisa} />
                         )}
 
-                        {policy.blocked && (
+                        {policy?.blocked && (
                             <div className="bg-red-50 rounded-lg p-3 border border-red-200">
                                 <p className="text-sm text-red-800 font-medium">Blocked for {selectedCountry.name}</p>
                             </div>

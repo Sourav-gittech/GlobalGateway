@@ -14,7 +14,7 @@ const CountrySelector = ({ setIsOpen, isOpen, selectedCountry, resetForm, visaDa
 
             <div className="relative w-full" ref={dropdownRef}>
                 {/* Selected Value Display */}
-                <DropdownBtn setIsOpen={setIsOpen} isOpen={isOpen} visaData={visaData} selectedCountry={selectedCountry} policies={policies} visaTypesByCountry={visaTypesByCountry} />
+                <DropdownBtn setIsOpen={setIsOpen} isOpen={isOpen} visaData={visaData} selectedCountry={selectedCountry} policies={policies} />
 
                 {/* Dropdown List */}
                 {isOpen && (

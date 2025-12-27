@@ -13,12 +13,12 @@ const VisaCardFooter = ({ handleEditVisa, handleBlockVisa, handleDeleteVisa, vis
             </button>
             <button
                 onClick={() => handleBlockVisa(visaType.id)}
-                className={`py-2 px-3 text-sm font-medium rounded-lg transition-colors ${policy.blocked
+                className={`py-2 px-3 text-sm font-medium rounded-lg transition-colors ${policy?.blocked
                     ? 'bg-green-50 text-green-700 hover:bg-green-100'
                     : 'bg-red-50 text-red-700 hover:bg-red-100'
                     }`}
             >
-                {policy.blocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+                {policy?.blocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
             </button>
             <button
                 onClick={() => handleDeleteVisa(visaType.id)}

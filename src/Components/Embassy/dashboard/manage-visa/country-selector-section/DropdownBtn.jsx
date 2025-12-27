@@ -1,8 +1,8 @@
 import React from 'react'
 import { Ban, ChevronDown } from 'lucide-react'
 
-const DropdownBtn = ({ setIsOpen, isOpen, visaData, policies, selectedCountry, visaTypesByCountry }) => {
-  const visaRow = visaData.find(v => v.visitor_country === selectedCountry.id);
+const DropdownBtn = ({ setIsOpen, isOpen, visaData, policies, selectedCountry }) => {
+  const visaRow = visaData?.find(v => v?.visitor_country === selectedCountry?.id);
   const countryVisaCount = visaRow?.visa_id?.length ?? 0;
 
   return (
