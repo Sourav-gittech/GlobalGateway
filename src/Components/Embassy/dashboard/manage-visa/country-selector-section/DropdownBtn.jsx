@@ -1,7 +1,10 @@
 import React from 'react'
 import { Ban, ChevronDown } from 'lucide-react'
 
-const DropdownBtn = ({ setIsOpen, isOpen,policies, selectedCountry, visaTypesByCountry }) => {
+const DropdownBtn = ({ setIsOpen, isOpen, visaData, policies, selectedCountry, visaTypesByCountry }) => {
+  const visaRow = visaData.find(v => v.visitor_country === selectedCountry.id);
+  const countryVisaCount = visaRow?.visa_id?.length ?? 0;
+
   return (
     <button
       type="button"
@@ -14,13 +17,13 @@ const DropdownBtn = ({ setIsOpen, isOpen,policies, selectedCountry, visaTypesByC
         shadow-sm"
     >
       <span className="flex items-center gap-2 font-medium">
-        {selectedCountry.name}
-        {Object.keys(policies[selectedCountry.id] || {}).length > 0 &&
-          ` (${Object.keys(policies[selectedCountry.id] || {}).length}/${(visaTypesByCountry[selectedCountry.id] || []).length
+        {selectedCountry?.name}
+        {countryVisaCount > 0 &&
+          ` (${Object.keys(policies[selectedCountry?.id] || {})?.length}/${countryVisaCount
           } configured)`}
-        {(visaTypesByCountry[selectedCountry.id] || []).length === 0 &&
+        {countryVisaCount === 0 &&
           " (No visa types)"}
-        {Object.values(policies[selectedCountry.id] || {}).some(p => p.blocked) && (
+        {Object.values(policies[selectedCountry?.id] || {})?.some(p => p.blocked) && (
           <span className="text-red-500"><Ban size={14} className="sm:size-4" /></span>
         )}
       </span>

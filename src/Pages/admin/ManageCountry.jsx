@@ -13,7 +13,7 @@ export default function CountryAdminPanel() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterContinent, setFilterContinent] = useState("");
   const dispatch = useDispatch();
-  const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector((state) => state.allCountry);
+  const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector(state => state.allCountry);
 
   useEffect(() => {
     dispatch(fetchAllCountryDetails())

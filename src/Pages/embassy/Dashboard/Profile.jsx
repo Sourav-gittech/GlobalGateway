@@ -149,30 +149,6 @@ export default function Profile() {
     }
   ];
 
-  const achievements = [
-    {
-      icon: Award,
-      title: "Excellence in Service",
-      description: "Recognized for outstanding diplomatic services",
-      bgColor: "bg-purple-50",
-      iconColor: "bg-purple-100 text-purple-600"
-    },
-    {
-      icon: Shield,
-      title: "Security Certified",
-      description: "ISO 27001 certified for data protection",
-      bgColor: "bg-cyan-50",
-      iconColor: "bg-cyan-100 text-cyan-600"
-    },
-    {
-      icon: FileCheck,
-      title: "Accredited Institution",
-      description: "Fully accredited by international bodies",
-      bgColor: "bg-emerald-50",
-      iconColor: "bg-emerald-100 text-emerald-600"
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ---------------- HERO SECTION ---------------- */}
@@ -236,7 +212,7 @@ export default function Profile() {
           ))}
         </div>
 
-        <AchievementSection achievements={achievements} />
+        <AchievementSection  />
 
         {/* ---------------- CONTACT CARD ---------------- */}
         <div className="bg-white rounded-xl border shadow-sm overflow-hidden border-gray-200">

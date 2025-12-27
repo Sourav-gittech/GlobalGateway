@@ -6,6 +6,11 @@ import AddVisa from '../../../Components/embassy/dashboard/manage-visa/new-visa/
 import EditVisaDetails from '../../../Components/embassy/dashboard/manage-visa/edit-visa/EditVisaDetails';
 import VisaTypeCard from '../../../Components/embassy/dashboard/manage-visa/visa-type-grid/VisaTypeCard';
 import EmptyVisa from '../../../Components/embassy/dashboard/manage-visa/EmptyVisa';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllCountryDetails } from '../../../Redux/Slice/countrySlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
+import { useCountryVisaForSpecificCountry } from '../../../tanstack/query/getVisaDetailsCountryWiseForSpecificCountry';
 
 // Mock countries - Replace with your actual country data from Supabase
 const mockCountries = [
@@ -101,11 +106,31 @@ const mockVisaPolicies = {
 };
 
 export default function VisaPolicyManage() {
-  const [selectedCountry, setSelectedCountry] = useState(mockCountries[0]);
+  const dispatch = useDispatch();
+  const { embassyData } = useSelector(state => state.embassy);
+  const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
+  const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector(state => state.allCountry);
+
+  useEffect(() => {
+    dispatch(fetchAllCountryDetails())
+      .then(res => {
+        // console.log('Response for fetching all country', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
+  }, []);
+
+  const countryListWithoutOwn = getAllCountryList?.filter(country => country?.name?.toLowerCase() != embassyData?.country_name?.toLowerCase());
+
+  const { data: visaData = [], isLoading:isVisaDataLoading } = useCountryVisaForSpecificCountry(countryDetails?.id);
+
+  const [selectedCountry, setSelectedCountry] = useState(countryListWithoutOwn[0]);
   const [editingVisa, setEditingVisa] = useState(null);
   const [expandedVisa, setExpandedVisa] = useState(null);
   const [policies, setPolicies] = useState(mockVisaPolicies);
-  const [visaTypesByCountry, setVisaTypesByCountry] = useState(mockVisaTypesByCountry);
+  const [visaTypesByCountry, setVisaTypesByCountry] = useState(countryListWithoutOwn);
   const [isAddingVisaType, setIsAddingVisaType] = useState(false);
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverItem, setDragOverItem] = useState(null);
@@ -323,9 +348,20 @@ export default function VisaPolicyManage() {
     return policies[selectedCountry.id]?.[visaTypeId];
   };
 
-  const currentCountryVisaTypes = visaTypesByCountry[selectedCountry.id] || [];
-  const countryPolicies = policies[selectedCountry.id] || {};
+  const currentCountryVisaTypes = visaTypesByCountry[selectedCountry?.id] || [];
+  const countryPolicies = policies[selectedCountry?.id] || {};
 
+  if (isAllCountryListLoading || isCountryLoading || isVisaDataLoading) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-transparent">
+        <div className="w-18 h-18 border-2 border-black border-t-transparent rounded-full animate-spin" />
+        <span className="mt-5 text-black">Loading...</span>
+      </div>
+    );
+  }
+
+  // console.log('Logges embassy data', embassyData);
+  // console.log('All available country details', getAllCountryList);
 
   return (
     <div className="space-y-6">
@@ -341,11 +377,11 @@ export default function VisaPolicyManage() {
       <StatsGrid countryPolicies={countryPolicies} currentCountryVisaTypes={currentCountryVisaTypes} mockCountries={mockCountries} />
 
       {/* Country Selector */}
-      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} selectedCountry={selectedCountry} visaTypesByCountry={visaTypesByCountry} mockCountries={mockCountries} policies={policies} resetForm={resetForm} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
+      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} selectedCountry={selectedCountry} countryDetails={countryDetails} visaTypesByCountry={visaTypesByCountry} visaData={visaData} mockCountries={countryListWithoutOwn} policies={policies} resetForm={resetForm} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
 
       {/* Add Visa Type Form */}
       {isAddingVisaType && (
-        <AddVisa addVisaFormRef={addVisaFormRef} selectedCountry={selectedCountry} setIsAddingVisaType={setIsAddingVisaType} iconMapping={iconMapping} />
+        <AddVisa selectedCountry={selectedCountry} setIsAddingVisaType={setIsAddingVisaType} iconMapping={iconMapping} countryDetails={countryDetails} />
       )}
 
       {/* Edit Form */}
@@ -359,7 +395,7 @@ export default function VisaPolicyManage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Need a new visa type?</h3>
-              <p className="text-sm text-gray-600 mt-1">Add custom visa types specific to {selectedCountry.name}'s embassy requirements</p>
+              <p className="text-sm text-gray-600 mt-1">Add custom visa types specific to {selectedCountry?.name}'s embassy requirements</p>
             </div>
             <button
               onClick={() => setIsAddingVisaType(true)}
@@ -375,7 +411,7 @@ export default function VisaPolicyManage() {
 
       {/* Visa Types Grid with Drag & swap */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {currentCountryVisaTypes.map((visaType, index) => (
+        {currentCountryVisaTypes?.map((visaType, index) => (
           <VisaTypeCard key={index} index={index} visaType={visaType} getVisaPolicy={getVisaPolicy} expandedVisa={expandedVisa} iconMapping={iconMapping} handleDeleteVisaType={handleDeleteVisaType} handleEditVisa={handleEditVisa}
             dragOverItem={dragOverItem} draggedItem={draggedItem} selectedCountry={selectedCountry} handleBlockVisa={handleBlockVisa} handleDeleteVisa={handleDeleteVisa} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd}
             handleDragOver={handleDragOver} handleDragEnter={handleDragEnter} handleDrop={handleDrop} setExpandedVisa={setExpandedVisa} />
@@ -383,7 +419,7 @@ export default function VisaPolicyManage() {
       </div>
 
       {/* Empty State */}
-      {currentCountryVisaTypes.length === 0 && (
+      {currentCountryVisaTypes?.length === 0 && (
         <EmptyVisa selectedCountry={selectedCountry} setIsAddingVisaType={setIsAddingVisaType} />
       )}
 

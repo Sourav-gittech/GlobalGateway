@@ -146,11 +146,7 @@ const EmbassyAuth = () => {
       <div className="w-full max-w-6xl h-[650px] flex shadow-2xl rounded-xl overflow-hidden">
         {/* LEFT VIDEO SECTION */}
         <div className="hidden md:block w-1/2 relative bg-black/80">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
+          <video autoPlay loop muted playsInline
             className="absolute w-full h-full object-cover top-0 left-0"
           >
             <source src="/signup.mp4" type="video/mp4" />
@@ -168,22 +164,11 @@ const EmbassyAuth = () => {
 
         {/* RIGHT FORM SECTION */}
         <div className="w-full md:w-1/2 bg-black/20 backdrop-blur-md text-white px-12 py-8 flex flex-col justify-center">
-          <h4
-            className="
-    font-bold mb-5
-    text-xl sm:text-2xl md:text-3xl
-    ml-0 sm:ml-6 md:ml-30
-    text-center sm:text-left
-  "
-          >
+          <h4 className=" font-bold mb-5 text-xl sm:text-2xl md:text-3xl ml-0 sm:ml-6 md:ml-30 text-center sm:text-left">
             {isSignup ? "Embassy Sign Up" : "Embassy Sign In"}
           </h4>
 
-
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-6"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             {isSignup && (
               <>
                 <EmbassyAuthInputField
@@ -192,8 +177,7 @@ const EmbassyAuth = () => {
                     required: "Country is required",
                   })}
                   error={!!errors.country}
-                  helperText={errors.country?.message}
-                />
+                  helperText={errors.country?.message} />
 
                 {/* DRAG & DROP PDF UPLOAD */}
                 <div
@@ -203,16 +187,9 @@ const EmbassyAuth = () => {
                   }}
                   onDragLeave={() => setDragActive(false)}
                   onDrop={handleFileDrop}
-                  className={`border-2 border-dashed rounded-md p-6 text-center transition ${dragActive
-                    ? "border-white bg-white/10"
-                    : "border-white/30"
-                    }`}
-                >
+                  className={`border-2 border-dashed rounded-md p-6 text-center transition ${dragActive ? "border-white bg-white/10" : "border-white/30"}`}>
                   <input
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    id="embassyDoc"
+                    type="file" accept="application/pdf" className="hidden" id="embassyDoc"
                     onChange={(e) => {
                       const file = e.target.files[0];
                       if (file) {

@@ -2,9 +2,9 @@ import React from 'react'
 import VisaForm from './VisaForm'
 import { X } from 'lucide-react'
 
-const AddVisa = ({ addVisaFormRef, selectedCountry, setIsAddingVisaType, iconMapping }) => {
+const AddVisa = ({ selectedCountry, setIsAddingVisaType, iconMapping,countryDetails }) => {
     return (
-        <div ref={addVisaFormRef} className="bg-white rounded-xl border-2 border-blue-500 shadow-lg p-6 animate-slideIn">
+        <div className="bg-white rounded-xl border-2 border-blue-500 shadow-lg p-6 animate-slideIn">
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h2 className="text-xl font-bold text-gray-900">Add New Visa Type</h2>
@@ -15,7 +15,7 @@ const AddVisa = ({ addVisaFormRef, selectedCountry, setIsAddingVisaType, iconMap
                 </button>
             </div>
 
-            <VisaForm setIsAddingVisaType={setIsAddingVisaType} iconMapping={iconMapping} />
+            <VisaForm setIsAddingVisaType={setIsAddingVisaType} selectedCountry={selectedCountry} iconMapping={iconMapping} countryDetails={countryDetails} />
         </div>
     )
 }

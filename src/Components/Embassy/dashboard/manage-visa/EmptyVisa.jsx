@@ -9,7 +9,7 @@ const EmptyVisa = ({ selectedCountry, setIsAddingVisaType }) => {
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Visa Types Yet</h3>
             <p className="text-sm text-gray-600 mb-6">
-                Get started by adding visa types for {selectedCountry.name}
+                Get started by adding visa types for {selectedCountry?.name}
             </p>
             <button
                 onClick={() => setIsAddingVisaType(true)}
