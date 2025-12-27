@@ -93,7 +93,6 @@ export const checkVisaForCountry = createAsyncThunk("visaSlice/checkVisaForCount
     }
 )
 
-
 // fetch grant visa for a specific country 
 export const fetchCountryVisa = createAsyncThunk("visaSlice/fetchCountryVisa",
     async ({ countryId, visitorCountryId }, { rejectWithValue }) => {
@@ -164,7 +163,68 @@ export const updateCountryVisa = createAsyncThunk("visaSlice/updateCountryVisa",
             return rejectWithValue(err.message);
         }
     }
+)
+
+// Delete visa only if not used in country_visas
+export const deleteVisaTypeFromCountry = createAsyncThunk("visaSlice/deleteVisaTypeFromCountry",
+    async ({ visaId, countryVisaRowId }, { rejectWithValue }) => {
+        try {
+
+            const { data: row, error: rowError } = await supabase.from("country_visas").select("*").eq("id", countryVisaRowId).maybeSingle();
+
+            if (rowError) throw rowError;
+            if (!row) return rejectWithValue("Country visa row not found");
+
+            const { visa_id: visaIds, visa_icon: visaIcons } = row;
+
+            if (visaIds.length > 1) {
+                const updatedVisaIds = visaIds.filter(id => id !== visaId);
+                const updatedVisaIcons = visaIcons.filter(iconObj => !iconObj[visaId]);
+
+                const { data, error } = await supabase.from("country_visas")
+                    .update({
+                        visa_id: updatedVisaIds,
+                        visa_icon: updatedVisaIcons,
+                        updated_at: new Date()
+                    }).eq("id", countryVisaRowId).select("*").maybeSingle();
+
+                if (error) throw error;
+                return { action: "removed_from_row", data };
+            } else {
+
+                const { data, error } = await supabase.from("country_visas").delete().eq("id", countryVisaRowId).select("*").maybeSingle();
+
+                if (error) throw error;
+                return { action: "deleted_row", data };
+            }
+        } catch (err) {
+            return rejectWithValue(err.message || "Failed to delete visa type");
+        }
+    }
+)
+
+export const deleteVisaIfUnusedAnywhere = createAsyncThunk("visaSlice/deleteVisaIfUnusedAnywhere",
+    async (visaId, { rejectWithValue }) => {
+        try {
+            const { data: rows, error } = await supabase.from("country_visas").select("*").contains("visa_id", [visaId]);
+
+            if (error) throw error;
+
+            // If no other rows contain this visaId, delete from visa table
+            if (!rows || rows.length === 0) {
+                const { data: deletedVisa, error: deleteError } = await supabase.from("visa").delete().eq("id", visaId).select("*").maybeSingle();
+
+                if (deleteError) throw deleteError;
+                return deletedVisa;
+            }
+
+            return null;
+        } catch (err) {
+            return rejectWithValue(err.message || "Failed to delete visa");
+        }
+    }
 );
+
 
 
 const initialState = {
@@ -249,6 +309,33 @@ export const visaSlice = createSlice({
                 state.isVisaListloading = false;
                 state.isVisaListerror = action.payload;
             })
+
+            // delete visa from country
+            .addCase(deleteVisaTypeFromCountry.pending, (state) => {
+                state.isVisaListloading = true;
+                state.isVisaListerror = null;
+            })
+            .addCase(deleteVisaTypeFromCountry.fulfilled, (state, action) => {
+                state.isVisaListloading = false;
+                state.visaListData = action.payload;
+            })
+            .addCase(deleteVisaTypeFromCountry.rejected, (state, action) => {
+                state.isVisaListloading = false;
+                state.isVisaListerror = action.payload;
+            })
+            
+            .addCase(deleteVisaIfUnusedAnywhere.pending, (state) => {
+                state.isVisaListloading = true;
+                state.isVisaListerror = null;
+            })
+            .addCase(deleteVisaIfUnusedAnywhere.fulfilled, (state, action) => {
+                state.isVisaListloading = false;
+                state.visaListData = action.payload;
+            })
+            .addCase(deleteVisaIfUnusedAnywhere.rejected, (state, action) => {
+                state.isVisaListloading = false;
+                state.isVisaListerror = action.payload;
+            });
     },
 });
 
