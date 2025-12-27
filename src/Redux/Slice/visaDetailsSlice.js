@@ -19,11 +19,11 @@ export const fetchVisaDetails = createAsyncThunk('visaDetailsSlice/fetchVisaDeta
 // Add a new visa detail
 export const addVisaDetail = createAsyncThunk('visaDetailsSlice/addVisaDetail',
     async (visaData, { rejectWithValue }) => {
-        console.log('Received visa details to add in slice', visaData);
+        // console.log('Received visa details to add in slice', visaData);
 
         try {
             const res = await supabase.from('visa_details').insert([visaData]).select();
-            console.log('Response for adding visa details', res);
+            // console.log('Response for adding visa details', res);
 
             if (res?.error) throw res?.error
             return res?.data[0]
@@ -36,11 +36,11 @@ export const addVisaDetail = createAsyncThunk('visaDetailsSlice/addVisaDetail',
 // Update an existing visa detail
 export const updateVisaDetail = createAsyncThunk('visaDetailsSlice/updateVisaDetail',
     async ({ id, updatedData }, { rejectWithValue }) => {
-        console.log('Received visa details to edit in slice', id, updatedData);
+        // console.log('Received visa details to edit in slice', id, updatedData);
 
         try {
             const res = await supabase.from('visa_details').update(updatedData).eq('id', id).select();
-            console.log('Response for updating visa details', res);
+            // console.log('Response for updating visa details', res);
 
             if (res?.error) throw res?.error
             return res?.data[0]
