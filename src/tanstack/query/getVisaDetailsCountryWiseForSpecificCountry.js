@@ -6,7 +6,7 @@ export const useCountryVisaForSpecificCountry = (countryId) => {
         queryKey: ["countryVisa", countryId],
         queryFn: () => fetchCountryVisaForSpecificCountry({ countryId }),
         enabled: !!countryId, 
-        staleTime: 5 * 60 * 1000, 
+        // staleTime: 5 * 60 * 1000, 
         retry: 1, 
     });
 };
