@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Plane } from 'lucide-react';
-import { formatAppointmentDateTimeWithYear } from '../../../util/dateFormat/dateFormatConvertion';
-import { parseJSONSafe } from '../../../util/jsonConvertion/ConvertStringToJson';
+import { formatAppointmentDateTimeWithYear } from '../../../../util/dateFormat/dateFormatConvertion';
+import { parseJSONSafe } from '../../../../util/jsonConvertion/ConvertStringToJson';
 
 const AppointmentLetter = forwardRef(({ appointment, countryDetails, reason }, ref) => {
     // console.log(appointment, countryDetails, reason);
@@ -10,19 +10,10 @@ const AppointmentLetter = forwardRef(({ appointment, countryDetails, reason }, r
 
     const embassy = parseJSONSafe(appointment.embassy_location);
 
-    const reasonLabels = {
-        physical_verification: 'Physical Verification',
-        biometric_test: 'Biometric Collection',
-        document_verification: 'Document Verification',
-        interview: 'Consular Interview',
-        additional_information: 'Additional Information',
-        medical_examination: 'Medical Examination'
-    };
-
     const location = countryDetails?.location || {
-        name: 'U.S. Embassy Consular Section',
-        address: '24 Ferozeshah Road, New Delhi 110001',
-        phone: '+91-11-2419-8000'
+        name: countryDetails?.name + ' Embassy',
+        address: 'N/A',
+        phone: 'N/A'
     };
 
     return (

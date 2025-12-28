@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Calendar, Eye, X, Printer, Phone, MapPinned, Earth } from 'lucide-react';
-import AppointmentLetter from './AppointmentLetter';
+import AppointmentLetter from './letter/AppointmentLetter';
 import { handlePrint } from './appointmentSlip';
 import { useFullCountryDetails } from '../../../tanstack/query/getCountryDetails';
 import { useAppointmentReasonByReasonId } from '../../../tanstack/query/getReasonForReasonId';

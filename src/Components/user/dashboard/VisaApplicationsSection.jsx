@@ -1,20 +1,26 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useFullCountryDetails } from '../../../tanstack/query/getCountryDetails'
 import { useVisaDetailsByApplicationId } from '../../../tanstack/query/getApplicationVisaDetails';
 import { useCountryWiseVisaDetails } from '../../../tanstack/query/getCountryWiseVisaDetails';
 import { calculateProcessingRange } from '../../../functions/calculateExpectedDate';
-import { CheckCircle, XCircle, X, Clock, Send, History, Eye, Printer } from 'lucide-react';
+import { X, History, Eye, Printer } from 'lucide-react';
 import RejectionModal from './modal/RejectModal';
 import ApprovalTimeline from './modal/ApproveModal';
-import ApproveLetter from '../dashboard/ApproveLetter';
+import ApproveLetter from './letter/ApproveLetter';
 import { handlePrintApproval } from '../../../util/printUtils';
+import { fetchSpecificationApplicationsById } from '../../../Redux/Slice/applicationSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { fetchFullApplicationDetailsById } from '../../../tanstack/query/getFullApplicationDetails';
 
 const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIcon }) => {
+    const dispatch = useDispatch();
     const [selectedVisa, setSelectedVisa] = useState(null);
     const [modalType, setModalType] = useState(null);
     const [showLetterModal, setShowLetterModal] = useState(false);
     const [selectedVisaForLetter, setSelectedVisaForLetter] = useState(null);
     const [selectedCountryDetails, setSelectedCountryDetails] = useState(null);
+    const [selectedApplicationDetails, setSelectedApplicationDetails] = useState(null);
     const [selectedVisaData, setSelectedVisaData] = useState(null);
     const letterRef = useRef(null);
 
@@ -28,10 +34,11 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
         setModalType(null);
     };
 
-    const handleViewLetter = (visa, countryDetails, visaData) => {
+    const handleViewLetter = (visa, countryDetails, visaData, applicationDetails) => {
         setSelectedVisaForLetter(visa);
         setSelectedCountryDetails(countryDetails);
         setSelectedVisaData(visaData);
+        setSelectedApplicationDetails(applicationDetails);
         setShowLetterModal(true);
     };
 
@@ -39,6 +46,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
         setShowLetterModal(false);
         setSelectedVisaForLetter(null);
         setSelectedCountryDetails(null);
+        setSelectedApplicationDetails(null);
         setSelectedVisaData(null);
     };
 
@@ -57,7 +65,10 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                     const { data: visaData, isLoading: isVisaDataLoading, error: isVisaDataError } = useVisaDetailsByApplicationId(visa?.id);
                     const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(visa?.country_id);
                     const { data: countryDetails, isLoading: isCountryLoading, error: countryError } = useFullCountryDetails(visa?.country_id);
+                    const { data: applicationDetails, isLoading: isApplicationDetailsLoading, error: applicationDetailsError } = fetchFullApplicationDetailsById(visa?.id);
                     const countrySpecificVisaDetails = countryWiseVisaDetails?.find(visaType => visaType?.visa_type == visaData?.visa_type);
+
+                    // console.log('Application details', applicationDetails);
 
                     const expectedDate = calculateProcessingRange(visa.applied_at, countrySpecificVisaDetails?.visa_details[0]?.visa_processing_time);
 
@@ -76,16 +87,16 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                     {normalizedStatus === 'approved' && (
                                         <>
                                             <button
-                                                onClick={() => handleViewLetter(visa, countryDetails, visaData)}
-                                                className="p-1.5 rounded-full text-blue-600 hover:bg-blue-50 border border-blue-200 transition-colors flex-shrink-0"
+                                                onClick={() => handleViewLetter(visa, countryDetails, visaData, applicationDetails)}
+                                                className="p-1.5 rounded-full text-blue-600 hover:bg-blue-50 border border-blue-200 transition-colors flex-shrink-0 cursor-pointer"
                                                 title="View Approval Letter"
                                                 type="button"
                                             >
                                                 <Eye className="w-4 h-4" />
                                             </button>
                                             <button
-                                                onClick={() => handlePrintApproval(visa, countryDetails, visaData)}
-                                                className="p-1.5 rounded-full text-purple-600 hover:bg-purple-50 border border-purple-200 transition-colors flex-shrink-0"
+                                                onClick={() => handlePrintApproval(visa, countryDetails, visaData, applicationDetails)}
+                                                className="p-1.5 rounded-full text-purple-600 hover:bg-purple-50 border border-purple-200 transition-colors flex-shrink-0 cursor-pointer"
                                                 title="Print Approval Letter"
                                                 type="button"
                                             >
@@ -93,7 +104,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                             </button>
                                             <button
                                                 onClick={() => openModal(visa, 'approved')}
-                                                className="p-1.5 rounded-full text-green-600 hover:bg-green-50 border border-green-200 transition-colors flex-shrink-0"
+                                                className="p-1.5 rounded-full text-green-600 hover:bg-green-50 border border-green-200 transition-colors flex-shrink-0 cursor-pointer"
                                                 title="View Timeline"
                                                 type="button"
                                             >
@@ -105,7 +116,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                     {normalizedStatus === 'rejected' && (
                                         <button
                                             onClick={() => openModal(visa, 'rejected')}
-                                            className="p-1.5 rounded-full text-red-600 hover:bg-red-50 border border-red-200 transition-colors flex-shrink-0"
+                                            className="p-1.5 rounded-full text-red-600 hover:bg-red-50 border border-red-200 transition-colors flex-shrink-0 cursor-pointer"
                                             title="View Details"
                                             type="button"
                                         >
@@ -157,7 +168,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                 className="p-1.5 rounded-full hover:bg-white/50 transition-all duration-200 hover:scale-110"
                                 type="button"
                             >
-                                <X className="w-5 h-5 text-slate-700" />
+                                <X className="w-5 h-5 text-slate-700 cursor-pointer" />
                             </button>
                         </div>
 
@@ -185,7 +196,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                 type="button"
                             >
-                                <X className="w-5 h-5 text-gray-600" />
+                                <X className="w-5 h-5 text-gray-600 cursor-pointer" />
                             </button>
                         </div>
 
@@ -195,13 +206,14 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                                 visa={selectedVisaForLetter}
                                 countryDetails={selectedCountryDetails}
                                 visaData={selectedVisaData}
+                                applicationDetails={selectedApplicationDetails}
                             />
                         </div>
 
                         <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
                             <button
                                 onClick={handleCloseLetterModal}
-                                className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                                 type="button"
                             >
                                 Close

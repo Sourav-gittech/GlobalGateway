@@ -11,6 +11,7 @@ import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import { fetchUserTransactionsWithApplications } from '../../../Redux/Slice/transactionSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
 import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/getAvailableAppointmentForUser';
+import getSweetAlert from '../../../util/alert/sweetAlert';
 
 const Dashboard = () => {
   const dispatch = useDispatch(),
@@ -86,7 +87,7 @@ const Dashboard = () => {
     }
   };
 
-  if (isuserLoading || isApplicationLoading) {
+  if (isuserLoading || isApplicationLoading ) {
     return (
       <div className='flex flex-col h-screen items-center justify-center bg-black'>
         <div className="w-18 h-18 border-2 border-white border-t-transparent rounded-full animate-spin" />

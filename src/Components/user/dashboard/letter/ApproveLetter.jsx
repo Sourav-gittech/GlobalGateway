@@ -1,52 +1,19 @@
 import React, { forwardRef } from 'react';
 import { CheckCircle, User, FileText, PlaneTakeoff } from 'lucide-react';
+import { formatDateDDMMYYYY } from '../../../../util/dateFormat/dateFormatConvertion';
 
-const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
-  // Static mock data - replace these with your actual props later
-  const mockVisa = {
-    id: 'GG-2024-87654',
-    approval_date: '2024-12-20',
-    application_personal_info: {
-      first_name: 'John',
-      last_name: 'Doe',
-      nationality: 'United States',
-      date_of_birth: '1990-05-15'
-    },
-    application_passport: {
-      passport_number: 'P12345678'
-    }
-  };
+const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationDetails }, ref) => {
 
-  const mockCountryDetails = {
-    name: 'Thailand'
-  };
+  // console.log('visa', visa);
+  // console.log('country', countryDetails);
+  // console.log('applicationDetails', applicationDetails);
 
-  const mockVisaData = {
-    visa_type: 'Tourist Visa',
-    visa_category: 'Single Entry',
-    duration_of_stay: '90 days',
-    purpose_of_visit: 'Tourism and leisure activities'
-  };
+  const fullName = `${applicationDetails?.application_personal_info?.first_name || ''} ${applicationDetails?.application_personal_info?.last_name || ''}`.trim();
 
-  // Use mock data for now (later switch to props)
-  const visaInfo = visa || mockVisa;
-  const country = countryDetails || mockCountryDetails;
-  const visaDetails = visaData || mockVisaData;
-
-  const fullName = `${visaInfo?.application_personal_info?.first_name || ''} ${visaInfo?.application_personal_info?.last_name || ''}`.trim();
-  
-  // Calculate visa validity dates
-  const approvalDate = new Date(visaInfo?.approval_date);
-  const issueDate = approvalDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  
-  // Add 6 months for typical tourist visa validity
-  const expiryDate = new Date(approvalDate);
-  expiryDate.setMonth(expiryDate.getMonth() + 6);
-  const expiryDateStr = expiryDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
     <div ref={ref} className="bg-white p-8 max-w-4xl mx-auto text-gray-900" style={{ fontFamily: 'Times New Roman, serif', fontSize: '11pt', lineHeight: '1.5' }}>
-      
+
       {/* Header with Official Logo */}
       <div className="text-center mb-6 pb-4 border-b-2 border-gray-800">
         <div className="relative w-20 h-20 border-4 border-blue-900 rounded-full mx-auto mb-3 flex items-center justify-center bg-white">
@@ -54,7 +21,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
         </div>
         <h1 className="text-2xl font-bold uppercase mb-1 text-gray-900" style={{ letterSpacing: '0.15em' }}>GLOBAL GATEWAY</h1>
         <p className="text-base font-semibold text-gray-800">International Visa Services</p>
-        <p className="text-xs text-gray-600 mt-1">In partnership with {country?.name} Embassy</p>
+        <p className="text-xs text-gray-600 mt-1">In partnership with {countryDetails?.name} Embassy</p>
       </div>
 
       {/* Document Title */}
@@ -81,11 +48,11 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-600 font-semibold">Application Reference:</span>
-            <p className="font-bold font-mono text-base">{visaInfo?.id}</p>
+            <p className="font-bold font-mono text-base">{applicationDetails?.id ?? 'N/A'}</p>
           </div>
           <div className="text-right">
             <span className="text-gray-600 font-semibold">Issue Date:</span>
-            <p className="font-bold text-base">{issueDate}</p>
+            <p className="font-bold text-base">{formatDateDDMMYYYY(applicationDetails?.approval_date) ?? 'N/A'}</p>
           </div>
         </div>
       </div>
@@ -100,20 +67,20 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Full Name:</span>
-              <p className="font-semibold text-gray-900">{fullName}</p>
+              <p className="font-semibold text-gray-900">{fullName || 'N/A'}</p>
             </div>
             <div>
               <span className="text-gray-600">Nationality:</span>
-              <p className="font-semibold text-gray-900">{visaInfo?.application_personal_info?.nationality || 'N/A'}</p>
+              <p className="font-semibold text-gray-900">{applicationDetails?.application_personal_info?.nationality || 'N/A'}</p>
             </div>
             <div>
               <span className="text-gray-600">Passport Number:</span>
-              <p className="font-semibold text-gray-900 font-mono">{visaInfo?.application_passport?.passport_number}</p>
+              <p className="font-semibold text-gray-900 font-mono">{applicationDetails?.application_passport?.passport_number|| 'N/A'}</p>
             </div>
             <div>
               <span className="text-gray-600">Date of Birth:</span>
               <p className="font-semibold text-gray-900">
-                {new Date(visaInfo?.application_personal_info?.date_of_birth).toLocaleDateString('en-GB')}
+                {new Date(applicationDetails?.application_personal_info?.date_of_birth).toLocaleDateString('en-GB')}
               </p>
             </div>
           </div>
@@ -128,33 +95,33 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
         </h3>
         <div className="border-2 border-gray-800 rounded overflow-hidden">
           <div className="bg-gray-800 text-white px-4 py-2">
-            <p className="font-bold text-lg">{visaDetails?.visa_type || 'Tourist Visa'}</p>
+            <p className="font-bold text-lg">{applicationDetails?.application_visa_details?.visa_type || 'N/A'}</p>
           </div>
           <div className="p-4 space-y-3">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-600">Visa Type:</span>
-                <p className="font-semibold text-gray-900">{visaDetails?.visa_type || 'Tourist Visa'}</p>
+                <p className="font-semibold text-gray-900">{applicationDetails?.application_visa_details?.visa_type || 'N/A'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Visa Category:</span>
-                <p className="font-semibold text-gray-900">{visaDetails?.visa_category || 'Single Entry'}</p>
+                <p className="font-semibold text-gray-900">{ 'Single Entry'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Issue Date:</span>
-                <p className="font-semibold text-gray-900">{issueDate}</p>
+                <p className="font-semibold text-gray-900">{formatDateDDMMYYYY(applicationDetails?.approval_date) || 'N/A'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Expiry Date:</span>
-                <p className="font-semibold text-gray-900">{expiryDateStr}</p>
+                <p className="font-semibold text-gray-900">{'10/11/2017'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Duration of Stay:</span>
-                <p className="font-semibold text-gray-900">{visaDetails?.duration_of_stay || '90 days'}</p>
+                <p className="font-semibold text-gray-900">{ '90 days'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Number of Entries:</span>
-                <p className="font-semibold text-gray-900">{visaDetails?.visa_category || 'Single'}</p>
+                <p className="font-semibold text-gray-900">{ 'Single'}</p>
               </div>
             </div>
           </div>
@@ -166,7 +133,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
         <h3 className="text-sm font-bold uppercase mb-3 text-gray-900">Purpose of Visit</h3>
         <div className="bg-gray-50 p-4 rounded">
           <p className="text-sm text-gray-800">
-            {visaDetails?.purpose_of_visit || 'Tourism and leisure activities'}
+            {applicationDetails?.application_visa_details?.purpose || 'N/A'}
           </p>
         </div>
       </div>
@@ -220,7 +187,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
       {/* Official Certification */}
       <div className="mb-6 p-4 bg-gray-100 border border-gray-400">
         <p className="text-xs text-center text-gray-700">
-          This is an official visa approval document issued by Global Gateway in coordination with the {country?.name} Embassy. 
+          This is an official visa approval document issued by Global Gateway in coordination with the {countryDetails?.name} Embassy.
           Any tampering or alteration will render this document invalid and may result in legal action.
         </p>
       </div>
@@ -233,7 +200,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
             <div className="border-t border-gray-400 pt-1">
               <p className="text-xs font-semibold">Authorized Consular Officer</p>
               <p className="text-xs text-gray-600">Global Gateway - Visa Services</p>
-              <p className="text-xs text-gray-600">{country?.name} Embassy</p>
+              <p className="text-xs text-gray-600">{countryDetails?.name} Embassy</p>
             </div>
           </div>
           <div className="text-right">
@@ -253,7 +220,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
           Global Gateway International - Authorized Visa Processing Partner
         </p>
         <p className="text-xs text-gray-600 mb-1">
-          {country?.name} Embassy - Consular Section
+          {countryDetails?.name} Embassy - Consular Section
         </p>
         <p className="text-xs text-gray-600 mb-1">
           For inquiries: visa.support@globalgateway.travel | Emergency: +1-800-VISA-HELP
@@ -262,7 +229,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData }, ref) => {
           This is an official document. Please retain for your records and travel purposes.
         </p>
         <p className="text-xs text-gray-400 font-mono mt-2">
-          Document ID: {visaInfo?.id} | Issued: {issueDate}
+          Document ID: {applicationDetails?.id} | Issued: {formatDateDDMMYYYY(applicationDetails?.approval_date)}
         </p>
       </div>
     </div>

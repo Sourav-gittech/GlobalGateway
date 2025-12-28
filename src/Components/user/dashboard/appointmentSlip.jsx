@@ -1,5 +1,5 @@
 import React from 'react';
-import AppointmentLetter from './AppointmentLetter';
+import AppointmentLetter from './letter/AppointmentLetter';
 
 const printStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }

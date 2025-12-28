@@ -1,5 +1,5 @@
 import React from 'react';
-import ApproveLetter from '../Components/user/dashboard/ApproveLetter';
+import ApproveLetter from '../Components/user/dashboard/letter/ApproveLetter';
 
 const printStyles = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -93,7 +93,7 @@ const printStyles = `
   .overflow-hidden { overflow: hidden; }
 `;
 
-export const handlePrintApproval = (visa, countryDetails, visaData) => {
+export const handlePrintApproval = (visa, countryDetails, visaData, applicationDetails) => {
   const printContainer = document.createElement('div');
   printContainer.style.position = 'absolute';
   printContainer.style.left = '-9999px';
@@ -106,7 +106,8 @@ export const handlePrintApproval = (visa, countryDetails, visaData) => {
       React.createElement(ApproveLetter, {
         visa: visa,
         countryDetails: countryDetails,
-        visaData: visaData
+        visaData: visaData,
+        applicationDetails: applicationDetails
       })
     );
 
