@@ -198,7 +198,7 @@ export const updateCountryVisa = createAsyncThunk("visaSlice/updateCountryVisa",
 )
 
 // Delete visa only if not used in country_visas
-export const deleteVisaTypeFromCountry = createAsyncThunk("visaSlice/deleteVisaTypeFromCountry",
+export const  deleteVisaTypeFromCountry = createAsyncThunk("visaSlice/deleteVisaTypeFromCountry",
     async ({ visaId, countryVisaRowId }, { rejectWithValue }) => {
         try {
 

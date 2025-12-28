@@ -5,6 +5,7 @@ import CountryDetailsStats from './countryDetails/CountryDetailsStats'
 import CountryDetailsHero from './countryDetails/CountryDetailsHero'
 import { useCountryWiseVisaDetails } from '../../../tanstack/query/getCountryWiseVisaDetails'
 import { useAvailableEmbassyCount } from '../../../tanstack/query/getCountryWiseEmbassyCount'
+import { useCountryWiseTotalVisaCount } from '../../../tanstack/query/getCountryWiseTotalAvailableVisa'
 
 const CountryDetailsExpanded = ({ country }) => {
 
@@ -14,7 +15,9 @@ const CountryDetailsExpanded = ({ country }) => {
     // console.log("Country wise visa details", countryWiseVisaDetails);
 
     const { data: count, isLoading, isError } = useAvailableEmbassyCount(country?.id);
-    console.log("Embassy count", count);
+    // console.log("Embassy count", count);
+
+    const { data: visaData, isLoading: isVisaLoading, isError: hasVisaError } = useCountryWiseTotalVisaCount(country?.id);
 
     const fmt = (n) => n ? n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'N/A'
 
@@ -93,7 +96,9 @@ const CountryDetailsExpanded = ({ country }) => {
                 {
                     label: 'Visa',
                     icon: Signature,
-                    value: countryWiseVisaDetails ? (
+                    value: isVisaLoading ? (
+                        <span className="text-gray-400">Checking...</span>
+                    ) : visaData > 0 ? (
                         <span className="flex items-center gap-1 text-amber-400 font-semibold">
                             <CheckCircle className="w-4 h-4" /> Available
                         </span>
@@ -147,7 +152,7 @@ const CountryDetailsExpanded = ({ country }) => {
                 <div className="border-l-4 border-gray-600">
 
                     {/* Hero */}
-                    <CountryDetailsHero country={country} countryWiseVisaDetails={countryWiseVisaDetails} />
+                    <CountryDetailsHero country={country} visaCount={visaData} countryWiseVisaDetails={countryWiseVisaDetails} />
 
                     {/* Stats */}
                     <CountryDetailsStats colors={colors} stats={stats} country={country} />

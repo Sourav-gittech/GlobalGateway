@@ -278,17 +278,12 @@ const AuthForm = () => {
                           ? 'border-red-400 bg-red-500/20'
                           : 'border-white/30 bg-white/5 hover:border-white/50'
                         }`}
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
-                    >
+                      onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} >
                       <input
                         ref={fileInputRef}
                         type="file"
                         accept="image/*"
                         {...register("avatar", {
-                          required: "Profile image is required",
                           validate: {
                             fileType: (value) => {
                               if (!value || !value[0]) return "File is required";
@@ -460,8 +455,8 @@ const AuthForm = () => {
                 type="submit"
                 disabled={isUserAuthLoading}
                 className={`w-full py-3.5 rounded-full font-semibold flex items-center justify-center gap-2 transition-all duration-300 text-base mt-2 uppercase tracking-wider ${isUserAuthLoading
-                  ? 'bg-white/20 cursor-not-allowed text-white/50'
-                  : 'bg-transparent hover:bg-black text-white shadow-lg hover:shadow-xl backdrop-blur-sm'
+                  ? 'bg-white/20 cursor-not-allowed text-white/50 cursor-not-allowed'
+                  : 'bg-transparent hover:bg-black text-white shadow-lg hover:shadow-xl backdrop-blur-sm cursor-pointer'
                   }`}
               >
                 {isUserAuthLoading && (

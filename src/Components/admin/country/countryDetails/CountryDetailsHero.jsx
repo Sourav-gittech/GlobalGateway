@@ -1,7 +1,7 @@
 import { Building2, Globe, Plane } from 'lucide-react';
 import React, { useState } from 'react'
 
-const CountryDetailsHero = ({ country, countryWiseVisaDetails }) => {
+const CountryDetailsHero = ({ country, visaCount, countryWiseVisaDetails }) => {
   const [imageError, setImageError] = useState(false);
   const [flagError, setFlagError] = useState(false);
 
@@ -43,8 +43,8 @@ const CountryDetailsHero = ({ country, countryWiseVisaDetails }) => {
             <span className={`px-3 py-1 rounded-lg border text-xs font-semibold ${!country?.is_blocked ? 'bg-green-500/20 text-green-300 border-green-500/50' : 'bg-red-500/20 text-red-300 border-red-500/50'}`}>
               {!country?.is_blocked ? '✓ Active' : '○ Inactive'}
             </span>
-            <span className={`px-3 py-1 rounded-lg ${countryWiseVisaDetails ? 'bg-amber-500/20 text-amber-300' : 'bg-red-500/20 text-red-300'} border border-amber-500/50 text-xs font-semibold flex items-center gap-1`}>
-              <Plane className="w-3 h-3" /> {countryWiseVisaDetails ? 'Visa Available' : 'Visa Unavailable'}
+            <span className={`px-3 py-1 rounded-lg ${visaCount > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-red-500/20 text-red-300'} border border-amber-500/50 text-xs font-semibold flex items-center gap-1`}>
+              <Plane className="w-3 h-3" /> {visaCount > 0 ? 'Visa Available' : 'Visa Unavailable'}
             </span>
           </div>
         </div>
