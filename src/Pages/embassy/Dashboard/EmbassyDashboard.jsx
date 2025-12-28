@@ -105,32 +105,7 @@ export default function EmbassyDashboard() {
     { type: "Student Visa", days: 15, color: "bg-green-500", percentage: 45 },
     { type: "Work Visa", days: 25, color: "bg-purple-500", percentage: 75 },
     { type: "Business Visa", days: 7, color: "bg-orange-500", percentage: 25 }
-  ];
-
-  // Upcoming appointments
-  const upcomingAppointments = [
-    {
-      time: "10:00 AM",
-      date: "Dec 20",
-      applicant: "Michael Chen",
-      type: "Work Visa Interview",
-      status: "confirmed"
-    },
-    {
-      time: "11:30 AM",
-      date: "Dec 20",
-      applicant: "Lisa Kumar",
-      type: "Student Visa Interview",
-      status: "confirmed"
-    },
-    {
-      time: "02:00 PM",
-      date: "Dec 21",
-      applicant: "Robert Johnson",
-      type: "Tourist Visa Interview",
-      status: "pending"
-    }
-  ];
+  ]
 
   // Quick actions
   const quickActions = [
@@ -156,16 +131,7 @@ export default function EmbassyDashboard() {
       path: "/embassy/dashboard/analytics",
       color: "bg-orange-500 hover:bg-orange-600"
     }
-  ];
-
-  const getPriorityBadge = (priority) => {
-    const styles = {
-      urgent: "bg-red-100 text-red-700",
-      high: "bg-orange-100 text-orange-700",
-      normal: "bg-gray-100 text-gray-700"
-    };
-    return styles[priority] || styles.normal;
-  };
+  ]
 
   // console.log('User data', userAuthData);
   // console.log('Embassy data', embassyData);

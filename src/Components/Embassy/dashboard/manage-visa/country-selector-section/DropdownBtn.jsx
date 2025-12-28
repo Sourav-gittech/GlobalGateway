@@ -1,9 +1,13 @@
 import React from 'react'
 import { Ban, ChevronDown } from 'lucide-react'
 
-const DropdownBtn = ({ setIsOpen, isOpen, visaData, policies, selectedCountry }) => {
+const DropdownBtn = ({ setIsOpen, isOpen, visaPolicy, visaData, selectedCountry }) => {
+
   const visaRow = visaData?.find(v => v?.visitor_country === selectedCountry?.id);
   const countryVisaCount = visaRow?.visa_id?.length ?? 0;
+
+  const visaPolicyCount = visaPolicy?.length ?? 0;
+
 
   return (
     <button
@@ -19,11 +23,11 @@ const DropdownBtn = ({ setIsOpen, isOpen, visaData, policies, selectedCountry })
       <span className="flex items-center gap-2 font-medium">
         {selectedCountry?.name}
         {countryVisaCount > 0 &&
-          ` (${Object.keys(policies[selectedCountry?.id] || {})?.length}/${countryVisaCount
+          ` (${visaPolicyCount}/${countryVisaCount
           } configured)`}
         {countryVisaCount === 0 &&
           " (No visa types)"}
-        {Object.values(policies[selectedCountry?.id] || {})?.some(p => p.blocked) && (
+        {visaPolicy?.some(p => p.status == 'inactive') && (
           <span className="text-red-500"><Ban size={14} className="sm:size-4" /></span>
         )}
       </span>

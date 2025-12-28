@@ -7,6 +7,10 @@ import VisaTypeDistribution from '../../../Components/embassy/dashboard/analytic
 import ApplicationStatus from '../../../Components/embassy/dashboard/analytics/charts/ApplicationStatus';
 import WeeklyPerformance from '../../../Components/embassy/dashboard/analytics/charts/WeeklyPerformance';
 import TopCountries from '../../../Components/embassy/dashboard/analytics/charts/TopCountries';
+import { useSelector } from 'react-redux';
+import { useFullCountryDetails } from '../../../tanstack/query/getCountryDetails';
+import { useApplicationsByCountryId } from '../../../tanstack/query/getApplicationsByCountryId';
+import { useApplicationStats } from '../../../tanstack/query/getApplicationStatsForEmbassy';
 
 // Mock data for charts
 const revenueData = [
@@ -66,8 +70,15 @@ export default function EmbassyAnalytics() {
   const [timeRange, setTimeRange] = useState('yearly');
   const [chartView, setChartView] = useState('revenue'); // 'revenue', 'applications', or 'both'
 
+  const { embassyData } = useSelector(state => state.embassy);
+  const { data: countryDetails } = useFullCountryDetails(embassyData?.country_id);
+  const { data: allTypeApplications } = useApplicationsByCountryId(embassyData?.country_id, "all");
+  // console.log(embassyData);
+
+  const { data: allStats = [] } = useApplicationStats({ countryId: embassyData?.country_id, statusFilter: "all" });
+
   const totalRevenue = revenueData.reduce((sum, item) => sum + item.revenue, 0);
-  const totalApplications = revenueData.reduce((sum, item) => sum + item.applications, 0);
+  const totalApplications = allStats?.length;
   const avgRevenue = Math.round(totalRevenue / revenueData.length);
   const revenueGrowth = ((revenueData[revenueData.length - 1].revenue - revenueData[0].revenue) / revenueData[0].revenue * 100).toFixed(1);
 

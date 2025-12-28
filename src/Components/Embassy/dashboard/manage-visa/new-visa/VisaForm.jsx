@@ -60,11 +60,14 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                 visaIconName: visaObj.visaIcon
             })).then(res => {
                 if (res.meta.requestStatus === "fulfilled") {
-                    hotToast("Visa type added successfully", "success");
+                    hotToast("Visa type added successfully! Now configure its policy.", "success");
                     reset();
                     setIsAddingVisaType(false);
                     queryClient.invalidateQueries({
                         queryKey: ["countryVisa", countryDetails.id],
+                    });
+                    queryClient.invalidateQueries({
+                        queryKey: ["visa-enable-country", countryDetails.id],
                     });
 
                 } else {
@@ -83,11 +86,14 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                 existingVisaIcons: countryVisa.visa_icon
             })).then(res => {
                 if (res.meta.requestStatus === "fulfilled") {
-                    hotToast("Visa type added successfully", "success");
+                    hotToast("Visa type added successfully! Now configure its policy.", "success");
                     reset();
                     setIsAddingVisaType(false);
                     queryClient.invalidateQueries({
                         queryKey: ["countryVisa", countryDetails.id],
+                    });
+                    queryClient.invalidateQueries({
+                        queryKey: ["visa-enable-country", countryDetails.id],
                     });
 
                 } else {
@@ -98,8 +104,10 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
                     getSweetAlert("Oops...", "Something went wrong!", "error");
                 })
         }
-
-        // data = { visaType: "Medical Visa", visaIcon: "Medical Visa Icon Name" }
+        else {
+            hotToast("Visa type already exist.", "error");
+            setIsAddingVisaType(false);
+        }
     }
 
     return (
@@ -170,7 +178,7 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
             {/* Buttons */}
             <div className="flex gap-3 pt-4">
                 <button type="submit" className={`px-6 py-2.5 hover:bg-blue-800 text-white rounded-lg flex items-center gap-2 ${isVisaListloading ? 'cursor-not-allowed bg-blue-800' : 'cursor-pointer bg-blue-600'}`}>
-                    {isVisaListloading ? <Loader2 className="h-6 w-6 animate-spin text-white" /> : <Plus className="w-5 h-5" />}
+                    {isVisaListloading ? <Loader2 className="h-5 w-5 animate-spin text-white" /> : <Plus className="w-5 h-5" />}
                     Add Visa Type
                 </button>
 

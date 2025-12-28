@@ -106,9 +106,9 @@ const AuthForm = () => {
         });
     } else {
       auth_obj = {
-        name: data.name,
+        name: data.name?.split(" ")?.map(char => char?.charAt(0)?.toUpperCase() + char?.slice(1))?.join(" "),
         phone: data.phone,
-        country: data.country,
+        country: data.country?.charAt(0)?.toUpperCase() + data.country?.slice(1),
         email: data.email,
         avatar: data.avatar,
         password: data.password,

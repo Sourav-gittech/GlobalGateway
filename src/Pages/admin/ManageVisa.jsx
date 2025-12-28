@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
-import {
-  Search,
-  ChevronDown,
-  ChevronRight,
-  Lock,
-  Unlock,
-  Clock,
-  Calendar,
-  DollarSign,
-  FileText,
-  Globe,
-  Filter,
-  MapPin,
-  Users
-} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, FileText } from 'lucide-react';
+import VisaStats from '../../Components/admin/visa/VisaStats';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllVisa } from '../../Redux/Slice/visaSlice';
+import VisaTable from '../../Components/admin/visa/VisaTable';
 
 const ManageVisa = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [expandedVisa, setExpandedVisa] = useState(null);
   const [visaStatuses, setVisaStatuses] = useState({});
+  const dispatch = useDispatch();
+  const { isVisaListloading, visaListData } = useSelector(state => state?.visa);
+
+  useEffect(() => {
+    dispatch(fetchAllVisa())
+      .then(res => {
+        // console.log('Response for fetching all visa', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+      })
+  }, [dispatch]);
 
   // Sample comprehensive visa data showing all relationships
   const visaData = [
@@ -99,6 +101,12 @@ const ManageVisa = () => {
       ]
     }
   ];
+
+
+  const getStatusColor = (status) => {
+    return status === 'active' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10';
+  };
+
   const getVisaStatus = (visaId, defaultStatus) => {
     return visaStatuses[visaId] || defaultStatus;
   };
@@ -111,43 +119,7 @@ const ManageVisa = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const toggleVisaStatus = (visaId, currentStatus) => {
-    const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-    setVisaStatuses(prev => ({
-      ...prev,
-      [visaId]: newStatus
-    }));
-
-    if (newStatus === 'blocked') {
-      alert('Visa globally blocked from the platform');
-    } else {
-      alert('Visa globally activated on the platform');
-    }
-  };
-
-
-  const getStatusColor = (status) => {
-    return status === 'active' ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10';
-  };
-
-  const getBlockedCountries = (visa) => {
-    const blocked = visa.countryStatus.filter(c => c.status === 'blocked').map(c => c.country);
-    return blocked.length > 0 ? blocked.join(', ') : 'Open';
-  };
-
-  const getAverageProcessing = (visa) => {
-    const activeCountries = visa.countryStatus.filter(c => c.status === 'active');
-    if (activeCountries.length === 0) return 'N/A';
-    const totalDays = activeCountries.reduce((sum, c) => sum + parseInt(c.processing), 0);
-    return Math.round(totalDays / activeCountries.length) + ' days';
-  };
-
-  const getAverageValidity = (visa) => {
-    const validities = visa.countryStatus.map(c => c.validity);
-    const uniqueValidities = [...new Set(validities)];
-    if (uniqueValidities.length === 1) return uniqueValidities[0];
-    return uniqueValidities.join(' / ');
-  };
+  console.log('All available visa', visaListData);
 
   return (
     <div className="min-h-screen w-full bg-transparent">
@@ -159,53 +131,7 @@ const ManageVisa = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-slate-400 text-xs font-medium">Total Visa Types</h3>
-              <FileText className="w-5 h-5 text-blue-400" />
-            </div>
-            <p className="text-3xl font-bold text-white">{visaData.length}</p>
-            <p className="text-xs text-slate-500 mt-1">System wide</p>
-          </div>
-
-          <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-slate-400 text-xs font-medium">Active Visas</h3>
-              <Unlock className="w-5 h-5 text-emerald-400" />
-            </div>
-            <p className="text-3xl font-bold text-white">
-              {visaData.filter(
-                v => getVisaStatus(v.id, v.globalStatus) === 'active'
-              ).length}
-            </p>
-            <p className="text-xs text-slate-500 mt-1">Currently accepting</p>
-          </div>
-
-          <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-slate-400 text-xs font-medium">Not Active Visas</h3>
-              <Lock className="w-5 h-5 text-red-400" />
-            </div>
-            <p className="text-3xl font-bold text-white">
-              {visaData.filter(
-                v => getVisaStatus(v.id, v.globalStatus) === 'blocked'
-              ).length}
-            </p>
-            <p className="text-xs text-slate-500 mt-1">Currently disabled</p>
-          </div>
-
-          <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-slate-400 text-xs font-medium">Total Applications</h3>
-              <Users className="w-5 h-5 text-cyan-400" />
-            </div>
-            <p className="text-3xl font-bold text-white">
-              {visaData.reduce((sum, v) => sum + v.totalApplications, 0).toLocaleString()}
-            </p>
-            <p className="text-xs text-slate-500 mt-1">All time</p>
-          </div>
-        </div>
+        <VisaStats getVisaStatus={getVisaStatus} />
 
         {/* Search and Filter Bar */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -240,229 +166,7 @@ const ManageVisa = () => {
         {/* Visa Table */}
         <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-slate-800/50 border-b border-slate-600/50">
-                <tr>
-                  <th className="text-left px-4 py-3 text-slate-400 font-medium text-sm w-12"></th>
-                  <th className="text-left px-4 py-3 text-slate-400 font-medium text-sm">Visa Type</th>
-                  <th className="text-left px-4 py-3 text-slate-400 font-medium text-sm hidden lg:table-cell">Avg. Processing</th>
-                  <th className="text-left px-4 py-3 text-slate-400 font-medium text-sm hidden xl:table-cell">Validity</th>
-                  <th className="text-center px-6 py-3 text-slate-400 font-medium text-sm hidden lg:table-cell">Applications</th>
-                  <th className="text-center px-6 py-3 text-slate-400 font-medium text-sm">Global Status</th>
-                  <th className="text-left px-6 py-3 text-slate-400 font-medium text-sm">Blocked by Countries</th>
-                  <th className="text-center px-6 py-3 text-slate-400 font-medium text-sm">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredVisas.map((visa) => {
-                  const currentStatus = getVisaStatus(visa.id, visa.globalStatus);
-                  return (
-                    <React.Fragment key={visa.id}>
-                      <tr className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
-                        <td className="px-4 py-4">
-                          <button
-                            onClick={() => setExpandedVisa(expandedVisa === visa.id ? null : visa.id)}
-                            className="text-slate-400 hover:text-white transition-colors"
-                          >
-                            {expandedVisa === visa.id ? (
-                              <ChevronDown className="w-5 h-5" />
-                            ) : (
-                              <ChevronRight className="w-5 h-5" />
-                            )}
-                          </button>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="font-semibold text-white text-sm">{visa.visaName}</div>
-                          <div className="text-xs text-slate-400">{visa.visaType}</div>
-                        </td>
-                        <td className="px-4 py-4 text-slate-300 text-sm hidden lg:table-cell">
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-slate-500" />
-                            {getAverageProcessing(visa)}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-slate-300 text-sm hidden xl:table-cell">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-slate-500" />
-                            {getAverageValidity(visa)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 hidden lg:table-cell">
-                          <div className="text-white font-semibold text-sm text-center">
-                            {visa.totalApplications.toLocaleString()}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex justify-center">
-                            {currentStatus === 'active' ? (
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium whitespace-nowrap">
-                                <Unlock className="w-3 h-3" />
-                                Active
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-500/10 text-red-400 rounded-full text-xs font-medium whitespace-nowrap">
-                                <Lock className="w-3 h-3" />
-                                Not Active
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {getBlockedCountries(visa) === 'Open' ? (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full text-xs font-medium whitespace-nowrap">
-                              <Unlock className="w-3 h-3" />
-                              Open
-                            </span>
-                          ) : (
-                            <div className="text-red-400 text-xs font-medium">
-                              {getBlockedCountries(visa)}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex justify-center">
-                            <button
-                              onClick={() => toggleVisaStatus(visa.id, currentStatus)}
-                              className={`p-2 hover:bg-slate-700/30 rounded-lg transition-colors ${currentStatus === 'active' ? 'text-red-400 hover:text-red-300' : 'text-emerald-400 hover:text-emerald-300'
-                                }`}
-                              title={currentStatus === 'active' ? 'Block Visa Globally' : 'Activate Visa Globally'}
-                            >
-                              {currentStatus === 'active' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      {/* Expanded Country-wise Details */}
-                      {expandedVisa === visa.id && (
-                        <tr className="bg-slate-800/30">
-                          <td colSpan="8" className="px-4 py-5">
-                            <div className="space-y-5">
-                              {/* Global Status Message */}
-                              {currentStatus === 'blocked' && (
-                                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-                                  <div className="flex items-center gap-2">
-                                    <Lock className="w-5 h-5 text-red-400" />
-                                    <p className="text-red-400 font-semibold text-sm">
-                                      This visa is not available right at this moment
-                                    </p>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Country-wise Status */}
-                              <div>
-                                <h4 className="text-slate-300 font-semibold mb-3 flex items-center gap-2 text-sm">
-                                  <Globe className="w-4 h-4" />
-                                  Country-wise Details
-                                </h4>
-                                <div className="bg-slate-700/30 rounded-lg border border-slate-600/50 overflow-hidden">
-                                  <div className="overflow-auto" style={{ maxHeight: '280px' }}>
-                                    <style>{`
-                                    .country-scroll-container::-webkit-scrollbar {
-                                      width: 6px;
-                                      height: 6px;
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-track {
-                                      background: rgba(51, 65, 85, 0.3);
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-thumb {
-                                      background: rgba(148, 163, 184, 0.4);
-                                      border-radius: 3px;
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-thumb:hover {
-                                      background: rgba(148, 163, 184, 0.6);
-                                    }
-                                  `}</style>
-                                    <table className="w-full">
-                                      <thead className="bg-slate-800/50 border-b border-slate-600/50 sticky top-0 z-10">
-                                        <tr>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Country</th>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Processing</th>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Validity</th>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Fees</th>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Applications</th>
-                                          <th className="text-left px-4 py-2.5 text-slate-400 text-xs font-medium">Visa Status in Country</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="country-scroll-container">
-                                        {visa.countryStatus.map((country, idx) => (
-                                          <tr key={idx} className="border-b border-slate-600/30 hover:bg-slate-700/20 transition-colors">
-                                            <td className="px-4 py-3 text-white font-medium text-sm">{country.country}</td>
-                                            <td className="px-4 py-3 text-slate-300 text-sm">
-                                              <div className="flex items-center gap-1.5">
-                                                <Clock className="w-3.5 h-3.5 text-slate-500" />
-                                                {country.processing}
-                                              </div>
-                                            </td>
-                                            <td className="px-4 py-3 text-slate-300 text-sm">
-                                              <div className="flex items-center gap-1.5">
-                                                <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                                                {country.validity}
-                                              </div>
-                                            </td>
-                                            <td className="px-4 py-3 text-slate-300 text-sm font-medium">
-                                              ₹{country.fees.toLocaleString()}
-                                            </td>
-                                            <td className="px-4 py-3 text-slate-300 text-sm font-medium">{country.applications.toLocaleString()}</td>
-                                            <td className="px-4 py-3">
-                                              {country.status === 'active' ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium text-emerald-400 bg-emerald-500/10">
-                                                  <Unlock className="w-3 h-3" />
-                                                  Open
-                                                </span>
-                                              ) : (
-                                                <div className="text-red-400 text-xs font-medium">
-                                                  <div className="flex items-start gap-1.5">
-                                                    <Lock className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                                                    <span>
-                                                      Blocked for: {country.blockedFor.length > 0 ? country.blockedFor.join(', ') : 'All countries'}
-                                                    </span>
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Summary Cards */}
-                              <div className="pt-4 border-t border-slate-600/50">
-                                <h4 className="text-slate-300 font-semibold mb-3 text-sm">Summary</h4>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Active Countries</div>
-                                    <div className="text-white text-2xl font-bold">
-                                      {visa.countryStatus.filter(c => c.status === 'active').length}
-                                    </div>
-                                  </div>
-                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Blocked Countries</div>
-                                    <div className="text-white text-2xl font-bold">
-                                      {visa.countryStatus.filter(c => c.status === 'blocked').length}
-                                    </div>
-                                  </div>
-                                  <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                    <div className="text-slate-400 text-xs mb-1.5 font-medium">Total Applications</div>
-                                    <div className="text-white text-2xl font-bold">
-                                      {visa.totalApplications.toLocaleString()}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
+            <VisaTable expandedVisa={expandedVisa} setExpandedVisa={setExpandedVisa} filteredVisas={visaListData} isVisaListloading={isVisaListloading} getVisaStatus={getVisaStatus} />
           </div>
 
           {filteredVisas.length === 0 && (

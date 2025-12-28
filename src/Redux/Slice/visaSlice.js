@@ -46,6 +46,38 @@ export const fetchVisaForCountry = createAsyncThunk("visaSlice/fetchVisaForCount
     }
 );
 
+// Update visa detail
+export const updateVisa = createAsyncThunk('visaDetailsSlice/updateVisa',
+    async ({ id, updatedData }, { rejectWithValue }) => {
+        // console.log('Received visa to edit in slice', id, updatedData);
+
+        try {
+            const res = await supabase.from('visa').update(updatedData).eq('id', id).select();
+            // console.log('Response for updating visa details', res);
+
+            if (res?.error) throw res?.error
+            return res?.data[0]
+        } catch (error) {
+            return rejectWithValue(error.message)
+        }
+    }
+)
+
+// fetch all visa from visa table 
+export const fetchAllVisa = createAsyncThunk("visaSlice/fetchAllVisa",
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await supabase.from("visa").select("*");
+            // console.log('Response for fetching all visa', res);
+
+            if (res?.error) throw res?.error
+            return res?.data
+        } catch (err) {
+            return rejectWithValue(err.message)
+        }
+    }
+)
+
 // fetch visa from visa table exist or not
 export const fetchVisaByType = createAsyncThunk("visaSlice/fetchVisaByType",
     async (visaType, { rejectWithValue }) => {
@@ -240,6 +272,20 @@ export const visaSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
+            // Fetch all visa 
+            .addCase(fetchAllVisa.pending, (state) => {
+                state.isVisaListloading = true;
+                state.isVisaListerror = null;
+            })
+            .addCase(fetchAllVisa.fulfilled, (state, action) => {
+                state.isVisaListloading = false;
+                state.visaListData = action.payload;
+            })
+            .addCase(fetchAllVisa.rejected, (state, action) => {
+                state.isVisaListloading = false;
+                state.isVisaListerror = action.payload;
+            })
+
             // Fetch all visa types for specific country
             .addCase(fetchVisaForCountry.pending, (state) => {
                 state.isVisaListloading = true;
@@ -278,6 +324,26 @@ export const visaSlice = createSlice({
                 state.visaListData = action.payload;
             })
             .addCase(addVisa.rejected, (state, action) => {
+                state.isVisaListloading = false;
+                state.isVisaListerror = action.payload;
+            })
+
+            // update visa in visa table 
+            .addCase(updateVisa.pending, (state) => {
+                state.isVisaListloading = true;
+                state.isVisaListerror = null;
+            })
+            .addCase(updateVisa.fulfilled, (state, action) => {
+                state.isVisaListloading = false;
+
+                const updatedVisa = action.payload;
+                const index = state.visaListData.findIndex((u) => u.id === updatedVisa.id);
+
+                if (index !== -1) {
+                    state.visaListData[index] = { ...state.visaListData[index], ...updatedVisa };
+                }
+            })
+            .addCase(updateVisa.rejected, (state, action) => {
                 state.isVisaListloading = false;
                 state.isVisaListerror = action.payload;
             })
@@ -323,7 +389,7 @@ export const visaSlice = createSlice({
                 state.isVisaListloading = false;
                 state.isVisaListerror = action.payload;
             })
-            
+
             .addCase(deleteVisaIfUnusedAnywhere.pending, (state) => {
                 state.isVisaListloading = true;
                 state.isVisaListerror = null;

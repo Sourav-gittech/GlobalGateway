@@ -11,20 +11,8 @@ import { fetchAllCountryDetails } from '../../../Redux/Slice/countrySlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import { useFullCountryDetails } from "../../../tanstack/query/getCountryDetails";
 import { useCountryVisaForSpecificCountry } from '../../../tanstack/query/getVisaDetailsCountryWiseForSpecificCountry';
-
-// Mock countries - Replace with your actual country data from Supabase
-const mockCountries = [
-  { id: 1, name: "India", code: "IN" },
-  { id: 2, name: "United States", code: "US" },
-  { id: 3, name: "United Kingdom", code: "GB" },
-  { id: 4, name: "Canada", code: "CA" },
-  { id: 5, name: "Australia", code: "AU" },
-  { id: 6, name: "Germany", code: "DE" },
-  { id: 7, name: "France", code: "FR" },
-  { id: 8, name: "Japan", code: "JP" },
-  { id: 9, name: "China", code: "CN" },
-  { id: 10, name: "Brazil", code: "BR" },
-];
+import { useAllVisaPoliciesForCountry } from '../../../tanstack/query/getAllVisaPoliciesForCountry';
+import { useSpecificCountryVisaEnable } from '../../../tanstack/query/getSpecificCountryVisaEnable';
 
 // Default visa type icons mapping
 const iconMapping = {
@@ -54,62 +42,20 @@ const iconMapping = {
   "Talent": Star
 };
 
-// Mock visa policies data
-const mockVisaPolicies = {
-  1: { // India
-    1: { // Student Visa
-      processingTime: "45", processingUnit: "days",
-      validityPeriod: "1", validityUnit: "year",
-      applicationFees: 10000, status: "active", blocked: false,
-      requiredDocuments: ["Admission documents", "Academic Transcripts", "English Test Score"]
-    },
-    2: { // Tourist Visa
-      processingTime: "20", processingUnit: "days",
-      validityPeriod: "6", validityUnit: "months",
-      applicationFees: 20000, status: "active", blocked: false,
-      requiredDocuments: ["Hotel booking details", "No criminal record certificate"]
-    },
-    4: { // Business Visa - BLOCKED
-      processingTime: "15", processingUnit: "days",
-      validityPeriod: "1", validityUnit: "year",
-      applicationFees: 25000, status: "inactive", blocked: true,
-      requiredDocuments: ["Business invitation letter"]
-    }
-  },
-  2: { // United States
-    1: { // Student Visa - FREE
-      processingTime: "60", processingUnit: "days",
-      validityPeriod: "5", validityUnit: "years",
-      applicationFees: 0, status: "active", blocked: false,
-      requiredDocuments: ["I-20 Form", "Financial Documents", "SEVIS Fee Receipt"]
-    }
-  }
-};
-
 export default function VisaPolicyManage() {
   const dispatch = useDispatch();
   const { embassyData } = useSelector(state => state.embassy);
   const { data: countryDetails, isLoading: isCountryLoading, isError: embassyError } = useFullCountryDetails(embassyData?.country_id);
   const { isAllCountryListLoading, getAllCountryList, isAllCountryListError } = useSelector(state => state.allCountry);
   const { data: visaData = [], isLoading: isVisaDataLoading } = useCountryVisaForSpecificCountry(countryDetails?.id);
-
-  useEffect(() => {
-    dispatch(fetchAllCountryDetails())
-      .then(res => {
-        // console.log('Response for fetching all country', res);
-      })
-      .catch(err => {
-        console.log('Error occured', err);
-        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-      });
-  }, []);
+  const { data: allCountryPolicy, isLoading: isAllPolicyLoading } = useAllVisaPoliciesForCountry();
+  const { data: specificVisaEnableCountry, isLoading: isspecificVisaEnableCountryLoading } = useSpecificCountryVisaEnable(countryDetails?.id);
 
   const countryListWithoutOwn = getAllCountryList?.filter(country => country?.name?.toLowerCase() != embassyData?.country_name?.toLowerCase());
 
-  const [selectedCountry, setSelectedCountry] = useState(countryListWithoutOwn[0]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [editingVisa, setEditingVisa] = useState(null);
   const [expandedVisa, setExpandedVisa] = useState(null);
-  const [policies, setPolicies] = useState(mockVisaPolicies);
   const [visaTypesByCountry, setVisaTypesByCountry] = useState(countryListWithoutOwn);
   const [isAddingVisaType, setIsAddingVisaType] = useState(false);
   const [draggedItem, setDraggedItem] = useState(null);
@@ -122,17 +68,25 @@ export default function VisaPolicyManage() {
   const addVisaFormRef = useRef(null);
 
   const visaRow = visaData?.find(v => v?.visitor_country === selectedCountry?.id);
+  const visaPolicy = allCountryPolicy?.filter(policy => policy?.country_id == countryDetails?.id && policy?.visitor_country_id == selectedCountry?.id)
 
-  const [formData, setFormData] = useState({
-    processingTime: '',
-    processingUnit: 'days',
-    validityPeriod: '',
-    validityUnit: 'months',
-    applicationFees: '',
-    status: 'active',
-    blocked: false,
-    requiredDocuments: ['']
-  });
+  useEffect(() => {
+    if (countryListWithoutOwn && countryListWithoutOwn.length > 0 && !selectedCountry) {
+      setSelectedCountry(countryListWithoutOwn[0]);
+    }
+  }, [countryListWithoutOwn]);
+
+  useEffect(() => {
+    dispatch(fetchAllCountryDetails())
+      .then(res => {
+        // console.log('Response for fetching all country', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
+  }, []);
+
 
   // Add this useEffect to close dropdown when clicking outside
   useEffect(() => {
@@ -162,59 +116,10 @@ export default function VisaPolicyManage() {
     }
   }, [isAddingVisaType]);
 
-  const resetForm = () => {
-    setFormData({
-      processingTime: '',
-      processingUnit: 'days',
-      validityPeriod: '',
-      validityUnit: 'months',
-      applicationFees: '',
-      status: 'active',
-      blocked: false,
-      requiredDocuments: ['']
-    });
-    setEditingVisa(null);
-  };
-
-  const handleEditVisa = (visaTypeId) => {
-    console.log(visaTypeId);
-
-    const existingPolicy = policies[selectedCountry.id]?.[visaTypeId];
-    if (existingPolicy) {
-      setFormData(existingPolicy);
-    } else {
-      resetForm();
-    }
-    setEditingVisa(visaTypeId);
+  const handleEditVisa = (visa) => {
+    setEditingVisa(visa);
     setExpandedVisa(null);
     setIsAddingVisaType(false);
-  };
-
-  const handleSaveVisa = () => {
-    if (!editingVisa) return;
-
-    // Basic validation
-    if (!formData.blocked) {
-      if (!formData.processingTime || !formData.validityPeriod || formData.applicationFees === '') {
-        alert('Please fill in all required fields');
-        return;
-      }
-      if (formData.requiredDocuments.some(doc => !doc.trim())) {
-        alert('Please fill in all required documents or remove empty entries');
-        return;
-      }
-    }
-
-    setPolicies(prev => ({
-      ...prev,
-      [selectedCountry.id]: {
-        ...(prev[selectedCountry.id] || {}),
-        [editingVisa]: { ...formData }
-      }
-    }));
-
-    resetForm();
-    alert('Visa policy saved successfully!');
   };
 
   const handleDragStart = (e, index) => {
@@ -262,84 +167,10 @@ export default function VisaPolicyManage() {
     setDragOverItem(null);
   };
 
-  const handleDeleteVisa = (visaTypeId) => {
-    if (window.confirm('Are you sure you want to delete this visa policy?')) {
-      setPolicies(prev => {
-        const countryPolicies = { ...prev[selectedCountry.id] };
-        delete countryPolicies[visaTypeId];
-        return {
-          ...prev,
-          [selectedCountry.id]: countryPolicies
-        };
-      });
-    }
-  };
-
-  const handleDeleteVisaType = (visaTypeId) => {
-    if (window.confirm('Are you sure you want to remove this visa type completely? This will also delete its policy if configured.')) {
-      // Remove from visa types
-      setVisaTypesByCountry(prev => ({
-        ...prev,
-        [selectedCountry.id]: (prev[selectedCountry.id] || []).filter(v => v.id !== visaTypeId)
-      }));
-
-      // Remove policy if exists
-      setPolicies(prev => {
-        const countryPolicies = { ...prev[selectedCountry.id] };
-        delete countryPolicies[visaTypeId];
-        return {
-          ...prev,
-          [selectedCountry.id]: countryPolicies
-        };
-      });
-    }
-  };
-
-  const handleBlockVisa = (visaTypeId) => {
-    const policy = policies[selectedCountry.id]?.[visaTypeId];
-    if (!policy) return;
-
-    const action = policy.blocked ? 'unblock' : 'block';
-    if (window.confirm(`Are you sure you want to ${action} this visa type for ${selectedCountry.name}?`)) {
-      setPolicies(prev => ({
-        ...prev,
-        [selectedCountry.id]: {
-          ...prev[selectedCountry.id],
-          [visaTypeId]: {
-            ...policy,
-            blocked: !policy.blocked,
-            status: !policy.blocked ? 'inactive' : policy.status
-          }
-        }
-      }));
-    }
-  }
-
-  // alert('Visa type added successfully! Now configure its policy.');
-
-  const addArrayField = (field) => {
-    setFormData({ ...formData, [field]: [...formData[field], ''] });
-  };
-
-  const removeArrayField = (field, index) => {
-    setFormData({
-      ...formData,
-      [field]: formData[field].filter((_, i) => i !== index)
-    });
-  };
-
-  const getVisaPolicy = (visaTypeId) => {
-    return policies[selectedCountry.id]?.[visaTypeId];
-  };
-
   const currentCountryVisaTypes = visaRow?.visa_id?.length ?? 0;
   const currentCountryVisaTypeDetails = visaRow?.visa_icon ?? [];
 
-  const countryPolicies = policies[selectedCountry?.id] || {};
-
-  // console.log(visaRow);
-
-  if (isAllCountryListLoading || isCountryLoading || isVisaDataLoading) {
+  if (isAllCountryListLoading || isCountryLoading || isVisaDataLoading || isAllPolicyLoading || isspecificVisaEnableCountryLoading) {
     return (
       <div className="flex flex-col h-screen items-center justify-center bg-transparent">
         <div className="w-18 h-18 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -350,6 +181,7 @@ export default function VisaPolicyManage() {
 
   // console.log('Logges embassy data', embassyData);
   // console.log('All available country details', getAllCountryList);
+  // console.log(countryListWithoutOwn, selectedCountry);
 
   return (
     <div className="space-y-6">
@@ -362,10 +194,10 @@ export default function VisaPolicyManage() {
       </div>
 
       {/* Stats Grid */}
-      <StatsGrid countryPolicies={countryPolicies} currentCountryVisaTypes={currentCountryVisaTypes} mockCountries={getAllCountryList} />
+      <StatsGrid visaPolicy={visaPolicy} currentCountryVisaTypes={currentCountryVisaTypes} specificVisaEnableCountry={specificVisaEnableCountry} />
 
       {/* Country Selector */}
-      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} selectedCountry={selectedCountry} countryDetails={countryDetails} visaTypesByCountry={visaTypesByCountry} visaData={visaData} mockCountries={countryListWithoutOwn} policies={policies} resetForm={resetForm} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
+      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} visaPolicy={visaPolicy} allCountryPolicy={allCountryPolicy} country_id={countryDetails?.id} selectedCountry={selectedCountry} visaData={visaData} mockCountries={countryListWithoutOwn} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
 
       {/* Add Visa Type Form */}
       {isAddingVisaType && (
@@ -400,8 +232,8 @@ export default function VisaPolicyManage() {
       {/* Visa Types Grid with Drag & swap */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {currentCountryVisaTypeDetails?.map((visaType, index) => (
-          <VisaTypeCard key={index} index={index} visaType={visaType} country_id={embassyData?.country_id} getVisaPolicy={getVisaPolicy} expandedVisa={expandedVisa} iconMapping={iconMapping} handleDeleteVisaType={handleDeleteVisaType} handleEditVisa={handleEditVisa}
-            dragOverItem={dragOverItem} draggedItem={draggedItem} selectedCountry={selectedCountry} handleBlockVisa={handleBlockVisa} handleDeleteVisa={handleDeleteVisa} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd}
+          <VisaTypeCard key={index} index={index} countryWiseVisa={visaRow} visaType={visaType} country_id={embassyData?.country_id} expandedVisa={expandedVisa} iconMapping={iconMapping} handleEditVisa={handleEditVisa}
+            dragOverItem={dragOverItem} draggedItem={draggedItem} selectedCountry={selectedCountry} handleDragStart={handleDragStart} handleDragEnd={handleDragEnd}
             handleDragOver={handleDragOver} handleDragEnter={handleDragEnter} handleDrop={handleDrop} setExpandedVisa={setExpandedVisa} />
         ))}
       </div>

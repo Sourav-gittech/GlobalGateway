@@ -90,14 +90,14 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
             id: userId,
             country_name: countryName,
             country_id: countryId,
-            email: data.email,
+            email: data?.email,
             is_verified: "pending",
             is_country_available: countryAvailable,
-            is_blocked: data.is_blocked,
-            is_approved: data.is_approved,
+            is_blocked: data?.is_blocked,
+            is_approved: data?.is_approved,
             last_sign_in_at: null,
-            providers: signUpData.user.app_metadata.provider,
-            role: data.role,
+            providers: signUpData?.user.app_metadata?.provider,
+            role: data?.role,
             document: publicUrl
           });
       }
@@ -105,16 +105,17 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
         // insert into custom table
         let { data: insertData, error: insertError } = await supabase.from("users").insert({
           id: userId,
-          name: data.name,
-          phone: data.phone,
-          email: data.email,
+          name: data?.name,
+          phone: data?.phone,
+          email: data?.email,
+          country: data?.country ?? null,
           avatar: fileName,
           avatar_url: publicUrl,
           is_verified: "pending",
-          is_blocked: data.is_blocked,
+          is_blocked: data?.is_blocked,
           last_sign_in_at: null,
-          providers: signUpData.user.app_metadata.provider,
-          role: data.role
+          providers: signUpData?.user.app_metadata.provider,
+          role: data?.role
         });
         // console.log('Response after inserting data in public user table', insertData, insertError);
 
