@@ -3,7 +3,7 @@ import { getMonthlyTransactionsByStatus } from "../../functions/getMonthlyTransa
 
 export function useMonthlyTransactionsByStatus(status) {
     return useQuery({
-        queryKey: ["monthly-success-transactions"],
+        queryKey: ["monthly-success-transactions",status],
         queryFn: () => getMonthlyTransactionsByStatus(status),
         refetchOnWindowFocus: false,
     });

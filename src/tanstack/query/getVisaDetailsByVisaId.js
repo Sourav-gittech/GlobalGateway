@@ -6,6 +6,6 @@ export const useVisaDetailsByVisaId = (visaId) => {
         queryKey: ["visa-details", visaId],
         queryFn: () => fetchVisaDetailsByVisaId(visaId),
         enabled: Boolean(visaId),
-        staleTime: 5 * 60 * 1000,
+        // staleTime: 5 * 60 * 1000,
     });
 }

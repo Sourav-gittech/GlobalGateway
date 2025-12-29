@@ -1,6 +1,8 @@
 import React from 'react'
 import VisaRow from './VisaRow';
-import { Loader2 } from 'lucide-react';
+import { Globe, Loader2 } from 'lucide-react';
+import CountryVisaTable from './CountryVisaTable';
+import VisaSummary from './VisaSummary';
 
 const VisaTable = ({ expandedVisa, setExpandedVisa, filteredVisas, isVisaListloading, getVisaStatus }) => {
     return (
@@ -25,14 +27,7 @@ const VisaTable = ({ expandedVisa, setExpandedVisa, filteredVisas, isVisaListloa
                         </td>
                     </tr>
                 )}
-                {!isVisaListloading && (!filteredVisas || filteredVisas.length === 0) && (
-                    <tr>
-                        <td colSpan="7" className="px-6 py-12 text-center text-slate-400">
-                            No visa types found
-                        </td>
-                    </tr>
-                )}
-                {filteredVisas?.map((visa) => {
+                {filteredVisas?.map(visa => {
                     const currentStatus = getVisaStatus(visa.id, visa.globalStatus);
                     return (
                         <React.Fragment key={visa.id}>

@@ -14,31 +14,19 @@ const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="text-sm text-gray-600">Visa Type</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.visa_type}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.visa_type ?? 'N/A'}</p>
                     </div>
-                    {/* <div>
+                    <div>
                         <label className="text-sm text-gray-600">Entry Type</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.entryType}</p>
-                    </div> */}
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.entry_type ?? 'N/A'}</p>
+                    </div>
                     <div>
                         <label className="text-sm text-gray-600">Duration</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{visaDetails?.visa_validity}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.validity ?? 'N/A'}</p>
                     </div>
-                    {/* <div>
-                        <label className="text-sm text-gray-600">Travel Date</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">
-                            {new Date(application?.application_visa_details?.travelDate).toLocaleDateString()}
-                        </p>
-                    </div>
-                    <div>
-                        <label className="text-sm text-gray-600">Return Date</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">
-                            {new Date(application?.application_visa_details?.returnDate).toLocaleDateString()}
-                        </p>
-                    </div> */}
                     <div className="md:col-span-2">
                         <label className="text-sm text-gray-600">Purpose of Visit</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.purpose}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_visa_details?.purpose ?? 'N/A'}</p>
                     </div>
                 </div>
             </div>
@@ -51,11 +39,11 @@ const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="text-sm text-gray-600">Passport Number</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_passport?.passport_number}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_passport?.passport_number ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Issue Place</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_passport?.place_of_issue}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_passport?.place_of_issue ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Issue Date</label>
@@ -85,8 +73,8 @@ const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
                                     <Globe size={18} className="text-blue-600" />
                                 </div>
                                 <div>
-                                    <p className="font-medium text-gray-900">{travel?.country?.name}</p>
-                                    <p className="text-sm text-gray-600">{travel?.visa?.purpose}</p>
+                                    <p className="font-medium text-gray-900">{travel?.country?.name ?? 'N/A'}</p>
+                                    <p className="text-sm text-gray-600">{travel?.visa?.purpose ?? 'N/A'}</p>
                                 </div>
                             </div>
                             <span className="text-sm font-medium text-gray-700">{getYear(travel?.approval_date)}</span>
@@ -107,17 +95,17 @@ const VisaDetails = ({ application, visaDetails, travelHistoryDetails }) => {
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Payment Provider</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.provider}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.provider ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Transaction ID</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.transaction_id}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_payment?.find(payment => payment.status == "success")?.transaction_id ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Status</label>
                         <p className="text-green-700 rounded text-sm font-medium mt-1">
-                            <CheckCircle size={14} className='inline mb-1 mr-1'/>
-                            {application?.application_payment?.find(payment => payment.status == "success")?.status}
+                            <CheckCircle size={14} className='inline mb-1 mr-1' />
+                            {application?.application_payment?.find(payment => payment.status == "success")?.status ?? 'N/A'}
                         </p>
                     </div>
                 </div>

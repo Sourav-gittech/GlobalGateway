@@ -12,7 +12,7 @@ import Documents from "../../../../Components/embassy/dashboard/application-view
 import TimeLine from "../../../../Components/embassy/dashboard/application-view/application-view-details/TimeLine";
 import { useVisaDetails } from "../../../../tanstack/query/getSpecificVisaDetails";
 import { useFulfilledApplicationByUser } from "../../../../tanstack/query/getUserTravelHistory";
-import { fetchFullApplicationDetailsById } from "../../../../tanstack/query/getFullApplicationDetails";
+import { useFullApplicationDetailsById } from "../../../../tanstack/query/getFullApplicationDetails";
 import { useSelector } from "react-redux";
 
 export default function ApplicationView() {
@@ -30,7 +30,7 @@ export default function ApplicationView() {
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
 
-  const { data: rawApplication, isLoading: applicationLoading } = fetchFullApplicationDetailsById(applicationId);
+  const { data: rawApplication, isLoading: applicationLoading } = useFullApplicationDetailsById(applicationId);
 
   const { data: visaDetails } = useVisaDetails({
     country_id: rawApplication?.country_id,

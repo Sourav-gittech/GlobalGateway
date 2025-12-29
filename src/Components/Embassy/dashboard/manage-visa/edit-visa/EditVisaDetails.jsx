@@ -23,6 +23,7 @@ const EditVisaDetails = ({ currentCountryVisaTypes, countryDetails, selectedCoun
             validityUnit: 'day',
             applicationFees: '',
             status: 'active',
+            visa_type: 'Single',
             requiredDocuments: ['']
         }
     })
@@ -38,6 +39,7 @@ const EditVisaDetails = ({ currentCountryVisaTypes, countryDetails, selectedCoun
             validityUnit: Number(editingVisa.visa_validity?.split(" ")[0]) > 1 ? editingVisa.visa_validity?.split(" ")[1]?.slice(0, -1) : editingVisa.visa_validity?.split(" ")[1] || "day",
             applicationFees: editingVisa.visa_fees || "",
             status: editingVisa.status || "active",
+            visa_type: editingVisa.entry_type || "Single",
             requiredDocuments: editingVisa.visa_documents?.length
                 ? editingVisa.visa_documents
                 : [""],
@@ -59,6 +61,7 @@ const EditVisaDetails = ({ currentCountryVisaTypes, countryDetails, selectedCoun
                 visa_id: typeof editingVisa === 'string' ? editingVisa : editingVisa?.visa_id,
                 visitor_country_id: selectedCountry?.id,
                 status: data?.blocked ? 'inactive' : data?.status,
+                entry_type: data?.visa_type,
                 visa_fees: data?.applicationFees,
                 visa_processing_time: data?.processingTime + ' ' + data?.processingUnit + (Number(data?.processingTime?.trim()) > 1 ? 's' : ''),
                 visa_validity: data?.validityPeriod + ' ' + data?.validityUnit + (Number(data?.validityPeriod?.trim()) > 1 ? 's' : ''),

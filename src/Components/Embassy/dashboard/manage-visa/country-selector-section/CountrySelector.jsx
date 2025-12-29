@@ -3,8 +3,7 @@ import DropdownBtn from './DropdownBtn';
 import DropdownList from './DropdownList';
 import { Ban } from 'lucide-react';
 
-const CountrySelector = ({ setIsOpen,visaPolicy, isOpen, selectedCountry, visaData, mockCountries, setSelectedCountry, setIsAddingVisaType, dropdownRef }) => {
-
+const CountrySelector = ({ setIsOpen, visaPolicy, allCountryPolicy, country_id, isOpen, selectedCountry, visaData, mockCountries, setSelectedCountry, setIsAddingVisaType, dropdownRef }) => {
 
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-lg p-3 sm:p-4 md:p-5 w-full">
@@ -20,7 +19,7 @@ const CountrySelector = ({ setIsOpen,visaPolicy, isOpen, selectedCountry, visaDa
 
                 {/* Dropdown List */}
                 {isOpen && (
-                    <DropdownList mockCountries={mockCountries} visaPolicy={visaPolicy} visaData={visaData} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setIsOpen={setIsOpen} setIsAddingVisaType={setIsAddingVisaType} />
+                    <DropdownList mockCountries={mockCountries} allCountryPolicy={allCountryPolicy} visaData={visaData} country_id={country_id} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} setIsOpen={setIsOpen} setIsAddingVisaType={setIsAddingVisaType} />
                 )}
             </div>
 

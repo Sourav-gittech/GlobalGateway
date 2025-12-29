@@ -197,7 +197,7 @@ export default function VisaPolicyManage() {
       <StatsGrid visaPolicy={visaPolicy} currentCountryVisaTypes={currentCountryVisaTypes} specificVisaEnableCountry={specificVisaEnableCountry} />
 
       {/* Country Selector */}
-      <CountrySelector setIsOpen={setIsOpen} isOpen={isOpen} visaPolicy={visaPolicy} allCountryPolicy={allCountryPolicy} country_id={countryDetails?.id} selectedCountry={selectedCountry} visaData={visaData} mockCountries={countryListWithoutOwn} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
+      <CountrySelector setIsOpen={setIsOpen} allCountryPolicy={allCountryPolicy} isOpen={isOpen} visaPolicy={visaPolicy} country_id={countryDetails?.id} selectedCountry={selectedCountry} visaData={visaData} mockCountries={countryListWithoutOwn} setSelectedCountry={setSelectedCountry} setIsAddingVisaType={setIsAddingVisaType} dropdownRef={dropdownRef} />
 
       {/* Add Visa Type Form */}
       {isAddingVisaType && (

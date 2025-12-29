@@ -36,77 +36,85 @@ const VisaForm = ({ setIsAddingVisaType, selectedCountry, iconMapping, countryDe
             status: 'active'
         }
 
+        const visaName = visaType?.toLowerCase()?.includes('visa') ? visaType : visaType + " Visa";
+
         const visaObj = {
-            visaName: visaType?.toLowerCase()?.includes('visa') ? visaType : visaType + " Visa",
+            visaName: visaName?.split(" ")?.map(char => char?.charAt(0)?.toUpperCase() + char?.slice(1)?.toLowerCase())?.join(" "),
             visaIcon: data?.visaIcon,
             visitor_country: selectedCountry?.id
         }
 
         let visa = await dispatch(fetchVisaByType(visaObj.visaName)).unwrap()
 
-        // Add visa if not exists
-        if (!visa) visa = await dispatch(addVisa(visaData)).unwrap()
-
-        // Fetch country visa row
-        let countryVisa = await dispatch(
-            fetchCountryVisa({ countryId: countryDetails?.id, visitorCountryId: visaObj?.visitor_country })
-        ).unwrap();
-
-        if (!countryVisa) {
-            dispatch(addVisaToCountry({
-                countryId: countryDetails?.id,
-                visitorCountry: visaObj?.visitor_country,
-                visaId: visa.id,
-                visaIconName: visaObj.visaIcon
-            })).then(res => {
-                if (res.meta.requestStatus === "fulfilled") {
-                    hotToast("Visa type added successfully! Now configure its policy.", "success");
-                    reset();
-                    setIsAddingVisaType(false);
-                    queryClient.invalidateQueries({
-                        queryKey: ["countryVisa", countryDetails.id],
-                    });
-                    queryClient.invalidateQueries({
-                        queryKey: ["visa-enable-country", countryDetails.id],
-                    });
-
-                } else {
-                    getSweetAlert("Oops...", res.payload, "error");
-                }
-            })
-                .catch(() => {
-                    getSweetAlert("Oops...", "Something went wrong!", "error");
-                })
-        } else if (!countryVisa.visa_id.includes(visa.id)) {
-            dispatch(updateCountryVisa({
-                rowId: countryVisa.id,
-                visaId: visa.id,
-                visaIconName: visaObj.visaIcon,
-                existingVisaIds: countryVisa.visa_id,
-                existingVisaIcons: countryVisa.visa_icon
-            })).then(res => {
-                if (res.meta.requestStatus === "fulfilled") {
-                    hotToast("Visa type added successfully! Now configure its policy.", "success");
-                    reset();
-                    setIsAddingVisaType(false);
-                    queryClient.invalidateQueries({
-                        queryKey: ["countryVisa", countryDetails.id],
-                    });
-                    queryClient.invalidateQueries({
-                        queryKey: ["visa-enable-country", countryDetails.id],
-                    });
-
-                } else {
-                    getSweetAlert("Oops...", res.payload, "error");
-                }
-            })
-                .catch(() => {
-                    getSweetAlert("Oops...", "Something went wrong!", "error");
-                })
+        if (visa?.status == "inactive") {
+            setIsAddingVisaType(false);
+            hotToast("This Visa type is inactive right now. Try again later", "error");
         }
         else {
-            hotToast("Visa type already exist.", "error");
-            setIsAddingVisaType(false);
+            // Add visa if not exists
+            if (!visa) visa = await dispatch(addVisa(visaData)).unwrap()
+
+            // Fetch country visa row
+            let countryVisa = await dispatch(
+                fetchCountryVisa({ countryId: countryDetails?.id, visitorCountryId: visaObj?.visitor_country })
+            ).unwrap();
+
+            if (!countryVisa) {
+                dispatch(addVisaToCountry({
+                    countryId: countryDetails?.id,
+                    visitorCountry: visaObj?.visitor_country,
+                    visaId: visa.id,
+                    visaIconName: visaObj.visaIcon
+                })).then(res => {
+                    if (res.meta.requestStatus === "fulfilled") {
+                        hotToast("Visa type added successfully! Now configure its policy.", "success");
+                        reset();
+                        setIsAddingVisaType(false);
+                        queryClient.invalidateQueries({
+                            queryKey: ["countryVisa", countryDetails.id],
+                        });
+                        queryClient.invalidateQueries({
+                            queryKey: ["visa-enable-country", countryDetails.id],
+                        });
+
+                    } else {
+                        getSweetAlert("Oops...", res.payload, "error");
+                    }
+                })
+                    .catch(() => {
+                        getSweetAlert("Oops...", "Something went wrong!", "error");
+                    })
+            } else if (!countryVisa.visa_id.includes(visa.id)) {
+                dispatch(updateCountryVisa({
+                    rowId: countryVisa.id,
+                    visaId: visa.id,
+                    visaIconName: visaObj.visaIcon,
+                    existingVisaIds: countryVisa.visa_id,
+                    existingVisaIcons: countryVisa.visa_icon
+                })).then(res => {
+                    if (res.meta.requestStatus === "fulfilled") {
+                        hotToast("Visa type added successfully! Now configure its policy.", "success");
+                        reset();
+                        setIsAddingVisaType(false);
+                        queryClient.invalidateQueries({
+                            queryKey: ["countryVisa", countryDetails.id],
+                        });
+                        queryClient.invalidateQueries({
+                            queryKey: ["visa-enable-country", countryDetails.id],
+                        });
+
+                    } else {
+                        getSweetAlert("Oops...", res.payload, "error");
+                    }
+                })
+                    .catch(() => {
+                        getSweetAlert("Oops...", "Something went wrong!", "error");
+                    })
+            }
+            else {
+                hotToast("Visa type already exist.", "error");
+                setIsAddingVisaType(false);
+            }
         }
     }
 

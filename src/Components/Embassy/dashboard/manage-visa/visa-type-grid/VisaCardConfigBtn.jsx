@@ -3,10 +3,10 @@ import { Plus, Trash2 } from 'lucide-react'
 import hotToast from '../../../../../util/alert/hot-toast';
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
-import { deleteVisaIfUnusedAnywhere, deleteVisaTypeFromCountry } from '../../../../../Redux/Slice/visaSlice';
+import { deleteVisaTypeFromCountry } from '../../../../../Redux/Slice/visaSlice';
 import { useQueryClient } from "@tanstack/react-query";
 
-const VisaCardConfigBtn = ({ handleEditVisa, visaType, visaData,country_id }) => {
+const VisaCardConfigBtn = ({ handleEditVisa, visaType, visaData, country_id }) => {
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
@@ -19,26 +19,12 @@ const VisaCardConfigBtn = ({ handleEditVisa, visaType, visaData,country_id }) =>
 
                     if (res?.meta?.requestStatus == "fulfilled") {
 
-                        dispatch(deleteVisaIfUnusedAnywhere(visaId))
-                            .then(res => {
-                                // console.log('Response for deleting visa type', res);
-
-                                if (res?.meta?.requestStatus == "fulfilled") {
-                                    hotToast("Visa type deleted successfully", "success");
-                                    queryClient.invalidateQueries({
-                                        queryKey: ["countryVisa", country_id],
-                                    });
-                                    queryClient.invalidateQueries({ queryKey: ["visaList"] });
-                                    queryClient.invalidateQueries({ queryKey: ["visa-enable-country",country_id] });
-                                }
-                                else {
-                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                }
-                            })
-                            .catch(err => {
-                                console.log('Error occured', err);
-                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                            })
+                        hotToast("Visa type deleted successfully", "success");
+                        queryClient.invalidateQueries({
+                            queryKey: ["countryVisa", country_id],
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["visaList"] });
+                        queryClient.invalidateQueries({ queryKey: ["visa-enable-country", country_id] });
                     }
                     else {
                         getSweetAlert('Oops...', 'Something went wrong!', 'error');

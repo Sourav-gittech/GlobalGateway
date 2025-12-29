@@ -111,15 +111,14 @@ const ManageVisa = () => {
     return visaStatuses[visaId] || defaultStatus;
   };
 
-  const filteredVisas = visaData.filter(visa => {
+  const filteredVisas = visaListData?.filter(visa => {
     const currentStatus = getVisaStatus(visa.id, visa.globalStatus);
-    const matchesSearch = visa.visaName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      visa.visaType.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || currentStatus === filterStatus;
+    const matchesSearch = visa?.visa_type?.toLowerCase()?.includes(searchTerm?.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || visa?.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
-  console.log('All available visa', visaListData);
+  // console.log('All available visa', visaListData);
 
   return (
     <div className="min-h-screen w-full bg-transparent">
@@ -131,7 +130,7 @@ const ManageVisa = () => {
         </div>
 
         {/* Stats Cards */}
-        <VisaStats getVisaStatus={getVisaStatus} />
+        <VisaStats visaListData={visaListData} />
 
         {/* Search and Filter Bar */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -159,14 +158,14 @@ const ManageVisa = () => {
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
-            <option value="blocked">Not Active</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
 
         {/* Visa Table */}
         <div className="bg-slate-700/30 border border-slate-600/50 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
-            <VisaTable expandedVisa={expandedVisa} setExpandedVisa={setExpandedVisa} filteredVisas={visaListData} isVisaListloading={isVisaListloading} getVisaStatus={getVisaStatus} />
+            <VisaTable expandedVisa={expandedVisa} setExpandedVisa={setExpandedVisa} filteredVisas={filteredVisas} isVisaListloading={isVisaListloading} getVisaStatus={getVisaStatus} />
           </div>
 
           {filteredVisas.length === 0 && (

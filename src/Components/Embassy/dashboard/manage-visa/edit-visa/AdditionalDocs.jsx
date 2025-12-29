@@ -94,15 +94,31 @@ const AdditionalDocs = ({ register, errors, control }) => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
-        <select
-          {...register('status', { required: "Status is required" })}
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        {errors?.status && <p className="text-red-500 text-xs mt-1">{errors?.status?.message}</p>}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+            <select
+              {...register('status', { required: "Status is required" })}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            {errors?.status && <p className="text-red-500 text-xs mt-1">{errors?.status?.message}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Entry Type *</label>
+            <select
+              {...register('visa_type', { required: "Entry type is required" })}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Single Entry">Single</option>
+              <option value="Double Entry">Double</option>
+              <option value="Multiple Entry">Multiple</option>
+            </select>
+            {errors?.visa_type && <p className="text-red-500 text-xs mt-1">{errors?.visa_type?.message}</p>}
+          </div>
+        </div>
       </div>
     </div>
   )

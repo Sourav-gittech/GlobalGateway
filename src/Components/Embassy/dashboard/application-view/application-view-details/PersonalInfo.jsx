@@ -12,27 +12,31 @@ const PersonalInfo = ({ application }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="text-sm text-gray-600">First Name</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.first_name??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.first_name ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Last Name</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.last_name??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.last_name ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Date of Birth</label>
                         <p className="text-base font-medium text-gray-900 mt-1">
-                            {new Date(application?.application_personal_info?.date_of_birth).toLocaleDateString()??'N/A'}
+                            {new Date(application?.application_personal_info?.date_of_birth).toLocaleDateString() ?? 'N/A'}
                         </p>
                     </div>
-                    {/* <div>
+                    <div>
                         <label className="text-sm text-gray-600">Gender</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.gender??'N/A'}</p>
-                    </div> */}
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.gender ?? 'N/A'}</p>
+                    </div>
+                    <div>
+                        <label className="text-sm text-gray-600">Marital Status</label>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.marital_status ?? 'N/A'}</p>
+                    </div>
                     <div>
                         <label className="text-sm text-gray-600">Nationality</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.nationality??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.nationality ?? 'N/A'}</p>
                     </div>
-                    
+
                 </div>
             </div>
 
@@ -48,7 +52,7 @@ const PersonalInfo = ({ application }) => {
                         </div>
                         <div>
                             <label className="text-sm text-gray-600">Email</label>
-                            <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.email??'N/A'}</p>
+                            <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.email ?? 'N/A'}</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3">
@@ -57,7 +61,7 @@ const PersonalInfo = ({ application }) => {
                         </div>
                         <div>
                             <label className="text-sm text-gray-600">Phone</label>
-                            <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.phone??'N/A'}</p>
+                            <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.phone ?? 'N/A'}</p>
                         </div>
                     </div>
                 </div>
@@ -71,23 +75,23 @@ const PersonalInfo = ({ application }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className="text-sm text-gray-600">Street Address</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.address??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.address ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">City</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.city??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.city ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">State/Province</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.state??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.state ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">ZIP/Postal Code</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.postal_code??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.postal_code ?? 'N/A'}</p>
                     </div>
                     <div>
                         <label className="text-sm text-gray-600">Country</label>
-                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.country??'N/A'}</p>
+                        <p className="text-base font-medium text-gray-900 mt-1">{application?.application_personal_info?.country ?? 'N/A'}</p>
                     </div>
                 </div>
             </div>

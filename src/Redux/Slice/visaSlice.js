@@ -81,12 +81,20 @@ export const fetchAllVisa = createAsyncThunk("visaSlice/fetchAllVisa",
 // fetch visa from visa table exist or not
 export const fetchVisaByType = createAsyncThunk("visaSlice/fetchVisaByType",
     async (visaType, { rejectWithValue }) => {
-        // console.log('Fetched visa type exist or not', visaType);
+
+        console.log('Fetched visa type exist or not', visaType);
         try {
-            const res = await supabase.from("visa").select("id, visa_type").eq("visa_type", visaType).maybeSingle();
+            const normalized = visaType.trim().replace(/\s+/g, " ");
+
+            const res = await supabase.from("visa").select("id, visa_type, status").ilike("visa_type", normalized).maybeSingle();
             // console.log('Response for fetching visa exist or not', res);
 
             if (res?.error) throw res?.error
+
+            if (res?.data && res?.data.visa_type.trim().replace(/\s+/g, " ").toLowerCase() !== normalized.toLowerCase()) {
+                return null;
+            }
+
             return res?.data
         } catch (err) {
             return rejectWithValue(err.message)
@@ -198,7 +206,7 @@ export const updateCountryVisa = createAsyncThunk("visaSlice/updateCountryVisa",
 )
 
 // Delete visa only if not used in country_visas
-export const  deleteVisaTypeFromCountry = createAsyncThunk("visaSlice/deleteVisaTypeFromCountry",
+export const deleteVisaTypeFromCountry = createAsyncThunk("visaSlice/deleteVisaTypeFromCountry",
     async ({ visaId, countryVisaRowId }, { rejectWithValue }) => {
         try {
 

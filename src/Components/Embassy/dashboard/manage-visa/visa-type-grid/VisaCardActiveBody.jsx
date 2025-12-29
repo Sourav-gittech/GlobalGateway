@@ -1,5 +1,5 @@
 import React from 'react'
-import { Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, IndianRupee } from 'lucide-react';
+import { Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, DoorOpen, IndianRupee } from 'lucide-react';
 
 const VisaCardActiveBody = ({ visaDetails, expandedVisa, setExpandedVisa }) => {
 
@@ -22,18 +22,27 @@ const VisaCardActiveBody = ({ visaDetails, expandedVisa, setExpandedVisa }) => {
                     </div>
                     <p className="text-sm font-bold text-gray-900">{visaDetails?.visa_validity ?? 'N/A'}</p>
                 </div>
-            </div>
 
-            <div className={`rounded-lg p-3 border ${visaDetails?.visa_fees == 0? 'bg-green-50 border-green-200': 'bg-gray-50 border-gray-200'}`}>
-                <div className="flex items-center gap-2 mb-1">
-                    <IndianRupee className={`w-4 h-4 ${visaDetails?.visa_fees == 0 ? 'text-green-600' : 'text-gray-600'}`} />
-                    <span className={`text-xs font-medium ${visaDetails?.visa_fees == 0 ? 'text-green-600' : 'text-gray-600'}`}>
-                        Fees {visaDetails?.visa_fees == 0 && '(FREE)'}
-                    </span>
+                <div className={`rounded-lg p-3 border ${visaDetails?.visa_fees == 0 ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                        <IndianRupee className={`w-4 h-4 ${visaDetails?.visa_fees == 0 ? 'text-green-600' : 'text-gray-600'}`} />
+                        <span className={`text-xs font-medium ${visaDetails?.visa_fees == 0 ? 'text-green-600' : 'text-gray-600'}`}>
+                            Fees {visaDetails?.visa_fees == 0 && '(FREE)'}
+                        </span>
+                    </div>
+                    <p className={`text-sm font-bold ${visaDetails?.visa_fees == 0 ? 'text-green-700' : 'text-gray-900'}`}>
+                        {visaDetails?.visa_fees == 0 ? 'No charge' : `₹${parseInt(visaDetails?.visa_fees)?.toLocaleString()}`}
+                    </p>
                 </div>
-                <p className={`text-sm font-bold ${visaDetails?.visa_fees == 0 ? 'text-green-700' : 'text-gray-900'}`}>
-                    {visaDetails?.visa_fees == 0 ? 'No charge' : `₹${parseInt(visaDetails?.visa_fees)?.toLocaleString()}`}
-                </p>
+
+                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div className="flex items-center gap-2 text-gray-600 mb-1">
+                        <DoorOpen className="w-4 h-4" />
+                        <span className="text-xs font-medium">Entry Type</span>
+                    </div>
+                    <p className="text-sm font-bold text-gray-900">{visaDetails?.entry_type?.split(" ")?.[0] ?? 'N/A'}</p>
+                </div>
+
             </div>
 
             <button

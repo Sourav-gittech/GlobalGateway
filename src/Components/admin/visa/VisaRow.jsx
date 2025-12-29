@@ -7,6 +7,7 @@ import getSweetAlert from '../../../util/alert/sweetAlert';
 import { useAverageProcessingTime } from '../../../tanstack/query/getAvgVisaProcessingTime';
 import { useAverageValidity } from '../../../tanstack/query/getAvgVisaValidity';
 import { useVisaDetailsByVisaId } from '../../../tanstack/query/getVisaDetailsByVisaId';
+import { useVisaWiseApplicationViaVisaId } from '../../../tanstack/query/getVisaWiseApplicationViaVisaId';
 
 const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
 
@@ -14,8 +15,11 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
 
     const { data: avgProcessingTime, isLoading: processingTimeLoading } = useAverageProcessingTime(visa?.id);
     const { data: avgValidity, isLoading: validityLoading } = useAverageValidity(visa?.id);
-    const { data: visaCountryList, isLoading: isVisaCountryLoading, isError, error } = useVisaDetailsByVisaId(visa?.id);
+    const { data: visaCountryList, isLoading: isVisaCountryLoading, isError, error: visaCountryListError } = useVisaDetailsByVisaId(visa?.id);
+    const { data: applicationList, isLoading: isApplicationListLoading, error: applicationListError } = useVisaWiseApplicationViaVisaId({ visaId: visa?.id, applicationStatus: 'all' });
 
+    // console.log(applicationList);
+    
     const toggleVisaStatus = (visaId, visa) => {
         const updated_visa = {
             ...visa,
@@ -64,18 +68,19 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
             <td className="px-4 py-4 text-slate-300 text-sm hidden lg:table-cell">
                 <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-slate-500" />
-                    {processingTimeLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : avgProcessingTime}
+                    {processingTimeLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : avgProcessingTime}
                 </div>
             </td>
             <td className="px-4 py-4 text-slate-300 text-sm hidden xl:table-cell">
                 <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-slate-500" />
-                    {validityLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : avgValidity}
+                    {validityLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : avgValidity}
                 </div>
             </td>
             <td className="px-6 py-4 hidden lg:table-cell">
                 <div className="text-white font-semibold text-sm text-center">
-                    00
+                    {isApplicationListLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : applicationList?.length}
+
                 </div>
             </td>
             <td className="px-6 py-4">
@@ -95,7 +100,7 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
             </td>
             <td className="px-6 py-4 hidden lg:table-cell">
                 <div className="text-white font-semibold text-sm text-center">
-                    {isVisaCountryLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : visaCountryList?.length}
+                    {isVisaCountryLoading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : visaCountryList?.length}
                 </div>
             </td>
             <td className="px-6 py-4">

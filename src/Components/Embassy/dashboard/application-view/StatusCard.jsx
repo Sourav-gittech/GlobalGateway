@@ -9,6 +9,7 @@ import getSweetAlert from '../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
 
 const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }) => {
+    
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
 
@@ -75,7 +76,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                             </p>
                         </div>
 
-                        {application?.appointment_date && (
+                        {application?.appointment_date && !application?.approval_date ? (
                             <>
                                 <div className="h-12 w-px bg-gray-300 hidden sm:block"></div>
                                 <div>
@@ -83,13 +84,23 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                     <p className="text-lg font-semibold text-cyan-700">
                                         {formatDateTimeMeridianWithoutSecond(application?.appointment_date)}
                                     </p>
-                                    {application?.appointment_location && (
+                                    {/* {application?.embassy_location && (
                                         <p className="text-xs text-gray-500 mt-1">
-                                            {typeof application.appointment_location === 'string'
-                                                ? application.appointment_location
-                                                : application.appointment_location.city || 'N/A'}
+                                            {typeof application.embassy_location === 'string'
+                                                ? application.embassy_location
+                                                : application.embassy_location.address || 'N/A'}
                                         </p>
-                                    )}
+                                    )} */}
+                                </div>
+                            </>
+                        ):(
+                             <>
+                                <div className="h-12 w-px bg-gray-300 hidden sm:block"></div>
+                                <div>
+                                    <p className="text-sm text-gray-600">Approval Date</p>
+                                    <p className="text-lg font-semibold text-cyan-700">
+                                        {formatDateTimeMeridianWithoutSecond(application?.approval_date)}
+                                    </p>
                                 </div>
                             </>
                         )}
@@ -97,7 +108,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
 
                     {/* Right Side - Action Buttons */}
                     <div className="flex gap-2 shrink-0">
-                        {!application?.appointment_date && application.status === "processing" && (
+                        {!application?.appointment_date && application?.status === "processing" && (
                             <button
                                 onClick={() => setShowRejectModal(true)}
                                 className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium shadow-sm hover:shadow cursor-pointer"
@@ -106,7 +117,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                 Reject
                             </button>
                         )}
-                        {application.status === "processing" && !isExpired && (
+                        {application?.status === "processing" && !isExpired && (
                             <button
                                 onClick={handleChangeAppointment}
                                 className="flex items-center gap-2 px-4 py-2 bg-cyan-700 text-white rounded-lg hover:bg-cyan-600 transition-colors font-medium shadow-sm hover:shadow cursor-pointer"
@@ -115,7 +126,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                 {!application?.appointment_date ? 'Set' : 'Change'} Appointment
                             </button>
                         )}
-                        {isExpired && application.status === "processing" && (
+                        {isExpired && application?.status === "processing" && (
                             <>
                                 <button
                                     onClick={() => setShowRejectModal(true)}
