@@ -10,10 +10,11 @@ import Payment from "../payment/PaymentInterface";
 import { useNavigate, useParams } from "react-router-dom";
 import { checkLoggedInUser } from "../../../../Redux/Slice/auth/checkAuthSlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";
-import { Loader2 } from "lucide-react";
 import { useApplicationByUserAndCountry } from "../../../../tanstack/query/getApplicationByUserAndCountry";
-import { useCountryWiseVisaDetails } from "../../../../tanstack/query/getCountryWiseVisaDetails";
+import { useVisaDetailsByCountryAndVisitor } from "../../../../tanstack/query/getVisaDetailsViaCountryNameAndVisitorCountryId";
 import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
+import { Loader2 } from "lucide-react";
+import { useFullApplicationDetailsById } from "../../../../tanstack/query/getFullApplicationDetails";
 
 export default function VisaApplicationForm() {
   const dispatch = useDispatch();
@@ -26,8 +27,9 @@ export default function VisaApplicationForm() {
 
   const countryId = decodeBase64Url(country_id);
   const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationByUserAndCountry(userAuthData?.id, countryId);
-  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(countryId);
+  const { data: countryWiseVisaDetails = [], isLoading: isCountryWiseVisaLoading, isError } = useVisaDetailsByCountryAndVisitor(countryId, userAuthData?.country);
   const finalAppId = applicationId || application?.id;
+  const { data: applicationDetails, isLoading: isApplicationDetailsLoading, isError: hasApplicationDetailsError } = useFullApplicationDetailsById(finalAppId);
 
   // Scroll to top whenever step changes
   useEffect(() => {
@@ -130,7 +132,7 @@ export default function VisaApplicationForm() {
           {step === 3 && <Step3VisaType onNext={next} onBack={prev} countryWiseVisaDetails={countryWiseVisaDetails} user_id={userAuthData?.id} application_id={finalAppId} />}
           {step === 4 && <Step4UploadDocuments onNext={next} onBack={prev} user_id={userAuthData?.id} application_id={finalAppId} />}
           {step === 5 && <Step5Review onNext={next} onBack={prev} onEdit={goToStep} user_id={userAuthData?.id} application_id={finalAppId} />}
-          {step === 6 && <Payment onBack={prev} onSuccess={next} user_id={userAuthData?.id} countryWiseVisaDetails={countryWiseVisaDetails} application_id={finalAppId} />}
+          {step === 6 && <Payment onBack={prev} countryWiseVisaDetails={countryWiseVisaDetails} application_id={finalAppId} applicationDetails={applicationDetails} />}
         </div>
       </div>
 

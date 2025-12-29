@@ -132,7 +132,7 @@ const PaymentPreview = () => {
                 onClick={handleProceed}
                 disabled={!agreedToTerms}
                 className={`flex-1 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold text-sm sm:text-base md:text-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg focus:outline-none ${agreedToTerms
-                  ? 'bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white hover:from-gray-950 hover:to-black active:scale-95 hover:shadow-xl focus:ring-2 focus:ring-cyan-700 focus:ring-offset-2'
+                  ? 'bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white hover:from-gray-950 hover:to-black active:scale-95 hover:shadow-xl focus:ring-2 focus:ring-cyan-700 focus:ring-offset-2 cursor-pointer'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                   }`}
               >

@@ -28,42 +28,47 @@ export const DownloadPolicyGuide = (currentPolicy, selectedCategory) => {
     // Policy Title
     doc.setFontSize(16);
     doc.setTextColor(...accentColor);
-    doc.text(currentPolicy.title, margin, yPos);
+    doc.text(currentPolicy?.title, margin, yPos);
     yPos += 8;
 
     // Description
     doc.setFontSize(10);
     doc.setTextColor(60, 60, 60);
     doc.setFont(undefined, 'normal');
-    const descLines = currentPolicy.description ? doc.splitTextToSize(currentPolicy.description, maxWidth) : doc.splitTextToSize(currentPolicy.country);
+    const descLines = currentPolicy?.description ? doc.splitTextToSize(currentPolicy?.description, maxWidth) : doc.splitTextToSize(currentPolicy?.country);
     doc.text(descLines, margin, yPos);
     yPos += (descLines.length * 5) + 8;
 
     // Info Box
     doc.setFillColor(248, 249, 250);
-    doc.rect(margin, yPos, maxWidth, 25, 'F');
+    doc.rect(margin, yPos, maxWidth, 32, 'F');
     doc.setDrawColor(...accentColor);
     doc.setLineWidth(2);
-    doc.line(margin, yPos, margin, yPos + 25);
+    doc.line(margin, yPos, margin, yPos + 32);
 
     doc.setFontSize(9);
     doc.setFont(undefined, 'bold');
     doc.setTextColor(...primaryColor);
     doc.text('Processing Time:', margin + 5, yPos + 7);
     doc.setFont(undefined, 'normal');
-    doc.text(currentPolicy.processingTime, margin + 45, yPos + 7);
+    doc.text(currentPolicy?.processingTime, margin + 45, yPos + 7);
 
     doc.setFont(undefined, 'bold');
     doc.text('Validity Period:', margin + 5, yPos + 14);
     doc.setFont(undefined, 'normal');
-    doc.text(currentPolicy.validityPeriod, margin + 45, yPos + 14);
+    doc.text(currentPolicy?.validityPeriod, margin + 45, yPos + 14);
 
     doc.setFont(undefined, 'bold');
-    doc.text('Application Fees:', margin + 5, yPos + 21);
+    doc.text('Visa Type:', margin + 5, yPos + 21);
     doc.setFont(undefined, 'normal');
-    doc.text('RS.' + currentPolicy.fees, margin + 45, yPos + 21);
+    doc.text(currentPolicy?.visaType, margin + 45, yPos + 21);
 
-    yPos += 35;
+    doc.setFont(undefined, 'bold');
+    doc.text('Application Fees:', margin + 5, yPos + 28);
+    doc.setFont(undefined, 'normal');
+    doc.text('RS.' + currentPolicy?.fees, margin + 45, yPos + 28);
+
+    yPos += 45;
 
     // Required Documents Section
     doc.setFontSize(14);
@@ -78,7 +83,7 @@ export const DownloadPolicyGuide = (currentPolicy, selectedCategory) => {
     doc.text('All applicants must provide the following documentation:', margin, yPos);
     yPos += 7;
 
-    currentPolicy.requirements.forEach((req, index) => {
+    currentPolicy?.requirements.forEach((req, index) => {
         if (yPos > 270) {
             doc.addPage();
             yPos = 20;

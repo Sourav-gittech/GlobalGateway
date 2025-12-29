@@ -16,23 +16,23 @@ const PaymentMethod = ({ paymentMethod, InfoRow }) => {
                     <InfoRow
                         icon={CreditCard}
                         label="Card Type"
-                        value={paymentMethod?.card_type.toUpperCase()}
+                        value={paymentMethod?.card_type?.toUpperCase()??'N/A'}
                     />
                     <InfoRow
                         icon={CreditCard}
                         label="Card Number"
-                        value={paymentMethod?.masked_card}
+                        value={paymentMethod?.masked_card??'N/A'}
                         mono={true}
                     />
                     <InfoRow
                         icon={FileText}
                         label="Cardholder Name"
-                        value={paymentMethod?.card_holder_name.toUpperCase()}
+                        value={paymentMethod?.card_holder_name?.toUpperCase()??'N/A'}
                     />
                     <InfoRow
                         icon={Calendar}
                         label="Expiry Date"
-                        value={paymentMethod?.expiry_card}
+                        value={paymentMethod?.expiry_card??'N/A'}
                         mono={true}
                     />
                 </div>
@@ -43,7 +43,7 @@ const PaymentMethod = ({ paymentMethod, InfoRow }) => {
                     <InfoRow
                         icon={Wallet}
                         label="UPI ID"
-                        value={paymentMethod?.upi_id || "-"}
+                        value={paymentMethod?.upi_id || 'N/A'}
                         mono={true}
                     />
                 </div>

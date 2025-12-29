@@ -1,14 +1,23 @@
 import React from 'react'
 import { useVisaDetailsByApplicationId } from '../../../tanstack/query/getApplicationVisaDetails';
 import { useCountryByApplicationId } from '../../../tanstack/query/getCountryByApplicationId';
+import { CreditCard } from 'lucide-react';
 
 const PaymentsSection = ({ transactions, getStatusColor, getStatusIcon }) => {
     // console.log('Transaction details', transactions);
 
     if(transactions.length==0){
         return (
-            <div className="py-8">
-                <p className="text-center">No payment details available</p>
+           <div className="py-12 px-4">
+                <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
+                        <CreditCard className="w-8 h-8 text-red-500" />
+                    </div>
+                    <p className="text-gray-600 text-lg">No payment details available</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                        Your upcoming payments will appear here
+                    </p>
+                </div>
             </div>
         )
     }

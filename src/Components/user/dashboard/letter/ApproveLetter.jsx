@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { CheckCircle, User, FileText, PlaneTakeoff } from 'lucide-react';
 import { formatDateDDMMYYYY } from '../../../../util/dateFormat/dateFormatConvertion';
+import { calculateExpirationDate } from '../../../../util/expiration-date/calculateVisaExpirationDate';
 
 const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationDetails }, ref) => {
 
@@ -10,6 +11,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationD
 
   const fullName = `${applicationDetails?.application_personal_info?.first_name || ''} ${applicationDetails?.application_personal_info?.last_name || ''}`.trim();
 
+  const expirationDate = calculateExpirationDate(applicationDetails?.approval_date, applicationDetails?.application_visa_details?.validity);
 
   return (
     <div ref={ref} className="bg-white p-8 max-w-4xl mx-auto text-gray-900" style={{ fontFamily: 'Times New Roman, serif', fontSize: '11pt', lineHeight: '1.5' }}>
@@ -75,7 +77,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationD
             </div>
             <div>
               <span className="text-gray-600">Passport Number:</span>
-              <p className="font-semibold text-gray-900 font-mono">{applicationDetails?.application_passport?.passport_number|| 'N/A'}</p>
+              <p className="font-semibold text-gray-900 font-mono">{applicationDetails?.application_passport?.passport_number || 'N/A'}</p>
             </div>
             <div>
               <span className="text-gray-600">Date of Birth:</span>
@@ -105,7 +107,7 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationD
               </div>
               <div>
                 <span className="text-gray-600">Visa Category:</span>
-                <p className="font-semibold text-gray-900">{ 'Single Entry'}</p>
+                <p className="font-semibold text-gray-900">{applicationDetails?.application_visa_details?.entry_type?.split(" ")?.[0] || 'N/A'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Issue Date:</span>
@@ -113,15 +115,15 @@ const ApproveLetter = forwardRef(({ visa, countryDetails, visaData, applicationD
               </div>
               <div>
                 <span className="text-gray-600">Expiry Date:</span>
-                <p className="font-semibold text-gray-900">{'10/11/2017'}</p>
+                <p className="font-semibold text-gray-900">{formatDateDDMMYYYY(expirationDate) || 'N/A'}</p>
               </div>
               <div>
-                <span className="text-gray-600">Duration of Stay:</span>
-                <p className="font-semibold text-gray-900">{ '90 days'}</p>
+                <span className="text-gray-600">Visa Validity:</span>
+                <p className="font-semibold text-gray-900">{applicationDetails?.application_visa_details?.validity || 'N/A'}</p>
               </div>
               <div>
                 <span className="text-gray-600">Number of Entries:</span>
-                <p className="font-semibold text-gray-900">{ 'Single'}</p>
+                <p className="font-semibold text-gray-900">{applicationDetails?.application_visa_details?.entry_type || 'N/A'}</p>
               </div>
             </div>
           </div>

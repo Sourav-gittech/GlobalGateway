@@ -46,11 +46,11 @@ const schema = yup.object().shape({
   gender: yup
     .string()
     .required("Gender is required")
-    .oneOf(["male", "female", "other"], "Please select a valid gender"),
+    .oneOf(["Male", "Female", "Other"], "Please select a valid gender"),
   maritalStatus: yup
     .string()
     .required("Marital status is required")
-    .oneOf(["single", "married"], "Please select a valid marital status"),
+    .oneOf(["Single", "Married", "Widowed", "Divorced", "Separated"], "Please select a valid marital status"),
   nationality: yup
     .string()
     .required("Nationality is required")
@@ -66,7 +66,7 @@ const schema = yup.object().shape({
   postalCode: yup
     .string()
     .required("Postal code is required")
-    .matches(/^\d{6}$/, "Please enter a valid postal code"),
+    .matches(/^[A-Za-z0-9][A-Za-z0-9\s-]{2,10}[A-Za-z0-9]$/, "Please enter a valid postal code"),
   state: yup
     .string()
     .required("State is required")
@@ -91,7 +91,7 @@ const CustomSelect = ({ label, icon: Icon, options, value, onChange, error, touc
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
-      
+
       <div className="relative">
         <button
           type="button"
@@ -105,27 +105,27 @@ const CustomSelect = ({ label, icon: Icon, options, value, onChange, error, touc
             ${error
               ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50'
               : touched && value
-              ? 'border-green-300 focus:border-green-500 focus:ring-4 focus:ring-green-50'
-              : isFocused || isOpen
-              ? 'border-red-400 focus:ring-4 focus:ring-red-50'
-              : 'border-gray-200 hover:border-gray-300'
+                ? 'border-green-300 focus:border-green-500 focus:ring-4 focus:ring-green-50'
+                : isFocused || isOpen
+                  ? 'border-red-400 focus:ring-4 focus:ring-red-50'
+                  : 'border-gray-200 hover:border-gray-300'
             }
             ${!value ? 'text-gray-400' : 'text-gray-900'}
           `}
         >
-          <Icon 
-            size={19} 
+          <Icon
+            size={19}
             className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-200
               ${error ? 'text-red-400' : touched && value ? 'text-green-500' : isFocused || isOpen ? 'text-red-500' : 'text-gray-400'}
-            `} 
+            `}
           />
-          
+
           <span className="block truncate">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          
-          <ChevronDown 
-            size={18} 
+
+          <ChevronDown
+            size={18}
             className={`absolute right-3.5 top-1/2 -translate-y-1/2 transition-all duration-200
               ${isOpen ? 'rotate-180 text-red-500' : 'text-gray-400'}
             `}
@@ -144,8 +144,8 @@ const CustomSelect = ({ label, icon: Icon, options, value, onChange, error, touc
                   setIsOpen(false);
                 }}
                 className={`w-full px-4 py-3 text-left transition-all duration-150 flex items-center gap-3
-                  ${value === option.value 
-                    ? 'bg-red-50 text-red-700 font-semibold' 
+                  ${value === option.value
+                    ? 'bg-red-50 text-red-700 font-semibold'
                     : 'text-gray-700 hover:bg-gray-50 font-medium'
                   }
                 `}
@@ -195,6 +195,8 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
     defaultValues: {},
   });
 
+  // console.log(user_data);
+
   useEffect(() => {
     if (personalInfoData) {
       reset({
@@ -216,14 +218,17 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
   }, [personalInfoData, reset]);
 
   const genderOptions = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-    { value: 'other', label: 'Other' }
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
+    { value: 'Other', label: 'Other' }
   ];
 
   const maritalStatusOptions = [
-    { value: 'single', label: 'Single' },
-    { value: 'married', label: 'Married' }
+    { value: 'Single', label: 'Single' },
+    { value: 'Married', label: 'Married' },
+    { value: 'Widowed', label: 'Widowed' },
+    { value: 'Divorced', label: 'Divorced' },
+    { value: 'Separated', label: 'Separated' },
   ];
 
   const submitPersonalDetails = async (data) => {
@@ -238,7 +243,8 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
       completed_steps: [],
       rejection_reason: null,
       appointment_date: null,
-      approval_date: null
+      approval_date: null,
+      created_at: new Date().toISOString()
     }
 
     const personalInfo_obj = {
@@ -247,7 +253,7 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
       date_of_birth: data.dateOfBirth,
       gender: data.gender,
       marital_status: data.maritalStatus,
-      nationality: data.nationality,
+      nationality: data.nationality?.charAt(0)?.toUpperCase() + data.nationality?.slice(1)?.toLowerCase(),
       email: data.email,
       phone: data.phone,
       address: data.address,
@@ -531,11 +537,12 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
                 id="country"
                 label="Country"
                 icon={MapPin}
+                value={user_data?.country?.charAt(0)?.toUpperCase() + user_data?.country?.slice(1)?.toLowerCase(" ")}
                 placeholder="USA"
                 {...register('country')}
                 errors={errors}
                 touched={touchedFields.country}
-                required
+                required disabled
               />
             </div>
           </div>

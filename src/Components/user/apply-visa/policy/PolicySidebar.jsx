@@ -20,7 +20,7 @@ const PolicySidebar = ({ visaPolicyCategories, selectedCategory, setSelectedCate
                 <div className="space-y-3">
                     <button
                         onClick={() => setSelectedCategory("General Policies")}
-                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ${selectedCategory === "General Policies"
+                        className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 cursor-pointer ${selectedCategory === "General Policies"
                             ? "bg-slate-800 text-white shadow-lg border-l-4 border-red-500"
                             : "bg-white text-slate-700 hover:bg-gray-50 shadow-md hover:shadow-lg"
                             }`}
@@ -28,16 +28,16 @@ const PolicySidebar = ({ visaPolicyCategories, selectedCategory, setSelectedCate
                         <span className="font-medium">General Policies</span>
                     </button>
                     {Array.isArray(visaPolicyCategories) &&
-                        visaPolicyCategories.map((visa) => (
+                        visaPolicyCategories?.map(visa => (
                             <button
-                                key={visa.id}
-                                onClick={() => setSelectedCategory(visa.id)}
-                                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ${selectedCategory === visa.id
+                                key={visa?.id}
+                                onClick={() => setSelectedCategory(visa?.id)}
+                                className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-300 cursor-pointer ${selectedCategory === visa.id
                                     ? 'bg-slate-800 text-white shadow-lg border-l-4 border-red-500'
                                     : 'bg-white text-slate-700 hover:bg-gray-50 shadow-md hover:shadow-lg'
                                     }`}
                             >
-                                <span className="font-medium">{visa.visa_type.charAt(0).toUpperCase() + visa.visa_type.slice(1)} Policy</span>
+                                <span className="font-medium">{visa?.visa?.visa_type.charAt(0).toUpperCase() + visa?.visa?.visa_type.slice(1)} Policy</span>
                             </button>
                         ))
                     }
@@ -64,7 +64,7 @@ const PolicySidebar = ({ visaPolicyCategories, selectedCategory, setSelectedCate
 
                 <button
                     onClick={handleDownloadPolicyGuide}
-                    className="text-sm font-medium text-amber-900 border border-amber-900 px-3 py-1.5 rounded hover:bg-amber-100 transition-colors flex items-center gap-2">
+                    className="text-sm font-medium text-amber-900 border border-amber-900 px-3 py-1.5 rounded hover:bg-amber-100 transition-colors flex items-center gap-2 cursor-pointer">
                     <FileText className="w-4 h-4" />
                     Download Policy Guide
                 </button>

@@ -10,7 +10,7 @@ const ActionButton = ({ handlePrintReceipt, handleShareStatus }) => {
 
             <button
                 onClick={handlePrintReceipt}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
             >
                 <Download size={18} />
                 <span className="hidden md:inline">Download Receipt</span>
@@ -18,7 +18,7 @@ const ActionButton = ({ handlePrintReceipt, handleShareStatus }) => {
 
             <button
                 onClick={handleShareStatus}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
             >
                 <Share2 size={18} />
                 <span className="hidden md:inline">Share Status</span>
@@ -26,7 +26,7 @@ const ActionButton = ({ handlePrintReceipt, handleShareStatus }) => {
 
             <button
                 onClick={() => navigate("/dashboard")}
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
             >
                 <Home size={18} />
                 <span className="hidden md:inline">Go to Dashboard</span>

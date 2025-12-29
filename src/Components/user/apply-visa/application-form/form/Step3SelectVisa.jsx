@@ -18,16 +18,16 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
 
     const visaTypes = [
         { value: "", label: "Select visa type" },
-        ...(countryWiseVisaDetails || []).map(v => ({
-            value: v.visa_type,
-            label: v.visa_type.charAt(0).toUpperCase() + v.visa_type.slice(1)
+        ...(countryWiseVisaDetails || [])?.filter(visa => visa?.status == 'active')?.map(v => ({
+            value: v?.visa?.visa_type,
+            label: v?.visa?.visa_type?.charAt(0)?.toUpperCase() + v?.visa?.visa_type?.slice(1).toLowerCase()
         }))
     ];
 
     const documentRequirements = React.useMemo(() => {
         const obj = {};
-        (countryWiseVisaDetails || []).forEach(doc => {
-            obj[doc.visa_type] = doc.visa_details[0].visa_documents || [];
+        (countryWiseVisaDetails || [])?.forEach(doc => {
+            obj[doc?.visa_type] = doc?.visa_details?.[0]?.visa_documents || [];
         });
         // console.log(obj);
 
@@ -37,6 +37,8 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
     const [selectedVisaType, setSelectedVisaType] = useState(visaTypeData?.visaType || "");
     const [selectedVisaId, setSelectedVisaId] = useState(visaTypeData?.visaId || "");
     const [visaPurpose, setVisaPurpose] = useState(visaTypeData?.visaPurpose || "");
+    const [visaValidity, setVisaValidity] = useState(visaTypeData?.visaValidity || "");
+    const [visaEntryType, setVisaEntryType] = useState(visaTypeData?.visaEntryType || "");
     const [supportingDocs, setSupportingDocs] = useState([{ id: 1, file: null, preview: null, error: null }]);
     const [errors, setErrors] = useState({});
 
@@ -56,16 +58,24 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
             }
         };
 
-        if (visaData.visa_type) {
+        if (visaData?.visa_type) {
             setSelectedVisaType(visaData.visa_type);
         }
 
-        if (visaData.visaId) {
+        if (visaData?.visaId) {
             setSelectedVisaId(visaData.visaId);
         }
 
-        if (visaData.purpose) {
+        if (visaData?.purpose) {
             setVisaPurpose(visaData.purpose);
+        }
+
+        if (visaData?.validity) {
+            setVisaValidity(visaData.validity);
+        }
+
+        if (visaData?.entry_type) {
+            setVisaEntryType(visaData.entry_type);
         }
 
         // Prepare supporting documents array
@@ -127,8 +137,12 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
         const value = e.target.value;
         setSelectedVisaType(value);
 
-        const choosedVisaId = countryWiseVisaDetails.find(visa => (visa.visa_type == value))?.id
-        setSelectedVisaId(choosedVisaId);
+        const choosedVisaDetails = countryWiseVisaDetails.find(visa => (visa?.visa?.visa_type == value));
+        // console.log(choosedVisaDetails);
+
+        setSelectedVisaId(choosedVisaDetails?.visa?.id);
+        setVisaValidity(choosedVisaDetails?.visa_validity);
+        setVisaEntryType(choosedVisaDetails?.entry_type);
 
         if (value) {
             setErrors(prev => ({ ...prev, visaType: null }));
@@ -236,6 +250,8 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
                 visaType: selectedVisaType,
                 visaId: selectedVisaId,
                 visaPurpose: visaPurpose,
+                validity: visaValidity,
+                entry_type: visaEntryType,
                 supportingDocs: docsToSubmit
             }
         }))
@@ -333,8 +349,8 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
                                         : 'border-gray-200 hover:border-gray-300'
                                     }`}
                             >
-                                {visaTypes.map((type) => (
-                                    <option key={type.value} value={type.value} disabled={type.value === ""}>
+                                {visaTypes.map((type, index) => (
+                                    <option key={index} value={type.value} disabled={type.value === ""}>
                                         {type.label}
                                     </option>
                                 ))}

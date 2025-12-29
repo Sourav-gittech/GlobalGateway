@@ -1,25 +1,11 @@
 import React from 'react';
-import {
-  Box,
-  Grid,
-  Typography,
-  TextField,
-  Button,
-  IconButton
-} from '@mui/material';
-import {
-  Email,
-  Phone,
-  Twitter,
-  Facebook,
-  Pinterest,
-  Instagram
-} from '@mui/icons-material';
+import { Box, Grid, Typography, TextField, Button, IconButton } from '@mui/material';
+import { Email, Phone, Twitter, Facebook, Pinterest, Instagram } from '@mui/icons-material';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 
 const galleryImages = [
   'Footer1.jpg',
-  'Footer2.jpeg', 
+  'Footer2.jpeg',
   'Footer3.jpeg',
   'Footer4.jpg',
   'Footer5.jpg',
@@ -30,9 +16,9 @@ const Footer = () => {
   return (
     <Box sx={{ backgroundColor: 'hsla(208, 41%, 15%, 1.00)', color: '#94a3b8' }}>
       {/* Top Newsletter Section */}
-      <Box sx={{ 
-        px: { xs: 3, md: 8 }, 
-        py: 4, 
+      <Box sx={{
+        px: { xs: 3, md: 8 },
+        py: 4,
         borderBottom: '1px solid #475569',
         display: 'flex',
         alignItems: 'center',
@@ -58,10 +44,10 @@ const Footer = () => {
             </Typography>
           </Box> */}
           <FlightTakeoffIcon sx={{ fontSize: '30px', color: '#ef4444' }} />
-          <Typography 
-            variant="h5" 
-            sx={{ 
-              color: 'white', 
+          <Typography
+            variant="h5"
+            sx={{
+              color: 'white',
               fontWeight: 'bold',
               fontSize: '24px'
             }}
@@ -71,17 +57,17 @@ const Footer = () => {
         </Box>
 
         {/* Newsletter Subscription */}
-        <Box sx={{ 
-          display: 'flex', 
+        <Box sx={{
+          display: 'flex',
           flexDirection: { xs: 'column', sm: 'row' },
-          alignItems: 'center', 
+          alignItems: 'center',
           gap: 2,
           flex: 1,
           justifyContent: { xs: 'center', sm: 'flex-end' },
           width: '100%'
         }}>
-          <Typography 
-            sx={{ 
+          <Typography
+            sx={{
               color: 'white',
               fontSize: { xs: '16px', sm: '18px' },
               fontWeight: 500,
@@ -132,9 +118,9 @@ const Footer = () => {
         <Grid container spacing={4} justifyContent="space-between">
           {/* Contact Section */}
           <Grid item xs={12} sm={6} md={2.2}>
-            <Typography 
-              sx={{ 
-                color: 'white', 
+            <Typography
+              sx={{
+                color: 'white',
                 fontWeight: 'bold',
                 fontSize: '16px',
                 mb: 2.5
@@ -164,14 +150,14 @@ const Footer = () => {
 
           {/* Explore Section */}
           <Grid item xs={12} sm={6} md={2}>
-            <Typography 
+            <Typography
               sx={{ color: 'white', fontWeight: 'bold', fontSize: '16px', mb: 2.5 }}
             >
               <span style={{ color: '#ef4444' }}>/</span> Explore
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
               {['About Company', 'Meet the Team', 'News & Media', 'Our Projects', 'Contact'].map((item, index) => (
-                <Typography 
+                <Typography
                   key={index}
                   sx={{ fontSize: '14px', cursor: 'pointer', lineHeight: 1.6, '&:hover': { color: '#ef4444' } }}
                 >
@@ -183,14 +169,14 @@ const Footer = () => {
 
           {/* Visa Section */}
           <Grid item xs={12} sm={6} md={2}>
-            <Typography 
+            <Typography
               sx={{ color: 'white', fontWeight: 'bold', fontSize: '16px', mb: 2.5 }}
             >
               <span style={{ color: '#ef4444' }}>/</span> Visa
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
               {['Students Visa', 'Business Visa', 'Family Visa', 'Travel Visa', 'Work Visa'].map((item, index) => (
-                <Typography 
+                <Typography
                   key={index}
                   sx={{ fontSize: '14px', cursor: 'pointer', lineHeight: 1.6, '&:hover': { color: '#ef4444' } }}
                 >
@@ -202,14 +188,14 @@ const Footer = () => {
 
           {/* Services Section */}
           <Grid item xs={12} sm={6} md={2}>
-            <Typography 
+            <Typography
               sx={{ color: 'white', fontWeight: 'bold', fontSize: '16px', mb: 2.5 }}
             >
               <span style={{ color: '#ef4444' }}>/</span> Services
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
               {['PR Applicants', 'Visa Consultancy', 'Travel Insurance', 'Work Permits', 'Abroad Study'].map((item, index) => (
-                <Typography 
+                <Typography
                   key={index}
                   sx={{ fontSize: '14px', cursor: 'pointer', lineHeight: 1.6, '&:hover': { color: '#ef4444' } }}
                 >
@@ -221,12 +207,12 @@ const Footer = () => {
 
           {/* Gallery Section */}
           <Grid item xs={12} md={3.5}>
-            <Typography 
+            <Typography
               sx={{ color: 'white', fontWeight: 'bold', fontSize: '16px', mb: 2.5 }}
             >
               <span style={{ color: '#ef4444' }}>/</span> Gallery
             </Typography>
-            <Box sx={{ 
+            <Box sx={{
               display: 'flex',
               flexWrap: 'wrap',
               gap: 1,
@@ -258,15 +244,15 @@ const Footer = () => {
       </Box>
 
       {/* Bottom Footer */}
-      <Box 
-        sx={{ 
+      <Box
+        sx={{
           backgroundColor: 'hsla(212, 50%, 13%, 1.00)',
           py: 2.5,
           px: { xs: 3, md: 8 }
         }}
       >
-        <Box 
-          sx={{ 
+        <Box
+          sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',
@@ -278,15 +264,15 @@ const Footer = () => {
         >
           <Typography sx={{ color: '#64748b', fontSize: '14px' }}>
             © Copyright Reserved by Global Gateway : Made by{' '}
-            <Box 
-              component="a" 
-              href="https://github.com/SubhradeepNathGit" 
-              target="_blank" 
+            <Box
+              component="a"
+              href="https://github.com/SubhradeepNathGit"
+              target="_blank"
               rel="noopener noreferrer"
-              sx={{ 
-                color: '#64748b', 
-                textDecoration: 'underline', 
-                fontWeight: 'bold', 
+              sx={{
+                color: '#64748b',
+                textDecoration: 'underline',
+                fontWeight: 'bold',
                 cursor: 'pointer',
                 '&:hover': {
                   color: '#334155'
@@ -299,7 +285,7 @@ const Footer = () => {
 
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             {[Twitter, Facebook, Pinterest, Instagram].map((Icon, index) => (
-              <IconButton 
+              <IconButton
                 key={index}
                 size="small"
                 sx={{

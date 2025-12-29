@@ -223,7 +223,7 @@ export const saveVisaDetails = createAsyncThunk("applicationSlice/saveVisaDetail
 
     const res = await supabase.from("application_visa_details")
       .upsert(
-        { application_id: applicationId, visa_type: payload.visaType, visaId: payload.visaId, purpose: payload.visaPurpose, ...uploadedDocs },
+        { application_id: applicationId, visa_type: payload.visaType, validity: payload.validity, entry_type: payload.entry_type, visaId: payload.visaId, purpose: payload.visaPurpose, ...uploadedDocs },
         { onConflict: "application_id" }
       );
     // console.log('Response for adding visa details for application in slice', res);

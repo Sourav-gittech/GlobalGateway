@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PolicyBanner from '../../../../Components/user/apply-visa/policy/PolicyBanner';
 import PolicyHeader from '../../../../Components/user/apply-visa/policy/PolicyHeader';
@@ -7,10 +7,12 @@ import PolicyTermAccordion from '../../../../Components/user/apply-visa/policy/P
 import ApplicationProcessAccordion from '../../../../Components/user/apply-visa/policy/ApplicationProcessAccordion';
 import RequirementsAccordion from '../../../../Components/user/apply-visa/policy/RequirementsAccordion';
 import { Loader2 } from 'lucide-react';
-import { useCountryWiseVisaDetails } from '../../../../tanstack/query/getCountryWiseVisaDetails';
 import { useFullCountryDetails } from '../../../../tanstack/query/getCountryDetails';
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import { decodeBase64Url, encodeBase64Url } from '../../../../util/encodeDecode/base64';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
+import { useVisaDetailsByCountryAndVisitor } from '../../../../tanstack/query/getVisaDetailsViaCountryNameAndVisitorCountryId';
 
 const policyData = {
     'General Policies': {
@@ -25,6 +27,7 @@ const policyData = {
             'No criminal background check',
         ],
         processingTime: 'Varies by visa type',
+        visaType: 'Varies by visa type',
         validityPeriod: 'Varies by visa type',
         fees: 'Varies by visa type',
 
@@ -34,37 +37,54 @@ const policyData = {
 
 const VisaPolicies = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [selectedCategory, setSelectedCategory] = useState('General Policies');
     const [expandedAccordion, setExpandedAccordion] = useState('requirements');
     const [hasReadPolicy, setHasReadPolicy] = useState(false);
-
+    const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
     const { country_id } = useParams();
 
     const countryId = decodeBase64Url(country_id);
-    const { data: visaPolicyCategories, isLoading: isVisaListloading, error: isVisaListerror } = useCountryWiseVisaDetails(countryId);
     const { data: countryDetails, isLoading: isCountryDetailsloading, error: isCountryDetailserror } = useFullCountryDetails(countryId);
+    const { data: countryWiseVisaDetails = [], isLoading: isCountryWiseVisaLoading, isError } = useVisaDetailsByCountryAndVisitor(countryId, userAuthData?.country);
 
     let currentPolicy;
+
+    // console.log("Logged user data", userAuthData);
+    // console.log("Country wise visa details", countryWiseVisaDetails);
+
+    useEffect(() => {
+        dispatch(checkLoggedInUser())
+            .then(res => {
+                // console.log('Response for fetching user profile', res);
+            })
+            .catch((err) => {
+                console.log("Error occurred", err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            });
+    }, [dispatch]);
 
     if (selectedCategory === "General Policies") {
         currentPolicy = policyData["General Policies"];
     } else {
         // console.log(selectedCategory);
 
-        const selectedVisa = visaPolicyCategories.find(
+        const selectedVisa = countryWiseVisaDetails?.find(
             v => v.id === selectedCategory
         );
         // console.log('Selected visa details', selectedVisa);
 
         if (selectedVisa) {
             currentPolicy = {
-                title: `${selectedVisa?.visa_type} Policy`,
+                title: `${selectedVisa?.visa?.visa_type} Policy`,
                 country: countryDetails?.name || "N/A",
-                requirements: selectedVisa?.visa_details[0]?.visa_documents || [],
-                fees: selectedVisa?.visa_details[0]?.visa_fees || "N/A",
-                processingTime: selectedVisa?.visa_details[0]?.visa_processing_time || "N/A",
-                validityPeriod: selectedVisa?.visa_details[0]?.visa_validity || "N/A",
-                status: selectedVisa?.visa_details[0]?.status || "N/A"
+                requirements: selectedVisa?.visa_documents || [],
+                fees: selectedVisa?.visa_fees || "N/A",
+                processingTime: selectedVisa?.visa_processing_time || "N/A",
+                visaType: selectedVisa?.entry_type || "N/A",
+                validityPeriod: selectedVisa?.visa_validity || "N/A",
+                status: selectedVisa?.status || "N/A"
             };
         }
     }
@@ -73,16 +93,15 @@ const VisaPolicies = () => {
         setExpandedAccordion(expandedAccordion === panel ? null : panel);
     };
 
+    const unblockVisaList = countryWiseVisaDetails?.filter(visa=>visa?.status=='active');
+
     const handleContinueToApplication = () => {
         if (hasReadPolicy) {
-            visaPolicyCategories ? navigate(`/application-form/${encodeBase64Url(String(countryId))}`) : getSweetAlert('Oops...', 'No Visa Available!', 'warning');
+            countryWiseVisaDetails?.length > 0 ? (unblockVisaList?.length>0? navigate(`/application-form/${encodeBase64Url(String(countryId))}`):getSweetAlert('Oops...', 'Currently No Active Visa Available!', 'warning') ): getSweetAlert('Oops...', 'No Visa Available!', 'warning');
         }
     };
 
-    // console.log('All available visa type', visaPolicyCategories);
-
-
-    if (isVisaListloading) {
+    if (isCountryWiseVisaLoading) {
         return (
             <div className="bg-white min-h-screen flex items-center justify-center">
                 <div className="text-center">
@@ -102,7 +121,7 @@ const VisaPolicies = () => {
             <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10 py-8 md:py-12">
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
                     {/* Left Sidebar */}
-                    <PolicySidebar visaPolicyCategories={visaPolicyCategories} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} currentPolicy={currentPolicy} />
+                    <PolicySidebar visaPolicyCategories={countryWiseVisaDetails} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} currentPolicy={currentPolicy} />
 
                     {/* Right Content */}
                     <div className="flex-1">

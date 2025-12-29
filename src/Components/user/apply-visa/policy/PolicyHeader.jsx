@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clock, Calendar, CircleCheck, IndianRupee, CircleX, CircleAlert } from 'lucide-react';
+import { Clock, Calendar, CircleCheck, IndianRupee, CircleX, CircleAlert, DoorOpen } from 'lucide-react';
 
 const PolicyHeader = ({ currentPolicy }) => {
     // console.log('Active visa policy details', currentPolicy);
@@ -36,7 +36,7 @@ const PolicyHeader = ({ currentPolicy }) => {
 
             {/* Quick Info Grid */}
             <div className="p-4 md:p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-2">
 
                     {/* Processing Time */}
                     <div className="bg-red-50 border-2 border-red-100 rounded-lg p-3 md:p-4 text-center transition-shadow">
@@ -56,6 +56,15 @@ const PolicyHeader = ({ currentPolicy }) => {
                         </p>
                     </div>
 
+                    {/* Visa type */}
+                    <div className="bg-blue-50 border-2 border-blue-100 rounded-lg p-3 md:p-4 text-center transition-shadow">
+                        <DoorOpen className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-blue-600" />
+                        <p className="text-xs font-bold text-gray-600 mb-1">VISA TYPE</p>
+                        <p className="text-sm md:text-base font-bold text-blue-600">
+                            {currentPolicy.visaType}
+                        </p>
+                    </div>
+
                     {/* Fees */}
                     <div className="bg-green-50 border-2 border-green-100 rounded-lg p-3 md:p-4 text-center transition-shadow">
                         <IndianRupee className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-green-600" />
@@ -66,7 +75,7 @@ const PolicyHeader = ({ currentPolicy }) => {
                     </div>
 
                     {/* Status */}
-                    <div className="bg-green-50 border-2 border-green-100 rounded-lg p-3 md:p-4 text-center transition-shadow">
+                    <div className="bg-gray-50 border-2 border-gray-100 rounded-lg p-3 md:p-4 text-center transition-shadow">
                         <StatusIcon className={`w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 ${statusColorClass}`} />
                         <p className="text-xs font-bold text-gray-600 mb-1">POLICY STATUS</p>
                         <span className={`inline-block ${badgeColorClass} text-white text-xs font-bold px-3 py-1 rounded-full`}>

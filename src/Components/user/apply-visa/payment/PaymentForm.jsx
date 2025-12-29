@@ -129,9 +129,7 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
                     <button
                         onClick={handlePayment}
                         disabled={isLoading}
-                        className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white font-bold py-4 rounded-lg hover:from-gray-950 hover:to-black transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-
-                    >
+                        className={`w-full bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white font-bold py-4 rounded-lg hover:from-gray-950 hover:to-black transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-x ${isLoading?'cursor-not-allowed':'cursor-pointer'}`}>
                         {isLoading ? (
                             <>
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

@@ -77,7 +77,7 @@ export default function StepButtons({
           type="button"
           onClick={onBack}
           disabled={isLoading}
-          className={`${getButtonStyles('back')} w-full sm:w-auto sm:min-w-[120px]`}
+          className={`${getButtonStyles('back')} w-full sm:w-auto sm:min-w-[120px] cursor-pointer`}
           aria-label={backLabel}
         >
           {backIcon && <ArrowLeft size={18} strokeWidth={2.5} />}
@@ -90,7 +90,7 @@ export default function StepButtons({
         type={buttonType}
         onClick={onNext}
         disabled={disabled || isLoading}
-        className={`
+        className={`${isLoading?'cursor-not-allowed':'cursor-pointer'}
           ${getButtonStyles('next')} 
           ${showBack ? 'flex-1 sm:flex-initial sm:ml-auto sm:min-w-[160px]' : 'w-full sm:w-auto sm:min-w-[200px]'}
         `}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchFullApplicationDetails } from "../../functions/fetchFullApplicationDetails";
 
-export const fetchFullApplicationDetailsById = (applicationId) => {
+export const useFullApplicationDetailsById = (applicationId) => {
     // console.log('Received application id to fetch details in query', applicationId);
 
     return useQuery({

@@ -7,6 +7,6 @@ export const useCountryWiseVisaDetails = (countryId) => {
     return useQuery({
         queryKey: ["visa-for-country", countryId],
         queryFn: () => fetchCountryWiseVisaDetails(countryId),
-        enabled: !!countryId,
+        enabled: !!countryId
     });
 }

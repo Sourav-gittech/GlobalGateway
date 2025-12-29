@@ -3,15 +3,13 @@ import { useFullCountryDetails } from '../../../tanstack/query/getCountryDetails
 import { useVisaDetailsByApplicationId } from '../../../tanstack/query/getApplicationVisaDetails';
 import { useCountryWiseVisaDetails } from '../../../tanstack/query/getCountryWiseVisaDetails';
 import { calculateProcessingRange } from '../../../functions/calculateExpectedDate';
-import { X, History, Eye, Printer } from 'lucide-react';
+import { X, History, Eye, Printer, FileText } from 'lucide-react';
 import RejectionModal from './modal/RejectModal';
 import ApprovalTimeline from './modal/ApproveModal';
 import ApproveLetter from './letter/ApproveLetter';
 import { handlePrintApproval } from '../../../util/printUtils';
-import { fetchSpecificationApplicationsById } from '../../../Redux/Slice/applicationSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import getSweetAlert from '../../../util/alert/sweetAlert';
-import { fetchFullApplicationDetailsById } from '../../../tanstack/query/getFullApplicationDetails';
+import { useDispatch } from 'react-redux';
+import { useFullApplicationDetailsById } from '../../../tanstack/query/getFullApplicationDetails';
 
 const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIcon }) => {
     const dispatch = useDispatch();
@@ -52,8 +50,16 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
 
     if (visaApplications.length === 0) {
         return (
-            <div className="py-8">
-                <p className="text-center">No visa applications available</p>
+            <div className="py-12 px-4">
+                <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 mb-4">
+                        <FileText className="w-8 h-8 text-red-500" />
+                    </div>
+                    <p className="text-gray-600 text-lg">No application available</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                        Your upcoming applications will appear here
+                    </p>
+                </div>
             </div>
         )
     }
@@ -65,7 +71,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                     const { data: visaData, isLoading: isVisaDataLoading, error: isVisaDataError } = useVisaDetailsByApplicationId(visa?.id);
                     const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(visa?.country_id);
                     const { data: countryDetails, isLoading: isCountryLoading, error: countryError } = useFullCountryDetails(visa?.country_id);
-                    const { data: applicationDetails, isLoading: isApplicationDetailsLoading, error: applicationDetailsError } = fetchFullApplicationDetailsById(visa?.id);
+                    const { data: applicationDetails, isLoading: isApplicationDetailsLoading, error: applicationDetailsError } = useFullApplicationDetailsById(visa?.id);
                     const countrySpecificVisaDetails = countryWiseVisaDetails?.find(visaType => visaType?.visa_type == visaData?.visa_type);
 
                     // console.log('Application details', applicationDetails);

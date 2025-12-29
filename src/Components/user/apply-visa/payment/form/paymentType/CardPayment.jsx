@@ -35,11 +35,7 @@ const CardPayment = forwardRef((props, ref) => {
         let formattedValue = value;
 
         if (name === "cardNumber") {
-            formattedValue = value
-                .replace(/\D/g, "")
-                .replace(/(\d{4})/g, "$1 ")
-                .trim()
-                .slice(0, 19);
+            formattedValue = value.replace(/\D/g, "").replace(/(\d{4})/g, "$1 ").trim().slice(0, 19);
         }
 
         else if (name === "expiryDate") {
@@ -108,7 +104,7 @@ const CardPayment = forwardRef((props, ref) => {
                 payment_method: "card",
                 card_type: cardType,
                 masked_card: maskCardNumber(formik.values.cardNumber),
-                card_holder_name: formik.values.cardName,
+                card_holder_name: formik.values.cardName?.toUpperCase(),
                 expiry_card: formik.values.expiryDate
             };
             setCardDetails(payload);

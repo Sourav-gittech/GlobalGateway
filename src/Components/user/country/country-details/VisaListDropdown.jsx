@@ -51,15 +51,15 @@ const VisaListDropdown = ({ availableVisa = [] }) => {
                         className="overflow-hidden"
                     >
                         <div className="mt-4 pl-2 pr-2 space-y-3">
-                            {availableVisa.length > 0 ? (
-                                availableVisa.map(item => (
+                            {availableVisa?.length > 0 ? (
+                                availableVisa?.map(item => (
                                     <div
                                         key={item?.id}
                                         className="flex items-start gap-2 ml-12"
                                     >
                                         <span className="w-2 h-2 mt-2 rounded-full bg-red-500" />
                                         <p className="text-gray-700 text-sm leading-relaxed inline">
-                                            {item?.visa_type}
+                                            {item?.visa?.visa_type}
                                         </p>
                                     </div>
                                 ))

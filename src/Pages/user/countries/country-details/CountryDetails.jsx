@@ -1,27 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useFullCountryDetails } from "../../../../tanstack/query/getCountryDetails";
 import CountryDescription from "../../../../Components/user/country/country-details/CountryDescription";
 import KeyInformation from "../../../../Components/user/country/country-details/KeyInformation";
 import CountryMap from "../../../../Components/user/country/country-details/CountryMap";
-import { Link } from "react-router-dom";
-import { useCountryWiseVisaDetails } from "../../../../tanstack/query/getCountryWiseVisaDetails";
 import Disclaimer from "../../../../Components/user/country/country-details/Disclaimer";
 import ContactInfo from "../../../../Components/user/country/country-details/ContactInfo";
 import CountryCTA from "../../../../Components/user/country/country-details/CountryCTA";
 import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
+import { useVisaDetailsByCountryAndVisitor } from "../../../../tanstack/query/getVisaDetailsViaCountryNameAndVisitorCountryId";
+import { useDispatch, useSelector } from "react-redux";
+import { checkLoggedInUser } from "../../../../Redux/Slice/auth/checkAuthSlice";
+import getSweetAlert from "../../../../util/alert/sweetAlert";
 
 const CountryDetails = () => {
   const { country_id } = useParams();
+  const dispatch = useDispatch();
 
   const countryId = decodeBase64Url(country_id);
   const { data: countryData, isLoading: countryLoading, error: countryError } = useFullCountryDetails(countryId);
-  const { data: countryWiseVisaDetails, isLoading: isCountryWiseVisaLoading, error: countryWiseVisaError } = useCountryWiseVisaDetails(countryId);
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { data: countryWiseVisaDetails = [], isLoading: isCountryWiseVisaLoading, isError } = useVisaDetailsByCountryAndVisitor(countryId, userAuthData?.country);
 
   // console.log("Country details", countryData);
+  // console.log("Logged user data", userAuthData);
   // console.log("Country wise visa details", countryWiseVisaDetails);
+
+  useEffect(() => {
+    dispatch(checkLoggedInUser())
+      .then(res => {
+        // console.log('Response for fetching user profile', res);
+      })
+      .catch((err) => {
+        console.log("Error occurred", err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
+  }, [dispatch]);
 
   const handleContinue = () => {
     alert("Continue without Applying clicked - would navigate to /coachingcards");
