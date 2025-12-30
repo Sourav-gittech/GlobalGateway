@@ -8,8 +8,9 @@ import getSweetAlert from "../../../util/alert/sweetAlert";
 import hotToast from "../../../util/alert/hot-toast";
 
 const ContactSetup = () => {
-  const { embassyEmail } = useParams();
+  const { embassyEmail, redirectPath } = useParams();
   const emailId = decodeBase64Url(embassyEmail);
+  const path = decodeBase64Url(redirectPath);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -71,7 +72,19 @@ const ContactSetup = () => {
         // console.log('Response for adding additional data', res);
 
         if (res.meta.requestStatus === "fulfilled") {
-          navigate("/embassy/auth");
+          if (path == 'login') {
+            navigate("/embassy/auth");
+          } else if (path == 'countrySetup') {
+            navigate("/embassy/country-setup");
+          } else if (path == 'review') {
+            navigate("/embassy/review");
+          } else if (path == 'reject') {
+            navigate("/embassy/reject");
+          } else if (path == 'approved') {
+            navigate("/embassy/approved");
+          } else {
+            navigate("/embassy/dashboard");
+          }
           hotToast('Profile created successfully', "success");
           reset();
         }

@@ -49,7 +49,7 @@ export default function EmailVerificationPage() {
               console.log('Error occured', err);
             })
 
-          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : user_type === 'admin' ? '/admin/' : user_type === 'embassy' ? `/embassy/contact-setup/${encodeBase64Url(String(email))}` : '/'), 2000);
+          setTimeout(() => navigate(user_type === 'user' ? '/authentication' : user_type === 'admin' ? '/admin/' : user_type === 'embassy' ? `/embassy/contact-setup/${encodeBase64Url(String(email))}/${encodeBase64Url('login')}` : '/'), 2000);
         }
       } catch (err) {
         console.error(err);

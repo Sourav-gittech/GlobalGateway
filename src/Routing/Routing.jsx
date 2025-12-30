@@ -139,7 +139,7 @@ const Routing = () => {
 
           {/* ================= EMBASSY AUTH (No Layout) ================= */}
           <Route path="/embassy/auth" element={<EmbassyAuth />} />
-          <Route path="/embassy/contact-setup/:embassyEmail" element={<ContactSetup />} />
+          <Route path="/embassy/contact-setup/:embassyEmail/:redirectPath" element={<ContactSetup />} />
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
           <Route path="/embassy/review" element={<Review />} />
           <Route path="/embassy/reject" element={<Rejected />} />

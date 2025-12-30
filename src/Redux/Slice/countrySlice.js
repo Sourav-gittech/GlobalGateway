@@ -119,7 +119,7 @@ export const toggleCountryStatus = createAsyncThunk('countrySlice/toggleCountryS
 // upload country image in bucket
 const uploadFile = async (file, country, type, folder) => {
     if (!file) return null;
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file?.name?.split('.')?.pop();
     const fileName = `${country}-${type}_${Date.now()}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
 
@@ -133,7 +133,7 @@ const uploadFile = async (file, country, type, folder) => {
     const bucketData = {
         file: { url: urlData.publicUrl },
         url: urlData.publicUrl,
-        docName: res.data.path.split('/')[1]
+        docName: res?.data?.path?.split('/')[1]
     }
     return bucketData;
 };

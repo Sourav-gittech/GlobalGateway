@@ -95,7 +95,7 @@ export default function Sidebar({ adminData }) {
   }, [location.pathname]);
 
   const handleLogout = async () => {
-    await dispatch(logoutUser("admin"));
+    await dispatch(logoutUser({ user_type: 'admin', showAlert: true }));
     navigate("/admin/");
   };
 

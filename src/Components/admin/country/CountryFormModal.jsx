@@ -58,46 +58,46 @@ const CountryFormModal = ({ isOpen, onClose, country, embassyCountryData }) => {
                 isActive: false,
             }
             : country
-            ? {
-                name: country.name || "",
-                code: country.country_details?.code || "",
-                officialName: country.country_details?.official_name || "",
-                continent: country.country_details?.continents || "",
-                capital: country.country_details?.capital || "",
-                flagImage: country.country_details?.flag_url || "",
-                countryImage: country.image_url || "",
-                area: country.country_details?.area || "",
-                population: country.country_details?.population || "",
-                latitude: country.country_details?.latlng?.[0] || "",
-                longitude: country.country_details?.latlng?.[1] || "",
-                currency: country.country_details?.currency?.name || "",
-                currencyCode: country.country_details?.currency?.code || "",
-                currencySymbol: country.country_details?.currency?.symbol || "",
-                language: country.country_details?.languages || "",
-                description: country.description || "",
-                visaRequired: !countryWiseVisaDetails,
-                isActive: !country.is_blocked,
-            }
-            : {
-                name: "",
-                code: "",
-                officialName: "",
-                continent: "",
-                capital: "",
-                flagImage: "",
-                countryImage: "",
-                area: "",
-                population: "",
-                latitude: "",
-                longitude: "",
-                currency: "",
-                currencyCode: "",
-                currencySymbol: "",
-                language: "",
-                description: "",
-                visaRequired: true,
-                isActive: false,
-            };
+                ? {
+                    name: country.name || "",
+                    code: country.country_details?.code || "",
+                    officialName: country.country_details?.official_name || "",
+                    continent: country.country_details?.continents || "",
+                    capital: country.country_details?.capital || "",
+                    flagImage: country.country_details?.flag_url || "",
+                    countryImage: country.image_url || "",
+                    area: country.country_details?.area || "",
+                    population: country.country_details?.population || "",
+                    latitude: country.country_details?.latlng?.[0] || "",
+                    longitude: country.country_details?.latlng?.[1] || "",
+                    currency: country.country_details?.currency?.name || "",
+                    currencyCode: country.country_details?.currency?.code || "",
+                    currencySymbol: country.country_details?.currency?.symbol || "",
+                    language: country.country_details?.languages || "",
+                    description: country.description || "",
+                    visaRequired: !countryWiseVisaDetails,
+                    isActive: !country.is_blocked,
+                }
+                : {
+                    name: "",
+                    code: "",
+                    officialName: "",
+                    continent: "",
+                    capital: "",
+                    flagImage: "",
+                    countryImage: "",
+                    area: "",
+                    population: "",
+                    latitude: "",
+                    longitude: "",
+                    currency: "",
+                    currencyCode: "",
+                    currencySymbol: "",
+                    language: "",
+                    description: "",
+                    visaRequired: true,
+                    isActive: false,
+                };
 
         // Save once per open/edit
         initialValuesRef.current = values;
@@ -116,7 +116,7 @@ const CountryFormModal = ({ isOpen, onClose, country, embassyCountryData }) => {
             setUploadError(null);
         }
     };
-    
+
     const onSubmit = async (data) => {
 
         const countryData = {

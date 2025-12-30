@@ -36,15 +36,7 @@ export default function CountryAdminPanel() {
       (!filterContinent || c?.country_details?.continents?.toLowerCase() === filterContinent?.toLowerCase())
   );
 
-  const continents = [
-    "Africa",
-    "Antarctica",
-    "Asia",
-    "Europe",
-    "North America",
-    "South America",
-    "Oceania",
-  ];
+  const continents = ["Africa", "Antarctica", "Asia", "Europe", "North America", "South America", "Oceania"];
 
   return (
     <div className="min-h-screen w-full bg-transparent">

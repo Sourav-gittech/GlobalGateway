@@ -55,7 +55,7 @@ const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShow
                     setAlertModalOpen(false);
 
                     if (userAuthData?.id == selectedAdminId && setStatus) {
-                        dispatch(logoutUser("admin"));
+                        dispatch(logoutUser({ user_type: 'admin', showAlert: true }));
                         navigate("/admin/");
                     }
                 }

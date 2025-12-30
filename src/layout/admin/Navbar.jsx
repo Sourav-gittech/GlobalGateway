@@ -22,10 +22,10 @@ export default function Navbar({ adminData }) {
   const [unreadCount, setUnreadCount] = useState(2);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Get collapsed state from sidebar store
   const collapsed = useSidebarStore((s) => s.collapsed);
-  
+
   const dispatch = useDispatch();
   const notificationRef = useRef(null);
   const userMenuRef = useRef(null);
@@ -103,7 +103,7 @@ export default function Navbar({ adminData }) {
   }, []);
 
   const handleLogout = async () => {
-    await dispatch(logoutUser('admin'));
+    await dispatch(logoutUser({ user_type: 'admin', showAlert: true }));
     navigate('/admin/');
   };
 

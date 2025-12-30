@@ -69,7 +69,7 @@ const Navbar = () => {
   }, [dispatch]);
 
   const handleLogout = async () => {
-    await dispatch(logoutUser('user'))
+    await dispatch(logoutUser({ user_type: 'embassy', showAlert: true }))
       .then(res => {
         // console.log('Response for log out', res);
       })

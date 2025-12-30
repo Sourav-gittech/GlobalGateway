@@ -4,10 +4,10 @@ import { Building2, Clock, ShieldCheck, X } from 'lucide-react';
 const EmbassyStats = ({ embassies }) => {
 
     const stats = {
-        total: embassies.length,
-        pending: embassies.filter(e => e.status === 'pending').length,
-        approved: embassies.filter(e => e.status === 'approved').length,
-        rejected: embassies.filter(e => e.status === 'rejected').length
+        total: embassies?.length,
+        pending: embassies.filter(e => e?.starting_hours && e?.country_id && e?.is_approved == 'pending').length,
+        approved: embassies.filter(e => e?.is_approved === 'fulfilled').length,
+        rejected: embassies.filter(e => e?.is_approved === 'rejected').length
     };
 
     const StatCard = ({ label, value, icon: Icon, color = 'text-white' }) => (
@@ -22,10 +22,10 @@ const EmbassyStats = ({ embassies }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard label="Total Embassies" value={stats.total} icon={Building2} color="text-white" />
-            <StatCard label="Pending Review" value={stats.pending} icon={Clock} color="text-yellow-400" />
-            <StatCard label="Approved" value={stats.approved} icon={ShieldCheck} color="text-green-400" />
-            <StatCard label="Rejected" value={stats.rejected} icon={X} color="text-red-400" />
+            <StatCard label="Total Embassies" value={stats?.total} icon={Building2} color="text-white" />
+            <StatCard label="Pending Review" value={stats?.pending} icon={Clock} color="text-yellow-400" />
+            <StatCard label="Approved" value={stats?.approved} icon={ShieldCheck} color="text-green-400" />
+            <StatCard label="Rejected" value={stats?.rejected} icon={X} color="text-red-400" />
         </div>
     )
 }

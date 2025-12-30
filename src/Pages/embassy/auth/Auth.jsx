@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { EmbassyAuthInputField } from "../../../Components/Embassy/auth/EmbassyAuthInputField";
 import hotToast from "../../../util/alert/hot-toast";
 import { useNavigate } from "react-router-dom";
+import { encodeBase64Url } from "../../../util/encodeDecode/base64";
 
 const EmbassyAuth = () => {
   const dispatch = useDispatch(),
@@ -59,6 +60,7 @@ const EmbassyAuth = () => {
         is_country_available: false,
         is_blocked: false,
         is_approved: "pending",
+        is_country_listed: false,
         last_sign_in_at: null,
         providers: null,
         role: "embassy",
@@ -91,12 +93,17 @@ const EmbassyAuth = () => {
 
       dispatch(loginUser(auth_obj))
         .then((res) => {
-          // console.log('Response for logged in', res);
+          console.log('Response for logged in', res);
 
           if (res.meta.requestStatus === "fulfilled") {
             sessionStorage.setItem("embassy_token", res.payload.accessToken);
 
-            if (!res?.payload?.user?.is_country_available) {
+            const redirectPath = !res?.payload?.user?.is_country_available ? 'countrySetup' : res?.payload?.user?.is_approved === "pending" ? 'review' :
+              res?.payload?.user?.is_approved === "rejected" ? 'reject' : 'approved';
+
+            if (res?.payload?.user?.address == null || res?.payload?.user?.ending_hours == null || res?.payload?.user?.starting_hours == null) {
+              navigate(`/embassy/contact-setup/${encodeBase64Url(String(res?.payload?.user?.email))}/${encodeBase64Url(redirectPath)}`);
+            } else if (!res?.payload?.user?.is_country_available) {
               navigate("/embassy/country-setup");
             } else if (res?.payload?.user?.is_approved === "pending") {
               navigate("/embassy/review");

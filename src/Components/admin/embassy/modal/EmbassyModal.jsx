@@ -6,6 +6,9 @@ import EmbassyDocumentSection from './EmbassyDocumentSection';
 import EmbassyContactSection from './EmbassyContactSection';
 
 const EmbassyModal = ({ selectedDocument, setSelectedDocument }) => {
+
+    const isPdf = selectedDocument?.document?.endsWith('.pdf');
+
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div className="bg-slate-800/95 backdrop-blur-xl rounded-lg max-w-5xl w-full max-h-[90vh] overflow-hidden border border-slate-600/50 shadow-2xl">
@@ -14,14 +17,23 @@ const EmbassyModal = ({ selectedDocument, setSelectedDocument }) => {
 
                 <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
                     <div className="bg-slate-700/30 rounded-lg p-4 mb-6 border border-slate-600/50">
-                        <img
-                            src={selectedDocument.documentUrl}
-                            alt={selectedDocument.document}
-                            className="w-full h-auto rounded-lg"
-                            onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/800x600?text=Document+Preview';
-                            }}
-                        />
+                        {isPdf ? (
+                            <iframe
+                                src={selectedDocument.document}
+                                className="w-full h-[600px] rounded-lg"
+                                title="PDF Preview"
+                            />
+                        ) : (
+                            <img
+                                src={selectedDocument.document}
+                                alt={selectedDocument?.country_name}
+                                className="w-full h-auto rounded-lg"
+                                onError={(e) => {
+                                    e.currentTarget.src =
+                                        'https://via.placeholder.com/800x600?text=Document+Preview';
+                                }}
+                            />
+                        )}
                     </div>
 
                     <div className="bg-slate-700/30 backdrop-blur-sm rounded-lg p-6 border border-slate-600/50 mb-6">
@@ -41,7 +53,7 @@ const EmbassyModal = ({ selectedDocument, setSelectedDocument }) => {
                         )}
                     </div>
 
-                    <EmbassyModalFooter />
+                    <EmbassyModalFooter selectedDocument={selectedDocument} />
                 </div>
             </div>
         </div>

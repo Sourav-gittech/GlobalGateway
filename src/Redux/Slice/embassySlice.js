@@ -4,7 +4,7 @@ import supabase from "../../util/Supabase/supabase";
 // upload cover photo in bucket
 const uploadCoverPhoto = async (file, country, folder) => {
     // console.log(file, country, folder);
-    
+
     if (!file) return null;
     const fileExt = file.name.split('.').pop();
     const fileName = `${country}_${Date.now()}.${fileExt}`;
@@ -32,7 +32,7 @@ async function deleteCoverPhoto(embassy_id, folder) {
     try {
         // Fetch existing country images
         const { data: img, error: fetchErr } = await supabase.from('embassy').select("*").eq('id', embassy_id).single();
-        console.log('Fetched image', img);
+        // console.log('Fetched image', img);
 
         if (fetchErr) throw fetchErr;
 
@@ -53,6 +53,23 @@ async function deleteCoverPhoto(embassy_id, folder) {
         console.error("Error deleting document:", err);
     }
 }
+
+// Fetch all embassy
+export const fetchAllEmbassy = createAsyncThunk("embassySlice/fetchAllEmbassy",
+    async (_, { rejectWithValue }) => {
+
+        try {
+            const res = await supabase.from("embassy").select("*");
+            // console.log('Response for fetching all embassy', res);
+
+            if (res?.error) return rejectWithValue(res?.error.message);
+
+            return res?.data ?? null;
+        } catch (err) {
+            return rejectWithValue(err.message || "Failed to fetch embassy");
+        }
+    }
+)
 
 // Fetch embassy by country_id
 export const fetchEmbassyByCountryId = createAsyncThunk("embassySlice/fetchEmbassyByCountryId",
@@ -107,7 +124,7 @@ export const updateEmbassyById = createAsyncThunk("embassySlice/updateEmbassyByI
 
             if (coverPhoto && !coverPhoto?.isOld) {
                 // console.log(coverPhoto);
-                
+
                 deleteCoverPhoto(updatedObj?.id, "cover_photo");
 
                 const photoUrl = await uploadCoverPhoto(coverPhoto.file, updatedObj?.country_name, 'cover_photo')
@@ -123,6 +140,33 @@ export const updateEmbassyById = createAsyncThunk("embassySlice/updateEmbassyByI
                     return rejectWithValue(embassyErr);
                 }
             }
+            if (res?.error) {
+                return rejectWithValue(res?.error.message);
+            }
+
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+)
+
+// update embassy status via ID
+export const updateEmbassyStatus = createAsyncThunk("embassySlice/updateEmbassyStatus",
+    async ({ id, status, is_blocked, is_country_listed }, { rejectWithValue }) => {
+        // console.log('Received data for update embassy status', id, updateData);
+
+        try {
+            if (!id) { return rejectWithValue("Embassy ID is required"); }
+
+            const res = await supabase.from("embassy").update({
+                is_approved: status,
+                is_blocked: is_blocked,
+                is_country_listed: is_country_listed,
+                updated_at: new Date().toISOString(),
+            }).eq("id", id).select().single();
+            // console.log('Response for update embassy status', res);
+
             if (res?.error) {
                 return rejectWithValue(res?.error.message);
             }
@@ -162,6 +206,7 @@ export const updateEmbassyByEmail = createAsyncThunk("embassySlice/updateEmbassy
 
 const initialState = {
     embassyData: null,
+    allEmbassyData: [],
     isEmbassyLoading: false,
     hasEmbassyerror: null,
 }
@@ -191,6 +236,19 @@ export const embassySlice = createSlice({
                 state.hasEmbassyerror = action.payload;
             })
 
+            // fetch all embassy 
+            .addCase(fetchAllEmbassy.pending, (state) => {
+                state.isEmbassyLoading = true;
+            })
+            .addCase(fetchAllEmbassy.fulfilled, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.allEmbassyData = action.payload;
+            })
+            .addCase(fetchAllEmbassy.rejected, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.hasEmbassyerror = action.payload;
+            })
+
             // specific embassy details
             .addCase(fetchEmbassyById.pending, (state) => {
                 state.isEmbassyLoading = true;
@@ -213,6 +271,19 @@ export const embassySlice = createSlice({
                 state.embassyData = action.payload;
             })
             .addCase(updateEmbassyById.rejected, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.hasEmbassyerror = action.payload;
+            })
+
+            // updating embassy status
+            .addCase(updateEmbassyStatus.pending, (state) => {
+                state.isEmbassyLoading = true;
+            })
+            .addCase(updateEmbassyStatus.fulfilled, (state, action) => {
+                state.isEmbassyLoading = false;
+                state.embassyData = action.payload;
+            })
+            .addCase(updateEmbassyStatus.rejected, (state, action) => {
                 state.isEmbassyLoading = false;
                 state.hasEmbassyerror = action.payload;
             })

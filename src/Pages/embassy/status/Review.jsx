@@ -1,4 +1,7 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
 
 /* ---------- SOFT LOADER ---------- */
 const PulseLoader = () => (
@@ -10,6 +13,15 @@ const PulseLoader = () => (
 
 /* ---------- REVIEW / PENDING ---------- */
 const Review = () => {
+
+    const dispatch = useDispatch(),
+      navigate = useNavigate();
+  
+    const setLogout = async () => {
+      await dispatch(logoutUser({ user_type: 'embassy', showAlert: false }))
+      navigate('/embassy/');
+    }
+
   return (
     <div
       className="min-h-screen flex justify-center items-center px-4 py-8"
@@ -70,14 +82,21 @@ const Review = () => {
 
           <div className="mt-6 w-full max-w-xs border border-white/20 rounded-lg px-4 py-3 bg-black/30">
             <p className="text-xs text-white/60">
-              You’ll receive an email notification once your embassy is approved
+              You’ll be informed once your embassy is approved
               or if additional information is required.
             </p>
           </div>
 
-          <p className="text-xs text-white/50 mt-6">
+          <p className="text-xs text-white/50 mt-3">
             Thank you for your patience.
           </p>
+          
+          <button onClick={() => setLogout()}
+            className="mt-4 px-6 py-3 rounded-md bg-black hover:bg-black/80
+            transition font-semibold cursor-pointer"
+          >
+            Go To Home
+          </button>
         </div>
       </div>
     </div>

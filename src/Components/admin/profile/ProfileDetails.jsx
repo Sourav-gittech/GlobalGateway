@@ -12,10 +12,7 @@ const ProfileDetails = ({ profile, isEditing, register, errors }) => {
 
       {isEditing && field ? (
         <div>
-          <input
-            id={field}
-            type={type}
-            defaultValue={value} // <-- set initial value
+          <input id={field} type={type} defaultValue={value}
             {...register(field, {
               required: `${label} is required`,
               ...(field === "phone" && {

@@ -65,7 +65,7 @@ export const listenAuthChanges = () => (dispatch) => {
 }
 
 // Logout
-export const logoutUser = (user_type) => async (dispatch) => {
+export const logoutUser = ({ user_type, showAlert = true }) => async (dispatch) => {
     try {
         const token = sessionStorage.getItem(user_type == 'admin' ? "admin_token" : user_type == 'user' ? "user_token" : "embassy_token");
         if (token) sessionStorage.removeItem(user_type == 'admin' ? "admin_token" : user_type == 'user' ? "user_token" : "embassy_token");
@@ -75,7 +75,8 @@ export const logoutUser = (user_type) => async (dispatch) => {
         if (error) throw new Error(error.message);
 
         dispatch(clearUser());
-        toastifyAlert.success("Logged out successfully");
+
+        showAlert && toastifyAlert.success("Logged out successfully");
     }
     catch (err) {
         console.error("Logout error:", err);

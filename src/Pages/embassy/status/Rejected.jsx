@@ -1,6 +1,17 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
 
 const Rejected = () => {
+  const dispatch = useDispatch(),
+    navigate = useNavigate();
+
+  const reApplyAgain = async () => {
+    await dispatch(logoutUser({ user_type: 'embassy', showAlert: false }))
+    navigate('/embassy/auth/');
+  }
+
   return (
     <div
       className="min-h-screen flex justify-center items-center px-4 py-8"
@@ -63,15 +74,15 @@ const Rejected = () => {
           </h4>
 
           <p className="text-sm sm:text-base text-white/70 max-w-sm">
-            Please review the feedback sent to your email and resubmit your
-            embassy details with the required corrections.
+            We are sorry to inform you that your application got rejected due to some lack of verification checks.
+            Please feel free to re-apply again.
           </p>
 
-          <button
+          <button onClick={() => reApplyAgain()}
             className="mt-4 px-6 py-3 rounded-md bg-black hover:bg-black/80
             transition font-semibold"
           >
-            Edit & Resubmit
+            Re-apply
           </button>
         </div>
       </div>

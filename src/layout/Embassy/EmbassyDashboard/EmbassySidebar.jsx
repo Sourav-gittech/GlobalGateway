@@ -1,16 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Home,
-  FileText,
-  Menu,
-  LogOut,
-  UserCircle,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Building2,
-  BarChart2
-} from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -26,15 +15,14 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
     className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
      ${collapsed ? "justify-center" : ""}
-     ${
-       isActive
-         ? collapsed
-           ? "bg-white/10 text-white shadow-lg rounded-xl"
-           : "bg-white/10 text-white shadow-lg rounded-lg"
-         : collapsed
-         ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl"
-         : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
-     }`
+     ${isActive
+        ? collapsed
+          ? "bg-white/10 text-white shadow-lg rounded-xl"
+          : "bg-white/10 text-white shadow-lg rounded-lg"
+        : collapsed
+          ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl"
+          : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
+      }`
     }
   >
     <div className="flex items-center justify-center w-6 flex-shrink-0">
@@ -90,7 +78,7 @@ export default function EmbassySidebar({ embassyData }) {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await dispatch(logoutUser("embassy"));
+      await dispatch(logoutUser({ user_type: 'embassy', showAlert: true }));
       await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/embassy/");
     } catch (error) {
@@ -147,9 +135,8 @@ export default function EmbassySidebar({ embassyData }) {
       >
         <div className="flex items-center justify-between p-4 border-b border-white/10">
           <div
-            className={`flex items-center gap-3 transition-all duration-300 ${
-              collapsed ? "w-14" : "w-48"
-            } min-w-0`}
+            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "w-14" : "w-48"
+              } min-w-0`}
           >
             <div className="w-10 h-10 shrink-0 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white font-bold text-lg shadow-lg border border-white/10">
               <FlightTakeoffIcon fontSize="small" />
@@ -250,9 +237,8 @@ export default function EmbassySidebar({ embassyData }) {
       </button>
 
       <div
-        className={`hidden md:block transition-all duration-300 ${
-          collapsed ? "md:w-20" : "md:w-64"
-        }`}
+        className={`hidden md:block transition-all duration-300 ${collapsed ? "md:w-20" : "md:w-64"
+          }`}
       />
     </>
   );

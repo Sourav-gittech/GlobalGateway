@@ -6,7 +6,7 @@ import { fetchCountryDetails } from "../../../functions/fetchCountryDetails";
 // register slice 
 export const registerUser = createAsyncThunk("authSlice/registerUser",
   async (data, { rejectWithValue, dispatch }) => {
-    console.log('Received register data', data);
+    // console.log('Received register data', data);
 
     try {
       let apiData = {};
@@ -93,6 +93,7 @@ export const registerUser = createAsyncThunk("authSlice/registerUser",
             email: data?.email,
             is_verified: "pending",
             is_country_available: countryAvailable,
+            is_country_listed:countryAvailable,
             is_blocked: data?.is_blocked,
             is_approved: data?.is_approved,
             last_sign_in_at: null,
