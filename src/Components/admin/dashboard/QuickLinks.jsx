@@ -1,5 +1,6 @@
 import React from 'react'
 import { FilePlus, Download, Bell } from "lucide-react";
+import { Link } from 'react-router-dom';
 
 const QuickLinks = () => {
     return (
@@ -8,10 +9,10 @@ const QuickLinks = () => {
                 Quick Actions
             </div>
             <div className="flex flex-col gap-2 sm:gap-3">
-                <button className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 text-white text-sm sm:text-base transition-all active:scale-95 font-medium flex items-center justify-center gap-2">
+                <Link to='/admin/dashboard/contact' className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/30 text-white text-sm sm:text-base transition-all active:scale-95 font-medium flex items-center justify-center gap-2">
                     <FilePlus className="w-4 h-4" />
-                    New Application
-                </button>
+                    New Queries
+                </Link>
                 <button className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm sm:text-base transition-all active:scale-95 flex items-center justify-center gap-2">
                     <Download className="w-4 h-4" />
                     Export Report

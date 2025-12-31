@@ -8,7 +8,7 @@ const FormHeader = ({ country, onClose }) => {
                 <h2 className="text-2xl font-bold text-white">{country ? 'Edit Country' : 'Register New Country'}</h2>
                 <p className="text-sm text-slate-400 mt-1">{country ? 'Update country information' : 'Add a new country to Global Gateway'}</p>
             </div>
-            <button onClick={onClose} type="button" className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
+            <button onClick={onClose} type="button" className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors cursor-pointer"><X className="w-5 h-5 cursor-pointer" /></button>
         </div>
     )
 }

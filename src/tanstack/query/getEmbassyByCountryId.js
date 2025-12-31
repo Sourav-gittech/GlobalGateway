@@ -6,7 +6,7 @@ export const useEmbassyByCountryId = (countryId) => {
         queryKey: ["embassy", countryId],
         queryFn: () => fetchEmbassyByCountryIdApi(countryId),
         enabled: !!countryId,
-        retry: false,
-        staleTime: 5 * 60 * 1000,
+        // retry: false,
+        // staleTime: 5 * 60 * 1000,
     });
 }

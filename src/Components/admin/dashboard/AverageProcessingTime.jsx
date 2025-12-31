@@ -27,7 +27,7 @@ export default function AverageProcessingTime() {
                 Average Processing Times
             </div>
 
-            <div className="glass-scrollbar space-y-3 max-h-30 overflow-y-auto">
+            <div className="glass-scrollbar space-y-3 max-h-42 overflow-y-auto">
                 {data.map(item => (
                     <div key={item.visa_type}>
                         <div className="flex justify-between text-xs sm:text-sm mb-1 mr-1">

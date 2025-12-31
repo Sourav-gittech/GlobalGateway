@@ -88,7 +88,7 @@ const CountrySetup = () => {
     };
     // console.log('Received data from embassy form', countryData);
 
-    dispatch(addOrUpdateCountry(countryData))
+    dispatch(addOrUpdateCountry({ countryData, type: "addCountry" }))
       .then(res => {
         // console.log('Response for adding country', res);
 

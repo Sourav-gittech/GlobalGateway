@@ -147,7 +147,7 @@ const CountryFormModal = ({ isOpen, onClose, country, embassyCountryData }) => {
         };
         // console.log('Received data from form', countryData);
 
-        dispatch(addOrUpdateCountry(countryData))
+        dispatch(addOrUpdateCountry({ countryData, type: "addCountry" }))
             .then(res => {
                 // console.log('Response for adding or updating country', res);
 

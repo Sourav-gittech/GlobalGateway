@@ -22,15 +22,41 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
 
     //   console.log('All available country', filteredCountry);
 
-    const { data: embassyData, isLoading: embassyLoading } = useEmbassyByCountryId(blockCountryId);
+    const { data, isLoading: embassyLoading } = useEmbassyByCountryId(blockCountryId);
+
+    const isArray = Array.isArray(data);
+    const isObject = data && typeof data === 'object' && !isArray;
+
+    let approvedEmbassies = [];
+
+    if (Array.isArray(data)) {
+        approvedEmbassies = data.filter(
+            embassy => embassy?.is_approved === "fulfilled"
+        );
+    } else if (data && typeof data === "object") {
+        approvedEmbassies =
+            data.is_approved === "fulfilled" ? [data] : [];
+    }
 
     useEffect(() => {
+
         if (blockCountryId === null) return;
 
         if (embassyLoading) return;
 
-        if (!embassyData) {
-            getSweetAlert("Oops...", "No embassy available right now", "error");
+        let approvedEmbassies = [];
+
+        if (Array.isArray(data)) {
+            approvedEmbassies = data.filter(
+                e => e?.is_approved === "fulfilled"
+            );
+        } else if (data) {
+            approvedEmbassies =
+                data.is_approved === "fulfilled" ? [data] : [];
+        }
+
+        if (approvedEmbassies.length === 0) {
+            getSweetAlert("Oops...", "No approved embassy available right now", "error");
             setBlockCountryId(null);
             return;
         }
@@ -41,7 +67,7 @@ const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filt
         setSelectedCountryId(blockCountryId);
         setSetStatus(status);
         setAlertModalOpen(true);
-    }, [embassyData, embassyLoading]);
+    }, [data, embassyLoading]);
 
     const handleSaveCountry = (countryData) => {
         if (selectedCountry) {

@@ -170,7 +170,7 @@ async function deleteFile(country_id, dbName, folder) {
 
 // add country
 export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCountry",
-    async (countryData, { rejectWithValue }) => {
+    async ({ countryData, type }, { rejectWithValue }) => {
         // console.log('Received data in slice', countryData);
 
         try {
@@ -231,11 +231,14 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                 }
             }
 
-            const countryImageUrl = !finalData.imageFile?.isOld ? await uploadFile(finalData.imageFile, finalData.name, 'place', "important_place") : finalData.imageFile;
+            let countryImageUrl = finalData.imageFile;
 
+            if (type == 'addCountry') {
+                countryImageUrl = !finalData.imageFile?.isOld ? await uploadFile(finalData.imageFile, finalData.name, 'place', "important_place") : finalData.imageFile;
+            }
             // console.log(flagUrl, countryImageUrl);
 
-            if (!finalData.imageFile?.isOld) {
+            if (type == 'addCountry' && !finalData.imageFile?.isOld) {
                 deleteFile(finalData.id, "countries", "important_place");
             }
 
@@ -245,8 +248,8 @@ export const addOrUpdateCountry = createAsyncThunk("countrySlice/addOrUpdateCoun
                     name: finalData.name,
                     description: finalData.description,
                     image: countryImageUrl,
-                    image_name: countryImageUrl?.docName || null,
-                    image_url: countryImageUrl?.url || null,
+                    image_name: type == 'addCountry' ? countryImageUrl?.docName : countryData.image_name || null,
+                    image_url: type == 'addCountry' ? countryImageUrl?.url : countryData.image_url || null,
                     is_blocked: finalData.is_blocked,
                     is_approved: finalData.is_approved,
                 },

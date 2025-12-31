@@ -38,7 +38,7 @@ const NewCountrySection = ({ embassy }) => {
             id: embassy?.id, status: embassy?.is_approved, is_blocked: embassy?.is_blocked, is_country_listed: true
         }
 
-        dispatch(addOrUpdateCountry(country_obj))
+        dispatch(addOrUpdateCountry({ countryData: country_obj, type: 'embassyCountry' }))
             .then(res => {
                 // console.log('Response for adding new country', res);
 
