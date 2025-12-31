@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchTopCountries } from "../../functions/fetchTopCountries";
+import { fetchAppliedCountryStatsByOriginId } from "../../functions/fetchTopCountries";
 
-export const useTopCountries = () => {
+export const useTopCountries = (country_id) => {
   return useQuery({
-    queryKey: ["top-countries"],
-    queryFn: fetchTopCountries,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    queryKey: ["top-countries", country_id],
+    queryFn: () => fetchAppliedCountryStatsByOriginId(country_id)
   });
 }

@@ -1,42 +1,31 @@
-// services/fetchTopCountries.js
 import supabase from "../util/Supabase/supabase";
 
-export const fetchTopCountries = async () => {
-    // Fetch applications
-    const { data: applications, error: appError } = await supabase.from("applications").select("id, country_id");
+export const fetchAppliedCountryStatsByOriginId = async (originCountryId) => {
+    const { data: applications, error: appError } = await supabase.from("applications").select("id, user_id, country_id").in("country_id", [originCountryId]);
 
     if (appError) throw appError;
 
-    // Fetch countries
-    const { data: countries, error: countryError } = await supabase.from("countries").select("id, name");
+    const userList = applications.map(app => app.user_id);
 
-    if (countryError) throw countryError;
+    const { data: users, error: userError } = await supabase.from("users").select("id, country").in("id", userList);
 
-    // Build countryId → countryName map
-    const countryMap = {};
-    countries.forEach(c => {
-        countryMap[c.id] = c.name;
-    });
+    if (userError) throw userError;
 
-    // Aggregate applications by country
     const stats = {};
 
-    applications.forEach(app => {
-        const countryName = countryMap[app.country_id] || "Others";
+    users.forEach(app => {
 
-        if (!stats[countryName]) {
-            stats[countryName] = {
-                country: countryName,
+        if (!stats[app?.country]) {
+            stats[app?.country] = {
+                countryName: app?.country,
                 applications: 0,
-                revenue: 0,
             };
         }
 
-        stats[countryName].applications += 1;
+        stats[app?.country].applications += 1;
     });
 
-    // Sort descending
-    return Object.values(stats).sort(
-        (a, b) => b.applications - a.applications
-    );
+    const result = Object.values(stats);
+
+    return result
 };
