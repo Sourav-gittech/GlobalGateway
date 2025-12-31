@@ -12,6 +12,9 @@ const StatusBadge = ({ status, type }) => {
         active: "bg-blue-500/20 text-blue-400 border-blue-500/30 px-4",
         blocked: "bg-red-500/20 text-red-400 border-red-500/30",
 
+        approved:"bg-green-500/20 text-green-400 border-green-500/30 px-3",
+        rejected:"bg-red-500/20 text-red-400 border-red-500/30 px-4",
+
         unknown: "bg-slate-500/20 text-slate-400 border-slate-500/30 px-5",
     };
 
@@ -24,6 +27,9 @@ const StatusBadge = ({ status, type }) => {
         active: ShieldCheck,
         blocked: ShieldX,
 
+        approved:CheckCircle,
+        rejected:XCircle,
+        
         unknown: ShieldAlert
     };
 

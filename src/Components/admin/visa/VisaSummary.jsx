@@ -3,7 +3,6 @@ import { useVisaSummary } from '../../../tanstack/query/useVisaSummary';
 import { Loader2 } from 'lucide-react';
 
 const VisaSummary = ({ visa }) => {
-    console.log(visa);
 
     const { data, isLoading } = useVisaSummary(visa?.id);
 

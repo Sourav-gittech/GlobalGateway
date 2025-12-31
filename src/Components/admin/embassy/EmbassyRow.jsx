@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Ban, ChevronDown, ChevronRight, Eye, Globe, ShieldCheck } from 'lucide-react';
 import EmbassyExpanded from './EmbassyExpanded';
 import { formatDateDDMMYY } from '../../../util/dateFormat/dateFormatConvertion';
@@ -6,23 +6,31 @@ import { useDispatch } from 'react-redux';
 import { fetchAllEmbassy, updateEmbassyStatus } from '../../../Redux/Slice/embassySlice';
 import hotToast from '../../../util/alert/hot-toast';
 import getSweetAlert from '../../../util/alert/sweetAlert';
+import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
+import { createPortal } from 'react-dom';
 
 const EmbassyRow = ({ embassy, expandedEmbassies, setExpandedEmbassies, setSelectedDocument }) => {
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [status, setstatus] = useState(null);
+    const [currentEmbassy, setCurrentEmbassy] = useState(null);
+    const [alertModalOpen, setAlertModalOpen] = useState(false);
     const dispatch = useDispatch();
 
-    const toggleBlockUnblock = (embassy, is_blocked) => {
-        dispatch(updateEmbassyStatus({ id: embassy?.id, status: embassy?.is_approved, is_blocked: is_blocked, is_country_listed: embassy?.is_country_listed }))
+    const toggleBlockUnblock = () => {
+        dispatch(updateEmbassyStatus({ id: currentEmbassy?.id, status: currentEmbassy?.is_approved, is_blocked: status, is_country_listed: currentEmbassy?.is_country_listed }))
             .then(res => {
                 // console.log('Response from embassy status', res);
 
                 if (res?.meta?.requestStatus == "fulfilled") {
 
-                    hotToast(`Embassy ${is_blocked ? 'blocked' : 'unblocked'} successfully`, "success");
+                    hotToast(`Embassy ${status ? 'blocked' : 'unblocked'} successfully`, "success");
                     dispatch(fetchAllEmbassy());
+                    setAlertModalOpen(false);
+                    setstatus(null);
+                    setCurrentEmbassy(null);
                 }
                 else {
-                    hotToast(`Embassy ${is_blocked ? 'blocked' : 'unblocked'} unsuccessfull`, "error");
+                    hotToast(`Embassy ${status ? 'blocked' : 'unblocked'} unsuccessfull`, "error");
                 }
             })
             .catch(err => {
@@ -69,6 +77,11 @@ const EmbassyRow = ({ embassy, expandedEmbassies, setExpandedEmbassies, setSelec
             <Icon className="w-4 h-4" />
         </button>
     );
+
+    const handleEmbassyData = (embassy, status) => {
+        setCurrentEmbassy(embassy);
+        setstatus(status);
+    }
 
     const embassyName = embassy?.country_name + " Embassy";
 
@@ -134,8 +147,8 @@ const EmbassyRow = ({ embassy, expandedEmbassies, setExpandedEmbassies, setSelec
                         <ActionButton onClick={() => setSelectedDocument(embassy)} icon={Eye} color="blue" title="View Document" disable={embassy?.starting_hours && embassy?.country_id ? false : true} />
 
                         {embassy?.is_blocked ?
-                            <ActionButton onClick={() => toggleBlockUnblock(embassy, false)} icon={ShieldCheck} color="green" title="Unblock" disable={embassy?.starting_hours && embassy?.is_approved == 'fulfilled' ? false : true} /> :
-                            <ActionButton onClick={() => toggleBlockUnblock(embassy, true)} icon={Ban} color="red" title="Block" disable={embassy?.starting_hours && embassy?.is_approved == 'fulfilled' ? false : true} />
+                            <ActionButton onClick={() => {handleEmbassyData(embassy, false); setAlertModalOpen(true);}} icon={ShieldCheck} color="green" title="Unblock" disable={embassy?.starting_hours && embassy?.is_approved == 'fulfilled' ? false : true} /> :
+                            <ActionButton onClick={() => {handleEmbassyData(embassy, true); setAlertModalOpen(true);}} icon={Ban} color="red" title="Block" disable={embassy?.starting_hours && embassy?.is_approved == 'fulfilled' ? false : true} />
                         }
                     </div>
                 </td>
@@ -144,6 +157,18 @@ const EmbassyRow = ({ embassy, expandedEmbassies, setExpandedEmbassies, setSelec
             {expandedEmbassies[embassy.id] && (
                 <EmbassyExpanded embassy={embassy} />
             )}
+
+            {alertModalOpen && createPortal(
+                <ConfirmBlockUnblockAlert
+                    open={alertModalOpen}
+                    onClose={() => setAlertModalOpen(false)}
+                    onConfirm={toggleBlockUnblock}
+                    buttonText={!embassy?.is_blocked ? 'Block' : 'Active'}
+                    type={!embassy?.is_blocked ? 'block' : 'active'}
+                    title={`${!embassy?.is_blocked ? 'Block' : 'Active'} Embassy`}
+                    message={`Are you sure you want to ${!embassy?.is_blocked ? 'block' : 'active'} the embassy?`}
+                />,
+                document.body)}
         </>
     )
 }

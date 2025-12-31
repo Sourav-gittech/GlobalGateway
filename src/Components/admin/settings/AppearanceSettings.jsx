@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Palette, Moon, Sun, Monitor, KeyRound, Lock, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
+import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
 import hotToast from '../../../util/alert/hot-toast';
 import { toggleUserStatus } from '../../../Redux/Slice/userSlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';

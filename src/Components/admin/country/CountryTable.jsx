@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllCountryDetails, toggleCountryStatus } from '../../../Redux/Slice/countrySlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import hotToast from '../../../util/alert/hot-toast';
-import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
+import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
 import { useEmbassyByCountryId } from '../../../tanstack/query/getEmbassyByCountryId';
 
 const CountryTable = ({ searchQuery, isLoading, filteredCountry, countries, filterContinent, setCountries }) => {

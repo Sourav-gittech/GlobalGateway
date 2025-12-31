@@ -1,14 +1,12 @@
 import React from 'react'
 import { FileText, BookOpen } from "lucide-react";
-import { useDispatch } from 'react-redux';
 import ApplicationDetails from './userDetails/user-row/ApplicationDetails';
 import CourseDetails from './userDetails/user-row/CourseDetails';
 import AdditionalInfo from './userDetails/user-row/AdditionalInfo';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
 
 const UserRowExpand = ({ user }) => {
-    // console.log('User Data', user);
-    const dispatch = useDispatch();
+
     const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(user?.id);
 
     return (

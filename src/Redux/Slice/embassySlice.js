@@ -59,7 +59,7 @@ export const fetchAllEmbassy = createAsyncThunk("embassySlice/fetchAllEmbassy",
     async (_, { rejectWithValue }) => {
 
         try {
-            const res = await supabase.from("embassy").select("*");
+            const res = await supabase.from("embassy").select("*").order("created_at", { ascending: false });
             // console.log('Response for fetching all embassy', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);

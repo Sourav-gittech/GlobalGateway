@@ -43,14 +43,14 @@ export default function ConfirmBlockUnblockAlert({ open, onClose, onConfirm, but
           <div className="flex gap-3 w-full">
             <button
               onClick={onClose}
-              className="flex-1 py-2 rounded-lg bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20 transition"
+              className="flex-1 py-2 rounded-lg bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20 transition cursor-pointer"
             >
               Cancel
             </button>
 
             <button
               onClick={onConfirm}
-              className="flex-1 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition"
+              className="flex-1 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition cursor-pointer"
             >
               {buttonText}
             </button>

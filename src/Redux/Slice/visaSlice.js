@@ -67,7 +67,7 @@ export const updateVisa = createAsyncThunk('visaDetailsSlice/updateVisa',
 export const fetchAllVisa = createAsyncThunk("visaSlice/fetchAllVisa",
     async (_, { rejectWithValue }) => {
         try {
-            const res = await supabase.from("visa").select("*");
+            const res = await supabase.from("visa").select("*").order("created_at", { ascending: false });
             // console.log('Response for fetching all visa', res);
 
             if (res?.error) throw res?.error

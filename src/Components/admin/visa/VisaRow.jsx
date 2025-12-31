@@ -8,13 +8,13 @@ import { useAverageProcessingTime } from '../../../tanstack/query/getAvgVisaProc
 import { useAverageValidity } from '../../../tanstack/query/getAvgVisaValidity';
 import { useVisaDetailsByVisaId } from '../../../tanstack/query/getVisaDetailsByVisaId';
 import { useVisaWiseApplicationViaVisaId } from '../../../tanstack/query/getVisaWiseApplicationViaVisaId';
-import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
+import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
 import { createPortal } from 'react-dom';
 
 const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [visaId, setVisaId] = useState(false);
-    const [currentVisa, setCurrentVisa] = useState(false);
+    const [visaId, setVisaId] = useState(null);
+    const [currentVisa, setCurrentVisa] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
     const dispatch = useDispatch();
 
@@ -24,6 +24,7 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
     const { data: applicationList, isLoading: isApplicationListLoading, error: applicationListError } = useVisaWiseApplicationViaVisaId({ visaId: visa?.id, applicationStatus: 'all' });
 
     // console.log(applicationList);
+    // console.log(visaCountryList);
 
     const toggleVisaStatus = () => {
         const updated_visa = {
@@ -38,6 +39,8 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
                 if (res?.meta?.requestStatus == "fulfilled") {
                     hotToast(`Visa ${updated_visa?.status == 'active' ? 'activated' : 'de-activated'} successfully`, "success");
                     setAlertModalOpen(false);
+                    setVisaId(null);
+                    setCurrentVisa(null);
                 }
                 else {
                     getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -132,19 +135,18 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
                 </td>
             </tr >
 
-
-{alertModalOpen && createPortal(
-            <ConfirmBlockUnblockAlert
-                open={alertModalOpen}
-                onClose={() => setAlertModalOpen(false)}
-                onConfirm={toggleVisaStatus}
-                buttonText={currentVisa?.status == 'active' ? 'Block' : 'Active'}
-                type={currentVisa?.status != 'inactive' ? 'block' : 'active'}
-                title={`${currentVisa?.status != 'inactive' ? 'Block' : 'Active'} Visa Globally`}
-                message={`Are you sure you want to ${currentVisa?.status != 'inactive' ? 'block' : 'active'} the visa?`}
-            /> ,
-  document.body)}
-  </>
+            {alertModalOpen && createPortal(
+                <ConfirmBlockUnblockAlert
+                    open={alertModalOpen}
+                    onClose={() => setAlertModalOpen(false)}
+                    onConfirm={toggleVisaStatus}
+                    buttonText={currentVisa?.status == 'active' ? 'Block' : 'Active'}
+                    type={currentVisa?.status != 'inactive' ? 'block' : 'active'}
+                    title={`${currentVisa?.status != 'inactive' ? 'Block' : 'Active'} Visa Globally`}
+                    message={`Are you sure you want to ${currentVisa?.status != 'inactive' ? 'block' : 'active'} the visa?`}
+                />,
+                document.body)}
+        </>
     )
 }
 

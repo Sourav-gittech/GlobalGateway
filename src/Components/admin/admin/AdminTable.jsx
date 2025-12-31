@@ -9,7 +9,7 @@ import { getAllAdmins } from '../../../Redux/Slice/adminSlice';
 import { logoutUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import { useNavigate } from 'react-router-dom';
 import getSweetAlert from '../../../util/alert/sweetAlert';
-import ConfirmBlockUnblockAlert from '../common/alarts/ConfirmBlockUnblockAlert';
+import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
 
 const AdminTable = ({ filteredAdmins, isAdminLoading, setSuccessMessage, setShowSuccess }) => {
 

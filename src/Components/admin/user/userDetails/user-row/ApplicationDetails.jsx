@@ -19,7 +19,7 @@ const ApplicationDetails = ({ visa }) => {
             </div>
 
             <div className="text-right">
-                <div className="text-sm font-semibold text-white">
+                <div className="text-sm font-semibold text-white mb-1">
                     {isPaymentDataLoading
                         ? <Loader2 className="w-4 h-4 text-white animate-spin mb-4 mx-auto" />
                         : `₹${paymentData?.[0]?.amount?.toLocaleString('en-IN') || 0}`}
