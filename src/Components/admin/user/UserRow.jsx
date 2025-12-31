@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, ShieldX, ShieldCheck, ShieldAlert } from "lucide-react";
+import { ChevronDown, ChevronUp, ShieldX, ShieldCheck, ShieldAlert, HandHelping } from "lucide-react";
 import StatusBadge from './userDetails/UserStatusBadge';
 import UserRowExpand from './../../../Components/admin/user/UserRowExpand';
 
-const UserRow = ({ user, onBlock }) => {
+const UserRow = ({ user, handleUserData, setAlertModalOpen }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     // console.log('User Data', user);
 
@@ -69,7 +69,7 @@ const UserRow = ({ user, onBlock }) => {
                 <td className="px-4 sm:px-6 py-4 text-right">
                     <div className="flex items-center justify-end">
                         <button
-                            onClick={() => onBlock(user?.id, user?.is_blocked)}
+                            onClick={() => { handleUserData(user?.id, user?.is_blocked); setAlertModalOpen(true); }}
                             className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
                             title={!user.is_blocked ? "Block access" : "Restore access"} disabled={user?.is_verified != 'success'}>
                             {user?.is_verified == 'success' ? user?.is_blocked ? <ShieldCheck className="w-6 h-6 text-green-500 cursor-pointer" /> :
