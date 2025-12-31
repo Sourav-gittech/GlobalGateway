@@ -29,7 +29,7 @@ const DashboardStats = () => {
     const { data: applicationStats, isLoading: isApplicationStatsLoading } = useApplicationStats();
     const { data: applicationPendingStats, isLoading: isApplicationPendingLoading } = usePendingApplicationsStats();
     const { data: applicationApprovedStats, isLoading: isApplicationApprovedLoading } = useApprovedApplicationsStats();
-    const { data: applicationStatusStats, isLoading: isApplicationStatusLoading } = useApplicationStatusStats();
+    const { data: applicationStatusStats, isLoading: isApplicationStatusLoading } = useApplicationStatusStats(null);
 
     const stats = [
         { id: 1, title: "Total Applications", isValueLoading: isApplicationStatsLoading, value: applicationStats?.totalApplications, icon: FileText, isTrendLoading: isApplicationStatsLoading, trend: `${applicationStats?.rate}%` },

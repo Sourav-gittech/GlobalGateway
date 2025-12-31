@@ -5,10 +5,10 @@ import { getApprovedApplicationsStats } from "../../functions/getApprovedStats";
 import { getApplicationStatusStats } from "../../functions/getApplicationStatusStats";
 
 export function useApplicationStats() {
-    return useQuery({
-        queryKey: ["application-stats"],
-        queryFn: getApplicationStats,
-    });
+  return useQuery({
+    queryKey: ["application-stats"],
+    queryFn: getApplicationStats,
+  });
 }
 
 export function usePendingApplicationsStats() {
@@ -27,10 +27,10 @@ export function useApprovedApplicationsStats() {
   });
 }
 
-export function useApplicationStatusStats() {
+export function useApplicationStatusStats(id) {
   return useQuery({
     queryKey: ["application-status-stats"],
-    queryFn: getApplicationStatusStats,
+    queryFn: () => getApplicationStatusStats(id),
     staleTime: 1000 * 60 * 5,
   });
 }

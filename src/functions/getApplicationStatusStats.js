@@ -1,10 +1,15 @@
 import supabase from "../util/Supabase/supabase";
 
-export async function getApplicationStatusStats() {
-    const { data, error } = await supabase
-        .from("applications")
-        .select("id, created_at, status")
-        .order("created_at", { ascending: true });
+export async function getApplicationStatusStats(country_id) {
+
+    let query = supabase.from("applications").select("id, created_at, status").order("created_at", { ascending: true });
+
+    // Apply filter only if country_id is provided
+    if (country_id != null) {
+        query = query.eq("country_id", country_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw error;
 
