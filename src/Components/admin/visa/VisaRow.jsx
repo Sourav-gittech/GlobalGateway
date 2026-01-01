@@ -10,13 +10,14 @@ import { useVisaDetailsByVisaId } from '../../../tanstack/query/getVisaDetailsBy
 import { useVisaWiseApplicationViaVisaId } from '../../../tanstack/query/getVisaWiseApplicationViaVisaId';
 import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert';
 import { createPortal } from 'react-dom';
+import { addNotification } from '../../../Redux/Slice/notificationSlice';
 
 const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const dispatch = useDispatch();
+
     const [visaId, setVisaId] = useState(null);
     const [currentVisa, setCurrentVisa] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
-    const dispatch = useDispatch();
 
     const { data: avgProcessingTime, isLoading: processingTimeLoading } = useAverageProcessingTime(visa?.id);
     const { data: avgValidity, isLoading: validityLoading } = useAverageValidity(visa?.id);
@@ -25,6 +26,11 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
 
     // console.log(applicationList);
     // console.log(visaCountryList);
+
+    const countryIds = visaCountryList?.map(item => item.country_id) || [];
+    const uniqueCountryIds = [...new Set(countryIds)];
+
+    const visaName = visa?.visa_type?.split(" ")?.map(type => type?.charAt(0)?.toUpperCase() + type?.slice(1)?.toLowerCase())?.join(" ");
 
     const toggleVisaStatus = () => {
         const updated_visa = {
@@ -37,10 +43,33 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
                 // console.log('Response for updating status', res);
 
                 if (res?.meta?.requestStatus == "fulfilled") {
-                    hotToast(`Visa ${updated_visa?.status == 'active' ? 'activated' : 'de-activated'} successfully`, "success");
-                    setAlertModalOpen(false);
-                    setVisaId(null);
-                    setCurrentVisa(null);
+
+                    const notification_obj = {
+                        application_id: null,
+                        title: `${visaName} is ${updated_visa.status != 'active' ? 'not' : ''} available right now`,
+                        receiver_type: 'embassy',
+                        receiver_country_id: uniqueCountryIds,
+                        mark_read: false
+                    }
+
+                    dispatch(addNotification(notification_obj))
+                        .then(res => {
+                            // console.log('Response for adding notification', res);
+
+                            if (res?.meta?.requestStatus == "fulfilled") {
+                                hotToast(`Visa ${updated_visa?.status == 'active' ? 'activated' : 'de-activated'} successfully`, "success");
+                                setAlertModalOpen(false);
+                                setVisaId(null);
+                                setCurrentVisa(null);
+                            }
+                            else {
+                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                            }
+                        })
+                        .catch(err => {
+                            console.log('Error occured', err);
+                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                        })
                 }
                 else {
                     getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -78,7 +107,7 @@ const VisaRow = ({ expandedVisa, setExpandedVisa, visa }) => {
                     </button>
                 </td>
                 <td className="px-4 py-4">
-                    <div className="font-semibold text-white text-sm">{visa?.visa_type?.split(" ")?.map(type => type?.charAt(0)?.toUpperCase() + type?.slice(1)?.toLowerCase())?.join(" ")}</div>
+                    <div className="font-semibold text-white text-sm">{visaName}</div>
                 </td>
                 <td className="px-4 py-4 text-slate-300 text-sm hidden lg:table-cell">
                     <div className="flex items-center gap-2">

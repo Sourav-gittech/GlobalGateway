@@ -11,6 +11,7 @@ import { saveTransaction } from "../../../../Redux/Slice/transactionSlice";
 import { saveStepPayment, saveStepProgress } from "../../../../Redux/Slice/applicationSlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";
 import { addActivity } from "../../../../Redux/Slice/activitySlice";
+import { addNotification } from "../../../../Redux/Slice/notificationSlice";
 
 const LottieAnimation = ({ animationData, isSuccess }) => {
     if (!animationData) return null;
@@ -86,6 +87,14 @@ export default function PaymentStatus() {
         icon: 'failed'
     }
 
+    const notification_obj = {
+        application_id: personalInfoData?.application_id,
+        title: "New application received with application i'd",
+        receiver_type: 'embassy',
+        receiver_country_id: country_id,
+        mark_read: false
+    }
+
     useEffect(() => {
         let timeout;
         let progressInterval;
@@ -125,18 +134,27 @@ export default function PaymentStatus() {
 
                                                             if (res.meta.requestStatus === "fulfilled") {
 
-                                                                if (res.meta.requestStatus === "fulfilled") {
-                                                                    setIsLottieTransitioning(true);
-                                                                    setTimeout(() => {
-                                                                        setPaymentStage('success');
-                                                                        setIsLottieTransitioning(false);
-                                                                        setShowConfetti(true);
-                                                                        setTimeout(() => setShowConfetti(false), 4000);
-                                                                    }, 3000);
-                                                                }
-                                                                else {
-                                                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                                                }
+                                                                dispatch(addNotification(notification_obj))
+                                                                    .then(res => {
+                                                                        // console.log('Response for adding notification', res);
+
+                                                                        if (res.meta.requestStatus === "fulfilled") {
+                                                                            setIsLottieTransitioning(true);
+                                                                            setTimeout(() => {
+                                                                                setPaymentStage('success');
+                                                                                setIsLottieTransitioning(false);
+                                                                                setShowConfetti(true);
+                                                                                setTimeout(() => setShowConfetti(false), 4000);
+                                                                            }, 3000);
+                                                                        }
+                                                                        else {
+                                                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                        }
+                                                                    })
+                                                                    .catch(err => {
+                                                                        console.log('Error occured', err);
+                                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                    })
                                                             }
                                                             else {
                                                                 getSweetAlert('Oops...', 'Something went wrong!', 'info');
@@ -146,8 +164,6 @@ export default function PaymentStatus() {
                                                             console.log('Error occured', err);
                                                             getSweetAlert('Oops...', 'Something went wrong!', 'error');
                                                         })
-
-
                                                 })
                                                 .catch(err => {
                                                     console.log('Error occured', err);

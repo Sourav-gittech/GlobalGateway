@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { updateEmbassyByEmail } from "../../../Redux/Slice/embassySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import hotToast from "../../../util/alert/hot-toast";
+import { addNotification } from "../../../Redux/Slice/notificationSlice";
 
 const ContactSetup = () => {
   const { embassyEmail, redirectPath } = useParams();
@@ -31,8 +32,8 @@ const ContactSetup = () => {
 
   const timeSlots = useMemo(() => {
     const slots = [];
-    const startHour = 9; // 09 AM
-    const endHour = 18;   // 06 PM
+    const startHour = 9;
+    const endHour = 18;
 
     for (let hour = startHour; hour <= endHour; hour++) {
       const period = hour >= 12 ? "PM" : "AM";
@@ -67,26 +68,49 @@ const ContactSetup = () => {
       ending_hours: data?.workingHoursTo
     }
 
+    const notification_obj = {
+      application_id: null,
+      title: `New embassy request received for email Id ${emailId?.slice(0, 5)}######`,
+      receiver_type: 'admin',
+      receiver_country_id: null,
+      mark_read: false
+    }
+
     dispatch(updateEmbassyByEmail({ email: emailId, updateData }))
       .then(res => {
         // console.log('Response for adding additional data', res);
 
         if (res.meta.requestStatus === "fulfilled") {
-          if (path == 'login') {
-            navigate("/embassy/auth");
-          } else if (path == 'countrySetup') {
-            navigate("/embassy/country-setup");
-          } else if (path == 'review') {
-            navigate("/embassy/review");
-          } else if (path == 'reject') {
-            navigate("/embassy/reject");
-          } else if (path == 'approved') {
-            navigate("/embassy/approved");
-          } else {
-            navigate("/embassy/dashboard");
-          }
-          hotToast('Profile created successfully', "success");
-          reset();
+
+          dispatch(addNotification(notification_obj))
+            .then(res => {
+              // console.log('Response for adding notification', res);
+
+              if (res.meta.requestStatus === "fulfilled") {
+                if (path == 'login') {
+                  navigate("/embassy/auth");
+                } else if (path == 'countrySetup') {
+                  navigate("/embassy/country-setup");
+                } else if (path == 'review') {
+                  navigate("/embassy/review");
+                } else if (path == 'reject') {
+                  navigate("/embassy/reject");
+                } else if (path == 'approved') {
+                  navigate("/embassy/approved");
+                } else {
+                  navigate("/embassy/dashboard");
+                }
+                hotToast('Profile created successfully', "success");
+                reset();
+              }
+              else {
+                getSweetAlert('Oops...', 'Something went wrong!', 'info');
+              }
+            })
+            .catch(err => {
+              console.log('Error occured', err);
+              getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
         }
         else {
           getSweetAlert('Oops...', 'Something went wrong!', 'info');

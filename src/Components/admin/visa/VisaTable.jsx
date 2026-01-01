@@ -59,21 +59,21 @@ const VisaTable = ({ expandedVisa, setExpandedVisa, filteredVisas, isVisaListloa
                                                 <div className="bg-slate-700/30 rounded-lg border border-slate-600/50 overflow-hidden">
                                                     <div className="overflow-auto" style={{ maxHeight: '280px' }}>
                                                         <style>{`
-                                    .country-scroll-container::-webkit-scrollbar {
-                                      width: 6px;
-                                      height: 6px;
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-track {
-                                      background: rgba(51, 65, 85, 0.3);
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-thumb {
-                                      background: rgba(148, 163, 184, 0.4);
-                                      border-radius: 3px;
-                                    }
-                                    .country-scroll-container::-webkit-scrollbar-thumb:hover {
-                                      background: rgba(148, 163, 184, 0.6);
-                                    }
-                                  `}</style>
+                                                        .country-scroll-container::-webkit-scrollbar {
+                                                        width: 6px;
+                                                        height: 6px;
+                                                        }
+                                                        .country-scroll-container::-webkit-scrollbar-track {
+                                                        background: rgba(51, 65, 85, 0.3);
+                                                        }
+                                                        .country-scroll-container::-webkit-scrollbar-thumb {
+                                                        background: rgba(148, 163, 184, 0.4);
+                                                        border-radius: 3px;
+                                                        }
+                                                        .country-scroll-container::-webkit-scrollbar-thumb:hover {
+                                                        background: rgba(148, 163, 184, 0.6);
+                                                        }
+                                                    `}</style>
                                                         <CountryVisaTable visa={visa} />
                                                     </div>
                                                 </div>

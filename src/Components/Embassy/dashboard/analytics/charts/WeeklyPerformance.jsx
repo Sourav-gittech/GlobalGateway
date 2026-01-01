@@ -1,7 +1,7 @@
 import React from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
-const WeeklyPerformance = ({weeklyData}) => {
+const WeeklyPerformance = ({ weeklyData }) => {
     return (
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5 sm:p-6">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Weekly Performance</h2>
@@ -21,9 +21,9 @@ const WeeklyPerformance = ({weeklyData}) => {
             </ResponsiveContainer>
             <div className="grid grid-cols-3 gap-4 mt-4">
                 {[
-                    { label: 'Total Applications', value: weeklyData.reduce((sum, d) => sum + d.applications, 0), color: 'text-blue-600' },
-                    { label: 'Approved', value: weeklyData.reduce((sum, d) => sum + d.approvals, 0), color: 'text-green-600' },
-                    { label: 'Revenue', value: `₹${(weeklyData.reduce((sum, d) => sum + d.revenue, 0) / 1000).toFixed(0)}K`, color: 'text-purple-600' }
+                    { label: 'Total Applications', value: weeklyData?.reduce((sum, d) => sum + d.applications, 0), color: 'text-blue-600' },
+                    { label: 'Approved', value: weeklyData?.reduce((sum, d) => sum + d.approvals, 0), color: 'text-green-600' },
+                    { label: 'Revenue', value: `₹${(weeklyData?.reduce((sum, d) => sum + d.revenue, 0) / 1000).toFixed(0)}K`, color: 'text-purple-600' }
                 ].map((stat, idx) => (
                     <div
                         key={idx}

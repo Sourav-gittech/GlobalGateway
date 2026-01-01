@@ -93,7 +93,7 @@ const EmbassyAuth = () => {
 
       dispatch(loginUser(auth_obj))
         .then((res) => {
-          console.log('Response for logged in', res);
+          // console.log('Response for logged in', res);
 
           if (res.meta.requestStatus === "fulfilled") {
             sessionStorage.setItem("embassy_token", res.payload.accessToken);
@@ -112,12 +112,10 @@ const EmbassyAuth = () => {
             } else if (res?.payload?.user?.last_sign_in_at == null) {
               navigate("/embassy/approved");
             } else {
-              dispatch(
-                updateLastSignInAt({
+              dispatch( updateLastSignInAt({
                   id: res?.payload?.user?.id,
                   user_type: "embassy",
-                })
-              ).then((res) => {
+                })).then((res) => {
                 if (res.meta.requestStatus === "fulfilled") {
                   toastifyAlert.success('Logged in Successfully');
                   navigate("/embassy/dashboard");

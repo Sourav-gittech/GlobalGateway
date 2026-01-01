@@ -19,7 +19,7 @@ const ProfileSection = ({ profileData }) => {
                 <div className="pt-4 pb-6 pl-0 -mt-3 sm:pl-48">
                     <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-1">
                         <span className="text-gray-900">
-                            {profileData?.name?.split(" ")?.length > 1 ? profileData?.name?.split(" ")?.map(n => n?.charAt(0)?.toUpperCase())?.join("") : profileData?.name.charAt(0).toUpperCase() + profileData?.name?.slice(1)}
+                            {profileData?.name?.split(" ")?.length > 1 ? profileData?.name?.split(" ")?.map(n => n?.charAt(0)?.toUpperCase())?.join("") : profileData?.name?.charAt(0)?.toUpperCase() + profileData?.name?.slice(1)}
                         </span>
                         <span className="text-gray-800">
                             {" "}Embassy

@@ -99,14 +99,6 @@ export default function EmbassyDashboard() {
   const chartData = buildMonthlyApplicationVolume(allTypeApplications || []);
   const maxValue = Math.max(1, ...chartData.map(d => d.value));
 
-  // Processing times
-  const processingTimes = [
-    { type: "Tourist Visa", days: 5, color: "bg-blue-500", percentage: 15 },
-    { type: "Student Visa", days: 15, color: "bg-green-500", percentage: 45 },
-    { type: "Work Visa", days: 25, color: "bg-purple-500", percentage: 75 },
-    { type: "Business Visa", days: 7, color: "bg-orange-500", percentage: 25 }
-  ]
-
   // Quick actions
   const quickActions = [
     {
@@ -120,7 +112,7 @@ export default function EmbassyDashboard() {
       icon: Calendar,
       label: "Schedule Interview",
       count: appointmentStats.length + " upcoming",
-      path: "/embassy/dashboard/appointments/schedule",
+      path: "/embassy/dashboard/applications",
       color: "bg-purple-500 hover:bg-purple-600"
     },
 
@@ -180,7 +172,7 @@ export default function EmbassyDashboard() {
           <UpcommingAppointmtnt upcomingAppointments={appointmentStats} />
 
           {/* Processing Times */}
-          <AvgProcessingTime processingTimes={processingTimes} />
+          <AvgProcessingTime countryDetails={countryDetails} />
 
         </div>
       </div>

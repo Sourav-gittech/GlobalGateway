@@ -1,27 +1,22 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Bell, LogOut, Settings, ChevronDown, Moon, Sun, Menu, X } from "lucide-react";
+import { Bell, LogOut, Settings, ChevronDown, Moon, Sun, Menu, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { logoutUser } from "../../Redux/Slice/auth/checkAuthSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSidebarStore } from "../../util/useSidebarStore";
-
-// Constants
-const NOTIFICATIONS = [
-  { id: 1, title: "New user registered", time: "2 min ago", unread: true },
-  { id: 2, title: "Payment received", time: "1 hour ago", unread: true },
-  { id: 3, title: "System update completed", time: "3 hours ago", unread: false },
-];
+import { fetchNotifications, markNotificationRead } from "../../Redux/Slice/notificationSlice";
+import getSweetAlert from "../../util/alert/sweetAlert";
+import { formatDateDDMMYYYYHHMM } from "../../util/dateFormat/dateFormatConvertion";
 
 export default function Navbar({ adminData }) {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(2);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
 
   // Get collapsed state from sidebar store
   const collapsed = useSidebarStore((s) => s.collapsed);
@@ -30,6 +25,17 @@ export default function Navbar({ adminData }) {
   const notificationRef = useRef(null);
   const userMenuRef = useRef(null);
   const searchInputRef = useRef(null);
+
+  // notification 
+  useEffect(() => {
+    dispatch(fetchNotifications({ receiver_type: 'admin', receiver_country_id: null }))
+      .then(res => {
+        // console.log('Response for fetching notification', res)
+      })
+      .catch(() => {
+        getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
+  }, []);
 
   // Detect screen size
   useEffect(() => {
@@ -57,26 +63,6 @@ export default function Navbar({ adminData }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      // Cmd/Ctrl + K to focus search
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-      // Escape to close dropdowns
-      if (e.key === "Escape") {
-        setShowNotifications(false);
-        setShowUserMenu(false);
-        setShowMobileSidebar(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   // Prevent body scroll when mobile sidebar is open
   useEffect(() => {
     if (showMobileSidebar) {
@@ -89,19 +75,6 @@ export default function Navbar({ adminData }) {
     };
   }, [showMobileSidebar]);
 
-  const handleSearch = useCallback((e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log("Searching for:", searchQuery);
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  }, [searchQuery, navigate]);
-
-  const handleNotificationClick = useCallback((notificationId) => {
-    console.log("Notification clicked:", notificationId);
-    setShowNotifications(false);
-  }, []);
-
   const handleLogout = async () => {
     await dispatch(logoutUser({ user_type: 'admin', showAlert: true }));
     navigate('/admin/');
@@ -112,10 +85,20 @@ export default function Navbar({ adminData }) {
     document.documentElement.classList.toggle("dark");
   }, []);
 
-  const markAllAsRead = useCallback(() => {
-    setUnreadCount(0);
-    console.log("Marked all notifications as read");
-  }, []);
+  const markAllAsRead = (receiver_type) => {
+    dispatch(markNotificationRead({ id: null, receiver_type, receiver_id: null }))
+      .then(res => {
+        // console.log('Response for updating data', res);
+        setShowNotifications(false);
+        dispatch(fetchNotifications({ receiver_type: 'admin', receiver_country_id: null }))
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  };
+
+  // console.log('Notification data',notificationList);
 
   return (
     <>
@@ -165,9 +148,9 @@ export default function Navbar({ adminData }) {
                 title="Notifications"
               >
                 <Bell size={18} />
-                {unreadCount > 0 && (
+                {notificationList?.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-white/20 text-white text-xs font-semibold rounded-full flex items-center justify-center">
-                    {unreadCount}
+                    {notificationList?.length}
                   </span>
                 )}
               </button>
@@ -177,9 +160,9 @@ export default function Navbar({ adminData }) {
                 <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-gray-900/95 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden">
                   <div className="flex items-center justify-between p-4 border-b border-white/10">
                     <h3 className="text-white font-semibold text-sm">Notifications</h3>
-                    {unreadCount > 0 && (
+                    {notificationList?.length > 0 && (
                       <button
-                        onClick={markAllAsRead}
+                        onClick={()=>markAllAsRead('admin')}
                         className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                       >
                         Mark all read
@@ -187,27 +170,24 @@ export default function Navbar({ adminData }) {
                     )}
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    {NOTIFICATIONS.map((notification) => (
-                      <button
-                        key={notification.id}
-                        onClick={() => handleNotificationClick(notification.id)}
-                        className={`w-full p-4 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-b-0 ${notification.unread ? "bg-blue-500/5" : ""
-                          }`}
-                      >
+                    {notificationList?.slice(0, 3)?.map(notification => (
+                      <div
+                        key={notification?.id}
+                        className={`w-full p-4 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-b-0 ${!notification?.mark_read ? "bg-blue-500/5" : ""}`}>
                         <div className="flex items-start gap-3">
-                          {notification.unread && (
+                          {!notification?.mark_read && (
                             <span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-white text-sm font-medium truncate">
-                              {notification.title}
+                              {notification?.title}
                             </p>
                             <p className="text-gray-400 text-xs mt-1">
-                              {notification.time}
+                              {formatDateDDMMYYYYHHMM(notification?.created_at)}
                             </p>
                           </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                   <div className="p-3 border-t border-white/10">
@@ -216,7 +196,7 @@ export default function Navbar({ adminData }) {
                         navigate("/notifications");
                         setShowNotifications(false);
                       }}
-                      className="w-full text-center text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                      className="w-full text-center text-sm text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
                     >
                       View all notifications
                     </button>

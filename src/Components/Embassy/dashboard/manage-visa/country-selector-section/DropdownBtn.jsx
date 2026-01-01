@@ -8,7 +8,6 @@ const DropdownBtn = ({ setIsOpen, isOpen, visaPolicy, visaData, selectedCountry 
 
   const visaPolicyCount = visaPolicy?.length ?? 0;
 
-
   return (
     <button
       type="button"

@@ -13,7 +13,7 @@ const EmptyVisa = ({ selectedCountry, setIsAddingVisaType }) => {
             </p>
             <button
                 onClick={() => setIsAddingVisaType(true)}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm inline-flex items-center gap-2"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm inline-flex items-center gap-2 cursor-pointer"
             >
                 <Plus className="w-5 h-5" />
                 Add First Visa Type

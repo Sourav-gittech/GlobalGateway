@@ -16,6 +16,7 @@ import embassySliceReducer from '../Slice/embassySlice';
 import holidaysSliceReducer from '../Slice/holidaySlice';
 import appointmentReasonSliceReducer from '../Slice/appointmentReasonSlice';
 import timingSliceReducer from '../Slice/timingSlice';
+import notificationSliceReducer from '../Slice/notificationSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,7 +35,8 @@ export const store = configureStore({
     embassy: embassySliceReducer,
     holiday: holidaysSliceReducer,
     timing: timingSliceReducer,
-    appointmentReason: appointmentReasonSliceReducer
+    appointmentReason: appointmentReasonSliceReducer,
+    notification: notificationSliceReducer
   }
 });
 

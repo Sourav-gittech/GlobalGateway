@@ -5,7 +5,7 @@ const DropdownList = ({ mockCountries, allCountryPolicy, country_id, visaData, s
 
     return (
         <div className="absolute z-50 w-full mt-1 bg-white/80 backdrop-blur-xl border border-white/30 rounded-lg shadow-2xl max-h-60 overflow-y-auto glass-scrollbar">
-            {mockCountries.map((country) => {
+            {mockCountries?.map((country) => {
 
                 const visaPolicy = allCountryPolicy?.filter(policy => policy?.country_id == country_id && policy?.visitor_country_id == country?.id)
 

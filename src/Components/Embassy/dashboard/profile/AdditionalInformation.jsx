@@ -5,8 +5,11 @@ import hotToast from "../../../../util/alert/hot-toast";
 import { updateEmbassyById } from "../../../../Redux/Slice/embassySlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";
 import { useDispatch } from "react-redux";
+import { addNotification } from "../../../../Redux/Slice/notificationSlice";
 
 const AdditionalInformation = ({ profileData }) => {
+  // console.log('Embassy profile data', profileData);
+
   const [isEditing, setIsEditing] = useState(false);
   const dispatch = useDispatch();
 
@@ -47,6 +50,14 @@ const AdditionalInformation = ({ profileData }) => {
     return timeSlots.filter(slot => slot.value > workingHoursFrom);
   }, [workingHoursFrom, timeSlots]);
 
+  const notification_obj = {
+    application_id: null,
+    title: `${profileData?.country_name} Embassy changes working hour`,
+    receiver_type: 'admin',
+    receiver_country_id: null,
+    mark_read: false
+  }
+
   const handleSave = async (data) => {
     const updateData = {
       ...profileData,
@@ -59,8 +70,23 @@ const AdditionalInformation = ({ profileData }) => {
         // console.log('Response for updating embassy timing', res);
 
         if (res.meta.requestStatus === "fulfilled") {
-          hotToast("Working hours updated successfully", "success");
-          setIsEditing(false);
+
+          dispatch(addNotification(notification_obj))
+            .then(res => {
+              // console.log('Response for adding notification', res);
+
+              if (res.meta.requestStatus === "fulfilled") {
+                hotToast("Working hours updated successfully", "success");
+                setIsEditing(false);
+              }
+              else {
+                getSweetAlert('Oops...', 'Something went wrong!', 'info');
+              }
+            })
+            .catch(err => {
+              console.log('Error occured', err);
+              getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
         } else {
           getSweetAlert("Oops...", "Something went wrong!", "error");
         }

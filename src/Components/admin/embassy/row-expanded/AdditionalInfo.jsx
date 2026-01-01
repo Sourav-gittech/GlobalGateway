@@ -31,7 +31,7 @@ const AdditionalInfo = ({ embassy }) => {
                 <div className="flex items-start gap-2">
                     <span className="text-slate-500 min-w-[80px]">Provider:</span>
                     <span className="text-slate-300">
-                        {embassy?.providers?.charAt(0)?.toUpperCase() + embassy?.providers?.slice(1)?.toLowerCase() ?? 'N/A'}
+                        {embassy?.providers ? embassy?.providers?.charAt(0)?.toUpperCase() + embassy?.providers?.slice(1)?.toLowerCase() : 'N/A'}
                     </span>
                 </div>
                 <div className="flex items-start gap-2">

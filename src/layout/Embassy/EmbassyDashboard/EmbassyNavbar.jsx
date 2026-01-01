@@ -2,15 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, LogOut, Settings, ChevronDown, Moon, Sun, X } from "lucide-react";
 import { useSidebarStore } from "../../../util/useSidebarStore";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
-
-// Constants
-const NOTIFICATIONS = [
-    { id: 1, title: "New visa application received", time: "5 min ago", unread: true },
-    { id: 2, title: "Application #A45467 approved", time: "1 hour ago", unread: true },
-    { id: 3, title: "Interview scheduled for tomorrow", time: "3 hours ago", unread: false },
-];
+import { fetchNotifications, markNotificationRead } from "../../../Redux/Slice/notificationSlice";
+import getSweetAlert from "../../../util/alert/sweetAlert";
+import { formatDateDDMMYYYYHHMM } from "../../../util/dateFormat/dateFormatConvertion";
 
 export default function EmbassyNavbar({ embassyData, countryDetails }) {
     const navigate = useNavigate();
@@ -19,15 +15,27 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
 
     const [showNotifications, setShowNotifications] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(2);
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
     const notificationRef = useRef(null);
     const userMenuRef = useRef(null);
+    const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
 
     // console.log('Embassy details', embassyData);
     // console.log('Country details', countryDetails);
+    // console.log('Notification List',notificationList);
+
+    // notification 
+    useEffect(() => {
+        dispatch(fetchNotifications({ receiver_type: 'embassy', receiver_country_id: embassyData?.country_id }))
+            .then(res => {
+                // console.log('Response for fetching notification', res)
+            })
+            .catch(() => {
+                getSweetAlert("Oops...", "Something went wrong!", "error");
+            })
+    }, []);
 
     // Detect screen size
     useEffect(() => {
@@ -55,25 +63,6 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Keyboard shortcuts
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            // Escape to close dropdowns
-            if (e.key === "Escape") {
-                setShowNotifications(false);
-                setShowUserMenu(false);
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
-
-    const handleNotificationClick = useCallback((notificationId) => {
-        console.log("Notification clicked:", notificationId);
-        setShowNotifications(false);
-    }, []);
-
     const handleLogout = async () => {
         await dispatch(logoutUser({ user_type: 'embassy', showAlert: true }));
         navigate('/embassy/');
@@ -84,10 +73,18 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
         document.documentElement.classList.toggle("dark");
     }, []);
 
-    const markAllAsRead = useCallback(() => {
-        setUnreadCount(0);
-        console.log("Marked all notifications as read");
-    }, []);
+    const markAllAsRead = (receiver_type, receiver_id) => {
+        dispatch(markNotificationRead({ id: null, receiver_type, receiver_id }))
+            .then(res => {
+                // console.log('Response for updating data', res);
+                setShowNotifications(false);
+                dispatch(fetchNotifications({ receiver_type: 'embassy', receiver_country_id: embassyData?.country_id }))
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    };
 
     return (
         <header
@@ -129,9 +126,9 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                             title="Notifications"
                         >
                             <Bell size={18} />
-                            {unreadCount > 0 && (
+                            {notificationList?.length > 0 && (
                                 <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-blue-600 text-white text-xs font-semibold rounded-full flex items-center justify-center">
-                                    {unreadCount}
+                                    {notificationList?.length}
                                 </span>
                             )}
                         </button>
@@ -141,9 +138,9 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                             <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
                                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                                     <h3 className="text-gray-900 font-semibold text-sm">Notifications</h3>
-                                    {unreadCount > 0 && (
+                                    {notificationList?.length > 0 && (
                                         <button
-                                            onClick={markAllAsRead}
+                                            onClick={() => markAllAsRead('embassy', embassyData?.country_id)}
                                             className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
                                         >
                                             Mark all read
@@ -151,27 +148,26 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                     )}
                                 </div>
                                 <div className="max-h-96 overflow-y-auto">
-                                    {NOTIFICATIONS.map((notification) => (
-                                        <button
-                                            key={notification.id}
-                                            onClick={() => handleNotificationClick(notification.id)}
-                                            className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${notification.unread ? "bg-blue-50" : ""
+                                    {notificationList?.slice(0, 3)?.map((notification) => (
+                                        <div
+                                            key={notification?.id}
+                                            className={`w-full p-4 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${!notification?.mark_read ? "bg-blue-50" : ""
                                                 }`}
                                         >
                                             <div className="flex items-start gap-3">
-                                                {notification.unread && (
+                                                {!notification?.mark_read && (
                                                     <span className="w-2 h-2 bg-blue-600 rounded-full mt-1.5 flex-shrink-0" />
                                                 )}
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-gray-900 text-sm font-medium truncate">
-                                                        {notification.title}
+                                                        {notification?.title}
                                                     </p>
                                                     <p className="text-gray-500 text-xs mt-1">
-                                                        {notification.time}
+                                                        {formatDateDDMMYYYYHHMM(notification?.created_at)}
                                                     </p>
                                                 </div>
                                             </div>
-                                        </button>
+                                        </div>
                                     ))}
                                 </div>
                                 <div className="p-3 border-t border-gray-200">
@@ -180,7 +176,7 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                             navigate("/embassy/dashboard/notifications");
                                             setShowNotifications(false);
                                         }}
-                                        className="w-full text-center text-sm text-blue-600 hover:text-blue-700 transition-colors"
+                                        className="w-full text-center text-sm text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
                                     >
                                         View all notifications
                                     </button>

@@ -19,7 +19,7 @@ const ApplicationStatus = ({applicationStatusData}) => {
                             dataKey="value"
                             style={{ fontSize: '12px', fontWeight: '700' }}
                         >
-                            {applicationStatusData.map((entry, index) => (
+                            {applicationStatusData?.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} stroke="#fff" strokeWidth={2} />
                             ))}
                         </Pie>
@@ -31,7 +31,7 @@ const ApplicationStatus = ({applicationStatusData}) => {
                 </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-1 gap-2.5 mt-4">
-                {applicationStatusData.map((item, idx) => (
+                {applicationStatusData?.map((item, idx) => (
                     <div
                         key={idx}
                         className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-all"

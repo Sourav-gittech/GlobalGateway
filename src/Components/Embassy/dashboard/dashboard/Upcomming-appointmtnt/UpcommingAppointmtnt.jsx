@@ -10,7 +10,7 @@ const UpcommingAppointmtnt = ({ upcomingAppointments }) => {
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Upcoming Interviews</h2>
                 <button
-                    onClick={() => navigate("/embassy/dashboard/appointments")}
+                    onClick={() => navigate("/embassy/dashboard/applications")}
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
                 >
                     View All

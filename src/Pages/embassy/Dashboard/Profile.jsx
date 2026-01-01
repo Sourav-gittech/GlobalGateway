@@ -15,6 +15,7 @@ import { getMonthlyChange } from "../../../util/embassy-stats/calcMonthlyChange"
 import hotToast from "../../../util/alert/hot-toast";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { fetchEmbassyById, updateEmbassyById } from "../../../Redux/Slice/embassySlice";
+import { useCountryVisas } from "../../../tanstack/query/getCountryVisas";
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +32,17 @@ export default function Profile() {
 
   const totalChange = getMonthlyChange(allStats);
   const processingChange = getMonthlyChange(processingStats);
+
+   const { data, isLoading, isError } = useCountryVisas(embassyData?.country_id);
+  
+    // Map all visa types dynamically
+    const visaWithDays = data?.visas?.map(visa => ({
+      type: visa.type,
+      days: Number(visa.days) || 0,
+    }));
+  
+    const totalProcessingTime = visaWithDays?.reduce((sum, visa) => sum + visa.days, 0);
+    const avgProcessingTime = Number(totalProcessingTime / data?.visas?.length)?.toFixed(0);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -130,8 +142,8 @@ export default function Profile() {
     {
       icon: Clock,
       label: "Average Processing Time",
-      value: "15 days",
-      change: "-3 days",
+      value: avgProcessingTime+" days",
+      change: "5 days",
       changeType: "positive",
       bgColor: "bg-green-50",
       iconColor: "bg-green-100 text-green-600",
