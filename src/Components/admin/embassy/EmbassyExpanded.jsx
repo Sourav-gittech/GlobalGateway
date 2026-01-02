@@ -1,8 +1,9 @@
 import React from 'react'
 import { Building2, FileText } from 'lucide-react';
 import AdditionalInfo from './row-expanded/AdditionalInfo';
-import ContactWithWorkingHours from './row-expanded/ContactWithWorkingHours';
+import ContactInfo from './row-expanded/ContactInfo';
 import NewCountrySection from './row-expanded/NewCountrySection';
+import GeneralInfo from './row-expanded/GeneralInfo';
 
 const EmbassyExpanded = ({ embassy }) => {
 
@@ -25,12 +26,15 @@ const EmbassyExpanded = ({ embassy }) => {
                             Embassy Details
                         </h4>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                             {/* Additional Information Combined */}
-                            <AdditionalInfo embassy={embassy} />
+                            <GeneralInfo embassy={embassy} />
 
                             {/* Contact & Working Hours */}
-                            <ContactWithWorkingHours embassy={embassy} />
+                            <ContactInfo embassy={embassy} />
+                            
+                            {/* Additional Information */}
+                            <AdditionalInfo embassy={embassy} />
                         </div>
 
                         {/* Country Setup Data - Only for New Countries */}
