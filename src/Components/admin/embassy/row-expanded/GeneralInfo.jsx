@@ -1,6 +1,5 @@
 import React from 'react'
 import { Mail } from 'lucide-react'
-import { formatDateTimeMeridian } from '../../../../util/dateFormat/dateFormatConvertion'
 
 const GeneralInfo = ({ embassy }) => {
 

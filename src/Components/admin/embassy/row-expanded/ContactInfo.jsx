@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clock, PhoneCall } from 'lucide-react'
+import { PhoneCall } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const ContactInfo = ({ embassy }) => {
