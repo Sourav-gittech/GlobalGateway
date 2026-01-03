@@ -15,7 +15,6 @@ const EmbassyExpanded = ({ embassy }) => {
                         {/* <span className='text-center'> */}
                         <FileText className='mx-auto h-10 w-10' />
                         <p className='pt-2'>Application under processing</p>
-                        {/* </span> */}
                     </div>
                 </td>
             ) : (

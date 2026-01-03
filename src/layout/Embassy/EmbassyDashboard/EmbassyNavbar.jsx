@@ -160,7 +160,10 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                                 )}
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-gray-900 text-sm font-medium truncate">
-                                                        {notification?.title}
+                                                        <>
+                                                            {notification?.title}
+                                                            {notification?.application_id ? notification?.application_id?.slice(0, 16) + '######' : ''}
+                                                        </>
                                                     </p>
                                                     <p className="text-gray-500 text-xs mt-1">
                                                         {formatDateDDMMYYYYHHMM(notification?.created_at)}

@@ -89,7 +89,7 @@ export default function PaymentStatus() {
 
     const notification_obj = {
         application_id: personalInfoData?.application_id,
-        title: "New application received with application i'd",
+        title: "New application received with application i'd ",
         receiver_type: 'embassy',
         receiver_country_id: country_id,
         mark_read: false
