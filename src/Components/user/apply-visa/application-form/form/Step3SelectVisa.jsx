@@ -140,7 +140,7 @@ export default function Step3VisaType({ onNext, onBack, countryWiseVisaDetails, 
         const choosedVisaDetails = countryWiseVisaDetails.find(visa => (visa?.visa?.visa_type == value));
         // console.log(choosedVisaDetails);
 
-        setSelectedVisaId(choosedVisaDetails?.visa?.id);
+        setSelectedVisaId(choosedVisaDetails?.id);
         setVisaValidity(choosedVisaDetails?.visa_validity);
         setVisaEntryType(choosedVisaDetails?.entry_type);
 

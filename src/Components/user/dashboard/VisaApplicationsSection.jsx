@@ -206,7 +206,7 @@ const VisaApplicationsSection = ({ visaApplications, getStatusColor, getStatusIc
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto bg-gray-50 p-6">
+                        <div className="flex-1 overflow-y-auto bg-gray-50 p-6 glass-scrollbar">
                             <ApproveLetter
                                 ref={letterRef}
                                 visa={selectedVisaForLetter}

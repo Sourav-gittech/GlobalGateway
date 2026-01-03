@@ -78,7 +78,7 @@ const schema = yup.object().shape({
 });
 
 // Custom Dropdown Component
-const CustomSelect = ({ label, icon: Icon, options, value, onChange, error, touched, required, placeholder }) => {
+const CustomSelect = ({ label, icon: Icon, options, value, onChange, error,onBlur, touched, required, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -87,7 +87,6 @@ const CustomSelect = ({ label, icon: Icon, options, value, onChange, error, touc
   return (
     <div className="space-y-1.5">
       <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-2">
-        <Icon size={16} className="text-gray-500" />
         {label}
         {required && <span className="text-red-500">*</span>}
       </label>
@@ -397,13 +396,14 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
             <Controller
               name="gender"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field }) => (
                 <CustomSelect
                   label="Gender"
                   icon={Users}
                   options={genderOptions}
-                  value={value}
-                  onChange={onChange}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                   error={errors.gender?.message}
                   touched={touchedFields.gender}
                   required
@@ -415,13 +415,14 @@ export default function Step1PersonalInfo({ onNext, onApplicationCreated, countr
             <Controller
               name="maritalStatus"
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field }) => (
                 <CustomSelect
                   label="Marital Status"
                   icon={Heart}
                   options={maritalStatusOptions}
-                  value={value}
-                  onChange={onChange}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
                   error={errors.maritalStatus?.message}
                   touched={touchedFields.maritalStatus}
                   required

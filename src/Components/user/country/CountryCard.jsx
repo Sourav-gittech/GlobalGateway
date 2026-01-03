@@ -30,7 +30,7 @@ const CountryCard = ({ countryId, countryName, countryDescription }) => {
                             <motion.img
                                 src={countryFlag}
                                 alt={`${countryName} flag`}
-                                className="rounded-full border-4 border-white w-24 h-24 md:w-32 md:h-32 object-cover"
+                                className="rounded-full border-1 border-black w-24 h-24 md:w-32 md:h-32 object-cover"
                                 whileHover={{ rotate: 360 }}
                                 transition={{ duration: 0.6, ease: "linear" }}
                             />

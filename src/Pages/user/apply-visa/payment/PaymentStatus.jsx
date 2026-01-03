@@ -12,6 +12,7 @@ import { saveStepPayment, saveStepProgress } from "../../../../Redux/Slice/appli
 import getSweetAlert from "../../../../util/alert/sweetAlert";
 import { addActivity } from "../../../../Redux/Slice/activitySlice";
 import { addNotification } from "../../../../Redux/Slice/notificationSlice";
+import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
 
 const LottieAnimation = ({ animationData, isSuccess }) => {
     if (!animationData) return null;
@@ -91,7 +92,7 @@ export default function PaymentStatus() {
         application_id: personalInfoData?.application_id,
         title: "New application received with application i'd ",
         receiver_type: 'embassy',
-        receiver_country_id: country_id,
+        receiver_country_id: decodeBase64Url(country_id),
         mark_read: false
     }
 
@@ -136,7 +137,7 @@ export default function PaymentStatus() {
 
                                                                 dispatch(addNotification(notification_obj))
                                                                     .then(res => {
-                                                                        // console.log('Response for adding notification', res);
+                                                                        console.log('Response for adding notification', res);
 
                                                                         if (res.meta.requestStatus === "fulfilled") {
                                                                             setIsLottieTransitioning(true);

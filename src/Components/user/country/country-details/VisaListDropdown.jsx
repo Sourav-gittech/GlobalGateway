@@ -12,7 +12,7 @@ const VisaListDropdown = ({ availableVisa = [] }) => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
                 <button
                     onClick={() => setOpen(!open)}
-                    className="w-full flex justify-between items-center"
+                    className="w-full flex justify-between items-center cursor-pointer"
                 >
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow">

@@ -25,8 +25,8 @@ const PaymentReviewDropdown = ({ personalInfo, paymentMethod, visaData, visaSpec
                         <Icon size={20} className="text-cyan-700" />
                     </div>
                     <div className="text-left">
-                        <h3 className="font-bold text-gray-900 text-sm md:text-base">{title}</h3>
-                        <p className="text-xs text-gray-500 mt-0.5">{count} fields</p>
+                        <h3 className="font-bold text-gray-900 text-sm md:text-base">{title ?? 'N/A'}</h3>
+                        <p className="text-xs text-gray-500 mt-0.5">{count ?? 'N/A'} fields</p>
                     </div>
                 </div>
                 {expandedSection === id ? (

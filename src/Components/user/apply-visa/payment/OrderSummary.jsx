@@ -33,11 +33,11 @@ const OrderSummary = ({ onBack, allCharges, visaData, visaSpecification, applica
             <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-2xl p-6 border border-gray-700/50 shadow-xl backdrop-blur-sm">
                 <div className="flex items-start justify-between mb-6">
                     <div>
-                        <h2 className="text-3xl font-bold mb-2">{visaData?.visa_type}</h2>
+                        <h2 className="text-3xl font-bold mb-2">{visaData?.visa_type??'N/A'}</h2>
                         <p className="text-gray-400 text-sm">Standard processing time</p>
                     </div>
                     <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-500/30">
-                        {visaSpecification?.visa_processing_time}
+                        {visaSpecification?.visa_processing_time??'N/A'}
                     </div>
                 </div>
 
@@ -56,13 +56,13 @@ const OrderSummary = ({ onBack, allCharges, visaData, visaSpecification, applica
                 <div className="space-y-3">
                     <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">Application Fee</span>
-                        <span className="font-semibold">₹{Number(application_fees)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span className="font-semibold">₹{Number(application_fees)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })??'N/A'}</span>
                     </div>
                     {
                         allCharges?.map(charge => (
                             <div className="flex justify-between items-center" key={charge?.id}>
                                 <span className="text-gray-400 text-sm">{charge?.charge_type}</span>
-                                <span className="font-semibold">{charge?.amount == '0' ? 'Free' : `₹${Number(charge?.amount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+                                <span className="font-semibold">{charge?.amount == '0' ? 'Free' : `₹${Number(charge?.amount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`??'N/A'}</span>
                             </div>
                         ))
                     }
@@ -70,7 +70,7 @@ const OrderSummary = ({ onBack, allCharges, visaData, visaSpecification, applica
                     <div className="border-t border-gray-700 pt-4 mt-4">
                         <div className="flex justify-between items-center">
                             <span className="text-lg font-semibold">Total Amount</span>
-                            <span className="text-3xl font-bold text-white">₹{Number(total_amount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            <span className="text-3xl font-bold text-white">₹{Number(total_amount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })??'N/A'}</span>
                         </div>
                         <p className="text-xs text-gray-500 mt-2">Amount payable now</p>
                     </div>

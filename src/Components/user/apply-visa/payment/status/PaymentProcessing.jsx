@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Shield, XCircle, Zap } from "lucide-react";
 import Lottie from "lottie-react";
 import processingAnimation from '../../../../../assets/payment/processing.json'
 
 const PaymentProcessing = ({ handleCancelPayment, processingProgress }) => {
+    const [cancelBtn, setCancelBtn] = useState(false);
 
     return (
         <div className="fixed inset-0 w-screen h-screen 
                 bg-gradient-to-b from-gray-900 via-gray-800 to-black
                 flex flex-col items-center justify-center px-4 overflow-hidden font-inter">
-                    
+
             {/* Lottie Animation */}
             <div
                 className="
@@ -50,8 +51,12 @@ const PaymentProcessing = ({ handleCancelPayment, processingProgress }) => {
 
             {/* Cancel Button */}
             <button
-                onClick={handleCancelPayment}
-                className="px-6 py-3 bg-transparent border-2 border-red-500 text-red-400 rounded-xl text-sm font-semibold hover:bg-red-500/10 transition-all duration-200 flex items-center justify-center gap-2 mb-20">
+                onClick={() => {
+                    handleCancelPayment();
+                    setCancelBtn(true);
+                }}
+                disabled={cancelBtn}
+                className={`px-6 py-3 border-2 border-red-500 text-red-400 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 mb-20 ${!cancelBtn?'cursor-pointer bg-transparent hover:bg-red-500/10':'cursor-not-allowed bg-red-500/10'}`}>
                 <XCircle size={20} />
                 Cancel Payment
             </button>

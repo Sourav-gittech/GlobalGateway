@@ -26,9 +26,11 @@ export default function VisaApplicationForm() {
   const { country_id } = useParams();
 
   const countryId = decodeBase64Url(country_id);
-  const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationByUserAndCountry(userAuthData?.id, countryId);
+  const { data: allApplication, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationByUserAndCountry(userAuthData?.id, countryId);
   const { data: countryWiseVisaDetails = [], isLoading: isCountryWiseVisaLoading, isError } = useVisaDetailsByCountryAndVisitor(countryId, userAuthData?.country);
-  const finalAppId = applicationId || application?.id;
+
+  const application = Array.isArray(allApplication) ? allApplication?.filter(app => app?.status == 'pending') : allApplication?.status == "pending" ? allApplication : null;
+  const finalAppId = applicationId || application?.id || application?.[0]?.id;
   const { data: applicationDetails, isLoading: isApplicationDetailsLoading, isError: hasApplicationDetailsError } = useFullApplicationDetailsById(finalAppId);
 
   // Scroll to top whenever step changes
@@ -58,7 +60,12 @@ export default function VisaApplicationForm() {
     }
 
     if (application && application.status === "pending" && !application?.is_completed) {
-      setStep(Number.parseInt(application?.current_step));
+      setStep(Number.parseInt(application?.[0]?.current_step || application?.current_step));
+      stepSetOnce.current = true;
+    }
+
+    if (application?.length > 0 && application?.[0]?.status === "pending" && !application?.[0]?.is_completed) {
+      setStep(Number.parseInt(application?.[0]?.current_step || application?.current_step));
       stepSetOnce.current = true;
     }
   }, [application]);
@@ -67,11 +74,14 @@ export default function VisaApplicationForm() {
   const prev = () => setStep((s) => Math.max(1, s - 1));
   const goToStep = (targetStep) => setStep(targetStep);
 
+  // console.log('All applications', allApplication);
   // console.log('Pending applications', application);
   // console.log('Application Id',finalAppId);
   // console.log('Logged in user details', userAuthData);
   // console.log('Current form steps is', step);
   // console.log('Visa types', countryWiseVisaDetails);
+  // console.log('Application details',applicationDetails);
+
 
 
   if (isuserLoading && isApplicationLoading) {

@@ -78,13 +78,13 @@ const PaymentFailed = ({ handleRetryPayment, currentDate, totalAmount }) => {
                     <div className="flex flex-col sm:flex-row gap-4 mb-8">
                         <button
                             onClick={handleRetryPayment}
-                            className="flex-1 px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-bold text-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center gap-2"
+                            className="flex-1 px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-bold text-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <RefreshCw size={20} />
                             Retry Payment
                         </button>
                         <Link to="/"
-                            className="flex-1 px-6 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-bold text-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2"
+                            className="flex-1 px-6 py-4 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-bold text-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <Home size={20} />
                             Go to Home
