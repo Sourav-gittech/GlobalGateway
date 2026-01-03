@@ -65,6 +65,7 @@ import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup.jsx";
 import VisaPolicyManage from "../Pages/embassy/dashboard/VisaPolicyManage.jsx";
 import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
 import EmbassyManage from "../Pages/admin/ManageEmbassy.jsx";
+import ViewApplications from "../Pages/admin/ViewApplications.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -124,6 +125,7 @@ const Routing = () => {
             <Route path="contact" element={<ContactMessages />} />
             <Route path="country" element={<CountryManagement />} />
             <Route path="embassyManage" element={<EmbassyManage />} />
+            <Route path="viewApplications" element={<ViewApplications />} />
             <Route path="courseManage" element={<CourseManage />} />
             <Route path="admin" element={<AddAdmin />} />
             <Route path="visaManage" element={<VisaManage />} />

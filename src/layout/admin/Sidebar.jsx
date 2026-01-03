@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Globe, Library, Loader2, UserRoundCog } from "lucide-react";
+import { Home, Users, CreditCard, Settings, Bell, Eye, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Globe, Library, Loader2, UserRoundCog } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -109,6 +109,7 @@ export default function Sidebar({ adminData }) {
     },
     { to: "/admin/dashboard/admin", label: "Manage Admin", icon: UserRoundCog },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Globe },
+     { to: "/admin/dashboard/viewApplications", label: "View Applications", icon: Eye },
     { to: "/admin/dashboard/visaManage", label: "Manage Visa", icon: IdCard },
     { to: "/admin/dashboard/embassyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
