@@ -4,6 +4,7 @@ import VisaStats from '../../Components/admin/visa/VisaStats';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllVisa } from '../../Redux/Slice/visaSlice';
 import VisaTable from '../../Components/admin/visa/VisaTable';
+import getSweetAlert from '../../util/alert/sweetAlert';
 
 const ManageVisa = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const ManageVisa = () => {
       })
       .catch(err => {
         console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
   }, [dispatch]);
 

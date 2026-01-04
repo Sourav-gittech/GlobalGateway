@@ -6,9 +6,7 @@ const getSweetAlert = (alertTitle, alertText, alertIcon) => {
     html: alertText,
     icon: alertIcon,
     background: "rgba(255, 255, 255, 0.06)",
-    backdrop: `
-      rgba(0, 0, 0, 0.1)
-      blur(10px)`,
+    backdrop: ` rgba(0, 0, 0, 0.1) blur(10px)`,
     color: "#fff",
     showConfirmButton: true,
     confirmButtonColor: "red",

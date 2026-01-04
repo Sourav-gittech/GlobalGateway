@@ -259,7 +259,7 @@ export default function AdditionalPaymentManagement() {
               </div>
 
               {/* Scrollable Charges List */}
-              <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500">
+              <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
                 {charges.length === 0 ? (
                   <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
                     <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
