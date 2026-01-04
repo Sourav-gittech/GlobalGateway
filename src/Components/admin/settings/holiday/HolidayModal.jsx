@@ -5,10 +5,12 @@ import getSweetAlert from '../../../../util/alert/sweetAlert'
 import { useDispatch } from 'react-redux'
 import { addHoliday, fetchHolidays } from '../../../../Redux/Slice/holidaySlice'
 import hotToast from '../../../../util/alert/hot-toast'
+import { addNotification } from '../../../../Redux/Slice/notificationSlice'
 
 const pad2 = (num) => String(num).padStart(2, "0")
+const unpad2 = (num) => String(num).replace(/^0+/, "") || "0";
 
-const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentMonth, setCurrentMonth }) => {
+const HolidayModal = ({ showModal, setShowModal, holidays, currentMonth, setCurrentMonth, uniqueCountryIds, monthNames }) => {
     const dispatch = useDispatch();
     const [isAdding, setIsAdding] = useState(false)
 
@@ -20,11 +22,7 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
     const selectedMonth = watch("month")
     const selectedDay = watch("day")
 
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     const holidaySet = useMemo(() => {
         const set = new Set()
@@ -107,9 +105,17 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
             setIsAdding(true)
             await new Promise(res => setTimeout(res, 500))
 
+            const notification_obj = {
+                application_id: null,
+                title: `New holiday applicable on ${data.day},${monthNames[unpad2(data.month)]?.slice(0, 3)} for celebration of ${data.description}`,
+                receiver_type: 'embassy',
+                receiver_country_id: uniqueCountryIds,
+                mark_read: false
+            }
+
             const holidayObj = {
                 date: `{month:${data.month},day:${data.day}}`,
-                event_name: data.description,
+                event_name: data.description?.charAt(0)?.toUpperCase() + data.description?.slice(1)?.toLowerCase(),
                 status: true
             }
             // console.log('Holiday object', holidayObj);
@@ -119,10 +125,25 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
                     // console.log('Response for adding new holiday', res);
 
                     if (res.meta.requestStatus === "fulfilled") {
-                        reset();
-                        setShowModal(false);
-                        hotToast("Holiday added successfully", "success");
-                        dispatch(fetchHolidays());
+
+                        dispatch(addNotification(notification_obj))
+                            .then(res => {
+                                // console.log('Response for adding notification', res);
+
+                                if (res?.meta?.requestStatus == "fulfilled") {
+                                    setShowModal(false);
+                                    reset();
+                                    hotToast("Holiday added successfully", "success");
+                                    dispatch(fetchHolidays());
+                                }
+                                else {
+                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                }
+                            })
+                            .catch(err => {
+                                console.log('Error occured', err);
+                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                            })
                     }
                     else {
                         getSweetAlert('Oops...', res.payload, 'info');
@@ -137,6 +158,11 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
         } finally {
             setIsAdding(false)
         }
+    }
+
+    const closeModal = () => {
+        reset();
+        setShowModal(false)
     }
 
     const Modal = ({ isOpen, children }) => {
@@ -156,7 +182,7 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
             <div className="flex items-center justify-between p-4 border-b border-slate-700">
                 <h3 className="text-lg font-semibold text-white">Add Holiday</h3>
                 <button
-                    onClick={() => setShowModal(false)}
+                    onClick={() => closeModal()}
                     className="p-1 hover:bg-slate-700/50 rounded-lg cursor-pointer"
                 >
                     <X className="w-5 h-5 text-slate-400" />
@@ -195,8 +221,7 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
                             const holiday = isDateHoliday(day)
 
                             return (
-                                <button
-                                    key={idx}
+                                <button key={idx}
                                     onClick={() => handleDateSelect(day)}
                                     disabled={!day || holiday}
                                     className={`
@@ -257,9 +282,7 @@ const HolidayModal = ({ showModal, setHolidays, setShowModal, holidays, currentM
 
             {/* Footer */}
             <div className="flex gap-2 p-4 border-t border-slate-700">
-                <button
-                    onClick={() => setShowModal(false)}
-                    disabled={isAdding}
+                <button onClick={() => closeModal()} disabled={isAdding}
                     className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm"
                 >
                     Cancel

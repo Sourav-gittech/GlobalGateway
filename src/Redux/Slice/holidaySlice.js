@@ -62,11 +62,11 @@ export const updateHoliday = createAsyncThunk("holidaysSlice/updateHoliday",
 // delete holiday
 export const deleteHoliday = createAsyncThunk("holidaysSlice/deleteHoliday",
     async (id, { rejectWithValue }) => {
-        console.log('Receive holiday data to delete id', id);
+        // console.log('Receive holiday data to delete id', id);
 
         try {
             const res = await supabase.from("holiday").delete().eq("id", id);
-            console.log('Response for deleting holiday data', res);
+            // console.log('Response for deleting holiday data', res);
 
             if (res?.error) throw res.error;
             return id;

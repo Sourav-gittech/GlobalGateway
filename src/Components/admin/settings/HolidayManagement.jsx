@@ -5,6 +5,7 @@ import HolidayRow from "./holiday/HolidayRow";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHolidays } from "../../../Redux/Slice/holidaySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
+import { fetchAllEmbassy } from "../../../Redux/Slice/embassySlice";
 
 // Settings Section Wrapper Component
 const SettingsSection = ({ title, description, icon: Icon, children }) => (
@@ -22,13 +23,32 @@ const SettingsSection = ({ title, description, icon: Icon, children }) => (
 
 export default function HolidayManagement() {
   const dispatch = useDispatch();
-  const [holidays, setHolidays] = useState([]);
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [newHoliday, setNewHoliday] = useState({ month: null, day: null, description: "" });
-  const [isLoading, setIsLoading] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { isHolidayLoading, holidayData, holidayError } = useSelector(state => state.holiday);
+  const { isEmbassyLoading, allEmbassyData: embassyData, hasEmbassyerror } = useSelector(state => state?.embassy);
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]
+
+  const countryIds = embassyData?.map(item => item.country_id) || [];
+  const filteredCountryIds = countryIds?.filter(country => country != null);
+  const uniqueCountryIds = [...new Set(filteredCountryIds)];
+
+  useEffect(() => {
+    dispatch(fetchAllEmbassy())
+      .then(res => {
+        // console.log('Response for fetching all embassy', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, []);
 
   useEffect(() => {
     dispatch(fetchHolidays())
@@ -41,26 +61,6 @@ export default function HolidayManagement() {
       })
   }, []);
 
-  const fetchHolidays1 = async () => {
-    try {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      // Mock data - format: month:MM,day:DD
-      setHolidays([
-        { id: 1, date: "month:1,day:12", description: "Swami Vivekananda Birthday" },
-        { id: 2, date: "month:1,day:26", description: "Republic Day" },
-        { id: 3, date: "month:3,day:8", description: "Holi" },
-        { id: 4, date: "month:8,day:15", description: "Independence Day" },
-        { id: 5, date: "month:10,day:2", description: "Gandhi Jayanti" }
-      ]);
-    } catch (error) {
-      console.error('Error fetching holidays:', error);
-      getSweetAlert('Error', 'Failed to load holidays', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const openModal = () => {
     setNewHoliday({ month: null, day: null, description: "" });
     setCurrentMonth(new Date());
@@ -68,6 +68,7 @@ export default function HolidayManagement() {
   };
 
   // console.log('Holiday list',holidayData);
+  // console.log('Embassy list',uniqueCountryIds);
 
   return (
     <div className="min-h-screen">
@@ -79,9 +80,8 @@ export default function HolidayManagement() {
         >
           {/* Add Holiday Button */}
           <div className="mb-4">
-            <button
+            <button disabled={isHolidayLoading}
               onClick={openModal}
-              disabled={isLoading}
               className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
             >
               <Plus className="w-4 h-4" />
@@ -114,7 +114,7 @@ export default function HolidayManagement() {
               ) : (
                 <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
                   {holidayData?.map(holiday => (
-                    <HolidayRow key={holiday?.id} holiday={holiday} deletingId={deletingId} />
+                    <HolidayRow key={holiday?.id} holiday={holiday} monthNames={monthNames} uniqueCountryIds={uniqueCountryIds} />
                   ))}
                 </div>
               )}
@@ -123,7 +123,7 @@ export default function HolidayManagement() {
         </SettingsSection>
 
         {/* Modal for Adding Holiday */}
-        <HolidayModal showModal={showModal} newHoliday={newHoliday} setShowModal={setShowModal} holidays={holidayData} setNewHoliday={setNewHoliday} setHolidays={setHolidays} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
+        <HolidayModal showModal={showModal} setShowModal={setShowModal} holidays={holidayData} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} uniqueCountryIds={uniqueCountryIds} monthNames={monthNames} />
 
       </div>
     </div>
