@@ -4,10 +4,7 @@ import getSweetAlert from "../../../util/alert/sweetAlert";
 
 export default function HolidayManagement({ SettingsSection }) {
   const [holidays, setHolidays] = useState([]);
-  const [newHoliday, setNewHoliday] = useState({
-    date: "",
-    description: ""
-  });
+  const [newHoliday, setNewHoliday] = useState({ date: "", description: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -53,11 +50,11 @@ export default function HolidayManagement({ SettingsSection }) {
     try {
       setIsAdding(true);
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const newId = holidays.length > 0 ? Math.max(...holidays.map(h => h.id)) + 1 : 1;
       setHolidays([...holidays, { ...newHoliday, id: newId }]);
       setNewHoliday({ date: "", description: "" });
-      
+
       getSweetAlert('Success', 'Holiday added successfully', 'success');
     } catch (error) {
       console.error('Error adding holiday:', error);
@@ -67,6 +64,8 @@ export default function HolidayManagement({ SettingsSection }) {
     }
   };
 
+  console.log(newHoliday);
+  
   const handleDeleteHoliday = async (id, description) => {
     try {
       const result = await getSweetAlert(
@@ -75,12 +74,12 @@ export default function HolidayManagement({ SettingsSection }) {
         'warning',
         true
       );
-      
+
       if (!result || !result.isConfirmed) return;
 
       setDeletingId(id);
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       setHolidays(holidays.filter(h => h.id !== id));
       getSweetAlert('Deleted', 'Holiday removed successfully', 'success');
     } catch (error) {
@@ -113,7 +112,7 @@ export default function HolidayManagement({ SettingsSection }) {
               className="w-full px-3 py-2 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Holiday Name
@@ -159,7 +158,7 @@ export default function HolidayManagement({ SettingsSection }) {
             </span>
           )}
         </div>
-        
+
         {isLoading && holidays.length === 0 ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
@@ -171,7 +170,7 @@ export default function HolidayManagement({ SettingsSection }) {
           </div>
         ) : (
           /* Fixed height container - shows exactly 3 items, scrolls if more */
-          <div className="h-[234px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500">
+          <div className="h-[234px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
             {holidays
               .sort((a, b) => new Date(a.date) - new Date(b.date))
               .map((holiday) => (

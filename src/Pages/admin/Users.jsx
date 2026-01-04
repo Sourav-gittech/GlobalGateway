@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Search, Filter, Download, Loader2 } from "lucide-react";
+import { Search, Filter, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, toggleUserStatus } from "../../Redux/Slice/userSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";

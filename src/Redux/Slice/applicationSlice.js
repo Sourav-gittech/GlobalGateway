@@ -387,6 +387,22 @@ export const getActiveApplication_specificCountry_specificUser = createAsyncThun
   }
 )
 
+// fetch all applications 
+export const getAllApplications = createAsyncThunk("applicationSlice/getAllApplications",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await supabase.from("applications").select("*").order("created_at", { ascending: false });
+      // console.log('Response for fetching all applications', res);
+
+      if (res.error) return rejectWithValue(res.error.message);
+
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+)
+
 // fetch all applications for specific user
 export const getAllApplication_specificUser = createAsyncThunk("applicationSlice/getAllApplication_specificUser",
   async (user_id, { rejectWithValue }) => {
@@ -394,7 +410,7 @@ export const getAllApplication_specificUser = createAsyncThunk("applicationSlice
 
     try {
       const res = await supabase.from("applications").select("*").eq("user_id", user_id).order("created_at", { ascending: false });
-      // console.log('Response for fetching all applications', res);
+      // console.log('Response for fetching all applications of specific user', res);
 
       if (res.error) return rejectWithValue(res.error.message);
 
@@ -632,6 +648,19 @@ export const applicationSlice = createSlice({
         state.isApplicationError = action.error.message;
       })
 
+      // fetch all applications 
+      .addCase(getAllApplications.pending, (state, action) => {
+        state.isApplicationLoading = true;
+      })
+      .addCase(getAllApplications.fulfilled, (state, action) => {
+        state.isApplicationLoading = false;
+        state.allApplications = action.payload;
+      })
+      .addCase(getAllApplications.rejected, (state, action) => {
+        state.isApplicationLoading = false;
+        state.isApplicationError = action.error.message;
+      })
+     
       // fetch applications per user
       .addCase(getAllApplication_specificUser.pending, (state, action) => {
         state.isApplicationLoading = true;
