@@ -20,8 +20,8 @@ const ApplicationStats = ({stats}) => {
             <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-4 md:p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-slate-400 text-xs md:text-sm mb-1">Pending</p>
-                        <p className="text-2xl md:text-3xl font-bold">{stats.pending}</p>
+                        <p className="text-slate-400 text-xs md:text-sm mb-1">Processing</p>
+                        <p className="text-2xl md:text-3xl font-bold">{stats.processing}</p>
                     </div>
                     <div className="bg-yellow-500/20 p-2 md:p-3 rounded-lg">
                         <svg className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
