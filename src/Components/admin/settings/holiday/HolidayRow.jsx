@@ -91,22 +91,23 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
                 className="flex items-center justify-between gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 hover:bg-slate-700/40 transition-all group"
             >
                 <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">
+                    <p className="text-sm font-medium text-white truncate relative">
                         {holiday?.event_name}
+                        <span className={`absolute text-[8px] mb-5 ml-3 ${holiday?.status?'text-green-400':'text-red-400'}`}>{holiday?.status?'Active':'In-active'}</span>
                     </p>
                     <p className="text-xs text-slate-400 mt-0.5">
                         {formatHolidayDate(holiday?.date)} (Annual)
                     </p>
                 </div>
                 <button
-                    onClick={() => handleUpdateStatusHoliday(holiday?.id)}
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                    title="Block / Unblock"
+                    onClick={() => handleUpdateStatusHoliday(holiday)}
+                    className={`p-1.5 text-slate-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${holiday?.status?'hover:text-red-400 hover:bg-red-500/10':'hover:text-green-400 hover:bg-green-500/10'}`}
+                    title={`${holiday?.status?'Block':'Unblock'}`}
                 >
                     {holiday?.status ? (
-                        <Ban className="w-4 h-4 bg:text-green-400 hover:bg-green-500/10" />
+                        <Ban className="w-4 h-4" />
                     ) : (
-                        <CircleCheckBig className="w-4 h-4 bg:text-green-400 hover:bg-green-500/10" />
+                        <CircleCheckBig className="w-4 h-4" />
                     )}
                 </button>
                 <button
