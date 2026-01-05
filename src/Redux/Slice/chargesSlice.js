@@ -89,7 +89,7 @@ export const chargesSlice = createSlice({
             })
             .addCase(addCharge.fulfilled, (state, action) => {
                 state.isChargesLoading = false;
-                state.allCharges = action.payload;
+                state.allCharges.push(action.payload);
             })
             .addCase(addCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;
@@ -128,7 +128,7 @@ export const chargesSlice = createSlice({
             })
             .addCase(deleteCharge.fulfilled, (state, action) => {
                 state.isChargesLoading = false;
-                state.allCharges = action.payload;
+                // state.allCharges = action.payload;
             })
             .addCase(deleteCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;

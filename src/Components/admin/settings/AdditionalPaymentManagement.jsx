@@ -40,7 +40,6 @@ export default function AdditionalPaymentManagement() {
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
 
   const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
   // Modal states
@@ -51,7 +50,7 @@ export default function AdditionalPaymentManagement() {
   useEffect(() => {
     dispatch(fetchCharges())
       .then(res => {
-        console.log('Response for fetching all charges', res);
+        // console.log('Response for fetching all charges', res);
       })
       .catch(err => {
         console.log('Error occured', err);
@@ -63,28 +62,6 @@ export default function AdditionalPaymentManagement() {
     const changed = JSON.stringify(charges) !== JSON.stringify(originalCharges);
     setHasChanges(changed);
   }, [charges, originalCharges]);
-
-  const fetchPaymentSettings = async () => {
-    try {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const data = [
-        { id: 1, label: 'Service Charge', amount: 2000 },
-        { id: 2, label: 'VFS / Visa Application Center Charge', amount: 1500 },
-        { id: 3, label: 'Travel Insurance Cost', amount: 1200 },
-        { id: 4, label: 'Form Filling Assistance Charge', amount: 0 }
-      ];
-
-      setCharges(data);
-      setOriginalCharges(JSON.parse(JSON.stringify(data)));
-    } catch (error) {
-      console.error('Error fetching payment settings:', error);
-      getSweetAlert('Error', 'Failed to load payment settings', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSave = async () => {
     try {
@@ -114,7 +91,7 @@ export default function AdditionalPaymentManagement() {
 
   const totalAdditional = charges.reduce((sum, charge) => sum + charge.amount, 0);
 
-  console.log('All available charges', allCharges);
+  // console.log('All available charges', allCharges);
 
   if (isChargesLoading) {
     return (
@@ -182,7 +159,7 @@ export default function AdditionalPaymentManagement() {
                   </div>
                 ) : (
                   allCharges?.map(charge => (
-                    <PaymentRow key={charge.id} charges={charges} charge={charge} setCharges={setCharges} editingId={editingId} isSaving={isSaving} deletingId={deletingId} />
+                    <PaymentRow key={charge.id} charges={charges} charge={charge} setCharges={setCharges} editingId={editingId} isSaving={isSaving} />
                   ))
                 )}
               </div>
@@ -241,7 +218,7 @@ export default function AdditionalPaymentManagement() {
         </SettingsSection>
 
         {/* Add Charge Modal */}
-        <PaymentModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} newCharge={newCharge} setNewCharge={setNewCharge} isAdding={isAdding} setIsAdding={setIsAdding} charges={charges} setCharges={setCharges} getSweetAlert={getSweetAlert} />
+        <PaymentModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} charges={charges} />
 
       </div>
     </div>

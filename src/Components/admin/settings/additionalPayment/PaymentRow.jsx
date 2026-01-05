@@ -1,31 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
+import getSweetAlert from '../../../../util/alert/sweetAlert';
+import { useDispatch } from 'react-redux';
+import { deleteCharge, fetchCharges } from '../../../../Redux/Slice/chargesSlice';
+import hotToast from '../../../../util/alert/hot-toast';
 
-const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving, deletingId }) => {
+const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving }) => {
 
-    const handleDeleteCharge = async (id, label) => {
+    const dispatch = useDispatch();
+
+    const handleDeleteCharge = async (id) => {
         try {
-            const result = await getSweetAlert(
-                'Delete Charge?',
-                `Remove "${label}" from payment settings?`,
-                'warning',
-                true
-            );
+            dispatch(deleteCharge(id))
+                .then(res => {
+                    // console.log('Response for adding charges', res);
 
-            if (!result || !result.isConfirmed) return;
-
-            setDeletingId(id);
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            setCharges(charges.filter(c => c.id !== id));
-            getSweetAlert('Deleted', 'Charge removed successfully', 'success');
+                    if (res.meta.requestStatus === "fulfilled") {
+                        hotToast("Charge deleted successfully", "success");
+                        dispatch(fetchCharges());
+                    }
+                    else {
+                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.log('Error occured', err);
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                })
         } catch (error) {
             console.error('Error deleting charge:', error);
             getSweetAlert('Error', 'Failed to delete charge', 'error');
-        } finally {
-            setDeletingId(null);
         }
-    };
+    }
 
     const handleAmountChange = (id, value) => {
         if (value === '' || value === null || value === undefined) {
@@ -52,7 +58,7 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving, deleting
         <div className="flex items-center gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 transition-all group">
 
             <div className="flex-1 min-w-0">
-                {editingId === charge?.id ? (
+                {editingId == charge?.id ? (
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
@@ -102,10 +108,7 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving, deleting
                 <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
                     ₹
                 </span>
-                <input
-                    type="number"
-                    min="0"
-                    step="1"
+                <input type="number" min="0" step="1"
                     value={charge?.amount || ''}
                     onChange={(e) => handleAmountChange(charge?.id, e.target.value)}
                     onBlur={(e) => {
@@ -115,7 +118,7 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving, deleting
                     placeholder="0"
                     className="w-full pl-6 pr-2 py-1.5 bg-slate-700/50 border border-slate-600/50 rounded text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm disabled:opacity-50"
                 />
-                {charge?.amount === 0 && (
+                {charge?.amount == 0 && (
                     <span className="absolute -top-1 -right-1 text-[10px] font-semibold text-green-400 bg-green-500/20 border border-green-500/30 px-1.5 py-0.5 rounded">
                         Free
                     </span>
@@ -124,16 +127,11 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving, deleting
 
             {/* Delete Button */}
             <button
-                onClick={() => handleDeleteCharge(charge?.id, charge?.charge_type)}
-                disabled={deletingId === charge?.id || editingId === charge?.id}
+                onClick={() => handleDeleteCharge(charge?.id)}
                 className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
                 title="Delete"
             >
-                {deletingId === charge?.id ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                    <Trash2 className="w-4 h-4" />
-                )}
+                <Trash2 className="w-4 h-4" />
             </button>
         </div>
     )
