@@ -10,7 +10,6 @@ import ConfirmBlockUnblockAlert from '../common/alerts/ConfirmBlockUnblockAlert'
 import { createPortal } from 'react-dom';
 
 const EmbassyRow = ({ embassy, expandedEmbassies, setExpandedEmbassies, setSelectedDocument }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setstatus] = useState(null);
     const [currentEmbassy, setCurrentEmbassy] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
