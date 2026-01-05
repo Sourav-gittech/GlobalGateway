@@ -30,12 +30,12 @@ export default function Navbar({ adminData }) {
   useEffect(() => {
     dispatch(fetchNotifications({ receiver_type: 'admin', receiver_country_id: null }))
       .then(res => {
-        // console.log('Response for fetching notification', res)
+        // console.log('Response for fetching notification for admin', res)
       })
       .catch(() => {
         getSweetAlert("Oops...", "Something went wrong!", "error");
       })
-  }, []);
+  }, [dispatch]);
 
   // Detect screen size
   useEffect(() => {

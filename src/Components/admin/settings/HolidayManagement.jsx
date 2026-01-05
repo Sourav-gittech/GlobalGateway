@@ -35,9 +35,9 @@ export default function HolidayManagement() {
     "July", "August", "September", "October", "November", "December"
   ]
 
-  const countryIds = embassyData?.map(item => item.country_id) || [];
-  const filteredCountryIds = countryIds?.filter(country => country != null);
-  const uniqueCountryIds = [...new Set(filteredCountryIds)];
+  const filteredCountryIds = embassyData?.filter(embassy => embassy != null && embassy.is_blocked == false && embassy.is_approved == 'fulfilled');
+  const countryIds = filteredCountryIds?.map(item => item.country_id) || [];
+  const uniqueCountryIds = [...new Set(countryIds)];
 
   useEffect(() => {
     dispatch(fetchAllEmbassy())

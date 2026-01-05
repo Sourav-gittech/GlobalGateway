@@ -45,11 +45,11 @@ export const addHoliday = createAsyncThunk("holidaysSlice/addHoliday",
 // update holiday
 export const updateHoliday = createAsyncThunk("holidaysSlice/updateHoliday",
     async ({ id, updatedData }, { rejectWithValue }) => {
-        console.log('Receive holiday data to update of id', id, ' with data', updatedData);
+        // console.log('Receive holiday data to update of id', id, ' with data', updatedData);
 
         try {
             const res = await supabase.from("holiday").update(updatedData).eq("id", id).select().single();
-            console.log('Response for updating holiday data', res);
+            // console.log('Response for updating holiday data', res);
 
             if (res?.error) throw res.error;
             return res.data;

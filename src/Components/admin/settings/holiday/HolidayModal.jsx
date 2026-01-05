@@ -115,7 +115,7 @@ const HolidayModal = ({ showModal, setShowModal, holidays, currentMonth, setCurr
 
             const holidayObj = {
                 date: `{month:${data.month},day:${data.day}}`,
-                event_name: data.description?.charAt(0)?.toUpperCase() + data.description?.slice(1)?.toLowerCase(),
+                event_name: data.description?.split(" ")?.map(word => word?.charAt(0)?.toUpperCase() + word?.slice(1)?.toLowerCase())?.join(" "),
                 status: true
             }
             // console.log('Holiday object', holidayObj);

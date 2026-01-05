@@ -44,6 +44,10 @@ export const fetchNotifications = createAsyncThunk("notificationSlice/fetchNotif
         try {
             let query = supabase.from("notifications").select("*").eq("receiver_type", receiver_type).eq("mark_read", false).order("created_at", { ascending: false });
 
+            if (receiver_type === "admin") {
+                query = query.is("receiver_country_id", null);
+            }
+
             if (receiver_country_id != null) {
                 query = query.eq("receiver_country_id", receiver_country_id);
             }
@@ -107,7 +111,7 @@ export const notificationSlice = createSlice({
             })
             .addCase(addNotification.fulfilled, (state, action) => {
                 state.isNotificationLoading = false;
-                state.notificationList = action.payload;
+                // state.notificationList = action.payload;
             })
             .addCase(addNotification.rejected, (state, action) => {
                 state.isNotificationLoading = false;
@@ -128,14 +132,22 @@ export const notificationSlice = createSlice({
             })
 
             // update notification
+            .addCase(markNotificationRead.pending, (state) => {
+                state.isNotificationLoading = true;
+            })
             .addCase(markNotificationRead.fulfilled, (state, action) => {
-                const index = state.notificationList.findIndex(
-                    (n) => n.id === action.payload.id
-                );
-                if (index !== -1) {
-                    state.notificationList[index].mark_read = true;
-                }
-            });
+                state.isNotificationLoading = false;
+                // const index = state.notificationList.findIndex(
+                //     (n) => n.id === action.payload.id
+                // );
+                // if (index !== -1) {
+                //     state.notificationList[index].mark_read = true;
+                // }
+            })
+             .addCase(markNotificationRead.rejected, (state, action) => {
+                state.isNotificationLoading = false;
+                state.hasNotificationError = action.payload;
+            })
     },
 });
 
