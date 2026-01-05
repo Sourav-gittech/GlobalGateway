@@ -1,16 +1,61 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
-import { deleteCharge, fetchCharges } from '../../../../Redux/Slice/chargesSlice';
+import { deleteCharge, fetchCharges, updateCharge } from '../../../../Redux/Slice/chargesSlice';
 import hotToast from '../../../../util/alert/hot-toast';
 import { createPortal } from 'react-dom';
 import ConfirmBlockUnblockAlert from '../../common/alerts/ConfirmBlockUnblockAlert';
+import { useForm } from 'react-hook-form';
 
-const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving }) => {
+const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
     const [currentChargeId, setCurrentChargeId] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
+    const [savingEdit, setSavingEdit] = useState(false);
     const dispatch = useDispatch();
+
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: {
+            charge_type: charge.charge_type,
+            amount: charge.amount,
+        }
+    });
+
+    useEffect(() => {
+        if (editingId === charge.id) {
+            reset({
+                charge_type: charge.charge_type,
+                amount: charge.amount,
+            });
+        }
+    }, [editingId, charge, reset]);
+
+    const onSubmit = async (data) => {
+        setSavingEdit(true);
+
+        dispatch(updateCharge({
+            id: charge.id,
+            updatedData: {
+                charge_type: data.charge_type.trim(),
+                amount: Number(data.amount)
+            }
+        }))
+            .then(res => {
+                console.log('Response for updating charges', res);
+
+                if (res.meta.requestStatus === "fulfilled") {
+                    hotToast("Charge updated successfully", "success");
+                    setEditingId(null);
+                    dispatch(fetchCharges());
+                } else {
+                    getSweetAlert("Error", "Update failed", "error");
+                }
+                setSavingEdit(false);
+            }).catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    }
 
     const handleDeleteCharge = () => {
         try {
@@ -38,27 +83,6 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving }) => {
         }
     }
 
-    const handleAmountChange = (id, value) => {
-        if (value === '' || value === null || value === undefined) {
-            setCharges(charges.map(c => c.id === id ? { ...c, amount: 0 } : c));
-            return;
-        }
-
-        const numValue = parseFloat(value);
-        if (isNaN(numValue) || numValue < 0) return;
-
-        setCharges(charges.map(c => c.id === id ? { ...c, amount: numValue } : c));
-    };
-
-    const handleLabelEdit = (id, newLabel) => {
-        if (!newLabel.trim()) {
-            getSweetAlert('Validation Error', 'Charge name cannot be empty', 'warning');
-            return;
-        }
-        setCharges(charges.map(c => c.id === id ? { ...c, label: newLabel } : c));
-        setEditingId(null);
-    };
-
     const handleCurrentCharge = (id) => {
         setCurrentChargeId(id);
     }
@@ -68,44 +92,46 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving }) => {
             <div className="flex items-center gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 transition-all group">
 
                 <div className="flex-1 min-w-0">
-                    {editingId == charge?.id ? (
-                        <div className="flex items-center gap-2">
+                    {editingId === charge.id ? (
+                        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-2">
                             <input
-                                type="text"
-                                defaultValue={charge?.charge_type}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleLabelEdit(charge.id, e.target.value);
-                                    if (e.key === 'Escape') setEditingId(null);
-                                }}
+                                {...register("charge_type", {
+                                    required: "Charge name is required",
+                                })}
                                 autoFocus
-                                maxLength={100}
-                                className="flex-1 px-2 py-1 bg-slate-700/50 border border-slate-600 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                                disabled={savingEdit || isSaving}
+                                className={`flex-1 px-2 py-1 bg-slate-700/50 border rounded text-white text-sm ${errors.charge_type ? 'border-red-600' : 'border-slate-600'}`}
                             />
-                            <button
-                                onClick={(e) => {
-                                    const input = e.currentTarget.parentElement.querySelector('input');
-                                    handleLabelEdit(charge?.id, input.value);
-                                }}
-                                className="p-1 text-green-400 hover:bg-green-500/10 rounded transition-colors"
-                            >
-                                <Check className="w-4 h-4" />
+
+                            <input
+                                type="number"
+                                {...register("amount", {
+                                    required: "Amount is required",
+                                    min: {
+                                        value: 0,
+                                        message: "Amount must be 0 or more",
+                                    }
+                                })}
+                                disabled={savingEdit || isSaving}
+                                className={`w-24 px-2 py-1 bg-slate-700/50 border rounded text-white text-sm ${errors.amount ? 'border-red-600' : 'border-slate-600'}`}
+                            />
+
+                            <button type="submit" className="p-1 text-green-400 cursor-pointer">
+                                {savingEdit ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check />}
                             </button>
+
                             <button
-                                onClick={() => setEditingId(null)}
-                                className="p-1 text-slate-400 hover:bg-slate-600/50 rounded transition-colors"
-                            >
-                                <X className="w-4 h-4" />
+                                type="button" onClick={() => setEditingId(null)}
+                                className="p-1 text-slate-400 cursor-pointer">
+                                <X className="w-4 h-4 text-red-500" />
                             </button>
-                        </div>
+                        </form>
                     ) : (
-                        <div className="flex items-center gap-2 group/label">
-                            <p className="text-sm font-medium text-white truncate">
-                                {charge?.charge_type}
-                            </p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-white">{charge.charge_type}</p>
                             <button
-                                onClick={() => setEditingId(charge?.id)}
-                                className="p-1 opacity-0 group-hover/label:opacity-100 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-all"
-                                title="Edit name"
+                                onClick={() => setEditingId(charge.id)}
+                                className="p-1 text-slate-400 hover:text-blue-400"
                             >
                                 <Edit2 className="w-3 h-3" />
                             </button>
@@ -114,19 +140,14 @@ const PaymentRow = ({ charges, charge, setCharges, editingId, isSaving }) => {
                 </div>
 
                 {/* Amount Input */}
-                <div className="relative w-32">
+                <div className="relative w-25">
                     <span className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none">
                         ₹
                     </span>
                     <input type="number" min="0" step="1"
                         value={charge?.amount || ''}
-                        onChange={(e) => handleAmountChange(charge?.id, e.target.value)}
-                        onBlur={(e) => {
-                            if (e.target.value === '') handleAmountChange(charge?.id, '0');
-                        }}
-                        disabled={isSaving || editingId === charge?.id}
-                        placeholder="0"
-                        className="w-full pl-6 pr-2 py-1.5 bg-slate-700/50 border border-slate-600/50 rounded text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm disabled:opacity-50"
+                        placeholder="0" disabled
+                        className="w-full pl-6 pr-2 py-1.5 bg-slate-700/50 border border-slate-600/50 rounded text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm disabled:opacity-50 cursor-not-allowed"
                     />
                     {charge?.amount == 0 && (
                         <span className="absolute -top-1 -right-1 text-[10px] font-semibold text-green-400 bg-green-500/20 border border-green-500/30 px-1.5 py-0.5 rounded">

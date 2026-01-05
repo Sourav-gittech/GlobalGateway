@@ -115,7 +115,7 @@ export const chargesSlice = createSlice({
             })
             .addCase(updateCharge.fulfilled, (state, action) => {
                 state.isChargesLoading = false;
-                state.allCharges = action.payload;
+                // state.allCharges = action.payload;
             })
             .addCase(updateCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;
