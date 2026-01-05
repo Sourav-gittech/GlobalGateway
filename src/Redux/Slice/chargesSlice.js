@@ -1,6 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import supabase from "../../util/Supabase/supabase";
 
+// slice to add new charges
+export const addCharge = createAsyncThunk("chargesSlice/addCharge",
+    async (chargeData, { rejectWithValue }) => {
+        // console.log('New Charge details',chargeData);
+
+        try {
+            const res = await supabase.from("charges").insert([chargeData]).select();
+            // console.log('Response for adding new charge', res);
+
+            if (res.error) return rejectWithValue(res.error.message);
+            return res.data[0];
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 // slice to fetch all charges
 export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
     async (_, { rejectWithValue }) => {
@@ -18,16 +35,68 @@ export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
     }
 );
 
+// slice to update charges
+export const updateCharge = createAsyncThunk("chargesSlice/updateCharge",
+    async ({ id, updatedData }, { rejectWithValue }) => {
+        // console.log('Updated Charge details',id, updatedData);
+
+        try {
+            const res = await supabase.from("charges").update(updatedData).eq("id", id).select();
+            // console.log('Response for updating charges', res);
+
+            if (res.error) return rejectWithValue(res.error.message);
+            return res.data[0];
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+// slice to delete charges
+export const deleteCharge = createAsyncThunk("chargesSlice/deleteCharge",
+    async (id, { rejectWithValue }) => {
+        // console.log('Deleted Charge id',id);
+
+        try {
+            const res = await supabase.from("charges").delete().eq("id", id).select();
+            // console.log('Response for deleting charges', res);
+
+            if (res.error) return rejectWithValue(res.error.message);
+            return res.data[0];
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+
+const initialState = {
+    allCharges: [],
+    isChargesLoading: false,
+    hasChargesError: null
+}
+
 export const chargesSlice = createSlice({
     name: "chargesSlice",
-    initialState: {
-        allCharges: [],
-        isChargesLoading: false,
-        hasChargesError: null,
-    },
+    initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
+
+            // add new charges
+            .addCase(addCharge.pending, (state) => {
+                state.isChargesLoading = true;
+            })
+            .addCase(addCharge.fulfilled, (state, action) => {
+                state.isChargesLoading = false;
+                state.allCharges = action.payload;
+            })
+            .addCase(addCharge.rejected, (state, action) => {
+                state.isChargesLoading = false;
+                state.hasChargesError = action.payload;
+            })
+
+            // fetch all charges
             .addCase(fetchCharges.pending, (state) => {
                 state.isChargesLoading = true;
             })
@@ -36,6 +105,32 @@ export const chargesSlice = createSlice({
                 state.allCharges = action.payload;
             })
             .addCase(fetchCharges.rejected, (state, action) => {
+                state.isChargesLoading = false;
+                state.hasChargesError = action.payload;
+            })
+
+            // update charges
+            .addCase(updateCharge.pending, (state) => {
+                state.isChargesLoading = true;
+            })
+            .addCase(updateCharge.fulfilled, (state, action) => {
+                state.isChargesLoading = false;
+                state.allCharges = action.payload;
+            })
+            .addCase(updateCharge.rejected, (state, action) => {
+                state.isChargesLoading = false;
+                state.hasChargesError = action.payload;
+            })
+
+            // delete charges
+            .addCase(deleteCharge.pending, (state) => {
+                state.isChargesLoading = true;
+            })
+            .addCase(deleteCharge.fulfilled, (state, action) => {
+                state.isChargesLoading = false;
+                state.allCharges = action.payload;
+            })
+            .addCase(deleteCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;
                 state.hasChargesError = action.payload;
             });

@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import { DollarSign, Save, RotateCcw, Info, Plus, Loader2 } from "lucide-react";
 import PaymentRow from "./additionalPayment/PaymentRow";
 import PaymentModal from "./additionalPayment/PaymentModal";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCharges } from "../../../Redux/Slice/chargesSlice";
+import getSweetAlert from "../../../util/alert/sweetAlert";
 
 // Mock sweet alert function
-const getSweetAlert = (title, text, icon, showConfirm = false) => {
-  if (showConfirm) {
-    return Promise.resolve({ isConfirmed: window.confirm(`${title}\n${text}`) });
-  }
-  alert(`${title}\n${text}`);
-  return Promise.resolve();
-};
+// const getSweetAlert = (title, text, icon, showConfirm = false) => {
+//   if (showConfirm) {
+//     return Promise.resolve({ isConfirmed: window.confirm(`${title}\n${text}`) });
+//   }
+//   alert(`${title}\n${text}`);
+//   return Promise.resolve();
+// };
 
 // Settings Section Wrapper Component - For Demo Only (use the one from Settings.jsx in production)
 const SettingsSection = ({ title, description, icon: Icon, children }) => (
@@ -29,6 +32,8 @@ const SettingsSection = ({ title, description, icon: Icon, children }) => (
 );
 
 export default function AdditionalPaymentManagement() {
+  const dispatch = useDispatch();
+
   const [charges, setCharges] = useState([]);
   const [originalCharges, setOriginalCharges] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,13 +42,21 @@ export default function AdditionalPaymentManagement() {
   const [editingId, setEditingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
+  const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCharge, setNewCharge] = useState({ label: '', amount: '' });
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    fetchPaymentSettings();
+    dispatch(fetchCharges())
+      .then(res => {
+        console.log('Response for fetching all charges', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
   }, []);
 
   useEffect(() => {
@@ -101,7 +114,9 @@ export default function AdditionalPaymentManagement() {
 
   const totalAdditional = charges.reduce((sum, charge) => sum + charge.amount, 0);
 
-  if (isLoading) {
+  console.log('All available charges', allCharges);
+
+  if (isChargesLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
         <div className="max-w-6xl mx-auto">
@@ -151,22 +166,22 @@ export default function AdditionalPaymentManagement() {
             <div className="flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between mb-3 flex-shrink-0">
                 <h4 className="text-sm font-medium text-slate-300">Payment Charges</h4>
-                {charges.length > 0 && (
+                {allCharges?.length > 0 && (
                   <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-                    {charges.length} {charges.length === 1 ? 'charge' : 'charges'}
+                    {allCharges?.length} {allCharges?.length === 1 ? 'charge' : 'charges'}
                   </span>
                 )}
               </div>
 
               {/* Scrollable Charges List */}
               <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
-                {charges.length === 0 ? (
+                {allCharges?.length === 0 ? (
                   <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
                     <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-400">No charges configured. Add your first charge to get started.</p>
                   </div>
                 ) : (
-                  charges.map(charge => (
+                  allCharges?.map(charge => (
                     <PaymentRow key={charge.id} charges={charges} charge={charge} setCharges={setCharges} editingId={editingId} isSaving={isSaving} deletingId={deletingId} />
                   ))
                 )}
@@ -174,25 +189,25 @@ export default function AdditionalPaymentManagement() {
             </div>
 
             {/* Total Summary - Fixed at Bottom */}
-            {charges.length > 0 && (
+            {allCharges?.length > 0 && (
               <div className="p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg flex-shrink-0 mt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-slate-300">Total Additional Charges</span>
                   <span className="text-xl font-bold text-white">
-                    ₹{totalAdditional.toLocaleString('en-IN')}
+                    ₹{totalAdditional?.toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>
             )}
 
             {/* Action Buttons - Fixed at Bottom */}
-            {charges.length > 0 && (
+            {allCharges?.length > 0 && (
               <div className="space-y-2 flex-shrink-0 mt-4">
                 <div className="flex gap-2">
                   <button
                     onClick={handleSave}
-                    disabled={isSaving || isLoading || !hasChanges}
-                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${hasChanges && !isSaving && !isLoading
+                    disabled={isSaving || isChargesLoading || !hasChanges}
+                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${hasChanges && !isSaving && !isChargesLoading
                       ? 'bg-blue-500 hover:bg-blue-600 text-white'
                       : 'bg-slate-700/50 text-slate-400 cursor-not-allowed'
                       }`}
@@ -202,8 +217,8 @@ export default function AdditionalPaymentManagement() {
                   </button>
                   <button
                     onClick={handleReset}
-                    disabled={isSaving || isLoading || !hasChanges}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${hasChanges && !isSaving && !isLoading
+                    disabled={isSaving || isChargesLoading || !hasChanges}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${hasChanges && !isSaving && !isChargesLoading
                       ? 'bg-slate-700/50 hover:bg-slate-700 text-slate-300'
                       : 'bg-slate-700/30 text-slate-500 cursor-not-allowed'
                       }`}
