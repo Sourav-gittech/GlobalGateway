@@ -107,7 +107,7 @@ const HolidayModal = ({ showModal, setShowModal, holidays, currentMonth, setCurr
 
             const notification_obj = {
                 application_id: null,
-                title: `New holiday applicable on ${data.day},${monthNames[unpad2(data.month)]?.slice(0, 3)} for celebration of ${data.description}`,
+                title: `New holiday applicable on ${data.day},${monthNames[unpad2(data.month) - 1]?.slice(0, 3)} for celebration of ${data.description}`,
                 receiver_type: 'embassy',
                 receiver_country_id: uniqueCountryIds,
                 mark_read: false

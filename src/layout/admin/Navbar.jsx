@@ -35,7 +35,7 @@ export default function Navbar({ adminData }) {
       .catch(() => {
         getSweetAlert("Oops...", "Something went wrong!", "error");
       })
-  }, [dispatch]);
+  }, []);
 
   // Detect screen size
   useEffect(() => {

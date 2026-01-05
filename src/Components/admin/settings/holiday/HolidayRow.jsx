@@ -50,7 +50,7 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
 
             const notification_obj = {
                 application_id: null,
-                title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month)]?.slice(0, 3)} is ${!updatedStatus ? 'cancelled' : 'applied'}`,
+                title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month) - 1]?.slice(0, 3)} is ${!updatedStatus ? 'cancelled' : 'applied'}`,
                 receiver_type: 'embassy',
                 receiver_country_id: uniqueCountryIds,
                 mark_read: false
@@ -86,7 +86,7 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
         } catch (err) {
             console.error(err);
             getSweetAlert("Error", "Failed to update holiday status", "error");
-        } 
+        }
     };
 
 
@@ -95,7 +95,7 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
 
         const notification_obj = {
             application_id: null,
-            title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month)]?.slice(0, 3)} is cancelled`,
+            title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month) - 1]?.slice(0, 3)} is cancelled`,
             receiver_type: 'embassy',
             receiver_country_id: uniqueCountryIds,
             mark_read: false
