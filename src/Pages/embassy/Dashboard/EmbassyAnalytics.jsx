@@ -40,7 +40,7 @@ export default function EmbassyAnalytics() {
   }));
 
   const totalProcessingTime = visaWithDays?.reduce((sum, visa) => sum + visa.days, 0);
-  const avgProcessingTime = Number(totalProcessingTime / data?.visas?.length)?.toFixed(0);
+  const avgProcessingTime = totalProcessingTime > 0 ? Number(totalProcessingTime / data?.visas?.length)?.toFixed(0) : 0;
 
   const { data: totalCountryWiseRevenue, isLoading: countryWiseRevenueLoading, error } = useCountryTransactions(embassyData?.country_id);
 

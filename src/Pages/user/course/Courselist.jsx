@@ -1,16 +1,6 @@
 import React from 'react';
-import { School, Scale, Globe, Hand, BookOpen, FileText } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-
-const iconMap = {
-  School: <School className="w-10 h-10 text-[#FF5252]" />,
-  Language: <Globe className="w-10 h-10 text-[#FF5252]" />,
-  Balance: <Scale className="w-10 h-10 text-[#FF5252]" />,
-  FrontHand: <Hand className="w-10 h-10 text-[#FF5252]" />,
-  BookOpen: <BookOpen className="w-10 h-10 text-[#FF5252]" />,
-  FileText: <FileText className="w-10 h-10 text-[#FF5252]" />,
-};
+import CourseBanner from '../../../Components/user/course/CourseBanner';
+import CourseCard from '../../../Components/user/course/CourseCard';
 
 // Static course data - Replace with your API call later
 export const staticCourses = [
@@ -100,101 +90,25 @@ export const staticCourses = [
   }
 ];
 
-const ArrowIcon = () => (
-  <span className="inline-block ml-2 animate-bounce-x">
-    →
-  </span>
-);
-
 const CourseList = () => {
-  const navigate = useNavigate();
 
- const handleViewCourse = (courseId) => {
-  navigate(`/coaching/course/${courseId}`);
-};
   return (
     <div className="min-h-screen bg-[#f9f9f9]">
       {/* Top Banner */}
-      <div
-        className="relative h-[250px] sm:h-[300px] bg-cover bg-center"
-        style={{ backgroundImage: 'url(/PageBanner.jpg)' }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-70"></div>
-        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center max-w-7xl">
-          <h1 className="text-white font-bold text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] mb-2">
-            Immigration Courses
-          </h1>
-          <nav className="flex items-center space-x-2 text-[#FF5252] mt-1 text-sm sm:text-base">
-            {/* ✅ FIXED SPA NAVIGATION */}
-            <button
-              onClick={() => navigate('/')}
-              className="hover:text-white transition-colors underline-offset-4 hover:underline"
-            >
-              Home
-            </button>
-            <span>›</span>
-            <span>Courses</span>
-          </nav>
-        </div>
-      </div>
+      <CourseBanner />
 
       {/* Course Cards Section */}
       <div className="py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {staticCourses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-                className="w-full bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col relative"
-              >
-                <div className="absolute top-4 right-4 bg-[#FF5252] text-white rounded-[20px] px-3 sm:px-4 py-1 text-xs sm:text-sm font-semibold z-10">
-                  ₹{parseInt(course.price).toLocaleString('en-IN')}
-                </div>
-
-                <div className="h-[180px] sm:h-[200px] w-full overflow-hidden relative">
-                  <img
-                    src={course.img_url}
-                    alt={course.course_name}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-
-                <div className="flex-1 flex flex-col p-4 sm:p-6">
-                  <div className="flex justify-center mb-2 sm:mb-3">
-                    {iconMap[course.icon]}
-                  </div>
-
-                  <h3 className="text-base sm:text-lg font-semibold text-[#2C3E50] text-center mb-2 min-h-[3rem] flex items-center justify-center">
-                    {course.course_name}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[#7f8c8d] text-center mb-4 flex-grow line-clamp-3">
-                    {course.description}
-                  </p>
-
-                  <div className="flex justify-center mt-auto">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleViewCourse(course.id)}
-                      className="flex items-center border border-[#E0E0E0] text-[#666] px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:border-[#FF5252] hover:text-[#FF5252] hover:bg-[rgba(255,82,82,0.04)] transition-all duration-200"
-                    >
-                      View Course
-                      <ArrowIcon />
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
+              <CourseCard key={course.id} index={index} course={course} />
             ))}
           </div>
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes bounce-x {
           0%, 100% {
             transform: translateX(0);

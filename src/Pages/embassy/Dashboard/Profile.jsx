@@ -33,16 +33,16 @@ export default function Profile() {
   const totalChange = getMonthlyChange(allStats);
   const processingChange = getMonthlyChange(processingStats);
 
-   const { data, isLoading, isError } = useCountryVisas(embassyData?.country_id);
-  
-    // Map all visa types dynamically
-    const visaWithDays = data?.visas?.map(visa => ({
-      type: visa.type,
-      days: Number(visa.days) || 0,
-    }));
-  
-    const totalProcessingTime = visaWithDays?.reduce((sum, visa) => sum + visa.days, 0);
-    const avgProcessingTime = Number(totalProcessingTime / data?.visas?.length)?.toFixed(0);
+  const { data, isLoading, isError } = useCountryVisas(embassyData?.country_id);
+
+  // Map all visa types dynamically
+  const visaWithDays = data?.visas?.map(visa => ({
+    type: visa.type,
+    days: Number(visa.days) || 0,
+  }));
+
+  const totalProcessingTime = visaWithDays?.reduce((sum, visa) => sum + visa.days, 0);
+  const avgProcessingTime = totalProcessingTime > 0 ? Number(totalProcessingTime / data?.visas?.length)?.toFixed(0) : 0;
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -142,7 +142,7 @@ export default function Profile() {
     {
       icon: Clock,
       label: "Average Processing Time",
-      value: avgProcessingTime+" days",
+      value: avgProcessingTime + `${avgProcessingTime>1?' days':' day'}`,
       change: "5 days",
       changeType: "positive",
       bgColor: "bg-green-50",
@@ -184,13 +184,7 @@ export default function Profile() {
 
           {isEditing && (
             <>
-              <input
-                type="file"
-                id="coverPhotoInput"
-                accept="image/*"
-                className="hidden"
-                onChange={handleCoverPhotoChange}
-              />
+              <input type="file" id="coverPhotoInput" accept="image/*" className="hidden" onChange={handleCoverPhotoChange} />
               <button
                 onClick={() =>
                   document.getElementById("coverPhotoInput").click()
@@ -224,7 +218,7 @@ export default function Profile() {
           ))}
         </div>
 
-        <AchievementSection  />
+        <AchievementSection />
 
         {/* ---------------- CONTACT CARD ---------------- */}
         <div className="bg-white rounded-xl border shadow-sm overflow-hidden border-gray-200">
@@ -235,12 +229,7 @@ export default function Profile() {
           <div className="p-6 space-y-6">
             {/* FORM (Contact Details) */}
             <form onSubmit={handleSubmit(onSubmit)}>
-              <ContactDetails
-                isEditing={isEditing}
-                register={register}
-                errors={errors}
-                profileData={embassyData}
-              />
+              <ContactDetails isEditing={isEditing} register={register} errors={errors} profileData={embassyData} />
             </form>
 
             {/* READ ONLY */}

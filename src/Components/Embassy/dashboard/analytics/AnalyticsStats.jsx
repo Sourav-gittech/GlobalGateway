@@ -1,7 +1,7 @@
 import React from 'react'
 import { Activity, DollarSign, FileText, TrendingUp, Users } from 'lucide-react'
 
-const AnalyticsStats = ({ totalRevenue, totalApplication, aplicationApprovalStats, avgProcessingTime, totalCountryWiseRevenue, totalApplications }) => {
+const AnalyticsStats = ({ totalApplication, aplicationApprovalStats, avgProcessingTime, totalCountryWiseRevenue, totalApplications }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
@@ -35,7 +35,7 @@ const AnalyticsStats = ({ totalRevenue, totalApplication, aplicationApprovalStat
                 {
                     icon: Activity,
                     title: 'Avg Processing Time',
-                    value: avgProcessingTime + ' days',
+                    value: avgProcessingTime + `${avgProcessingTime>1?' days':' day'}`,
                     change: '+5.1%',
                     subtitle: 'Target: 5 days',
                     bgColor: 'bg-orange-50',

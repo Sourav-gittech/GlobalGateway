@@ -9,7 +9,7 @@ import getSweetAlert from '../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
 
 const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }) => {
-    
+
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
 
@@ -93,8 +93,8 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                     )} */}
                                 </div>
                             </>
-                        ):(
-                             <>
+                        ) : (application?.approval_date ?
+                            <>
                                 <div className="h-12 w-px bg-gray-300 hidden sm:block"></div>
                                 <div>
                                     <p className="text-sm text-gray-600">Approval Date</p>
@@ -102,7 +102,7 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                                         {formatDateTimeMeridianWithoutSecond(application?.approval_date)}
                                     </p>
                                 </div>
-                            </>
+                            </> : null
                         )}
                     </div>
 

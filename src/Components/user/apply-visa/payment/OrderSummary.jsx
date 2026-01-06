@@ -7,7 +7,7 @@ const OrderSummary = ({ onBack, allCharges, visaData, visaSpecification, applica
         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 lg:p-12 flex flex-col lg:overflow-hidden">
             <button
                 onClick={onBack}
-                className=" flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-8 group w-fit"
+                className=" flex items-center gap-2 text-gray-300 hover:text-white transition-colors mb-8 group w-fit cursor-pointer"
             >
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                 <span className="text-sm font-medium">Back to Review</span>

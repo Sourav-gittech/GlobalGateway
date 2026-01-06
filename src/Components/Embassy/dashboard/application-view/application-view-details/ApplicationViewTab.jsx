@@ -13,7 +13,7 @@ const ApplicationViewTab = ({ activeTab, setActiveTab }) => {
     return (
         <div className="border-b border-gray-200 overflow-x-auto">
             <div className="flex">
-                {tabs.map((tab) => {
+                {tabs?.map((tab) => {
                     const Icon = tab.icon;
                     return (
                         <button

@@ -639,7 +639,7 @@ const Cart = () => {
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .line-clamp-2 {
           overflow: hidden;
           display: -webkit-box;

@@ -70,7 +70,7 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
     }
 
     return (
-        <div className="p-6 lg:p-12 flex flex-col bg-white lg:overflow-y-auto">
+        <div className="p-6 lg:p-12 flex flex-col bg-white lg:overflow-y-auto glass-scrollbar">
             <div className="max-w-xl mx-auto w-full flex-1 flex flex-col">
                 <div className="mb-8">
                     <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Payment Details</h1>

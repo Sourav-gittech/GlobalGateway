@@ -19,13 +19,12 @@ const CountryCTA = ({countryId,handleContinue}) => {
                     <span className="text-sm tracking-wide uppercase">Apply for Visa</span>
                 </Link>
 
-                <button
-                    onClick={handleContinue}
-                    className="flex-1 px-6 sm:px-8 py-4 sm:py-5 bg-white border-2 border-gray-200 text-gray-700 font-medium rounded hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center gap-3"
+                <Link to='/course/'
+                    className="flex-1 px-6 sm:px-8 py-4 sm:py-5 bg-white border-2 border-gray-200 text-gray-700 font-medium rounded hover:border-gray-300 hover:bg-gray-50 transition-all hover:scale-[1.02] active:scale-100 flex items-center justify-center gap-3 cursor-pointer"
                 >
                     <ClipboardList className="w-5 h-5 group-hover:rotate-6 transition-transform" />
                     <span className="text-sm tracking-wide uppercase">Check Visa Courses</span>
-                </button>
+                </Link>
             </div>
         </>
     )

@@ -9,12 +9,13 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkLoggedInUser, logoutUser } from '../../Redux/Slice/auth/checkAuthSlice';
+import { Link } from 'react-router-dom';
 
 const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'About Us', to: '/about' },
   { label: 'Countries', to: '/country' },
-  { label: 'Courses', to: 'coaching/course' },
+  { label: 'Courses', to: '/course' },
   { label: 'Get in Touch', to: '/contact' },
 ];
 
@@ -224,9 +225,9 @@ const Navbar = () => {
 
               {/* Cart Icon - Only show when user is logged in */}
               {userAuthData && (
-                <IconButton
+                <Link
                   color="inherit"
-                  // onClick={() => dispatch(openCartDrawer())}
+                  to='/cart'
                   sx={{
                     color: 'white',
                     '&:hover': {
@@ -247,7 +248,7 @@ const Navbar = () => {
                   >
                     <ShoppingCartIcon />
                   </Badge>
-                </IconButton>
+                </Link>
               )}
 
               {userAuthData ? (

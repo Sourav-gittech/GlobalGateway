@@ -24,7 +24,7 @@ import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview";
 import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus";
 import Courselist from "../Pages/user/course/Courselist";
 import CourseDetails from "../Pages/user/course/course-details/CourseDetails";
-import Cart from "../Pages/user/coaching/Cart";
+import Cart from "../Pages/user/cart/Cart";
 
 /* ---------- Auth ---------- */
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
@@ -81,7 +81,10 @@ const Routing = () => {
             <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
             <Route path="/payment-preview" element={<PaymentPreview />} />
             <Route path="/payment-status" element={<PaymentStatus />} />
+
+            {/* Course */}
             <Route path="/course/:id" element={<CourseDetails />} />
+            <Route path="/cart" element={<Cart />} />
 
           {/* ================= USER ================= */}
           <Route element={<UserLayout />}>
@@ -95,7 +98,6 @@ const Routing = () => {
 
             {/* Course */}
             <Route path="/course" element={<Courselist />} />
-            <Route path="/cart" element={<Cart />} />
           </Route>
 
           {/* ================= AUTH (NO LAYOUT) ================= */}
