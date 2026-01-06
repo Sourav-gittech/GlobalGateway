@@ -111,6 +111,7 @@ export default function EmbassySidebar({ embassyData }) {
       label: "Analytics",
       icon: BarChart2
     }
+    
   ];
 
   return (
