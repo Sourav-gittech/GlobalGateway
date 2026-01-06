@@ -22,8 +22,8 @@ import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy";
 import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm";
 import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview";
 import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus";
-import Courselist from "../Pages/user/coaching/Courselist";
-import CourseDetails from "../Pages/user/coaching/CourseDetails";
+import Courselist from "../Pages/user/course/Courselist";
+import CourseDetails from "../Pages/user/course/course-details/CourseDetails";
 import Cart from "../Pages/user/coaching/Cart";
 
 /* ---------- Auth ---------- */
@@ -74,24 +74,26 @@ const Routing = () => {
       <Suspense fallback={<h3 className="mt-5 text-center">Loading...</h3>}>
         <Routes>
 
+          {/* ================= AUTH (NO LAYOUT) ================= */}
+            <Route path="/country/:country_id" element={<CountryDetails />} />
+            <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
+            <Route path="/payment-preview" element={<PaymentPreview />} />
+            <Route path="/payment-status" element={<PaymentStatus />} />
+            <Route path="/course/:id" element={<CourseDetails />} />
+
           {/* ================= USER ================= */}
           <Route element={<UserLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutSection />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/country" element={<CountryGrid />} />
-            <Route path="/country/:country_id" element={<CountryDetails />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
             <Route path="/policy/:country_id" element={<VisaPolicies />} />
-            <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
-            <Route path="/payment-preview" element={<PaymentPreview />} />
-            <Route path="/payment-status" element={<PaymentStatus />} />
 
-            {/* Coaching */}
-            <Route path="/coaching/course" element={<Courselist />} />
-            <Route path="/coaching/course/:id" element={<CourseDetails />} />
-            <Route path="/coaching/cart" element={<Cart />} />
+            {/* Course */}
+            <Route path="/course" element={<Courselist />} />
+            <Route path="/cart" element={<Cart />} />
           </Route>
 
           {/* ================= AUTH (NO LAYOUT) ================= */}
