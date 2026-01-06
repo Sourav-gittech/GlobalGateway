@@ -83,7 +83,7 @@ const Routing = () => {
             <Route path="/payment-status" element={<PaymentStatus />} />
 
             {/* Course */}
-            <Route path="/course/:id" element={<CourseDetails />} />
+            <Route path="/course/:course_id" element={<CourseDetails />} />
             <Route path="/cart" element={<Cart />} />
 
           {/* ================= USER ================= */}

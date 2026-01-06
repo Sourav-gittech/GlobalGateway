@@ -5,6 +5,7 @@ import CourseDetailsHeader from '../../../../Components/user/course/course-detai
 import PricingCard from '../../../../Components/user/course/course-details/PricingCard';
 import CourseContent from '../../../../Components/user/course/course-details/CourseContent';
 import CartDrawer from '../../../../Components/user/course/course-details/CartDrawer';
+import { decodeBase64Url } from '../../../../util/encodeDecode/base64';
 
 const staticCourses = [
   {
@@ -387,11 +388,11 @@ const staticCourses = [
   }
 ];
 
-const iconMap = { School, Globe, Balance: Scale, FrontHand: Hand, BookOpen, FileText };
-
 const CourseDetails = () => {
-  const { id } = useParams();
+  const { course_id } = useParams();
+  const id=decodeBase64Url(course_id);
   const navigate = useNavigate();
+
   const [course, setCourse] = useState(null);
   const [cartDrawer, setCartDrawer] = useState(false);
   const [cartItems, setCartItems] = useState([]);

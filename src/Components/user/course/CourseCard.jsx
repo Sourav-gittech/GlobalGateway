@@ -2,6 +2,7 @@ import React from 'react'
 import { School, Scale, Globe, Hand, BookOpen, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { encodeBase64Url } from '../../../util/encodeDecode/base64';
 
 const CourseCard = ({ course, index }) => {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ const CourseCard = ({ course, index }) => {
     }
 
     const handleViewCourse = (courseId) => {
-        navigate(`/course/${courseId}`);
+        navigate(`/course/${encodeBase64Url(String(courseId))}`);
     }
 
     const ArrowIcon = () => (
