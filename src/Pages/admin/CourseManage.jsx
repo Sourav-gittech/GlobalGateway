@@ -455,26 +455,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput
-                  label="Duration"
-                  name="duration"
-                  register={register}
-                  errors={errors}
-                  placeholder="e.g., 10 hours"
-                  required
-                />
-
-                <FormInput
-                  label="Number of Lectures"
-                  name="lectures"
-                  register={register}
-                  errors={errors}
-                  type="number"
-                  placeholder="15"
-                  required
-                />
-              </div>
+           
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -589,14 +570,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 />
               </div>
 
-              <FormInput
-                label="Number of Reviews"
-                name="reviews"
-                register={register}
-                errors={errors}
-                type="number"
-                placeholder="124"
-              />
+              
             </div>
           )}
 
@@ -668,30 +642,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 required
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormInput
-                  label="Video Duration"
-                  name="video.duration"
-                  register={register}
-                  errors={errors}
-                  placeholder="45:30"
-                  required
-                />
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Free Preview
-                  </label>
-                  <select
-                    {...register('video.isFree')}
-                    className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                  >
-                    <option value="true">Yes (Free)</option>
-                    <option value="false">No (Paid Only)</option>
-                  </select>
-                </div>
-              </div>
-
+              
               <FormInput
                 label="Video URL"
                 name="video.url"
@@ -717,7 +668,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 <h3 className="text-sm font-medium text-slate-300">Course Documents</h3>
                 <button
                   type="button"
-                  onClick={() => appendDocument({ name: '', type: 'PDF', size: '', pages: '', isFree: false })}
+                  onClick={() => appendDocument({ name: '', type: 'PDF', isFree: false })}
                   className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
@@ -755,18 +706,8 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                         <option value="XLSX">XLSX</option>
                       </select>
 
-                      <input
-                        {...register(`documents.${index}.size`)}
-                        className="px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                        placeholder="Size (e.g., 2.5 MB)"
-                      />
+                     
 
-                      <input
-                        {...register(`documents.${index}.pages`)}
-                        type="number"
-                        className="px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                        placeholder="Pages"
-                      />
 
                       <select
                         {...register(`documents.${index}.isFree`)}
