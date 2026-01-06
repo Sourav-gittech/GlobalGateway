@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { 
-  BookOpen, Plus, Search, Edit2, Trash2, Eye, DollarSign, 
+import {
+  BookOpen, Plus, Search, Edit2, Trash2, Eye, DollarSign,
   Clock, Users, Video, FileText, Star, Globe, BarChart,
   Upload, X, Save, Lock, Unlock, Award, Calendar, School, Scale, Hand
 } from 'lucide-react';
@@ -154,34 +154,33 @@ function SettingsSection({ title, description, icon: Icon, children, className =
 // Course Card Component
 function CourseCard({ course, onEdit, onDelete, onView }) {
   const IconComponent = iconOptions.find(i => i.value === course.icon)?.Icon || BookOpen;
-  
+
   return (
     <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
       <div className="aspect-video relative overflow-hidden">
-        <img 
-          src={course.img_url} 
+        <img
+          src={course.img_url}
           alt={course.course_name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute top-2 right-2 flex gap-2">
-          <span className={`px-2 py-1 rounded text-xs font-semibold ${
-            course.status === 'active' 
-              ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-              : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
-          }`}>
+          <span className={`px-2 py-1 rounded text-xs font-semibold ${course.status === 'active'
+            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+            : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+            }`}>
             {course.status === 'active' ? 'Active' : 'Draft'}
           </span>
         </div>
         <div className="absolute bottom-2 left-2 bg-blue-500/90 text-white px-2 py-1 rounded text-xs font-bold">
           ₹{parseInt(course.price).toLocaleString('en-IN')}
         </div>
-      
+
       </div>
-      
+
       <div className="p-4">
         <h3 className="text-white font-semibold mb-2 line-clamp-1">{course.course_name}</h3>
         <p className="text-slate-400 text-sm mb-3 line-clamp-2">{course.description}</p>
-        
+
         <div className="flex items-center gap-3 text-xs text-slate-400 mb-3 flex-wrap">
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
@@ -200,7 +199,7 @@ function CourseCard({ course, onEdit, onDelete, onView }) {
             {course.rating}
           </span>
         </div>
-        
+
         <div className="flex gap-2">
           <button
             onClick={() => onView(course)}
@@ -315,14 +314,14 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
     const cgst = parseFloat(watchCGST) || 0;
     const sgst = parseFloat(watchSGST) || 0;
     const gstAmount = base * ((cgst + sgst) / 100);
-    
+
     let additionalTotal = 0;
     if (watchCharges && Array.isArray(watchCharges)) {
       additionalTotal = watchCharges.reduce((sum, charge) => {
         return sum + (parseFloat(charge.amount) || 0);
       }, 0);
     }
-    
+
     return base + gstAmount + additionalTotal;
   };
 
@@ -340,21 +339,21 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
     const cgst = parseFloat(data.pricing?.cgst) || 0;
     const sgst = parseFloat(data.pricing?.sgst) || 0;
     const gstAmount = basePrice * ((cgst + sgst) / 100);
-    
+
     let additionalTotal = 0;
     if (data.pricing?.additionalCharges) {
       additionalTotal = data.pricing.additionalCharges.reduce((sum, charge) => {
         return sum + (parseFloat(charge.amount) || 0);
       }, 0);
     }
-    
+
     const totalPrice = basePrice + gstAmount + additionalTotal;
-    
+
     const courseData = {
       ...data,
       price: totalPrice.toString()
     };
-    
+
     onSave(courseData);
     reset();
   };
@@ -367,7 +366,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
-      
+
       <div className="relative w-full max-w-6xl max-h-[90vh] bg-slate-800 border border-slate-700/50 rounded-xl shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
@@ -387,45 +386,45 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
           </button>
         </div>
 
-       {/* Tabs */}
-<div className="relative">
-  {/* Bottom border */}
-  <div className="absolute inset-x-0 bottom-0 h-px bg-slate-700/50" />
+        {/* Tabs */}
+        <div className="relative">
+          {/* Bottom border */}
+          <div className="absolute inset-x-0 bottom-0 h-px bg-slate-700/50" />
 
-  <div className="flex gap-6 px-6 overflow-x-auto scrollbar-hide">
-    {[
-      'basic',
-      'details',
-      'instructor',
-      'features',
-      'video',
-      'documents',
-      'pricing'
-    ].map((tab) => {
-      const isActive = activeTab === tab;
+          <div className="flex gap-6 px-6">
+            {[
+              'basic',
+              'details',
+              'instructor',
+              'features',
+              'video',
+              'documents',
+              'pricing'
+            ].map((tab) => {
+              const isActive = activeTab === tab;
 
-      return (
-        <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={`
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`
             relative py-4 text-sm font-medium whitespace-nowrap transition-colors
             ${isActive
-              ? 'text-blue-400'
-              : 'text-slate-400 hover:text-slate-300'}
+                      ? 'text-blue-400'
+                      : 'text-slate-400 hover:text-slate-300'}
           `}
-        >
-          {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
 
-          {/* Active underline */}
-          {isActive && (
-            <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-blue-500 rounded-full" />
-          )}
-        </button>
-      );
-    })}
-  </div>
-</div>
+                  {/* Active underline */}
+                  {isActive && (
+                    <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-blue-500 rounded-full" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Content */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex-1 overflow-y-auto p-6">
@@ -455,7 +454,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 )}
               </div>
 
-           
+
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -512,24 +511,34 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Course Image URL
+                <label className="block text-sm font-medium text-slate-300 mb-3">
+                  Upload Thumbnail
                 </label>
-                <div className="flex gap-2">
-                  <input
-                    {...register('img_url')}
-                    className="flex-1 px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <button
-                    type="button"
-                    className="px-4 py-2.5 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors flex items-center gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload
-                  </button>
+
+                {/* Dropzone */}
+                <div
+                  onClick={() => document.getElementById('thumbnailInput').click()}
+                  className="w-full h-28 flex items-center justify-center
+               border border-dashed border-slate-600/60
+               rounded-xl cursor-pointer
+               bg-slate-800/40 hover:bg-slate-800/60
+               transition-colors"
+                >
+                  <p className="text-sm text-slate-400">
+                    Click to upload thumbnail <span className="text-slate-500">(JPG, PNG, WebP)</span>
+                  </p>
                 </div>
+
+                {/* Hidden file input */}
+                <input
+                  id="thumbnailInput"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  {...register('thumbnail', { required: true })}
+                />
               </div>
+
             </div>
           )}
 
@@ -570,7 +579,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 />
               </div>
 
-              
+
             </div>
           )}
 
@@ -632,94 +641,94 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
           )}
 
           {activeTab === 'video' && (
-  <div className="space-y-6">
-    {/* Video Title */}
-    <FormInput
-      label="Video Title"
-      name="video.title"
-      register={register}
-      errors={errors}
-      placeholder="Complete Study Visa Application Guide"
-      required
-    />
+            <div className="space-y-6">
+              {/* Video Title */}
+              <FormInput
+                label="Video Title"
+                name="video.title"
+                register={register}
+                errors={errors}
+                placeholder="Complete Study Visa Application Guide"
+                required
+              />
 
-    {/* Video Upload */}
-    <div>
-      <label className="block text-sm font-medium text-slate-300 mb-2">
-        Upload Video
-      </label>
+              {/* Video Upload */}
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Upload Video
+                </label>
 
-      <input
-        type="file"
-        accept="video/*"
-        className="hidden"
-        id="videoUpload"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (!file) return;
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  id="videoUpload"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
 
-          setValue("video.file", file);
-          setValue("video.preview", URL.createObjectURL(file));
-        }}
-      />
+                    setValue("video.file", file);
+                    setValue("video.preview", URL.createObjectURL(file));
+                  }}
+                />
 
-      <label
-        htmlFor="videoUpload"
-        className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
-      >
-        <span className="text-slate-400 text-sm">
-          Click to upload video (MP4, WebM, MOV)
-        </span>
-      </label>
+                <label
+                  htmlFor="videoUpload"
+                  className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
+                >
+                  <span className="text-slate-400 text-sm">
+                    Click to upload video (MP4, WebM, MOV)
+                  </span>
+                </label>
 
-      {watch("video.preview") && (
-        <video
-          src={watch("video.preview")}
-          controls
-          className="mt-4 rounded-lg w-full max-h-64"
-        />
-      )}
-    </div>
+                {watch("video.preview") && (
+                  <video
+                    src={watch("video.preview")}
+                    controls
+                    className="mt-4 rounded-lg w-full max-h-64"
+                  />
+                )}
+              </div>
 
-    {/* Thumbnail Upload */}
-    <div>
-      <label className="block text-sm font-medium text-slate-300 mb-2">
-        Upload Thumbnail
-      </label>
+              {/* Thumbnail Upload */}
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Upload Thumbnail
+                </label>
 
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        id="thumbnailUpload"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (!file) return;
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="thumbnailUpload"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
 
-          setValue("video.thumbnailFile", file);
-          setValue("video.thumbnailPreview", URL.createObjectURL(file));
-        }}
-      />
+                    setValue("video.thumbnailFile", file);
+                    setValue("video.thumbnailPreview", URL.createObjectURL(file));
+                  }}
+                />
 
-      <label
-        htmlFor="thumbnailUpload"
-        className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
-      >
-        <span className="text-slate-400 text-sm">
-          Click to upload thumbnail (JPG, PNG, WebP)
-        </span>
-      </label>
+                <label
+                  htmlFor="thumbnailUpload"
+                  className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
+                >
+                  <span className="text-slate-400 text-sm">
+                    Click to upload thumbnail (JPG, PNG, WebP)
+                  </span>
+                </label>
 
-      {watch("video.thumbnailPreview") && (
-        <img
-          src={watch("video.thumbnailPreview")}
-          alt="Thumbnail Preview"
-          className="mt-4 rounded-lg w-full max-h-48 object-cover"
-        />
-      )}
-    </div>
-  </div>
-)}
+                {watch("video.thumbnailPreview") && (
+                  <img
+                    src={watch("video.thumbnailPreview")}
+                    alt="Thumbnail Preview"
+                    className="mt-4 rounded-lg w-full max-h-48 object-cover"
+                  />
+                )}
+              </div>
+            </div>
+          )}
 
 
           {activeTab === 'documents' && (
@@ -766,7 +775,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                         <option value="XLSX">XLSX</option>
                       </select>
 
-                     
+
 
 
                       <select
@@ -894,21 +903,21 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
               {/* Price Breakdown */}
               <div className="p-4 bg-slate-700/30 border border-slate-600/50 rounded-lg space-y-3">
                 <h3 className="text-sm font-medium text-white mb-3">Price Breakdown</h3>
-                
+
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-slate-300">
                     <span>Base Price:</span>
-                    <span className="font-medium">₹{(parseFloat(watchPrice) || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{(parseFloat(watchPrice) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-300">
                     <span>CGST ({watchCGST || 0}%):</span>
-                    <span className="font-medium">₹{((parseFloat(watchPrice) || 0) * ((parseFloat(watchCGST) || 0) / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{((parseFloat(watchPrice) || 0) * ((parseFloat(watchCGST) || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-300">
                     <span>SGST ({watchSGST || 0}%):</span>
-                    <span className="font-medium">₹{((parseFloat(watchPrice) || 0) * ((parseFloat(watchSGST) || 0) / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{((parseFloat(watchPrice) || 0) * ((parseFloat(watchSGST) || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
 
                   {watchCharges && watchCharges.length > 0 && watchCharges.some(c => c.name || c.amount) && (
@@ -919,7 +928,7 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                           return (
                             <div key={index} className="flex justify-between text-slate-300">
                               <span>{charge.name || `Charge ${index + 1}`}:</span>
-                              <span className="font-medium">₹{(parseFloat(charge.amount) || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                              <span className="font-medium">₹{(parseFloat(charge.amount) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                           );
                         }
@@ -929,10 +938,10 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                   )}
 
                   <div className="border-t border-slate-600/50 my-2"></div>
-                  
+
                   <div className="flex justify-between text-white text-lg font-bold">
                     <span>Total Price:</span>
-                    <span className="text-green-400">₹{calculateTotal().toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    <span className="text-green-400">₹{calculateTotal().toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
               </div>
@@ -983,7 +992,7 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      
+
       <div className="relative w-full max-w-5xl max-h-[90vh] bg-slate-800 border border-slate-700/50 rounded-xl shadow-2xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
@@ -1063,11 +1072,10 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
             </div>
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">Status</h4>
-              <span className={`inline-flex px-2 py-1 rounded text-xs font-semibold ${
-                course.status === 'active' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
-              }`}>
+              <span className={`inline-flex px-2 py-1 rounded text-xs font-semibold ${course.status === 'active'
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                }`}>
                 {course.status === 'active' ? 'Active' : 'Draft'}
               </span>
             </div>
@@ -1110,17 +1118,17 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-slate-300">
                     <span>Base Price:</span>
-                    <span className="font-medium">₹{parseFloat(course.pricing.basePrice || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{parseFloat(course.pricing.basePrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-300">
                     <span>CGST ({course.pricing.cgst || 0}%):</span>
-                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.cgst || 0) / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.cgst || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                   </div>
 
                   <div className="flex justify-between text-slate-300">
                     <span>SGST ({course.pricing.sgst || 0}%):</span>
-                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.sgst || 0) / 100)).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.sgst || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                   </div>
 
                   {course.pricing.additionalCharges && course.pricing.additionalCharges.length > 0 && (
@@ -1130,7 +1138,7 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
                         <div key={index}>
                           <div className="flex justify-between text-slate-300">
                             <span>{charge.name}:</span>
-                            <span className="font-medium">₹{parseFloat(charge.amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+                            <span className="font-medium">₹{parseFloat(charge.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                           </div>
                           {charge.description && (
                             <p className="text-xs text-slate-500 mt-1">{charge.description}</p>
@@ -1141,7 +1149,7 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
                   )}
 
                   <div className="border-t border-slate-600/50 my-2"></div>
-                  
+
                   <div className="flex justify-between text-white text-base font-bold">
                     <span>Total Price:</span>
                     <span className="text-green-400">₹{parseInt(course.price).toLocaleString('en-IN')}</span>
@@ -1151,7 +1159,7 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
             </div>
           )}
 
-         
+
 
           {/* Documents */}
           {course.documents && course.documents.length > 0 && (
@@ -1173,11 +1181,10 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
                         </div>
                       </div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      doc.isFree 
-                        ? 'bg-green-500/20 text-green-400' 
-                        : 'bg-red-500/20 text-red-400'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded ${doc.isFree
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-red-500/20 text-red-400'
+                      }`}>
                       {doc.isFree ? 'Free' : 'Paid'}
                     </span>
                   </div>
