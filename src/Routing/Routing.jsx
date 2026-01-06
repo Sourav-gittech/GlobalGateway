@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
+import UserLayout from '../layout/user/index.jsx';
 
-/* ---------- Global Layout ---------- */
-import Navbar from "../layout/user/Navbar.jsx";
-import Footer from "../layout/user/Footer.jsx";
+/* ---------- User Layout ---------- */
+
 
 /* ---------- Global Utils ---------- */
 import ScrollToTop from "../Components/ScrollToTop.jsx";
@@ -66,6 +66,9 @@ import VisaPolicyManage from "../Pages/embassy/dashboard/VisaPolicyManage.jsx";
 import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
 import EmbassyManage from "../Pages/admin/ManageEmbassy.jsx";
 import ViewApplications from "../Pages/admin/ViewApplications.jsx";
+import Courselist from "../Pages/user/coaching/Courselist.jsx";
+import CourseDetails from "../Pages/user/coaching/CourseDetails.jsx";
+import Cart from "../Pages/user/coaching/Cart.jsx";
 
 const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
 
@@ -90,29 +93,35 @@ const Routing = () => {
       {/* GLOBAL SCROLL */}
       <ScrollToTop />
 
-      {/* USER NAVBAR */}
-      {!hideLayout && <Navbar />}
-
       <Suspense fallback={<h3 className="mt-5 text-center">Loading...</h3>}>
         <Routes>
-          {/* ================= USER ================= */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutSection />} />
-          <Route path="/country" element={<CountryGrid />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/authentication" element={<AuthForm />} />
-          <Route path="/verification/:email/:user_type" element={<EmailVerification />} />
+         <Route path="/" element={<UserLayout />}>
 
-          <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/country/:country_id" element={<CountryDetails />} />
-          <Route path="/policy/:country_id" element={<VisaPolicies />} />
-          <Route
-            path="/application-form/:country_id"
-            element={<VisaApplicationForm />}
-          />
-          <Route path="/payment-preview" element={<PaymentPreview />} />
-          <Route path="/payment-status" element={<PaymentStatus />} />
+          <Route index element={<Home />} />
+          <Route path="about" element={<AboutSection />} />
+          <Route path="contact" element={<ContactUs />} />
+
+          <Route path="country" element={<CountryGrid />} />
+          <Route path="country/:country_id" element={<CountryDetails />} />
+
+          <Route path="dashboard" element={<Dashboard />} />
+
+          <Route path="authentication" element={<AuthForm />} />
+          <Route path="verification/:email/:user_type" element={<EmailVerification />} />
+
+          <Route path="visaprocess/:country_id" element={<VisaProcess />} />
+          <Route path="policy/:country_id" element={<VisaPolicies />} />
+          <Route path="application-form/:country_id" element={<VisaApplicationForm />} />
+
+          <Route path="payment-preview" element={<PaymentPreview />} />
+          <Route path="payment-status" element={<PaymentStatus />} />
+
+          {/* ===== COACHING ===== */}
+          <Route path="coaching">
+            <Route path="course" element={<Courselist />} />
+            <Route path="course/:id" element={<CourseDetails />} />
+            <Route path="cart" element={<Cart />} />
+          </Route>
 
           {/* ================= ADMIN ================= */}
           <Route path="/admin" element={<AdminLoginForm />} />
@@ -164,11 +173,11 @@ const Routing = () => {
 
           {/* ================= FALLBACK ================= */}
           <Route path="*" element={<Error_404 />} />
+         </Route>
         </Routes>
       </Suspense>
 
-      {/* USER FOOTER */}
-      {!hideLayout && <Footer />}
+     
     </>
   );
 };

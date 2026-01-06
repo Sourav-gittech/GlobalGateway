@@ -14,7 +14,7 @@ const navLinks = [
   { label: 'Home', to: '/' },
   { label: 'About Us', to: '/about' },
   { label: 'Countries', to: '/country' },
-  { label: 'Courses', to: '/course' },
+  { label: 'Courses', to: 'coaching/course' },
   { label: 'Get in Touch', to: '/contact' },
 ];
 

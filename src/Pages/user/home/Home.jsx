@@ -1,5 +1,5 @@
 import React from 'react'
-import Banner from '../../../layout/user/Banner'
+import Banner from '../../../Components/user/home/Banner'
 import About from '../../../Components/user/home/About'
 import VisaServicesSection from '../../../Components/user/home/Visaservice'
 import CountrySupportSection from '../../../Components/user/common/Countries'
