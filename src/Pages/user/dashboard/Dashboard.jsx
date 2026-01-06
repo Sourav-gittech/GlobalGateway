@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Calendar, CreditCard, FileText, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, CreditCard, FileText, Clock, CheckCircle, XCircle, AlertCircle, BookOpen } from 'lucide-react';
 import ProfileCard from '../../../Components/user/dashboard/ProfileCard';
 import DashboardHeader from '../../../Components/user/dashboard/DashboardHeader';
 import StatsCard from '../../../Components/user/dashboard/StatsCard';
 import VisaApplicationsSection from '../../../Components/user/dashboard/VisaApplicationsSection';
 import PaymentsSection from '../../../Components/user/dashboard/PaymentsSection';
 import AppointmentsSection from '../../../Components/user/dashboard/AppointmentsSection';
+import PurchasedCoursesSection from '../../../Components/user/dashboard/PurchasedCoursesSection';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import { fetchUserTransactionsWithApplications } from '../../../Redux/Slice/transactionSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
@@ -14,15 +16,16 @@ import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/g
 import getSweetAlert from '../../../util/alert/sweetAlert';
 
 const Dashboard = () => {
-  const dispatch = useDispatch(),
-    { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth),
-    { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id),
-    { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true),
-    { isTransactionLoading, transactions, hasTransactionError } = useSelector(state => state.transaction);
-
-  // console.log('Dashboard user data', userAuthData);
-  // console.log('All application for specific user', application);
-  // console.log('All transactions', transactions);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id);
+  const { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true);
+  const { isTransactionLoading, transactions, hasTransactionError } = useSelector(state => state.transaction);
+  
+  // TODO: Replace with actual Redux selector when implemented
+  // const { purchasedCourses } = useSelector(state => state.courses);
+  const purchasedCourses = []; // Placeholder - will be populated from Redux/Supabase later
 
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -59,6 +62,7 @@ const Dashboard = () => {
         return 'text-emerald-700 bg-emerald-50 border-emerald-200';
       case 'processing':
       case 'pending':
+      case 'in progress':
         return 'text-amber-700 bg-amber-50 border-amber-200';
       case 'rejected':
       case 'failed':
@@ -77,6 +81,7 @@ const Dashboard = () => {
       case 'confirmed':
         return <CheckCircle className="w-4 h-4" />;
       case 'processing':
+      case 'in progress':
         return <Clock className="w-4 h-4" />;
       case 'rejected':
       case 'failed':
@@ -87,13 +92,17 @@ const Dashboard = () => {
     }
   };
 
-  if (isuserLoading || isApplicationLoading ) {
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
+
+  if (isuserLoading || isApplicationLoading) {
     return (
       <div className='flex flex-col h-screen items-center justify-center bg-black'>
         <div className="w-18 h-18 border-2 border-white border-t-transparent rounded-full animate-spin" />
         <span className='mt-5 text-white'>Loading...</span>
       </div>
-    )
+    );
   }
 
   return (
@@ -105,7 +114,11 @@ const Dashboard = () => {
       <ProfileCard userAuthData={userAuthData} />
 
       {/* Stats Cards */}
-      <StatsCard visaApplications={Array.isArray(application) ? application : []} payments={transactions} appointments={appointment} />
+      <StatsCard 
+        visaApplications={Array.isArray(application) ? application : []} 
+        payments={transactions} 
+        appointments={appointment} 
+      />
 
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
@@ -115,15 +128,18 @@ const Dashboard = () => {
               {[
                 { id: 'overview', label: 'Visa Applications', icon: FileText },
                 { id: 'appointments', label: 'Appointments', icon: Calendar },
-                { id: 'payments', label: 'Payments', icon: CreditCard }
+                { id: 'payments', label: 'Payments', icon: CreditCard },
+                { id: 'courses', label: 'My Courses', icon: BookOpen }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === tab.id
-                    ? 'border-red-600 text-red-700'
-                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                    }`}>
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                    activeTab === tab.id
+                      ? 'border-red-600 text-red-700'
+                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                  }`}
+                >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
                 </button>
@@ -133,15 +149,36 @@ const Dashboard = () => {
 
           <div className="p-6">
             {activeTab === 'overview' && (
-              <VisaApplicationsSection visaApplications={Array.isArray(application) ? application : []} getStatusColor={getStatusColor} getStatusIcon={getStatusIcon} />
+              <VisaApplicationsSection 
+                visaApplications={Array.isArray(application) ? application : []} 
+                getStatusColor={getStatusColor} 
+                getStatusIcon={getStatusIcon} 
+              />
             )}
 
             {activeTab === 'appointments' && (
-              <AppointmentsSection appointments={appointment} getStatusColor={getStatusColor} getStatusIcon={getStatusIcon} />
+              <AppointmentsSection 
+                appointments={appointment} 
+                getStatusColor={getStatusColor} 
+                getStatusIcon={getStatusIcon} 
+              />
             )}
 
             {activeTab === 'payments' && (
-              <PaymentsSection transactions={transactions} getStatusColor={getStatusColor} getStatusIcon={getStatusIcon} />
+              <PaymentsSection 
+                transactions={transactions} 
+                getStatusColor={getStatusColor} 
+                getStatusIcon={getStatusIcon} 
+              />
+            )}
+
+            {activeTab === 'courses' && (
+              <PurchasedCoursesSection 
+                purchasedCourses={purchasedCourses}
+                getStatusColor={getStatusColor} 
+                getStatusIcon={getStatusIcon}
+                onNavigate={handleNavigate}
+              />
             )}
           </div>
         </div>

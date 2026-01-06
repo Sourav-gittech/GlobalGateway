@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  School, Scale, Globe, Hand, BookOpen, FileText, 
+import {
+  School, Scale, Globe, Hand, BookOpen, FileText,
   Clock, Users, BarChart, CheckCircle, Star, ShoppingCart, X, ArrowLeft,
   Award, Calendar, Video, Lock, Play, ChevronDown, ChevronUp, Download, FileIcon
 } from 'lucide-react';
@@ -396,7 +396,7 @@ const CourseDetails = () => {
   const [cartDrawer, setCartDrawer] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
-  const [isPurchased] = useState(false);
+  const [isPurchased, setIsPurchased] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
@@ -404,10 +404,22 @@ const CourseDetails = () => {
     setCourse(foundCourse);
     const savedCart = localStorage.getItem('courseCart');
     if (savedCart) setCartItems(JSON.parse(savedCart));
+
+
+    const mockPurchasedCourseIds = [1, 2, 4];
+    const purchased = mockPurchasedCourseIds.includes(parseInt(id));
+    setIsPurchased(purchased);
   }, [id]);
 
   const addToCart = () => {
     if (!course) return;
+
+    // ADD THIS CHECK:
+    if (isPurchased) {
+      alert('You have already purchased this course!');
+      return;
+    }
+
     const existing = cartItems.find(i => i.id === course.id);
     if (!existing) {
       const newCart = [...cartItems, course];
@@ -437,7 +449,7 @@ const CourseDetails = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF5252] mx-auto mb-4"/>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF5252] mx-auto mb-4" />
           <p className="text-gray-600 font-medium">Loading course details...</p>
         </div>
       </div>
@@ -458,6 +470,13 @@ const CourseDetails = () => {
 
             <div className="grid lg:grid-cols-5  gap-8 items-start">
               <div className="lg:col-span-3 mt-20 space-y-6">
+                {/* PURCHASED BADGE */}
+                {isPurchased && (
+                  <div className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                    <CheckCircle className="w-5 h-5" />
+                    Course Purchased - Full Access Unlocked
+                  </div>
+                )}
                 {/* Badges */}
                 <div className="flex items-center gap-3">
                   <span className="bg-[#FF5252] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
@@ -509,33 +528,74 @@ const CourseDetails = () => {
 
               {/* Price Card */}
               <div className="lg:col-span-2">
-               <div className=" bg-white/20 backdrop-blur-lg border border-white/50 rounded-2xl sticky top-4 shadow-lg overflow-hidden">
+                <div className=" bg-white/20 backdrop-blur-lg border border-white/50 rounded-2xl sticky top-4 shadow-lg overflow-hidden">
 
                   {/* Image with Icon */}
                   <div className="relative h-56">
+                    {/* PURCHASED BADGE */}
+                    {isPurchased && (
+                      <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        Purchased
+                      </div>
+                    )}
                     <img src={course.img_url} alt={course.course_name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                    
-                  </div>
-                  
-                  <div className="p-6">
-                    {/* Price */}
-                    <div className="mb-5">
-                      <p className="text-gray-600 text-xs font-semibold mb-2 uppercase tracking-wider">Course Price</p>
-                      <p className="text-5xl font-bold text-white">
-                        ₹{parseInt(course.price).toLocaleString('en-IN')}
-                      </p>
-                    </div>
-                    
-                    {/* Add to Cart Button */}
-                    <button 
-                      onClick={addToCart} 
-                      className="w-full bg-red-400 hover:bg-[#E63946] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg"
-                    >
-                      <ShoppingCart className="w-6 h-6" />
-                      Add to Cart
-                    </button>
 
+                  </div>
+
+                  <div className="p-6">
+                    {isPurchased ? (
+                      <>
+                        {/* Already Purchased Message */}
+                        <div className="mb-5">
+                          <p className="text-green-100 text-sm font-semibold mb-2 uppercase tracking-wider">Congratulations!</p>
+                          <p className="text-2xl font-bold text-white mb-2">
+                            You Own This Course
+                          </p>
+                          <p className="text-white/80 text-sm">
+                            All course content is now unlocked and ready for you
+                          </p>
+                        </div>
+
+                        {/* Access Course Button */}
+                        <button
+                          onClick={() => setActiveTab('content')}
+                          className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg mb-4"
+                        >
+                          <BookOpen className="w-6 h-6" />
+                          Access Course Content
+                        </button>
+
+                        {/* Go to Dashboard Button */}
+                        <button
+                          onClick={() => navigate('/user/dashboard')}
+                          className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/30"
+                        >
+                          View in Dashboard
+                          <ArrowLeft className="w-4 h-4 rotate-180" />
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* Price */}
+                        <div className="mb-5">
+                          <p className="text-gray-600 text-xs font-semibold mb-2 uppercase tracking-wider">Course Price</p>
+                          <p className="text-5xl font-bold text-white">
+                            ₹{parseInt(course.price).toLocaleString('en-IN')}
+                          </p>
+                        </div>
+
+                        {/* Add to Cart Button */}
+                        <button
+                          onClick={addToCart}
+                          className="w-full bg-red-400 hover:bg-[#E63946] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg"
+                        >
+                          <ShoppingCart className="w-6 h-6" />
+                          Add to Cart
+                        </button>
+                      </>
+                    )}
                     {/* Features */}
                     <div className="mt-5 pt-5 border-t border-gray-200 space-y-3">
                       <div className="flex items-center text-green-500 text-sm font-medium">
@@ -591,7 +651,18 @@ const CourseDetails = () => {
                   {activeTab === 'content' && (
                     <div>
                       <h2 className="text-2xl font-bold text-[#2C3E50] mb-5">Course Content</h2>
-                      
+                      {/* ADD THIS ACCESS STATUS BANNER */}
+                      {isPurchased && (
+                        <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+                            <div>
+                              <p className="font-semibold text-green-900">Full Access Granted</p>
+                              <p className="text-sm text-green-700">All videos and documents are now unlocked for you</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       {/* Video Section */}
                       <div className="mb-6">
                         <h3 className="text-lg font-bold text-[#2C3E50] mb-3 flex items-center">
@@ -611,7 +682,7 @@ const CourseDetails = () => {
                                 />
                               </div>
                             ) : (
-                              <div 
+                              <div
                                 className="relative aspect-video cursor-pointer"
                                 onClick={() => {
                                   if (course.video.isFree || isPurchased) {
@@ -621,8 +692,8 @@ const CourseDetails = () => {
                                   }
                                 }}
                               >
-                                <img 
-                                  src={course.video.thumbnail} 
+                                <img
+                                  src={course.video.thumbnail}
                                   alt={course.video.title}
                                   className="w-full h-full object-cover"
                                 />
@@ -661,24 +732,22 @@ const CourseDetails = () => {
                           <FileText className="w-5 h-5 mr-2 text-[#FF5252]" />
                           Course Documents
                         </h3>
-                        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2" style={{scrollbarWidth: 'thin', scrollbarColor: '#FF5252 #f1f1f1'}}>
+                        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#FF5252 #f1f1f1' }}>
                           {course.documents.map((doc, idx) => (
-                            <div 
+                            <div
                               key={idx}
                               className="border border-gray-200 rounded-lg p-4 hover:border-[#FF5252] transition-all bg-white hover:shadow-md"
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3 flex-1">
-                                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                                    doc.isFree || isPurchased 
-                                      ? 'bg-blue-100' 
-                                      : 'bg-gray-100'
-                                  }`}>
-                                    <FileIcon className={`w-6 h-6 ${
-                                      doc.isFree || isPurchased 
-                                        ? 'text-blue-600' 
-                                        : 'text-gray-400'
-                                    }`} />
+                                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${doc.isFree || isPurchased
+                                    ? 'bg-blue-100'
+                                    : 'bg-gray-100'
+                                    }`}>
+                                    <FileIcon className={`w-6 h-6 ${doc.isFree || isPurchased
+                                      ? 'text-blue-600'
+                                      : 'text-gray-400'
+                                      }`} />
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
@@ -701,11 +770,10 @@ const CourseDetails = () => {
                                 <button
                                   onClick={() => handleDocumentDownload(doc)}
                                   disabled={!doc.isFree && !isPurchased}
-                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex-shrink-0 ${
-                                    doc.isFree || isPurchased
-                                      ? 'bg-[#FF5252] hover:bg-[#E63946] text-white shadow-md hover:shadow-lg transform hover:scale-105'
-                                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                  }`}
+                                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex-shrink-0 ${doc.isFree || isPurchased
+                                    ? 'bg-[#FF5252] hover:bg-[#E63946] text-white shadow-md hover:shadow-lg transform hover:scale-105'
+                                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                    }`}
                                 >
                                   {doc.isFree || isPurchased ? (
                                     <>
@@ -815,7 +883,7 @@ const CourseDetails = () => {
       {cartDrawer && (
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity" onClick={() => setCartDrawer(false)} />
-          
+
           <div className="fixed right-0 top-0 h-full w-full sm:w-[480px] bg-white/95 backdrop-blur-xl shadow-2xl transform transition-transform duration-300 flex flex-col border-l border-white/20">
             <div className="bg-gradient-to-r from-[#FF5252] to-[#E63946] px-6 py-5 flex items-center justify-between text-white">
               <div>
