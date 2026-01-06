@@ -1,44 +1,30 @@
 import React from 'react';
-import { Box, Typography, LinearProgress } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import FlightIcon from '@mui/icons-material/Flight';
+import { useSelector } from 'react-redux';
+
 const LoadingAnimation = () => {
+  const { isLoading, loadingMessage } = useSelector(
+    (state) => state.loading || { isLoading: false, loadingMessage: '' }
+  );
 
   const containerVariants = {
     initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: { duration: 0.3 },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-      transition: { duration: 0.4 },
-    },
+    animate: { opacity: 1, transition: { duration: 0.3 } },
+    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.4 } },
   };
 
   const planeVariants = {
-    initial: {
-      x: -100,
-      opacity: 0,
-      rotate: -10,
-    },
+    initial: { x: -100, opacity: 0, rotate: -10 },
     animate: {
       x: 0,
       opacity: 1,
       rotate: 0,
-      transition: {
-        duration: 1.2,
-        ease: 'easeOut',
-      },
+      transition: { duration: 1.2, ease: 'easeOut' },
     },
     float: {
       y: [-5, 5, -5],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      },
+      transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
     },
     takeoff: {
       y: -500,
@@ -46,10 +32,7 @@ const LoadingAnimation = () => {
       rotate: -15,
       scale: 0.5,
       opacity: 0,
-      transition: {
-        duration: 1.5,
-        ease: 'easeInOut',
-      },
+      transition: { duration: 1.5, ease: 'easeInOut' },
     },
   };
 
@@ -58,215 +41,116 @@ const LoadingAnimation = () => {
     animate: {
       y: 0,
       opacity: 1,
-      transition: {
-        delay: 0.8,
-        duration: 0.6,
-        ease: 'easeOut',
-      },
+      transition: { delay: 0.8, duration: 0.6, ease: 'easeOut' },
     },
   };
 
   return (
     <AnimatePresence>
-      <motion.div
-        variants={containerVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 9999,
-          backgroundImage: 'url("/Slider1.jpg")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {/* Dark Blur Overlay */}
-        <Box
-          sx={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            zIndex: 0,
-          }}
-        />
-
-        {/* Floating circles */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              x: [0, 100, 0],
-              y: [0, -100, 0],
-              opacity: [0.05, 0.15, 0.05],
-            }}
-            transition={{
-              duration: 8 + i * 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
-            }}
-            style={{
-              position: 'absolute',
-              width: 80 + i * 20,
-              height: 80 + i * 20,
-              borderRadius: '50%',
-              background: 'rgba(255, 255, 255, 0.05)',
-              left: `${10 + i * 15}%`,
-              top: `${10 + i * 10}%`,
-              zIndex: 0,
-            }}
-          />
-        ))}
-
-        {/* Main content */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            zIndex: 1,
-            textAlign: 'center',
-            px: 4,
-          }}
+      {isLoading && (
+        <motion.div
+          variants={containerVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-cover bg-center"
+          style={{ backgroundImage: 'url("/Slider1.jpg")' }}
         >
-          {/* Plane icon */}
-          <Box sx={{ position: 'relative' }}>
+          {/* Dark Blur Overlay */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[20px]" />
+
+          {/* Floating circles */}
+          {[...Array(6)].map((_, i) => (
             <motion.div
-              variants={planeVariants}
-              initial="initial"
-              animate={['takeoff', 'animate', 'float']}
-            >
-              <Box
-                sx={{
-                  width: 120,
-                  height: 120,
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
+              key={i}
+              animate={{
+                x: [0, 100, 0],
+                y: [0, -100, 0],
+                opacity: [0.05, 0.15, 0.05],
+              }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: i * 0.5,
+              }}
+              className="absolute rounded-full bg-white/5"
+              style={{
+                width: 80 + i * 20,
+                height: 80 + i * 20,
+                left: `${10 + i * 15}%`,
+                top: `${10 + i * 10}%`,
+              }}
+            />
+          ))}
+
+          {/* Main content */}
+          <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center">
+            {/* Plane */}
+            <div className="relative">
+              <motion.div
+                variants={planeVariants}
+                initial="initial"
+                animate={!isLoading ? ['takeoff'] : ['animate', 'float']}
               >
-                <FlightIcon
-                  sx={{
-                    fontSize: 50,
-                    color: 'white',
-                    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4))',
-                  }}
-                />
-              </Box>
+                <div className="w-[160px] h-[160px] rounded-full bg-white/10 border border-white/10 flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                  <FlightIcon
+                    style={{
+                      fontSize: 80,
+                      color: 'white',
+                      filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
+                    }}
+                  />
+                </div>
+              </motion.div>
+
+              {/* Rotating ring */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                className="absolute -top-[15px] -left-[15px] w-[190px] h-[190px] rounded-full border-t-4 border-r-4 border-white/30"
+              />
+            </div>
+
+            {/* Title & subtitle */}
+            <motion.div variants={textVariants} initial="initial" animate="animate">
+              <h1 className=" mt-5  text-[1.5rem] sm:text-[2rem] md:text-[4.5rem] font-bold text-white/20  drop-shadow">
+                Global Gateway
+              </h1>
+
+              <p className="text-white/50 tracking-[0.1em] text-md sm:text-base mt-1 mb-5">
+                Crafting Comfort Across Continents over a Decade
+              </p>
             </motion.div>
 
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
-              style={{
-                position: 'absolute',
-                top: -10,
-                left: -10,
-                width: 140,
-                height: 140,
-                borderRadius: '50%',
-                border: '2px solid transparent',
-                borderTop: '2px solid rgba(255, 255, 255, 0.3)',
-                borderRight: '2px solid rgba(255, 255, 255, 0.1)',
-              }}
-            />
-          </Box>
-
-          {/* Title and subtitle */}
-          <motion.div variants={textVariants} initial="initial" animate="animate">
-            <Typography
-              variant="h4"
-              sx={{
-                color: 'red',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                mb: 1,
-                textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
-                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-              }}
-            >
-              Global Gateway
-            </Typography>
-
-            <Typography
-              variant="body1"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontWeight: 300,
-                letterSpacing: '0.1em',
-                fontSize: { xs: '0.9rem', sm: '1rem' },
-              }}
-            >
-              Crafting Comfort Across Continents over a Decade
-            </Typography>
-          </motion.div>
-
-          {/* Progress bar */}
-          <Box sx={{ width: '300px', maxWidth: '80vw', position: 'relative' }}>
-            <LinearProgress
-              sx={{
-                height: 6,
-                borderRadius: 3,
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                '& .MuiLinearProgress-bar': {
-                  borderRadius: 3,
-                  background: 'linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)',
-                  boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)',
-                },
-              }}
-            />
-          </Box>
-
-          {/* Dots animation */}
-          <Box sx={{ display: 'flex', gap: 1.5, mt: 2 }}>
-            {[0, 1, 2].map((index) => (
+            {/* Progress bar */}
+            <div className="w-[430px] max-w-[100vw] h-[6px] rounded-full bg-white/10 overflow-hidden">
               <motion.div
-                key={index}
-                animate={{
-                  scale: [1, 1.4, 1],
-                  opacity: [0.3, 0.8, 0.3],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  delay: index * 0.3,
-                  ease: 'easeInOut',
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.6)',
-                    boxShadow: '0 2px 8px rgba(255, 255, 255, 0.2)',
+                className="h-full w-full bg-gradient-to-r from-red-500 via-red-600 to-red-700 shadow-[0_2px_10px_rgba(239,68,68,0.4)]"
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
+              />
+            </div>
+
+            {/* Dots */}
+            <div className="flex gap-[15px] mt-5">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0.8, 0.3] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: i * 0.3,
+                    ease: 'easeInOut',
                   }}
+                  className="w-[16px] h-[16px] rounded-full bg-white/60 shadow-[0_2px_8px_rgba(255,255,255,0.2)]"
                 />
-              </motion.div>
-            ))}
-          </Box>
-        </Box>
-      </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 };

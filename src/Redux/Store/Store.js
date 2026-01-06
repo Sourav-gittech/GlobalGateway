@@ -17,6 +17,7 @@ import holidaysSliceReducer from '../Slice/holidaySlice';
 import appointmentReasonSliceReducer from '../Slice/appointmentReasonSlice';
 import timingSliceReducer from '../Slice/timingSlice';
 import notificationSliceReducer from '../Slice/notificationSlice';
+import loadingReducer from '../Slice/loadingSlice';
 
 export const store = configureStore({
   reducer: {
@@ -36,7 +37,8 @@ export const store = configureStore({
     holiday: holidaysSliceReducer,
     timing: timingSliceReducer,
     appointmentReason: appointmentReasonSliceReducer,
-    notification: notificationSliceReducer
+    notification: notificationSliceReducer,
+    loading: loadingReducer,
   }
 });
 

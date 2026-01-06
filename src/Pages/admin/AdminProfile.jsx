@@ -94,8 +94,8 @@ export default function AdminProfile() {
     <div className="w-full max-h-screen">
       <AdminHeader />
 
-      <div className="bg-transparent border border-slate-800/50 rounded-2xl p-6 md:p-10 mt-10">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-8 border-b border-slate-800">
+      <div className="bg-transparent p-6 md:p-10 mt-10">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-8">
           <AdminProfileTopSection profile={{
             name: userAuthData.name,
             role: "Administrator"

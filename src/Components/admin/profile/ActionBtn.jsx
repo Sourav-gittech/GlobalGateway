@@ -7,13 +7,13 @@ const ActionBtn = ({ isEditing, setIsEditing, handleSave, handleCancel }) => {
     const { isAdminLoading } = useSelector(state => state.admin);
 
     return (
-        <div className="flex gap-3">
+        <div className="flex -mt-16 gap-3">
             {!isEditing ? (
                 <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-transparent border border-gray-300 hover:bg-white/10 px-5 py-2.5 rounded-lg text-white flex items-center gap-2 transition-all"
+                    className="bg-transparent  border border-gray-300 hover:bg-white/10 px-5 py-2.5 rounded-lg text-white flex items-center gap-2 transition-all"
                 >
-                    <Edit2 className="w-4 h-4" /> Edit Profile
+                    <Edit2 className="w-4 h-4" />
                 </button>
             ) : (
                 <>
