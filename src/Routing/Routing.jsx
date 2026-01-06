@@ -81,6 +81,7 @@ const Routing = () => {
             <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
             <Route path="/payment-preview" element={<PaymentPreview />} />
             <Route path="/payment-status" element={<PaymentStatus />} />
+            <Route path="/dashboard" element={<Dashboard />} />
 
             {/* Course */}
             <Route path="/course/:course_id" element={<CourseDetails />} />
@@ -92,7 +93,6 @@ const Routing = () => {
             <Route path="/about" element={<AboutSection />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/country" element={<CountryGrid />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
             <Route path="/policy/:country_id" element={<VisaPolicies />} />
 
