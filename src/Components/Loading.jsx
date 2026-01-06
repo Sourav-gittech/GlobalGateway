@@ -101,7 +101,7 @@ const LoadingAnimation = () => {
                   <FlightIcon
                     style={{
                       fontSize: 80,
-                      color: 'white',
+                      color: 'gray',
                       filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
                     }}
                   />
