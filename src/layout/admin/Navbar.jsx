@@ -193,7 +193,7 @@ export default function Navbar({ adminData }) {
                   <div className="p-3 border-t border-white/10">
                     <button
                       onClick={() => {
-                        navigate("/notifications");
+                        navigate("/admin/dashboard/adminNotification");
                         setShowNotifications(false);
                       }}
                       className="w-full text-center text-sm text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"

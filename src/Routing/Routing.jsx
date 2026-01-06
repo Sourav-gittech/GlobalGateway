@@ -65,6 +65,8 @@ import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup";
 
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404";
+import AdminNotifications from "../Pages/admin/AdminNotifications";
+import EmbassyNotifications from "../Pages/embassy/Dashboard/EmbassyNotifications";
 
 const Routing = () => {
   return (
@@ -116,6 +118,7 @@ const Routing = () => {
             <Route path="admin" element={<AddAdmin />} />
             <Route path="visaManage" element={<VisaManage />} />
             <Route path="adminProfile" element={<AdminProfile />} />
+             <Route path="adminNotification" element={<AdminNotifications />} />
           </Route>
 
           {/* ================= EMBASSY PUBLIC ================= */}
@@ -141,6 +144,7 @@ const Routing = () => {
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
             <Route path="analytics" element={<EmbassyAnalytics />} />
+             <Route path="notifications" element={<EmbassyNotifications />} />
           </Route>
 
           {/* ================= FALLBACK ================= */}
