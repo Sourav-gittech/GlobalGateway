@@ -175,9 +175,7 @@ function CourseCard({ course, onEdit, onDelete, onView }) {
         <div className="absolute bottom-2 left-2 bg-blue-500/90 text-white px-2 py-1 rounded text-xs font-bold">
           ₹{parseInt(course.price).toLocaleString('en-IN')}
         </div>
-        <div className="absolute top-2 left-2 p-2 bg-white/90 rounded-lg">
-          <IconComponent className="w-5 h-5 text-red-500" />
-        </div>
+      
       </div>
       
       <div className="p-4">
