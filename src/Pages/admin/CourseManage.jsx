@@ -312,6 +312,17 @@ const handleRemoveVideo = () => {
   setIsUploadingVideo(false);
 };
 
+const handleRemoveVideoThumbnail = () => {
+  setValue("video.thumbnailFile", null);
+  setValue("video.thumbnail", "");
+};
+
+const handleRemoveCourseThumbnail = () => {
+  setValue("thumbnailFile", null);
+  setValue("img_url", "");
+};
+
+
 
 
   // Watch pricing fields for calculation
@@ -522,7 +533,7 @@ const handleRemoveVideo = () => {
                 </select>
               </div>
 
-            <div>
+           <div>
   <label className="block text-sm font-medium text-slate-300 mb-2">
     Course Thumbnail
   </label>
@@ -550,14 +561,24 @@ const handleRemoveVideo = () => {
           className="w-full h-full object-cover"
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition flex items-center justify-center">
+        {/* Overlay Actions */}
+        <div className="absolute top-3 right-3 flex gap-2">
+          {/* Replace */}
           <label
             htmlFor="courseThumbnail"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-600 transition"
+            className="px-3 py-1.5 bg-white/10 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-blue-600 transition"
           >
-            Re-upload Thumbnail
+            <RotateCcw className="w-4 h-4" />
           </label>
+
+          {/* Delete */}
+          <button
+            type="button"
+            onClick={handleRemoveCourseThumbnail}
+            className="px-3 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-md text-xs font-medium transition"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </>
     ) : (
@@ -566,16 +587,13 @@ const handleRemoveVideo = () => {
         className="flex flex-col items-center justify-center h-full cursor-pointer"
       >
         <Upload className="w-6 h-6 text-slate-400 mb-2" />
-        <p className="text-sm text-slate-400">
-          Upload course thumbnail
-        </p>
-        <p className="text-xs text-slate-500 mt-1">
-          JPG, PNG, WebP
-        </p>
+        <p className="text-sm text-slate-400">Upload course thumbnail</p>
+        <p className="text-xs text-slate-500 mt-1">JPG, PNG, WebP</p>
       </label>
     )}
   </div>
 </div>
+
 
 
 
@@ -800,7 +818,7 @@ const handleRemoveVideo = () => {
 </div>
 
 
-             <div>
+           <div>
   <label className="block text-sm font-medium text-slate-300 mb-2">
     Video Thumbnail
   </label>
@@ -828,13 +846,24 @@ const handleRemoveVideo = () => {
           className="w-full h-full object-cover"
         />
 
-        <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition flex items-center justify-center">
+        {/* Overlay Actions */}
+        <div className="absolute top-3 right-3 flex gap-2">
+          {/* Replace */}
           <label
             htmlFor="videoThumbnail"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-600 transition"
+            className="px-3 py-1.5 bg-white/10 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-blue-600 transition"
           >
-            Re-upload Thumbnail
+            <RotateCcw className="w-4 h-4" />
           </label>
+
+          {/* Delete */}
+          <button
+            type="button"
+            onClick={handleRemoveVideoThumbnail}
+            className="px-3 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-md text-xs font-medium transition"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </>
     ) : (
@@ -843,13 +872,13 @@ const handleRemoveVideo = () => {
         className="flex flex-col items-center justify-center h-full cursor-pointer"
       >
         <Upload className="w-5 h-5 text-slate-400 mb-2" />
-        <p className="text-sm text-slate-400">
-          Upload video thumbnail
-        </p>
+        <p className="text-sm text-slate-400">Upload video thumbnail</p>
+        <p className="text-xs text-slate-500">JPG, PNG, WebP</p>
       </label>
     )}
   </div>
 </div>
+
 
 
             </div>
