@@ -462,7 +462,7 @@ const CourseDetails = () => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-slate-700/80 via-[#4a5c6a] to-[#556b7a] text-white shadow-xl">
+        <div className="bg-gradient-to-r from-gray-900 to-[#556b7a] text-white shadow-2xl">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 sm:py-12">
             <button onClick={() => navigate('/coaching/course')} className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />Back to Courses
@@ -472,7 +472,7 @@ const CourseDetails = () => {
               <div className="lg:col-span-3 mt-20 space-y-6">
                 {/* PURCHASED BADGE */}
                 {isPurchased && (
-                  <div className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                  <div className="inline-flex mb-10 items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                     <CheckCircle className="w-5 h-5" />
                     Course Purchased - Full Access Unlocked
                   </div>
