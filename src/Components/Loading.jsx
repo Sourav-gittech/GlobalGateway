@@ -97,7 +97,7 @@ const LoadingAnimation = () => {
                 initial="initial"
                 animate={!isLoading ? ['takeoff'] : ['animate', 'float']}
               >
-                <div className="w-[160px] h-[160px] rounded-full bg-white/10 border border-white/10 flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+                <div className="w-[140px] h-[140px] rounded-full bg-white/10 border border-white/10 flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
                   <FlightIcon
                     style={{
                       fontSize: 80,
@@ -112,7 +112,7 @@ const LoadingAnimation = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="absolute -top-[15px] -left-[15px] w-[190px] h-[190px] rounded-full border-t-4 border-r-4 border-white/30"
+                className="absolute -top-[16px] -left-[16px] w-[180px] h-[180px] rounded-full border-t-4 border-r-4 border-white/30"
               />
             </div>
 
