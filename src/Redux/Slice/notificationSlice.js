@@ -39,16 +39,20 @@ export const addNotification = createAsyncThunk("notificationSlice/addNotificati
 // fetch all notifications
 export const fetchNotifications = createAsyncThunk("notificationSlice/fetchNotifications",
     async ({ receiver_type, receiver_country_id }, { rejectWithValue }) => {
-        // console.log('Received data for fetching', receiver_type, receiver_country_id);
+        // console.log('Received data for fetching notifications', receiver_type, receiver_country_id);
 
         try {
+            if (receiver_type === "embassy" && !receiver_country_id) {
+                return [];
+            }
+
             let query = supabase.from("notifications").select("*").eq("receiver_type", receiver_type).eq("mark_read", false).order("created_at", { ascending: false });
 
             if (receiver_type === "admin") {
                 query = query.is("receiver_country_id", null);
             }
 
-            if (receiver_country_id != null) {
+            if (receiver_type === "embassy") {
                 query = query.eq("receiver_country_id", receiver_country_id);
             }
 
@@ -144,7 +148,7 @@ export const notificationSlice = createSlice({
                 //     state.notificationList[index].mark_read = true;
                 // }
             })
-             .addCase(markNotificationRead.rejected, (state, action) => {
+            .addCase(markNotificationRead.rejected, (state, action) => {
                 state.isNotificationLoading = false;
                 state.hasNotificationError = action.payload;
             })

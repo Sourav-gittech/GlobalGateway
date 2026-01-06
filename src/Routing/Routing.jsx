@@ -66,7 +66,7 @@ import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup";
 /* ---------- Misc ---------- */
 import Error_404 from "../Pages/Error_404";
 import AdminNotifications from "../Pages/admin/AdminNotifications";
-import EmbassyNotifications from "../Pages/embassy/Dashboard/EmbassyNotifications";
+import EmbassyNotifications from "../Pages/embassy/dashboard/EmbassyNotifications";
 
 const Routing = () => {
   return (
@@ -146,7 +146,7 @@ const Routing = () => {
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
             <Route path="analytics" element={<EmbassyAnalytics />} />
-             <Route path="notifications" element={<EmbassyNotifications />} />
+             <Route path="notifications/:countryId" element={<EmbassyNotifications />} />
           </Route>
 
           {/* ================= FALLBACK ================= */}

@@ -24,7 +24,6 @@ export default function Navbar({ adminData }) {
   const dispatch = useDispatch();
   const notificationRef = useRef(null);
   const userMenuRef = useRef(null);
-  const searchInputRef = useRef(null);
 
   // notification 
   useEffect(() => {
@@ -32,7 +31,8 @@ export default function Navbar({ adminData }) {
       .then(res => {
         // console.log('Response for fetching notification for admin', res)
       })
-      .catch(() => {
+      .catch(err => {
+        console.log('Error occured', err);
         getSweetAlert("Oops...", "Something went wrong!", "error");
       })
   }, []);
@@ -162,7 +162,7 @@ export default function Navbar({ adminData }) {
                     <h3 className="text-white font-semibold text-sm">Notifications</h3>
                     {notificationList?.length > 0 && (
                       <button
-                        onClick={()=>markAllAsRead('admin')}
+                        onClick={() => markAllAsRead('admin')}
                         className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
                       >
                         Mark all read

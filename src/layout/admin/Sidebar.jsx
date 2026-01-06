@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Library, Loader2, UserRoundCog, FileChartColumnIncreasing, Earth } from "lucide-react";
+import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Library, Loader2, UserRoundCog, FileChartColumnIncreasing, Earth, BellRing, MessageSquareText } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "../../Redux/Slice/userSlice";
 import "../../../src/App.css";
 import getSweetAlert from "../../util/alert/sweetAlert";
+import { fetchNotifications } from "../../Redux/Slice/notificationSlice";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
 
@@ -22,10 +23,7 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
         : collapsed
           ? "text-gray-300 hover:bg-white/5 hover:text-white rounded-xl" // square hover
           : "text-gray-300 hover:bg-white/5 hover:text-white rounded-lg" // normal hover
-      }
-    `
-    }
-  >
+      }`}>
 
     <div className="flex items-center justify-center w-6 flex-shrink-0">
       <Icon size={18} />
@@ -41,13 +39,6 @@ const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
         )}
       </>
     )}
-
-    {/* {collapsed && (
-      <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 shadow-xl border border-white/10">
-        {children}
-        {badge && <span className="ml-2 text-blue-400">({badge})</span>}
-      </div>
-    )} */}
   </NavLink>
 );
 
@@ -61,6 +52,7 @@ export default function Sidebar({ adminData }) {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
 
   const { getUserData, isUserLoading } = useSelector(state => state.userProfile);
 
@@ -73,6 +65,18 @@ export default function Sidebar({ adminData }) {
         console.log('Error occured', err);
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       });
+  }, []);
+
+  // notification 
+  useEffect(() => {
+    dispatch(fetchNotifications({ receiver_type: 'admin', receiver_country_id: null }))
+      .then(res => {
+        // console.log('Response for fetching notification for admin', res)
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
   }, []);
 
   // Close sidebar on Escape
@@ -109,14 +113,15 @@ export default function Sidebar({ adminData }) {
     },
     { to: "/admin/dashboard/admin", label: "Manage Admin", icon: UserRoundCog },
     { to: "/admin/dashboard/country", label: "Manage Countries", icon: Earth },
-     { to: "/admin/dashboard/viewApplications", label: "View Applications", icon: FileChartColumnIncreasing },
+    { to: "/admin/dashboard/viewApplications", label: "View Applications", icon: FileChartColumnIncreasing },
     { to: "/admin/dashboard/visaManage", label: "Manage Visa", icon: IdCard },
     { to: "/admin/dashboard/embassyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
 
+    { to: "/admin/dashboard/payments", label: "Notifications", icon: BellRing, badge: notificationList?.length },
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
-    { to: "/admin/dashboard/contact", label: "Messages", icon: Bell },
+    { to: "/admin/dashboard/contact", label: "Messages", icon: MessageSquareText },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
