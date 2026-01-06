@@ -462,7 +462,7 @@ const CourseDetails = () => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-gray-700/80 via-[#4a5c6a] to-[#556b7a] text-white shadow-xl">
+        <div className="bg-gradient-to-r from-slate-700/80 via-[#4a5c6a] to-[#556b7a] text-white shadow-xl">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 sm:py-12">
             <button onClick={() => navigate('/coaching/course')} className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />Back to Courses

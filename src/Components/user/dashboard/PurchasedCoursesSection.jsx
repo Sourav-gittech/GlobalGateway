@@ -28,7 +28,7 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
       description: "IELTS, TOEFL, and PTE preparation with certified trainers",
       img_url: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=600&fit=crop",
       purchaseDate: "2025-01-02",
-     g 
+      
       lastAccessed: "Today"
     }
   ];
