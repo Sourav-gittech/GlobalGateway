@@ -249,7 +249,7 @@ function FormInput({ label, name, register, errors, type = "text", placeholder, 
 
 // Add/Edit Course Modal
 function CourseModal({ isOpen, onClose, course, onSave }) {
-  const { register, control, handleSubmit, reset, watch, formState: { errors } } = useForm({
+  const { register, control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm({
     defaultValues: course || {
       course_name: '',
       description: '',
@@ -510,34 +510,62 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-3">
-                  Upload Thumbnail
-                </label>
+            <div>
+  <label className="block text-sm font-medium text-slate-300 mb-2">
+    Course Thumbnail
+  </label>
 
-                {/* Dropzone */}
-                <div
-                  onClick={() => document.getElementById('thumbnailInput').click()}
-                  className="w-full h-28 flex items-center justify-center
-               border border-dashed border-slate-600/60
-               rounded-xl cursor-pointer
-               bg-slate-800/40 hover:bg-slate-800/60
-               transition-colors"
-                >
-                  <p className="text-sm text-slate-400">
-                    Click to upload thumbnail <span className="text-slate-500">(JPG, PNG, WebP)</span>
-                  </p>
-                </div>
+  <input
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    className="hidden"
+    id="courseThumbnail"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-                {/* Hidden file input */}
-                <input
-                  id="thumbnailInput"
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  className="hidden"
-                  {...register('thumbnail', { required: true })}
-                />
-              </div>
+      setValue("thumbnailFile", file);
+      setValue("img_url", URL.createObjectURL(file));
+    }}
+  />
+
+  <div className="relative w-full h-44 rounded-xl border border-dashed border-slate-600 bg-slate-800/40 overflow-hidden">
+    {watch("img_url") ? (
+      <>
+        <img
+          src={watch("img_url")}
+          alt="Course Thumbnail"
+          className="w-full h-full object-cover"
+        />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition flex items-center justify-center">
+          <label
+            htmlFor="courseThumbnail"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-600 transition"
+          >
+            Re-upload Thumbnail
+          </label>
+        </div>
+      </>
+    ) : (
+      <label
+        htmlFor="courseThumbnail"
+        className="flex flex-col items-center justify-center h-full cursor-pointer"
+      >
+        <Upload className="w-6 h-6 text-slate-400 mb-2" />
+        <p className="text-sm text-slate-400">
+          Upload course thumbnail
+        </p>
+        <p className="text-xs text-slate-500 mt-1">
+          JPG, PNG, WebP
+        </p>
+      </label>
+    )}
+  </div>
+</div>
+
+
 
             </div>
           )}
@@ -652,81 +680,114 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 required
               />
 
-              {/* Video Upload */}
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Upload Video
-                </label>
+             <div>
+  <label className="block text-sm font-medium text-slate-300 mb-2">
+    Course Video
+  </label>
 
-                <input
-                  type="file"
-                  accept="video/*"
-                  className="hidden"
-                  id="videoUpload"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+  <input
+    type="file"
+    accept="video/*"
+    className="hidden"
+    id="videoUpload"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-                    setValue("video.file", file);
-                    setValue("video.preview", URL.createObjectURL(file));
-                  }}
-                />
+      setValue("video.file", file);
+      setValue("video.preview", URL.createObjectURL(file));
+    }}
+  />
 
-                <label
-                  htmlFor="videoUpload"
-                  className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
-                >
-                  <span className="text-slate-400 text-sm">
-                    Click to upload video (MP4, WebM, MOV)
-                  </span>
-                </label>
+  <div className="relative w-full h-56 rounded-xl border border-dashed border-slate-600 bg-slate-800/40 overflow-hidden">
+    {watch("video.preview") ? (
+      <>
+        <video
+          src={watch("video.preview")}
+          controls
+          className="w-full h-full object-cover"
+        />
 
-                {watch("video.preview") && (
-                  <video
-                    src={watch("video.preview")}
-                    controls
-                    className="mt-4 rounded-lg w-full max-h-64"
-                  />
-                )}
-              </div>
+        {/* Overlay */}
+        <div className="absolute top-3 right-3">
+          <label
+            htmlFor="videoUpload"
+            className="px-3 py-1.5 bg-blue-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-blue-600 transition"
+          >
+            Replace Video
+          </label>
+        </div>
+      </>
+    ) : (
+      <label
+        htmlFor="videoUpload"
+        className="flex flex-col items-center justify-center h-full cursor-pointer"
+      >
+        <Video className="w-6 h-6 text-slate-400 mb-2" />
+        <p className="text-sm text-slate-400">
+          Upload course video
+        </p>
+        <p className="text-xs text-slate-500 mt-1">
+          MP4, WebM, MOV
+        </p>
+      </label>
+    )}
+  </div>
+</div>
 
-              {/* Thumbnail Upload */}
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Upload Thumbnail
-                </label>
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="thumbnailUpload"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+             <div>
+  <label className="block text-sm font-medium text-slate-300 mb-2">
+    Video Thumbnail
+  </label>
 
-                    setValue("video.thumbnailFile", file);
-                    setValue("video.thumbnailPreview", URL.createObjectURL(file));
-                  }}
-                />
+  <input
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    className="hidden"
+    id="videoThumbnail"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-                <label
-                  htmlFor="thumbnailUpload"
-                  className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
-                >
-                  <span className="text-slate-400 text-sm">
-                    Click to upload thumbnail (JPG, PNG, WebP)
-                  </span>
-                </label>
+      setValue("video.thumbnailFile", file);
+      setValue("video.thumbnail", URL.createObjectURL(file));
+    }}
+  />
 
-                {watch("video.thumbnailPreview") && (
-                  <img
-                    src={watch("video.thumbnailPreview")}
-                    alt="Thumbnail Preview"
-                    className="mt-4 rounded-lg w-full max-h-48 object-cover"
-                  />
-                )}
-              </div>
+  <div className="relative w-full h-40 rounded-xl border border-dashed border-slate-600 bg-slate-800/40 overflow-hidden">
+    {watch("video.thumbnail") ? (
+      <>
+        <img
+          src={watch("video.thumbnail")}
+          alt="Video Thumbnail"
+          className="w-full h-full object-cover"
+        />
+
+        <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition flex items-center justify-center">
+          <label
+            htmlFor="videoThumbnail"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium cursor-pointer hover:bg-blue-600 transition"
+          >
+            Re-upload Thumbnail
+          </label>
+        </div>
+      </>
+    ) : (
+      <label
+        htmlFor="videoThumbnail"
+        className="flex flex-col items-center justify-center h-full cursor-pointer"
+      >
+        <Upload className="w-5 h-5 text-slate-400 mb-2" />
+        <p className="text-sm text-slate-400">
+          Upload video thumbnail
+        </p>
+      </label>
+    )}
+  </div>
+</div>
+
+
             </div>
           )}
 
