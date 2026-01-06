@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import {
-  BookOpen, Plus, Search, Edit2, Trash2, Eye, DollarSign,
+  BookOpen,  RotateCcw, Plus, Search, Edit2, Trash2, Eye, DollarSign,
   Clock, Users, Video, FileText, Star, Globe, BarChart,
   Upload, X, Save, Lock, Unlock, Award, Calendar, School, Scale, Hand
 } from 'lucide-react';
@@ -47,11 +47,12 @@ const initialCourses = [
     },
     documents: [
       {
-        name: "Visa Application Checklist",
-        type: "PDF",
-        size: "2.5 MB",
-        pages: 12,
-        isFree: false
+         name: '',
+         type: 'PDF',
+         isFree: false,
+         file: null,        // local file
+         previewUrl: '',    // local preview
+         size: '',          // file size
       },
       {
         name: "Interview Questions & Answers",
@@ -301,6 +302,17 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
   });
 
   const [activeTab, setActiveTab] = useState('basic');
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
+const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+
+const handleRemoveVideo = () => {
+  setValue("video.file", null);
+  setValue("video.preview", "");
+  setVideoUploadProgress(0);
+  setIsUploadingVideo(false);
+};
+
+
 
   // Watch pricing fields for calculation
   const watchPrice = watch('pricing.basePrice');
@@ -690,16 +702,50 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
     accept="video/*"
     className="hidden"
     id="videoUpload"
-    onChange={(e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+   onChange={(e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-      setValue("video.file", file);
+  setIsUploadingVideo(true);
+  setVideoUploadProgress(0);
+
+  setValue("video.file", file);
+
+  // 🔹 Simulated upload progress
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 12; // smooth random progress
+
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+
       setValue("video.preview", URL.createObjectURL(file));
-    }}
+      setIsUploadingVideo(false);
+    }
+
+    setVideoUploadProgress(Math.floor(progress));
+  }, 200);
+}}
+
   />
 
   <div className="relative w-full h-56 rounded-xl border border-dashed border-slate-600 bg-slate-800/40 overflow-hidden">
+  {/* Upload Progress */}
+{isUploadingVideo && (
+  <div className="absolute bottom-0 left-0 right-0 p-3 bg-white/10 backdrop-blur-sm">
+    <div className="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
+      <div
+        className="h-full bg-blue-500 transition-all duration-300"
+        style={{ width: `${videoUploadProgress}%` }}
+      />
+    </div>
+    <p className="text-xs text-slate-300 mt-1 text-right">
+      Uploading... {videoUploadProgress}%
+    </p>
+  </div>
+)}
+
     {watch("video.preview") ? (
       <>
         <video
@@ -708,15 +754,33 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
           className="w-full h-full object-cover"
         />
 
-        {/* Overlay */}
-        <div className="absolute top-3 right-3">
-          <label
-            htmlFor="videoUpload"
-            className="px-3 py-1.5 bg-blue-500 text-white rounded-md text-xs font-medium cursor-pointer hover:bg-blue-600 transition"
-          >
-            Replace Video
-          </label>
-        </div>
+       {/* Overlay Actions */}
+<div className="absolute top-3 right-3 flex gap-2">
+  {/* Replace */}
+  <label
+    htmlFor="videoUpload"
+    className={`px-3 py-1.5 rounded-md text-xs font-medium transition
+      ${isUploadingVideo
+        ? "bg-white/10 cursor-not-allowed text-slate-300"
+        : "bg-white/10 text-white cursor-pointer hover:bg-blue-600"
+      }`}
+  >
+    <RotateCcw className="w-4 h-4" />
+
+  </label>
+
+  {/* Delete */}
+  {!isUploadingVideo && (
+    <button
+      type="button"
+      onClick={handleRemoveVideo}
+      className="px-3 mr-2 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-md text-xs font-medium transition"
+    >
+    <Trash2 className="w-4 h-4" />
+    </button>
+  )}
+</div>
+
       </>
     ) : (
       <label
@@ -798,7 +862,17 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                 <h3 className="text-sm font-medium text-slate-300">Course Documents</h3>
                 <button
                   type="button"
-                  onClick={() => appendDocument({ name: '', type: 'PDF', isFree: false })}
+                 onClick={() =>
+  appendDocument({
+    name: '',
+    type: 'PDF',
+    isFree: false,
+    file: null,
+    previewUrl: '',
+    size: '',
+  })
+}
+
                   className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-sm flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
@@ -819,6 +893,77 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
+                    {/* Document Upload */}
+<div
+  className="w-full rounded-xl border border-dashed border-slate-600 bg-slate-800/40 p-4 text-center"
+  onDragOver={(e) => e.preventDefault()}
+  onDrop={(e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    setValue(`documents.${index}.file`, file);
+    setValue(`documents.${index}.previewUrl`, URL.createObjectURL(file));
+    setValue(`documents.${index}.size`, (file.size / (1024 * 1024)).toFixed(2) + " MB");
+    setValue(`documents.${index}.name`, file.name);
+    setValue(`documents.${index}.type`, file.name.split('.').pop().toUpperCase());
+  }}
+>
+  <input
+    type="file"
+    accept=".pdf,.doc,.docx,.xls,.xlsx"
+    className="hidden"
+    id={`docUpload-${index}`}
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setValue(`documents.${index}.file`, file);
+      setValue(`documents.${index}.previewUrl`, URL.createObjectURL(file));
+      setValue(`documents.${index}.size`, (file.size / (1024 * 1024)).toFixed(2) + " MB");
+      setValue(`documents.${index}.name`, file.name);
+      setValue(`documents.${index}.type`, file.name.split('.').pop().toUpperCase());
+    }}
+  />
+
+  {watch(`documents.${index}.file`) ? (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <FileText className="w-5 h-5 text-blue-400" />
+        <div className="text-left">
+          <p className="text-sm text-white font-medium">
+            {watch(`documents.${index}.name`)}
+          </p>
+          <p className="text-xs text-slate-400">
+            {watch(`documents.${index}.size`)}
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          setValue(`documents.${index}.file`, null);
+          setValue(`documents.${index}.previewUrl`, '');
+          setValue(`documents.${index}.size`, '');
+        }}
+        className="p-1.5 bg-red-500/20 border border-red-500/30 text-red-400 rounded hover:bg-red-500/30"
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+    </div>
+  ) : (
+    <label
+      htmlFor={`docUpload-${index}`}
+      className="flex flex-col items-center justify-center cursor-pointer"
+    >
+      <Upload className="w-5 h-5 text-slate-400 mb-2" />
+      <p className="text-sm text-slate-400">Drag & drop or click to upload</p>
+      <p className="text-xs text-slate-500">PDF, DOCX, XLSX</p>
+    </label>
+  )}
+</div>
+
 
                     <div className="grid grid-cols-2 gap-3">
                       <input

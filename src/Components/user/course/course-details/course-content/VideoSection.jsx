@@ -40,7 +40,7 @@ const VideoSection = ({ isPurchased, course }) => {
                             />
                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
                                 {course.video.isFree || isPurchased ? (
-                                    <div className="w-20 h-20 rounded-full bg-white/95 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                    <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl ring-2 ring-red-400 ring-offset-2 ring-offset-transparent flex items-center justify-center shadow-xl transform hover:scale-130 animate-pulse transition-transform" >
                                         <Play className="w-10 h-10 text-[#FF5252] ml-1" fill="#FF5252" />
                                     </div>
                                 ) : (
