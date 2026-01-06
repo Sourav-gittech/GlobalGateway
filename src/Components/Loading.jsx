@@ -112,7 +112,7 @@ const LoadingAnimation = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                className="absolute -top-[16px] -left-[16px] w-[180px] h-[180px] rounded-full border-t-4 border-r-4 border-white/30"
+                className="absolute -top-[18px] -left-[18px] w-[180px] h-[180px] rounded-full border-t-4 border-r-4 border-white/30"
               />
             </div>
 
