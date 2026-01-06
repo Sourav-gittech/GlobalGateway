@@ -9,9 +9,13 @@ const LoadingAnimation = () => {
   );
 
   const containerVariants = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, scale: 0.95, transition: { duration: 0.4 } },
+   
+    animate: { opacity: 1 },
+    exit: { 
+      opacity: 0, 
+      scale: 0.95, 
+      transition: { duration: 0.5, ease: 'easeInOut' } 
+    },
   };
 
   const planeVariants = {
@@ -46,7 +50,7 @@ const LoadingAnimation = () => {
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isLoading && (
         <motion.div
           variants={containerVariants}
@@ -114,7 +118,7 @@ const LoadingAnimation = () => {
 
             {/* Title & subtitle */}
             <motion.div variants={textVariants} initial="initial" animate="animate">
-              <h1 className=" mt-5  text-[1.5rem] sm:text-[2rem] md:text-[4.5rem] font-bold text-white/20  drop-shadow">
+              <h1 className="mt-5 text-[1.5rem] sm:text-[2rem] md:text-[4.5rem] font-bold text-white/20 drop-shadow">
                 Global Gateway
               </h1>
 

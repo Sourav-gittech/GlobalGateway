@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Routing from './Routing/Routing';
 import { Toaster } from 'react-hot-toast';
 import { ToastContainer } from 'react-toastify';
 import LoadingAnimation from './Components/Loading';
 import { useDispatch } from 'react-redux';
-import { startLoading, stopLoading } from './Redux/Slice/loadingSlice';
+import { stopLoading } from './Redux/Slice/loadingSlice';
 
 function App() {
   const dispatch = useDispatch();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    // Start loader on app boot
-    dispatch(startLoading('Initializing application...'));
-
+    // Minimum display time for smooth UX
     const timer = setTimeout(() => {
       dispatch(stopLoading());
-    }, 3000); 
+      setIsInitializing(false);
+    }, 2500); 
 
     return () => clearTimeout(timer);
   }, [dispatch]);
@@ -26,10 +26,14 @@ function App() {
       {/* GLOBAL LOADER */}
       <LoadingAnimation />
 
-      {/* APP UI */}
-      <ToastContainer />
-      <Toaster />
-      <Routing />
+      {/* APP UI - Only render after initial delay */}
+      {!isInitializing && (
+        <>
+          <ToastContainer />
+          <Toaster />
+          <Routing />
+        </>
+      )}
     </>
   );
 }
