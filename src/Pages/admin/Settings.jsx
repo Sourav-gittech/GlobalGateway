@@ -4,6 +4,9 @@ import GeneralSettings from "../../Components/admin/settings/GeneralSettings";
 import AppearanceSettings from "../../Components/admin/settings/AppearanceSettings";
 import HolidayManagement from "../../Components/admin/settings/HolidayManagement";
 import AdditionalPaymentManagement from "../../Components/admin/settings/AdditionalPaymentManagement";
+import PromoCodeManagement from "../../Components/admin/settings/PromoCodeManagement";
+import PaymentChargesManagement from "../../Components/admin/settings/PaymentChargesManagement";
+
 import { useDispatch, useSelector } from "react-redux";
 import SettingsHeader from "../../Components/admin/settings/SettingsHeader";
 import { checkLoggedInUser } from "../../Redux/Slice/auth/checkAuthSlice";
@@ -85,6 +88,18 @@ export default function Settings() {
         </div>
       </div>
 
+      
+      {/* Payment Settings Row */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <PromoCodeManagement 
+    SettingsSection={SettingsSection} 
+  />
+  
+  <PaymentChargesManagement 
+    SettingsSection={SettingsSection} 
+  />
+</div>
+
       {/* Bottom Row - Fixed Height Management Settings */}
       <div className="grid grid-cols-1  lg:grid-cols-2 gap-8">
         <HolidayManagement 
@@ -95,6 +110,8 @@ export default function Settings() {
           SettingsSection={SettingsSection} 
         />
       </div>
+
     </div>
+
   );
 }

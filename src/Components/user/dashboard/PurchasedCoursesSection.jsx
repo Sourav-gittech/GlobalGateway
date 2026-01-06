@@ -1,7 +1,13 @@
-import React from 'react';
-import { BookOpen, Clock, Video, FileText, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, Clock, Video, FileText, ArrowRight, Star, Check } from 'lucide-react';
 
 const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
+  // State to manage ratings for each course
+  const [tempRatings, setTempRatings] = useState({});
+  const [hoveredRatings, setHoveredRatings] = useState({});
+  const [submittedRatings, setSubmittedRatings] = useState({});
+  const [showSuccessMessage, setShowSuccessMessage] = useState({});
+
   // Mock purchased courses data (replace with Redux data later)
   const mockPurchasedCourses = [
     {
@@ -10,8 +16,9 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
       description: "Complete guidance for international study visa applications",
       img_url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop",
       purchaseDate: "2024-12-15",
-      
-      lastAccessed: "2 days ago"
+      lastAccessed: "2 days ago",
+      userRating: null, // null means not rated yet
+      hasSubmittedRating: false
     },
     {
       id: 4,
@@ -19,8 +26,9 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
       description: "Expert guidance for work visa applications and employment authorization",
       img_url: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=600&fit=crop",
       purchaseDate: "2024-11-20",
-    
-      lastAccessed: "1 week ago"
+      lastAccessed: "1 week ago",
+      userRating: 4,
+      hasSubmittedRating: true
     },
     {
       id: 2,
@@ -28,13 +36,80 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
       description: "IELTS, TOEFL, and PTE preparation with certified trainers",
       img_url: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=600&fit=crop",
       purchaseDate: "2025-01-02",
-      
-      lastAccessed: "Today"
+      lastAccessed: "Today",
+      userRating: null,
+      hasSubmittedRating: false
     }
   ];
 
   const coursesToDisplay =
     purchasedCourses.length > 0 ? purchasedCourses : mockPurchasedCourses;
+
+  // Initialize submitted ratings from course data
+  React.useEffect(() => {
+    const initialSubmitted = {};
+    coursesToDisplay.forEach(course => {
+      if (course.hasSubmittedRating && course.userRating) {
+        initialSubmitted[course.id] = course.userRating;
+      }
+    });
+    setSubmittedRatings(initialSubmitted);
+  }, []);
+
+  const handleStarClick = (courseId, rating) => {
+    // Only allow rating if not already submitted
+    if (!submittedRatings[courseId]) {
+      setTempRatings(prev => ({
+        ...prev,
+        [courseId]: rating
+      }));
+    }
+  };
+
+  const handleStarHover = (courseId, rating) => {
+    // Only show hover effect if not already submitted
+    if (!submittedRatings[courseId]) {
+      setHoveredRatings(prev => ({
+        ...prev,
+        [courseId]: rating
+      }));
+    }
+  };
+
+  const handleStarLeave = (courseId) => {
+    setHoveredRatings(prev => ({
+      ...prev,
+      [courseId]: 0
+    }));
+  };
+
+  const handleSubmitRating = (courseId) => {
+    const rating = tempRatings[courseId];
+    if (rating && rating > 0) {
+      // Save the rating permanently
+      setSubmittedRatings(prev => ({
+        ...prev,
+        [courseId]: rating
+      }));
+      
+      // Show success message
+      setShowSuccessMessage(prev => ({
+        ...prev,
+        [courseId]: true
+      }));
+
+      // Here you would typically call an API to save the rating
+      console.log(`Course ${courseId} rating submitted: ${rating} stars`);
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(prev => ({
+          ...prev,
+          [courseId]: false
+        }));
+      }, 3000);
+    }
+  };
 
   const handleGoToCourse = (courseId) => {
     if (onNavigate) {
@@ -46,6 +121,77 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
     if (onNavigate) {
       onNavigate('/coaching/course');
     }
+  };
+
+  const StarRating = ({ courseId }) => {
+    const isSubmitted = submittedRatings[courseId] !== undefined;
+    const submittedRating = submittedRatings[courseId] || 0;
+    const currentTempRating = tempRatings[courseId] || 0;
+    const hoverRating = hoveredRatings[courseId] || 0;
+    
+    const displayRating = isSubmitted 
+      ? submittedRating 
+      : (hoverRating || currentTempRating);
+
+    return (
+      <div className="flex items-center gap-4 flex-wrap">
+        {/* Stars and Rating Display */}
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              onClick={() => handleStarClick(courseId, star)}
+              onMouseEnter={() => handleStarHover(courseId, star)}
+              onMouseLeave={() => handleStarLeave(courseId)}
+              disabled={isSubmitted}
+              className={`transition-all transform focus:outline-none ${
+                isSubmitted 
+                  ? 'cursor-not-allowed' 
+                  : 'hover:scale-110 cursor-pointer'
+              }`}
+            >
+              <Star
+                className={`w-5 h-5 transition-colors ${
+                  star <= displayRating
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-slate-300'
+                }`}
+              />
+            </button>
+          ))}
+          <span className="text-sm text-slate-600 ml-2">
+            {isSubmitted 
+              ? `${submittedRating}/5` 
+              : currentTempRating > 0 
+                ? `${currentTempRating}/5` 
+                : 'Rate this course'}
+          </span>
+        </div>
+
+        {/* Submit Text Link or Success Message */}
+        {!isSubmitted && currentTempRating > 0 && (
+          <button
+            onClick={() => handleSubmitRating(courseId)}
+            className="text-slate-500 hover:text-slate-700 text-sm font-medium transition-colors underline"
+          >
+            Submit
+          </button>
+        )}
+
+        {isSubmitted && showSuccessMessage[courseId] && (
+          <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+            <Check className="w-4 h-4" />
+            Submitted!
+          </div>
+        )}
+
+        {isSubmitted && !showSuccessMessage[courseId] && (
+          <span className="text-slate-400 text-sm">
+            Submitted
+          </span>
+        )}
+      </div>
+    );
   };
 
   if (coursesToDisplay.length === 0) {
@@ -118,8 +264,6 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
                     {course.description}
                   </p>
 
-                 
-
                   {/* Meta */}
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
                     <span>
@@ -132,6 +276,11 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
                     </span>
                     <span>•</span>
                     <span>Last accessed: {course.lastAccessed}</span>
+                  </div>
+
+                  {/* Star Rating */}
+                  <div className="mb-4">
+                    <StarRating courseId={course.id} />
                   </div>
                 </div>
 
