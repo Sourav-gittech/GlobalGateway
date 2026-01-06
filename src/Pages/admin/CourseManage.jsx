@@ -632,35 +632,95 @@ function CourseModal({ isOpen, onClose, course, onSave }) {
           )}
 
           {activeTab === 'video' && (
-            <div className="space-y-4">
-              <FormInput
-                label="Video Title"
-                name="video.title"
-                register={register}
-                errors={errors}
-                placeholder="Complete Study Visa Application Guide"
-                required
-              />
+  <div className="space-y-6">
+    {/* Video Title */}
+    <FormInput
+      label="Video Title"
+      name="video.title"
+      register={register}
+      errors={errors}
+      placeholder="Complete Study Visa Application Guide"
+      required
+    />
 
-              
-              <FormInput
-                label="Video URL"
-                name="video.url"
-                register={register}
-                errors={errors}
-                placeholder="https://www.youtube.com/embed/..."
-                required
-              />
+    {/* Video Upload */}
+    <div>
+      <label className="block text-sm font-medium text-slate-300 mb-2">
+        Upload Video
+      </label>
 
-              <FormInput
-                label="Video Thumbnail URL"
-                name="video.thumbnail"
-                register={register}
-                errors={errors}
-                placeholder="https://example.com/thumbnail.jpg"
-              />
-            </div>
-          )}
+      <input
+        type="file"
+        accept="video/*"
+        className="hidden"
+        id="videoUpload"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          setValue("video.file", file);
+          setValue("video.preview", URL.createObjectURL(file));
+        }}
+      />
+
+      <label
+        htmlFor="videoUpload"
+        className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
+      >
+        <span className="text-slate-400 text-sm">
+          Click to upload video (MP4, WebM, MOV)
+        </span>
+      </label>
+
+      {watch("video.preview") && (
+        <video
+          src={watch("video.preview")}
+          controls
+          className="mt-4 rounded-lg w-full max-h-64"
+        />
+      )}
+    </div>
+
+    {/* Thumbnail Upload */}
+    <div>
+      <label className="block text-sm font-medium text-slate-300 mb-2">
+        Upload Thumbnail
+      </label>
+
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
+        id="thumbnailUpload"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          setValue("video.thumbnailFile", file);
+          setValue("video.thumbnailPreview", URL.createObjectURL(file));
+        }}
+      />
+
+      <label
+        htmlFor="thumbnailUpload"
+        className="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-lg p-6 cursor-pointer hover:border-blue-500 transition"
+      >
+        <span className="text-slate-400 text-sm">
+          Click to upload thumbnail (JPG, PNG, WebP)
+        </span>
+      </label>
+
+      {watch("video.thumbnailPreview") && (
+        <img
+          src={watch("video.thumbnailPreview")}
+          alt="Thumbnail Preview"
+          className="mt-4 rounded-lg w-full max-h-48 object-cover"
+        />
+      )}
+    </div>
+  </div>
+)}
+
 
           {activeTab === 'documents' && (
             <div className="space-y-4">
@@ -1091,30 +1151,7 @@ function CourseDetailsModal({ isOpen, onClose, course }) {
             </div>
           )}
 
-          {/* Video */}
-          {course.video && (
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-3">Course Video</h3>
-              <div className="p-4 bg-slate-700/30 border border-slate-600/50 rounded-lg">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-white font-medium">{course.video.title}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-sm text-slate-400">{course.video.duration}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded ${
-                        course.video.isFree 
-                          ? 'bg-green-500/20 text-green-400' 
-                          : 'bg-red-500/20 text-red-400'
-                      }`}>
-                        {course.video.isFree ? 'Free Preview' : 'Paid Only'}
-                      </span>
-                    </div>
-                  </div>
-                  <Video className="w-5 h-5 text-blue-400" />
-                </div>
-              </div>
-            </div>
-          )}
+         
 
           {/* Documents */}
           {course.documents && course.documents.length > 0 && (
