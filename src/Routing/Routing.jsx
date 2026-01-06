@@ -1,127 +1,102 @@
 import React, { lazy, Suspense } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
-import UserLayout from '../layout/user/index.jsx';
+import { Route, Routes } from "react-router-dom";
 
-/* ---------- User Layout ---------- */
+/* ---------- Layouts ---------- */
+import UserLayout from "../layout/user";
+import AdminLayout from "../layout/admin/AdminLayout";
+import EmbassyLayout from "../layout/embassy/EmbassyLayout";
+import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout";
 
-
-/* ---------- Global Utils ---------- */
-import ScrollToTop from "../Components/ScrollToTop.jsx";
+/* ---------- Utils ---------- */
+import ScrollToTop from "../Components/ScrollToTop";
 
 /* ---------- User Pages ---------- */
 import Home from "../Pages/user/home/Home";
 import AboutSection from "../Pages/user/about/AboutPage";
 import CountryGrid from "../Pages/user/countries/Country";
+import CountryDetails from "../Pages/user/countries/country-details/CountryDetails";
 import ContactUs from "../Pages/user/get-in-touch/ContactUs";
-import EmailVerification from "../Pages/verification/EmailVerificationPage";
-import VisaProcess from "../Pages/user/apply-visa/VisaProcess";
 import Dashboard from "../Pages/user/dashboard/Dashboard";
-import CountryDetails from "../Pages/user/countries/country-details/CountryDetails.jsx";
-import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy.jsx";
-import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm.jsx";
-import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview.jsx";
-import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus.jsx";
+import VisaProcess from "../Pages/user/apply-visa/VisaProcess";
+import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy";
+import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm";
+import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview";
+import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus";
+import Courselist from "../Pages/user/coaching/Courselist";
+import CourseDetails from "../Pages/user/coaching/CourseDetails";
+import Cart from "../Pages/user/coaching/Cart";
 
-/* ---------- Admin ---------- */
-import AdminLayout from "../layout/admin/AdminLayout";
-import AdminDashboard from "../Pages/admin/AdminDashboard.jsx";
+/* ---------- Auth ---------- */
+const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
+import EmailVerification from "../Pages/verification/EmailVerificationPage";
+
+/* ---------- Admin Pages ---------- */
+import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
+import AdminDashboard from "../Pages/admin/AdminDashboard";
 import Users from "../Pages/admin/Users";
 import Payments from "../Pages/admin/Payments";
 import Settings from "../Pages/admin/Settings";
 import Analytics from "../Pages/admin/Analytics";
-import ContactMessages from "../Pages/admin/UserContact.jsx";
-import CountryManagement from "../Pages/admin/ManageCountry.jsx";
-import AdminLoginForm from "../Pages/admin/auth/AdminLoginForm";
-import CourseManage from "../Pages/admin/CourseManage.jsx";
-import AddAdmin from "../Pages/admin/ManageAdmin.jsx";
-import VisaManage from "../Pages/admin/ManageVisa.jsx";
-import AdminProfile from "../Pages/admin/AdminProfile.jsx";
+import ContactMessages from "../Pages/admin/UserContact";
+import CountryManagement from "../Pages/admin/ManageCountry";
+import EmbassyManage from "../Pages/admin/ManageEmbassy";
+import ViewApplications from "../Pages/admin/ViewApplications";
+import CourseManage from "../Pages/admin/CourseManage";
+import AddAdmin from "../Pages/admin/ManageAdmin";
+import VisaManage from "../Pages/admin/ManageVisa";
+import AdminProfile from "../Pages/admin/AdminProfile";
 
-/* ---------- Embassy Public Layout ---------- */
-import EmbassyLayout from "../layout/embassy/EmbassyLayout";
+/* ---------- Embassy ---------- */
 import EmbassyHome from "../Pages/embassy/Home";
 import EmbassyAbout from "../Pages/embassy/About";
 import EmbassyContact from "../Pages/embassy/Contact";
-import EmbassyAuth from "../Pages/embassy/auth/Auth.jsx";
-
-/* ---------- Embassy Dashboard Layout ---------- */
-import EmbassyDashboardLayout from "../layout/embassy/EmbassyDashboard/EmbassyDashboardLayout";
-
-/* ---------- Embassy Status Pages ---------- */
-import Review from "../Pages/embassy/status/Review.jsx";
-import Rejected from "../Pages/embassy/status/Rejected.jsx";
-import CountrySetup from "../Pages/embassy/requirement-form/CountrySetup.jsx";
-
-/* ---------- Embassy Dashboard Pages ---------- */
-import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard.jsx";
-import EmbassyProfile from "../Pages/embassy/Dashboard/Profile.jsx";
-import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications.jsx";
-import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView.jsx";
+import EmbassyAuth from "../Pages/embassy/auth/Auth";
+import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard";
+import EmbassyProfile from "../Pages/embassy/Dashboard/Profile";
+import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications";
+import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView";
+import VisaPolicyManage from "../Pages/embassy/dashboard/VisaPolicyManage";
+import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics";
+import Review from "../Pages/embassy/status/Review";
+import Rejected from "../Pages/embassy/status/Rejected";
+import Approved from "../Pages/embassy/status/Approved";
+import CountrySetup from "../Pages/embassy/requirement-form/CountrySetup";
+import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup";
 
 /* ---------- Misc ---------- */
-import Error_404 from "../Pages/Error_404.jsx";
-import Approved from "../Pages/embassy/status/Approved.jsx";
-import ContactSetup from "../Pages/embassy/requirement-form/ContactSetup.jsx";
-import VisaPolicyManage from "../Pages/embassy/dashboard/VisaPolicyManage.jsx";
-import EmbassyAnalytics from "../Pages/embassy/Dashboard/EmbassyAnalytics.jsx";
-import EmbassyManage from "../Pages/admin/ManageEmbassy.jsx";
-import ViewApplications from "../Pages/admin/ViewApplications.jsx";
-import Courselist from "../Pages/user/coaching/Courselist.jsx";
-import CourseDetails from "../Pages/user/coaching/CourseDetails.jsx";
-import Cart from "../Pages/user/coaching/Cart.jsx";
-
-const AuthForm = lazy(() => import("../Pages/user/auth/Authentication"));
+import Error_404 from "../Pages/Error_404";
 
 const Routing = () => {
-  const location = useLocation();
-
-  /* ---------- FIXED LAYOUT VISIBILITY LOGIC ---------- */
-  const hideLayout =
-    location.pathname === "/authentication" ||
-    location.pathname.startsWith("/verification") ||
-    location.pathname.startsWith("/country/") ||
-    location.pathname.startsWith("/policy/") ||
-    location.pathname.startsWith("/application-form/") ||
-    location.pathname.startsWith("/dashboard") ||
-    location.pathname.startsWith("/payment") ||
-    location.pathname.startsWith("/admin") ||
-    location.pathname.startsWith("/embassy") ||
-    location.pathname.startsWith("/auth");
-
   return (
     <>
-      {/* GLOBAL SCROLL */}
       <ScrollToTop />
 
       <Suspense fallback={<h3 className="mt-5 text-center">Loading...</h3>}>
         <Routes>
-         <Route path="/" element={<UserLayout />}>
 
-          <Route index element={<Home />} />
-          <Route path="about" element={<AboutSection />} />
-          <Route path="contact" element={<ContactUs />} />
+          {/* ================= USER ================= */}
+          <Route element={<UserLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutSection />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/country" element={<CountryGrid />} />
+            <Route path="/country/:country_id" element={<CountryDetails />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/visaprocess/:country_id" element={<VisaProcess />} />
+            <Route path="/policy/:country_id" element={<VisaPolicies />} />
+            <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
+            <Route path="/payment-preview" element={<PaymentPreview />} />
+            <Route path="/payment-status" element={<PaymentStatus />} />
 
-          <Route path="country" element={<CountryGrid />} />
-          <Route path="country/:country_id" element={<CountryDetails />} />
-
-          <Route path="dashboard" element={<Dashboard />} />
-
-          <Route path="authentication" element={<AuthForm />} />
-          <Route path="verification/:email/:user_type" element={<EmailVerification />} />
-
-          <Route path="visaprocess/:country_id" element={<VisaProcess />} />
-          <Route path="policy/:country_id" element={<VisaPolicies />} />
-          <Route path="application-form/:country_id" element={<VisaApplicationForm />} />
-
-          <Route path="payment-preview" element={<PaymentPreview />} />
-          <Route path="payment-status" element={<PaymentStatus />} />
-
-          {/* ===== COACHING ===== */}
-          <Route path="coaching">
-            <Route path="course" element={<Courselist />} />
-            <Route path="course/:id" element={<CourseDetails />} />
-            <Route path="cart" element={<Cart />} />
+            {/* Coaching */}
+            <Route path="/coaching/course" element={<Courselist />} />
+            <Route path="/coaching/course/:id" element={<CourseDetails />} />
+            <Route path="/coaching/cart" element={<Cart />} />
           </Route>
+
+          {/* ================= AUTH (NO LAYOUT) ================= */}
+          <Route path="/authentication" element={<AuthForm />} />
+          <Route path="/verification/:email/:user_type" element={<EmailVerification />} />
 
           {/* ================= ADMIN ================= */}
           <Route path="/admin" element={<AdminLoginForm />} />
@@ -148,7 +123,7 @@ const Routing = () => {
             <Route path="contact" element={<EmbassyContact />} />
           </Route>
 
-          {/* ================= EMBASSY AUTH (No Layout) ================= */}
+          {/* ================= EMBASSY AUTH ================= */}
           <Route path="/embassy/auth" element={<EmbassyAuth />} />
           <Route path="/embassy/contact-setup/:embassyEmail/:redirectPath" element={<ContactSetup />} />
           <Route path="/embassy/country-setup" element={<CountrySetup />} />
@@ -160,24 +135,17 @@ const Routing = () => {
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
             <Route index element={<EmbassyDashboard />} />
             <Route path="profile" element={<EmbassyProfile />} />
-
-            {/* Applications Routes */}
             <Route path="applications" element={<EmbassyApplications />} />
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
-
             <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
-
             <Route path="analytics" element={<EmbassyAnalytics />} />
-
           </Route>
 
           {/* ================= FALLBACK ================= */}
           <Route path="*" element={<Error_404 />} />
-         </Route>
+
         </Routes>
       </Suspense>
-
-     
     </>
   );
 };
