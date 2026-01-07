@@ -7,6 +7,7 @@ import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
 import { fetchNotifications, markNotificationRead } from "../../../Redux/Slice/notificationSlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { formatDateDDMMYYYYHHMM } from "../../../util/dateFormat/dateFormatConvertion";
+import { encodeBase64Url } from "../../../util/encodeDecode/base64";
 
 export default function EmbassyNavbar({ embassyData, countryDetails }) {
     const navigate = useNavigate();
@@ -28,14 +29,17 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
 
     // notification 
     useEffect(() => {
+        if (!embassyData?.country_id) return;
+
         dispatch(fetchNotifications({ receiver_type: 'embassy', receiver_country_id: embassyData?.country_id }))
             .then(res => {
                 // console.log('Response for fetching notification', res)
             })
-            .catch(() => {
+            .catch(err => {
+                console.log('Error occured', err);
                 getSweetAlert("Oops...", "Something went wrong!", "error");
             })
-    }, []);
+    }, [dispatch, embassyData?.country_id]);
 
     // Detect screen size
     useEffect(() => {
@@ -176,7 +180,7 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                 <div className="p-3 border-t border-gray-200">
                                     <button
                                         onClick={() => {
-                                            navigate("/embassy/dashboard/notifications");
+                                            navigate(`/embassy/dashboard/notifications/${encodeBase64Url(String(embassyData?.country_id))}`);
                                             setShowNotifications(false);
                                         }}
                                         className="w-full text-center text-sm text-blue-600 hover:text-blue-700 transition-colors cursor-pointer"
@@ -220,7 +224,7 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                     </p>
                                 </div>
 
-                                <div className="p-2">
+                                {/* <div className="p-2">
                                     <button
                                         onClick={() => {
                                             navigate("/embassy/dashboard/settings");
@@ -231,7 +235,7 @@ export default function EmbassyNavbar({ embassyData, countryDetails }) {
                                         <Settings size={16} />
                                         <span>Settings</span>
                                     </button>
-                                </div>
+                                </div> */}
 
                                 <div className="p-2 border-t border-gray-200">
                                     <button

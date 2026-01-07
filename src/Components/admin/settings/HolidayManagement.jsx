@@ -7,21 +7,7 @@ import { fetchHolidays } from "../../../Redux/Slice/holidaySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { fetchAllEmbassy } from "../../../Redux/Slice/embassySlice";
 
-// Settings Section Wrapper Component
-const SettingsSection = ({ title, description, icon: Icon, children }) => (
-  <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
-    <div className="flex items-start gap-3 mb-6">
-      {Icon && <Icon className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />}
-      <div>
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
-        {description && <p className="text-sm text-slate-400 mt-1">{description}</p>}
-      </div>
-    </div>
-    {children}
-  </div>
-);
-
-export default function HolidayManagement() {
+export default function HolidayManagement({SettingsSection}) {
   const dispatch = useDispatch();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());

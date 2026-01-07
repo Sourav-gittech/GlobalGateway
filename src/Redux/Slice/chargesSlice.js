@@ -20,9 +20,14 @@ export const addCharge = createAsyncThunk("chargesSlice/addCharge",
 
 // slice to fetch all charges
 export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
-    async (_, { rejectWithValue }) => {
+    async ({ type } = {}, { rejectWithValue }) => {
         try {
-            const res = await supabase.from("charges").select("*").order("created_at", { ascending: true });
+            let query = supabase.from("charges").select("*").order("created_at", { ascending: true });
+
+            if (type) {
+                query = query.eq("purpose", type)
+            }
+            const res = await query;
             // console.log('Response for fetching all charges', res);
 
             if (res.error) return rejectWithValue(res.error.message);

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2 } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2, Bell, Columns4 } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { logoutUser } from "../../../Redux/Slice/auth/checkAuthSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useApplicationStats } from "../../../tanstack/query/getApplicationStatsForEmbassy";
+import { encodeBase64Url } from "../../../util/encodeDecode/base64";
+import { fetchNotifications } from "../../../Redux/Slice/notificationSlice";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
   <NavLink
@@ -52,11 +54,26 @@ export default function EmbassySidebar({ embassyData }) {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
 
   const { data: processingStats = [] } = useApplicationStats({
     countryId: embassyData?.country_id,
     statusFilter: "processing"
   });
+
+  // notification 
+  useEffect(() => {
+    if (!embassyData?.country_id) return;
+
+    dispatch(fetchNotifications({ receiver_type: 'embassy', receiver_country_id: embassyData?.country_id }))
+      .then(res => {
+        // console.log('Response for fetching notification', res)
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        // getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
+  }, [dispatch, embassyData?.country_id]);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -104,14 +121,20 @@ export default function EmbassySidebar({ embassyData }) {
     {
       to: "/embassy/dashboard/visa-policy-manage",
       label: "Manage Visa",
-      icon: FileText
+      icon: Columns4
+    },
+    {
+      to: `/embassy/dashboard/notifications/${encodeBase64Url(String(embassyData?.country_id))}`,
+      label: "Notifications",
+      icon: Bell,
+      badge: notificationList?.length
     },
     {
       to: "/embassy/dashboard/analytics",
       label: "Analytics",
       icon: BarChart2
     }
-    
+
   ];
 
   return (

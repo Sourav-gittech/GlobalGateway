@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
-import getSweetAlert from '../../../../util/alert/sweetAlert';
+import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
-import { deleteCharge, fetchCharges, updateCharge } from '../../../../Redux/Slice/chargesSlice';
-import hotToast from '../../../../util/alert/hot-toast';
+import { deleteCharge, fetchCharges, updateCharge } from '../../../../../Redux/Slice/chargesSlice';
+import hotToast from '../../../../../util/alert/hot-toast';
 import { createPortal } from 'react-dom';
-import ConfirmBlockUnblockAlert from '../../common/alerts/ConfirmBlockUnblockAlert';
+import ConfirmBlockUnblockAlert from '../../../common/alerts/ConfirmBlockUnblockAlert';
 import { useForm } from 'react-hook-form';
 
 const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
@@ -37,16 +37,19 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
             id: charge.id,
             updatedData: {
                 charge_type: data.charge_type.trim(),
-                amount: Number(data.amount)
+                amount: Number(data.amount),
+                purpose:'visa',
+                percentage:null,
+                percentage_conversion:null
             }
         }))
             .then(res => {
-                console.log('Response for updating charges', res);
+                // console.log('Response for updating charges', res);
 
                 if (res.meta.requestStatus === "fulfilled") {
                     hotToast("Charge updated successfully", "success");
                     setEditingId(null);
-                    dispatch(fetchCharges());
+                     dispatch(fetchCharges({type:'visa'}));
                 } else {
                     getSweetAlert("Error", "Update failed", "error");
                 }
@@ -67,7 +70,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
                         hotToast("Charge deleted successfully", "success");
                         setAlertModalOpen(false);
                         setCurrentChargeId(null);
-                        dispatch(fetchCharges());
+                         dispatch(fetchCharges({type:'visa'}));
                     }
                     else {
                         getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -131,7 +134,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
                             <p className="text-sm font-medium text-white">{charge.charge_type}</p>
                             <button
                                 onClick={() => setEditingId(charge.id)}
-                                className="p-1 text-slate-400 hover:text-blue-400"
+                                className="p-1 text-slate-400 hover:text-blue-400 cursor-pointer"
                             >
                                 <Edit2 className="w-3 h-3" />
                             </button>
@@ -159,7 +162,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
                 {/* Delete Button */}
                 <button
                     onClick={() => { handleCurrentCharge(charge?.id); setAlertModalOpen(true); }}
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                     title="Delete"
                 >
                     <Trash2 className="w-4 h-4" />

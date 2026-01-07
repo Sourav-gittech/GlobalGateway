@@ -1,28 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { DollarSign, Info, Plus, Loader2 } from "lucide-react";
-import PaymentRow from "./additionalPayment/PaymentRow";
-import PaymentModal from "./additionalPayment/PaymentModal";
+import PaymentRow from "./payment/additionalPayment/PaymentRow";
+import PaymentModal from "./payment/additionalPayment/PaymentModal";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCharges } from "../../../Redux/Slice/chargesSlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 
-
-const SettingsSection = ({ title, description, icon: Icon, children }) => (
-  <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 h-[640px] flex flex-col">
-    <div className="flex items-start gap-3 mb-6 flex-shrink-0">
-      {Icon && <Icon className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />}
-      <div>
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
-        {description && <p className="text-sm text-slate-400 mt-1">{description}</p>}
-      </div>
-    </div>
-    <div className="flex-1 flex flex-col min-h-0">
-      {children}
-    </div>
-  </div>
-);
-
-export default function AdditionalPaymentManagement() {
+export default function AdditionalPaymentManagement({SettingsSection}) {
   const dispatch = useDispatch();
 
   const [editingId, setEditingId] = useState(null);
@@ -33,7 +17,7 @@ export default function AdditionalPaymentManagement() {
   const [newCharge, setNewCharge] = useState({ label: '', amount: '' });
 
   useEffect(() => {
-    dispatch(fetchCharges())
+    dispatch(fetchCharges({type:'visa'}))
       .then(res => {
         // console.log('Response for fetching all charges', res);
       })
@@ -75,7 +59,7 @@ export default function AdditionalPaymentManagement() {
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto">
         <SettingsSection
-          title="Additional Payment Management"
+          title="Additional Payment Management For VISA"
           description="Configure additional visa service charges"
           icon={DollarSign}
         >
@@ -111,7 +95,7 @@ export default function AdditionalPaymentManagement() {
               </div>
 
               {/* Scrollable Charges List */}
-              <div className="flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
+              <div className="h-full flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
                 {allCharges?.length === 0 ? (
                   <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
                     <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />

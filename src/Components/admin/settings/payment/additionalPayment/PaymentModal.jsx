@@ -1,10 +1,10 @@
 import React from "react";
 import { Plus, X, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import getSweetAlert from "../../../../util/alert/sweetAlert";
-import hotToast from "../../../../util/alert/hot-toast";
+import getSweetAlert from "../../../../../util/alert/sweetAlert";
+import hotToast from "../../../../../util/alert/hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { addCharge, fetchCharges } from "../../../../Redux/Slice/chargesSlice";
+import { addCharge, fetchCharges } from "../../../../../Redux/Slice/chargesSlice";
 
 // Modal Component
 const Modal = ({ isOpen, onClose, children }) => {
@@ -31,17 +31,21 @@ const PaymentModal = ({ showAddModal, setShowAddModal, charges }) => {
     });
 
     const onSubmit = async (data) => {
-        const labelExists = charges?.some(c => c.label.toLowerCase() === data.label.trim().toLowerCase());
+
+        const labelExists = charges?.some(c => (c?.purpose?.toLowerCase() === 'visa' && c?.charge_type?.toLowerCase() === data?.label?.trim()?.toLowerCase()));
 
         if (labelExists) {
-            getSweetAlert("Validation Error", "A charge with this name already exists", "warning");
+            getSweetAlert("Oops...", "The charge is already exists", "warning");
             return;
         }
 
         try {
             const newChargeData = {
                 charge_type: data?.label?.trim()?.split(" ")?.map(charge => charge?.charAt(0)?.toUpperCase() + charge?.slice(1)?.toLowerCase())?.join(" "),
-                amount: data?.amount
+                amount: data?.amount,
+                purpose: 'visa',
+                percentage:null,
+                percentage_conversion:null
             }
 
             dispatch(addCharge(newChargeData))
@@ -52,7 +56,7 @@ const PaymentModal = ({ showAddModal, setShowAddModal, charges }) => {
                         reset();
                         setShowAddModal(false);
                         hotToast("New charge added successfully", "success");
-                        dispatch(fetchCharges())
+                        dispatch(fetchCharges({ type: 'visa' }))
                     }
                     else {
                         getSweetAlert('Oops...', 'Something went wrong!', 'error');

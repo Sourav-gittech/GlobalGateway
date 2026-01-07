@@ -32,6 +32,26 @@ function SettingsSection({ title, description, icon: Icon, children, className =
   );
 }
 
+// Modal Component
+const Modal = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-slate-800 border border-slate-700 rounded-xl p-6 w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-lg font-semibold text-white mb-4">{title}</h3>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 // Form Field Component
 function FormField({ label, id, type = "text", placeholder, value, onChange, helper, disabled }) {
   return (
@@ -40,13 +60,7 @@ function FormField({ label, id, type = "text", placeholder, value, onChange, hel
         {label}
       </label>
       <div className="relative">
-        <input 
-          id={id} 
-          type={type} 
-          placeholder={placeholder} 
-          value={value} 
-          onChange={onChange} 
-          disabled={disabled}
+        <input id={id} type={type} placeholder={placeholder} value={value} onChange={onChange} disabled={disabled}
           className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         />
       </div>
@@ -73,41 +87,41 @@ export default function Settings() {
       {/* Top Row - Compact Settings */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
-          <GeneralSettings 
-            SettingsSection={SettingsSection} 
-            FormField={FormField} 
-            userAuthData={userAuthData} 
+          <GeneralSettings
+            SettingsSection={SettingsSection}
+            FormField={FormField}
+            userAuthData={userAuthData}
           />
         </div>
-        
+
         <div>
-          <AppearanceSettings 
-            SettingsSection={SettingsSection} 
-            userAuthData={userAuthData} 
+          <AppearanceSettings
+            SettingsSection={SettingsSection}
+            userAuthData={userAuthData}
           />
         </div>
       </div>
 
-      
+
       {/* Payment Settings Row */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-  <PromoCodeManagement 
-    SettingsSection={SettingsSection} 
-  />
-  
-  <PaymentChargesManagement 
-    SettingsSection={SettingsSection} 
-  />
-</div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <PromoCodeManagement
+          SettingsSection={SettingsSection} Modal={Modal}
+        />
+
+        <PaymentChargesManagement
+          SettingsSection={SettingsSection} Modal={Modal}
+        />
+      </div>
 
       {/* Bottom Row - Fixed Height Management Settings */}
       <div className="grid grid-cols-1  lg:grid-cols-2 gap-8">
-        <HolidayManagement 
-          SettingsSection={SettingsSection} 
+        <HolidayManagement
+          SettingsSection={SettingsSection}
         />
-        
-        <AdditionalPaymentManagement 
-          SettingsSection={SettingsSection} 
+
+        <AdditionalPaymentManagement
+          SettingsSection={SettingsSection}
         />
       </div>
 
