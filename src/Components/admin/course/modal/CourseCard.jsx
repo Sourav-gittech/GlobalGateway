@@ -2,49 +2,50 @@ import React from 'react'
 import { BookOpen, Edit2, Trash2, Eye, Clock, Users, Video, Star } from 'lucide-react';
 
 const CourseCard = ({ course, onEdit, onDelete, onView }) => {
+console.log(course);
 
     return (
         <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
             <div className="aspect-video relative overflow-hidden">
                 <img
-                    src={course.img_url}
-                    alt={course.course_name}
+                    src={course?.img_url}
+                    alt={course?.course_name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 right-2 flex gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${course.status === 'active'
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${course?.status === 'active'
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                         : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
                         }`}>
-                        {course.status === 'active' ? 'Active' : 'Draft'}
+                        {course?.status === 'active' ? 'Active' : 'Draft'}
                     </span>
                 </div>
                 <div className="absolute bottom-2 left-2 bg-blue-500/90 text-white px-2 py-1 rounded text-xs font-bold">
-                    ₹{parseInt(course.price).toLocaleString('en-IN')}
+                    ₹{parseInt(course?.pricing)?.toLocaleString('en-IN')}
                 </div>
 
             </div>
 
             <div className="p-4">
-                <h3 className="text-white font-semibold mb-2 line-clamp-1">{course.course_name}</h3>
-                <p className="text-slate-400 text-sm mb-3 line-clamp-2">{course.description}</p>
+                <h3 className="text-white font-semibold mb-2 line-clamp-1">{course?.course_name}</h3>
+                <p className="text-slate-400 text-sm mb-3 line-clamp-2">{course?.description}</p>
 
                 <div className="flex items-center gap-3 text-xs text-slate-400 mb-3 flex-wrap">
-                    <span className="flex items-center gap-1">
+                    {/* <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        {course.duration}
-                    </span>
+                        {course?.duration}
+                    </span> */}
                     <span className="flex items-center gap-1">
                         <Video className="w-3 h-3" />
-                        {course.lectures}
+                        {course?.course_content?.[0]?.documents?.length+1}
                     </span>
                     <span className="flex items-center gap-1">
                         <Users className="w-3 h-3" />
-                        {course.students}
+                        {course?.students}
                     </span>
                     <span className="flex items-center gap-1">
                         <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        {course.rating}
+                        {course?.rating}
                     </span>
                 </div>
 

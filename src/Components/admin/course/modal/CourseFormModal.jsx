@@ -80,8 +80,6 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
     };
 
     const onSubmit = (data) => {
-        console.log(data);
-
         let hasError = false;
 
         const validFeatures = Array.isArray(data.features) && data.features.some(f => f?.trim());

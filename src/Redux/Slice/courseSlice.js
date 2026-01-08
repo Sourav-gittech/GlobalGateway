@@ -11,7 +11,7 @@ export const fetchAllCourses = createAsyncThunk("courseSlice/fetchAllCourses",
             else if (filter === "inactive") query = query.eq("is_blocked", true);
 
             const res = await query;
-            console.log('Response for fetching all course', res);
+            // console.log('Response for fetching all course', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);
 
@@ -64,7 +64,7 @@ async function uploadFile(file, bucket, folder = "") {
 // add course slice 
 export const addCourse = createAsyncThunk("courseSlice/addCourse",
     async ({ course, content, files }, { rejectWithValue }) => {
-        console.log('Received data for adding new course slice', course, content, files);
+        // console.log('Received data for adding new course slice', course, content, files);
 
         try {
             // ===== Thumbnail (MANDATORY) =====
@@ -180,7 +180,7 @@ export const toggleBlockCourse = createAsyncThunk("courseSlice/toggleBlockCourse
         console.log('Received data for block/unblock course', courseId, block);
 
         try {
-            const res = await supabase.from("courses").update({ is_blocked: block }).eq("id", courseId).select().single();
+            const res = await supabase.from("courses").update({ status: block }).eq("id", courseId).select().single();
             console.log('Response for block/unblock course', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);
@@ -210,8 +210,7 @@ export const deleteCourse = createAsyncThunk("courseSlice/deleteCourse",
 const initialState = {
     courseList: [],
     currentCourse: null,
-    totalCourse: 0,
-    courseLoading: false,
+    isCourseLoading: false,
     hasCourseError: null,
 }
 
@@ -227,42 +226,40 @@ export const courseSlice = createSlice({
         builder
             /* FETCH ALL */
             .addCase(fetchAllCourses.pending, (state) => {
-                state.courseLoading = true;
+                state.isCourseLoading = true;
             })
             .addCase(fetchAllCourses.fulfilled, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.courseList = action.payload.courses;
-                state.totalCourse = action.payload.totalCourse;
             })
             .addCase(fetchAllCourses.rejected, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.hasCourseError = action.payload;
             })
 
             /* FETCH ONE */
             .addCase(fetchCourseById.pending, (state) => {
-                state.courseLoading = true;
+                state.isCourseLoading = true;
             })
             .addCase(fetchCourseById.fulfilled, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.currentCourse = action.payload;
             })
             .addCase(fetchCourseById.rejected, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.hasCourseError = action.payload;
             })
 
             /* ADD */
             .addCase(addCourse.pending, (state) => {
-                state.courseLoading = true;
+                state.isCourseLoading = true;
             })
             .addCase(addCourse.fulfilled, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.courseList.unshift(action.payload);
-                state.totalCourse += 1;
             })
             .addCase(addCourse.rejected, (state, action) => {
-                state.courseLoading = false;
+                state.isCourseLoading = false;
                 state.hasCourseError = action.payload;
             })
 
@@ -286,7 +283,6 @@ export const courseSlice = createSlice({
             /* DELETE */
             .addCase(deleteCourse.fulfilled, (state, action) => {
                 state.courseList = state.courseList.filter((c) => c.id !== action.payload);
-                state.totalCourse -= 1;
                 if (state.currentCourse?.id === action.payload) state.currentCourse = null;
             });
     },

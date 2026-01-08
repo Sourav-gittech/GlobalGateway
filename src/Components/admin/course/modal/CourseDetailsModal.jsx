@@ -3,6 +3,7 @@ import { BookOpen, DollarSign, Clock, Users, FileText, Star, X, Award } from 'lu
 
 const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
   if (!isOpen || !course) return null;
+console.log(course);
 
   const IconComponent = iconOptions.find(i => i.value === course.icon)?.Icon || BookOpen;
 

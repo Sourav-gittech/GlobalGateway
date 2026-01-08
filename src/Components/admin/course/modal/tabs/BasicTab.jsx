@@ -81,7 +81,7 @@ export default function BasicTab({ register, errors, iconOptions, watch, setValu
                         className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
                     >
                         <option value="active">Active</option>
-                        <option value="draft">Draft</option>
+                        <option value="inactive">Draft</option>
                     </select>
                 </div>
             </div>

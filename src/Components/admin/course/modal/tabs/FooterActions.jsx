@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 
 export default function FooterActions({ onClose, isEdit }) {
 
-    // const { courseLoading } = useSelector(state => state?.course);
-    const { courseLoading = false } = useSelector(state => state?.course || {});
+    const { isCourseLoading } = useSelector(state => state?.course);
+    // const { isCourseLoading = false } = useSelector(state => state?.course || {});
 
     return (
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-700/50 mt-6">
@@ -12,7 +12,7 @@ export default function FooterActions({ onClose, isEdit }) {
                 Cancel
             </button>
             <button type="submit" className="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer">
-                {courseLoading ? (<div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin mr-2" />) : <Save />} {isEdit ? "Update Course" : "Create Course"}
+                {isCourseLoading ? (<div className="w-4 h-4 border-1 border-white border-t-transparent rounded-full animate-spin mr-2" />) : <Save />} {isEdit ? "Update Course" : "Create Course"}
             </button>
         </div>
     );

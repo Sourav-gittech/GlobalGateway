@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { BookOpen, Plus, Search, FileText, Globe, School, Scale, Hand } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { BookOpen, Plus, Search, FileText, Globe, School, Scale, Hand, Loader2 } from 'lucide-react';
 import CourseCard from '../../Components/admin/course/modal/CourseCard';
 import CourseFormModal from '../../Components/admin/course/modal/CourseFormModal';
 import CourseStats from '../../Components/admin/course/CourseStats';
 import CourseDetailsModal from '../../Components/admin/course/modal/CourseDetailsModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import getSweetAlert from "../../util/alert/sweetAlert";
-import { addCourse } from '../../Redux/Slice/courseSlice';
+import { addCourse, fetchAllCourses } from '../../Redux/Slice/courseSlice';
 import hotToast from '../../util/alert/hot-toast';
 
 // Mock initial courses data
@@ -165,6 +165,7 @@ export default function CourseManagement() {
   const [viewCourse, setViewCourse] = useState(null);
 
   const dispatch = useDispatch();
+  const { isCourseLoading, courseList, hasCourseError } = useSelector(state => state?.course);
 
   const filteredCourses = courses.filter(course =>
     course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -192,6 +193,17 @@ export default function CourseManagement() {
     setIsDetailsOpen(true);
   };
 
+  useEffect(() => {
+    dispatch(fetchAllCourses())
+      .then(res => {
+        // console.log('Response for fetching all available course', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error')
+      })
+  }, [dispatch]);
+
   const handleSaveCourse = (data) => {
 
     const course = {
@@ -206,8 +218,7 @@ export default function CourseManagement() {
         name: data?.instructor,
         bio: data?.instructorBio,
       },
-      pricing: data?.pricing,
-      is_blocked: true
+      pricing: data?.pricing
     };
 
     const content = {
@@ -239,7 +250,7 @@ export default function CourseManagement() {
 
     // console.log('Course data', course);
     // console.log('Content data', content);
-    console.log('Files data', files);
+    // console.log('Files data', files);
 
     dispatch(addCourse({ course, content, files }))
       .then(res => {
@@ -260,6 +271,8 @@ export default function CourseManagement() {
       })
   };
 
+  // console.log('Available course', courseList);
+
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto">
@@ -269,18 +282,15 @@ export default function CourseManagement() {
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+
+            <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search courses..."
-              className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-            />
+              className="w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
+
           </div>
-          <button
-            onClick={handleAddCourse}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
-          >
+          <button onClick={handleAddCourse}
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer" >
+
             <Plus className="w-5 h-5" />
             Add New Course
           </button>
@@ -290,11 +300,15 @@ export default function CourseManagement() {
         <CourseStats courses={courses} />
 
         {/* Courses Grid */}
-        <SettingsSection
-          title="All Courses"
-          description="Manage your immigration courses"
-          icon={BookOpen}
-        >
+        <SettingsSection title="All Courses" description="Manage your immigration courses" icon={BookOpen} >
+
+          {isCourseLoading && (
+            <div className="text-center py-12">
+              <Loader2 className="w-16 h-16 text-white animate-spin mx-auto text-center" />
+              <p className="text-slate-400 text-lg">Loading...</p>
+            </div>
+          )}
+
           {filteredCourses.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <BookOpen className="w-16 h-16 text-slate-600 mb-4" />
@@ -305,14 +319,9 @@ export default function CourseManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredCourses.map(course => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onEdit={handleEditCourse}
-                  onDelete={handleDeleteCourse}
-                  onView={handleViewCourse}
-                />
+              {courseList?.map(course => (
+                <CourseCard key={course.id} course={course} onEdit={handleEditCourse}
+                  onDelete={handleDeleteCourse} onView={handleViewCourse} />
               ))}
             </div>
           )}
