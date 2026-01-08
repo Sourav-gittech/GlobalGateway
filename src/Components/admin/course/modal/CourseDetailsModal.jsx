@@ -1,7 +1,7 @@
 import React from 'react'
-import {BookOpen,  DollarSign,Clock, Users, FileText, Star, X,  Award} from 'lucide-react';
+import { BookOpen, DollarSign, Clock, Users, FileText, Star, X, Award } from 'lucide-react';
 
-const CourseDetailsModal = ({ isOpen, onClose, course,iconOptions })=> {
+const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
   if (!isOpen || !course) return null;
 
   const IconComponent = iconOptions.find(i => i.value === course.icon)?.Icon || BookOpen;
@@ -176,8 +176,6 @@ const CourseDetailsModal = ({ isOpen, onClose, course,iconOptions })=> {
             </div>
           )}
 
-
-
           {/* Documents */}
           {course.documents && course.documents.length > 0 && (
             <div>
@@ -198,10 +196,7 @@ const CourseDetailsModal = ({ isOpen, onClose, course,iconOptions })=> {
                         </div>
                       </div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded ${doc.isFree
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-red-500/20 text-red-400'
-                      }`}>
+                    <span className={`text-xs px-2 py-1 rounded ${doc.isFree ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                       {doc.isFree ? 'Free' : 'Paid'}
                     </span>
                   </div>

@@ -83,9 +83,7 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                         <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
                             Admin Name
                         </label>
-                        <input
-                            id="name"
-                            type="text"
+                        <input id="name" type="text"
                             {...register("name", {
                                 required: "Name is required",
                                 minLength: {
@@ -105,9 +103,7 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                         <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                             Email
                         </label>
-                        <input
-                            id="email"
-                            type="email"
+                        <input id="email" type="email"
                             {...register("email", {
                                 required: "Email is required",
                                 pattern: {
@@ -127,9 +123,7 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                         <label htmlFor="phone" className="block text-sm font-medium text-slate-300 mb-2">
                             Phone Number
                         </label>
-                        <input
-                            id="phone"
-                            type="tel"
+                        <input id="phone" type="tel"
                             {...register("phone", {
                                 required: "Phone number is required",
                                 pattern: {
@@ -152,9 +146,7 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                         <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                             Password
                         </label>
-                        <input
-                            id="password"
-                            type="password"
+                        <input id="password" type="password"
                             {...register("password", {
                                 required: "password is required",
                                 pattern: {
@@ -171,19 +163,15 @@ const AddAdmin = ({ setShowSuccess, setSuccessMessage, setShowAddModal }) => {
                     </div>
 
                     <div className="flex gap-3 pt-2">
-                        <button
-                            type="button"
+                        <button type="button"
                             onClick={() => {
                                 setShowAddModal(false);
                                 reset();
                             }}
-                            className="flex-1 px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-all font-medium"
-                        >
+                            className="flex-1 px-4 py-2.5 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm transition-all font-medium">
                             Cancel
                         </button>
-                        <button
-                            type="button"
-                            onClick={onSubmit}
+                        <button type="button" onClick={onSubmit}
                             className={`flex-1 px-4 py-2.5 rounded-lg hover:bg-blue-700 ${isUserAuthLoading ? 'bg-blue-600' : 'bg-blue-700'} text-white text-sm transition-all font-medium cursor-pointer`}
                         >
                             <span className='flex items-center justify-center'>

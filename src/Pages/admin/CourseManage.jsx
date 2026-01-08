@@ -4,6 +4,10 @@ import CourseCard from '../../Components/admin/course/modal/CourseCard';
 import CourseFormModal from '../../Components/admin/course/modal/CourseFormModal';
 import CourseStats from '../../Components/admin/course/CourseStats';
 import CourseDetailsModal from '../../Components/admin/course/modal/CourseDetailsModal';
+import { useDispatch } from 'react-redux';
+import getSweetAlert from "../../util/alert/sweetAlert";
+import { addCourse } from '../../Redux/Slice/courseSlice';
+import hotToast from '../../util/alert/hot-toast';
 
 // Mock initial courses data
 const initialCourses = [
@@ -160,6 +164,8 @@ export default function CourseManagement() {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [viewCourse, setViewCourse] = useState(null);
 
+  const dispatch = useDispatch();
+
   const filteredCourses = courses.filter(course =>
     course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -187,19 +193,71 @@ export default function CourseManagement() {
   };
 
   const handleSaveCourse = (data) => {
-    if (selectedCourse) {
-      // Update existing course
-      setCourses(courses.map(c => c.id === selectedCourse.id ? { ...data, id: c.id } : c));
-    } else {
-      // Add new course
-      const newCourse = {
-        ...data,
-        id: Math.max(...courses.map(c => c.id)) + 1
-      };
-      setCourses([...courses, newCourse]);
-    }
-    setIsModalOpen(false);
-    setSelectedCourse(null);
+
+    const course = {
+      course_name: data?.course_name,
+      description: data?.description,
+      full_description: data?.fullDescription,
+      skill_level: data?.skillLevel,
+      language: data?.language,
+      status: data?.status,
+      icon: data?.icon,
+      instructor: {
+        name: data?.instructor,
+        bio: data?.instructorBio,
+      },
+      pricing: data?.pricing,
+      is_blocked: true
+    };
+
+    const content = {
+      features: data?.features || [],
+      video: {
+        title: data?.video?.title || "",
+        isFree: data?.video?.isFree || false,
+        video_url: "",
+        thumbnail_url: "",
+      },
+      documents: (data.documents || []).map((doc) => ({
+        name: doc?.name,
+        // type: doc?.type,
+        type: String(doc?.name)?.split(".")[String(doc?.name)?.split(".")?.length - 1]?.toUpperCase(),
+        isFree: doc?.isFree,
+        size: doc?.size,
+        file_url: "",
+      })),
+    };
+
+    const files = {
+      thumbnail: data?.thumbnailFile || null,
+      video: data?.video?.file || null,
+      videoThumbnail: data?.video?.thumbnailFile || null,
+      documents: (data?.documents || [])?.map((doc) => ({
+        file: doc?.file,
+      })),
+    };
+
+    // console.log('Course data', course);
+    // console.log('Content data', content);
+    console.log('Files data', files);
+
+    dispatch(addCourse({ course, content, files }))
+      .then(res => {
+        // console.log('Response for adding course', res);
+
+        if (res.meta.requestStatus === "fulfilled") {
+          hotToast('Course added successfully.', "success");
+          setIsModalOpen(false);
+          setSelectedCourse(null);
+        }
+        else {
+          getSweetAlert('Oops...', res?.payload, 'info');
+        }
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error')
+      })
   };
 
   return (
@@ -221,7 +279,7 @@ export default function CourseManagement() {
           </div>
           <button
             onClick={handleAddCourse}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <Plus className="w-5 h-5" />
             Add New Course
