@@ -20,19 +20,19 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
         defaultValues: course || {
 
             // Basic Tab
-            course_name: "", description: "", fullDescription: course?.full_description || "", skillLevel: "Beginner", language: "", status: "active", icon: "",
+            course_name: "", description: "", fullDescription: "", skillLevel: "Beginner", language: "", status: "active", icon: "",
 
             // Instructor Tab
-            instructor: course?.instructor?.name || "", bio: course?.instructor?.bio ||"",
+            instructor: "", instructorBio: "",
 
             // Features Tab
-            features: course?.course_content?.[0]?.features || [],
+            features: [],
 
             // Video Tab
-            video: { title:course?.course_content?.[0]?.video?.title|| "", url:course?.course_content?.[0]?.video?.video_url|| "", thumbnail: course?.course_content?.[0]?.video?.thumbnail_url||"", isFree:course?.course_content?.[0]?.video?.isFree|| false },
+            video: { title: "", preview: "", thumbnail_url: "", isFree: false },
 
             // Documents Tab
-            documents: course?.course_content?.[0]?.documents||[],
+            documents: [],
 
             // Pricing Tab
             pricing: "",
@@ -70,7 +70,60 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
     });
 
     useEffect(() => {
-        if (course) reset(course);
+        if (!course) {
+            reset({
+                // If editing a course, use course values; otherwise fallback to empty/new defaults
+                course_name: course?.course_name || "",
+                description: course?.description || "",
+                fullDescription: course?.full_description || "",
+                skillLevel: course?.skill_level || "Beginner",
+                language: course?.language || "",
+                status: course?.status || "active",
+                icon: course?.icon || "",
+                img_url: course?.img_url || "",
+
+                instructor: course?.instructor?.name || "",
+                instructorBio: course?.instructor?.bio || "",
+
+                features: course?.course_content?.[0]?.features || [],
+                video: {
+                    title: course?.course_content?.[0]?.video?.title || "",
+                    preview: course?.course_content?.[0]?.video?.video_url || "",
+                    thumbnail_url: course?.course_content?.[0]?.video?.thumbnail_url || "",
+                    isFree: course?.course_content?.[0]?.video?.isFree || false,
+                },
+
+                documents: course?.course_content?.[0]?.documents || [],
+                pricing: course?.pricing || "",
+            });
+            return;
+        }
+
+        reset({
+            course_name: course?.course_name || "",
+            description: course?.description || "",
+            fullDescription: course?.full_description || "",
+            skillLevel: course?.skill_level || "Beginner",
+            language: course?.language || "",
+            status: course?.status || "active",
+            icon: course?.icon || "",
+            img_url: course?.img_url || "",
+
+            instructor: course?.instructor?.name || "",
+            instructorBio: course?.instructor?.bio || "",
+
+            features: course?.course_content?.[0]?.features || [],
+
+            video: {
+                title: course?.course_content?.[0]?.video?.title || "",
+                preview: course?.course_content?.[0]?.video?.video_url || "",
+                thumbnail_url: course?.course_content?.[0]?.video?.thumbnail_url || "",
+                isFree: course?.course_content?.[0]?.video?.isFree || false,
+            },
+
+            documents: course?.course_content?.[0]?.documents || [],
+            pricing: course?.pricing || "",
+        });
     }, [course, reset]);
 
     const handleClose = () => {
@@ -80,6 +133,8 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
     };
 
     const onSubmit = (data) => {
+        console.log(data);
+
         let hasError = false;
 
         const validFeatures = Array.isArray(data.features) && data.features.some(f => f?.trim());
@@ -88,20 +143,21 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
             hasError = true;
         }
 
-        const validDocuments = Array.isArray(data.documents) && data.documents.some(doc => doc?.file);
+        const validDocuments = Array.isArray(data.documents) && data.documents.some(doc => doc?.file || doc?.file_url);
         if (!validDocuments) {
             setError("documents", { type: "manual", message: "At least one document is required" });
             hasError = true;
         }
 
-        if (!data?.video?.file) {
+        const hasVideo = Boolean(data?.video?.file || data?.video?.preview || data?.video?.video_url);
+        if (!hasVideo) {
             setError("video.file", { type: "manual", message: "Course video is required" });
             hasError = true;
         }
 
         if (hasError) return;
 
-        onSave(data);
+        onSave(data, course?.id, course);
         reset();
     };
 
@@ -134,7 +190,7 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
                 <form onSubmit={handleSubmit(onSubmit, onError)} className="flex-1 overflow-y-auto p-6">
 
                     <div className={activeTab === "basic" ? "block" : "hidden"}>
-                        <BasicTab register={register} errors={errors} iconOptions={iconOptions} watch={watch} setValue={setValue} />
+                        <BasicTab register={register} errors={errors} iconOptions={iconOptions} watch={watch} setValue={setValue} isEdit={!!course} />
                     </div>
 
                     <div className={activeTab === "details" ? "block" : "hidden"}>
@@ -151,7 +207,8 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
                     </div>
 
                     <div className={activeTab === "video" ? "block" : "hidden"}>
-                        <VideoTab register={register} watch={watch} setValue={setValue} errors={errors} control={control} />
+                        <VideoTab register={register} watch={watch} setValue={setValue} errors={errors} control={control}
+                            clearErrors={clearErrors} />
                     </div>
 
                     <div className={activeTab === "documents" ? "block" : "hidden"}>

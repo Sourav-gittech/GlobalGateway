@@ -1,9 +1,9 @@
 import { Video, RotateCcw, Trash2, Upload } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import FormInput from "./FormInput"; // adjust path if needed
 import { Controller } from "react-hook-form";
 
-export default function VideoTab({ control, register, watch, setValue, errors = {} }) {
+export default function VideoTab({ control, register, watch, setValue, clearErrors, errors = {} }) {
     const [isUploadingVideo, setIsUploadingVideo] = useState(false);
     const [videoUploadProgress, setVideoUploadProgress] = useState(0);
     const videoFileInputRef = useRef(null);
@@ -16,6 +16,12 @@ export default function VideoTab({ control, register, watch, setValue, errors = 
         setIsUploadingVideo(false);
         if (videoFileInputRef.current) videoFileInputRef.current.value = "";
     };
+
+    useEffect(() => {
+        if (watch("video.preview") || watch("video.file")) {
+            clearErrors("video.file");
+        }
+    }, [watch("video.preview"), watch("video.file")]);
 
     const handleReloadVideo = () => {
         if (videoFileInputRef.current) videoFileInputRef.current.click();
@@ -49,7 +55,7 @@ export default function VideoTab({ control, register, watch, setValue, errors = 
                 <Controller
                     name="video.file"
                     control={control}
-                    rules={{ required: "Course video is required" }}
+                    // rules={{ required: "Course video is required" }}
                     render={({ field }) => (
 
                         <input type="file" accept="video/*" className="hidden" id="videoUpload"

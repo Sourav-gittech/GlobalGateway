@@ -2,7 +2,6 @@ import React from 'react'
 import { BookOpen, Edit2, Trash2, Eye, Clock, Users, Video, Star } from 'lucide-react';
 
 const CourseCard = ({ course, onEdit, onDelete, onView }) => {
-    console.log(course);
 
     return (
         <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">

@@ -67,7 +67,6 @@ export const addCourse = createAsyncThunk("courseSlice/addCourse",
         // console.log('Received data for adding new course slice', course, content, files);
 
         try {
-            // ===== Thumbnail (MANDATORY) =====
             if (!files?.thumbnail) {
                 throw new Error("Course thumbnail is required");
             }
@@ -133,33 +132,63 @@ export const addCourse = createAsyncThunk("courseSlice/addCourse",
 
 // update course slice 
 export const updateCourse = createAsyncThunk("courseSlice/updateCourse",
-    async ({ courseId, course, content, files }, { rejectWithValue }) => {
-        console.log('Received data for updating course slice', courseId, course, content, files);
+    async ({ courseId, course, content, files, oldCourse }, { rejectWithValue }) => {
+        // console.log('Received data for updating course slice', courseId, course, content, files, oldCourse);
 
         try {
             content.video = content.video || {};
 
-            if (files?.thumbnail)
+            if (files?.thumbnail) {
                 course.img_url = await uploadFile(files.thumbnail, "course/course-thumbnails");
+            }
+            else {
+                course.img_url = oldCourse?.img_url
+            }
 
-            if (files?.video)
+            if (files?.video) {
                 content.video.video_url = await uploadFile(files.video, "course/course-videos");
+            }
+            else {
+                content.video.video_url = oldCourse?.course_content?.[0]?.video?.video_url
+            }
 
-            if (files?.videoThumbnail)
+            if (files?.videoThumbnail) {
                 content.video.thumbnail_url = await uploadFile(files.videoThumbnail, "course/course-thumbnails");
+            }
+            else {
+                content.video.thumbnail_url = oldCourse?.course_content?.[0]?.video?.thumbnail_url
+            }
+
+            content.documents = content.documents || oldCourse?.course_content?.[0]?.documents || [];
 
             if (files?.documents?.length > 0) {
-                for (let i = 0; i < files.documents.length; i++) {
-                    const docFile = files.documents[i]?.file;
 
-                    if (!docFile) continue;
-                    content.documents[i].file_url = await uploadFile(docFile, "course/course-documents");
+                for (let i = 0,j=0; i < files.documents.length; i++) {
+
+                    const docFileObj = files.documents[i];
+
+                    if (docFileObj?.file) {
+                        j++;
+                        const file_url = await uploadFile(docFileObj.file, "course/course-documents");
+
+                        if (content.documents[i]) {
+                            content.documents[i] = { ...content.documents[i], ...docFileObj, file_url };
+                        } else {
+                            content.documents.push({ ...docFileObj, file_url });
+                        }
+                    }
+                    else {
+                        if (oldCourse?.course_content?.[0]?.documents[i] != null) {
+                            content.documents[j] = { ...oldCourse?.course_content?.[0]?.documents[i] }
+                            j++;
+                        }
+                    }
                 }
             }
 
             // Update course table
             const res = await supabase.from("courses").update(course).eq("id", courseId).select().single();
-            console.log('Response for updating course slice', res);
+            // console.log('Response for updating course slice', res);
 
             if (res?.error) throw res?.error;
 
@@ -264,11 +293,18 @@ export const courseSlice = createSlice({
             })
 
             /* UPDATE */
+            .addCase(updateCourse.pending, (state, action) => {
+                state.isCourseLoading = true;
+            })
             .addCase(updateCourse.fulfilled, (state, action) => {
-                state.courseList = state.courseList.map((c) =>
-                    c.id === action.payload.id ? action.payload : c
-                );
-                state.currentCourse = action.payload;
+                state.isCourseLoading = false;
+                // state.courseList = state.courseList.map((c) =>
+                //     c.id === action.payload.id ? action.payload : c
+                // );
+                // state.currentCourse = action.payload;
+            })
+            .addCase(updateCourse.rejected, (state, action) => {
+                state.isCourseLoading = false;
             })
 
             /* BLOCK/UNBLOCK */

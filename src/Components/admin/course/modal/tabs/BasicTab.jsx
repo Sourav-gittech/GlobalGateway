@@ -2,7 +2,7 @@ import { useRef } from "react";
 import FormInput from "./FormInput";
 import { RotateCcw, Trash2, Upload } from "lucide-react";
 
-export default function BasicTab({ register, errors, iconOptions, watch, setValue }) {
+export default function BasicTab({ register, errors, iconOptions, watch, setValue, isEdit }) {
     const fileInputRef = useRef(null);
 
     const handleThumbnailChange = (e) => {
@@ -26,8 +26,8 @@ export default function BasicTab({ register, errors, iconOptions, watch, setValu
         <div className="space-y-4">
             {/* Course Name */}
             <FormInput label="Course Name" name="course_name" register={register}
-                rules={{ required: "Course name is required" }}
-                errors={errors} placeholder="Enter course name" required/>
+                rules={{ required: "Course name is required" }} disabled={isEdit}
+                errors={errors} placeholder="Enter course name" required />
 
             {/* Short Description */}
             <div>

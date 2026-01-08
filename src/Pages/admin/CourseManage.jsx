@@ -6,112 +6,8 @@ import CourseStats from '../../Components/admin/course/CourseStats';
 import CourseDetailsModal from '../../Components/admin/course/modal/CourseDetailsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import getSweetAlert from "../../util/alert/sweetAlert";
-import { addCourse, fetchAllCourses } from '../../Redux/Slice/courseSlice';
+import { addCourse, fetchAllCourses, updateCourse } from '../../Redux/Slice/courseSlice';
 import hotToast from '../../util/alert/hot-toast';
-
-// Mock initial courses data
-const initialCourses = [
-  {
-    id: 1,
-    course_name: "Study Visa Consultation",
-    description: "Complete guidance for international study visa applications with expert support",
-    price: "15000",
-    img_url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop",
-    icon: "School",
-    fullDescription: "Our Study Visa Consultation course provides comprehensive guidance for students aspiring to study abroad. Learn about visa requirements, application processes, documentation, and interview preparation.",
-    duration: "10 hours",
-    lectures: 15,
-    students: 50,
-    skillLevel: "Advanced",
-    language: "English",
-    rating: 4.8,
-    reviews: 124,
-    instructor: "Dr. Sarah Johnson",
-    instructorTitle: "Senior Immigration Consultant",
-    status: "active",
-    features: [
-      "Comprehensive visa application guidance",
-      "Document preparation assistance",
-      "Mock interview sessions",
-      "Country-specific requirements"
-    ],
-    pricing: {
-      basePrice: "12711.86",
-      cgst: 9,
-      sgst: 9,
-      additionalCharges: []
-    },
-    video: {
-      title: "Complete Study Visa Application Guide",
-      duration: "45:30",
-      thumbnail: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=450&fit=crop",
-      isFree: true,
-      url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    documents: [
-      {
-        name: '',
-        type: 'PDF',
-        isFree: false,
-        file: null,        // local file
-        previewUrl: '',    // local preview
-        size: '',          // file size
-      },
-      {
-        name: "Interview Questions & Answers",
-        type: "PDF",
-        size: "1.2 MB",
-        pages: 10,
-        isFree: true
-      }
-    ]
-  },
-  {
-    id: 2,
-    course_name: "Language Proficiency Training",
-    description: "IELTS, TOEFL, and PTE preparation with certified trainers",
-    price: "12000",
-    img_url: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=600&fit=crop",
-    icon: "Globe",
-    fullDescription: "Master English language proficiency tests with our comprehensive training program.",
-    duration: "8 hours",
-    lectures: 12,
-    students: 65,
-    skillLevel: "Intermediate",
-    language: "English",
-    rating: 4.9,
-    reviews: 98,
-    instructor: "Prof. Michael Chen",
-    instructorTitle: "Certified Language Trainer",
-    status: "active",
-    features: [
-      "IELTS, TOEFL & PTE prep",
-      "Speaking practice sessions"
-    ],
-    pricing: {
-      basePrice: "10169.49",
-      cgst: 9,
-      sgst: 9,
-      additionalCharges: []
-    },
-    video: {
-      title: "Language Test Preparation Masterclass",
-      duration: "38:15",
-      thumbnail: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=450&fit=crop",
-      isFree: true,
-      url: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    documents: [
-      {
-        name: "IELTS Study Material",
-        type: "PDF",
-        size: "3.2 MB",
-        pages: 25,
-        isFree: false
-      }
-    ]
-  }
-];
 
 // Icon mapping
 const iconOptions = [
@@ -157,7 +53,6 @@ function SettingsSection({ title, description, icon: Icon, children, className =
 
 // Main Component
 export default function CourseManagement() {
-  const [courses, setCourses] = useState(initialCourses);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -167,7 +62,7 @@ export default function CourseManagement() {
   const dispatch = useDispatch();
   const { isCourseLoading, courseList, hasCourseError } = useSelector(state => state?.course);
 
-  const filteredCourses = courses.filter(course =>
+  const filteredCourses = courseList?.filter(course =>
     course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -183,9 +78,10 @@ export default function CourseManagement() {
   };
 
   const handleDeleteCourse = (course) => {
-    if (window.confirm(`Are you sure you want to delete "${course.course_name}"?`)) {
-      setCourses(courses.filter(c => c.id !== course.id));
-    }
+
+
+
+
   };
 
   const handleViewCourse = (course) => {
@@ -204,7 +100,8 @@ export default function CourseManagement() {
       })
   }, [dispatch]);
 
-  const handleSaveCourse = (data) => {
+  const handleSaveCourse = (data, courseId, oldCourse) => {
+    console.log(courseId);
 
     const course = {
       course_name: data?.course_name,
@@ -231,7 +128,6 @@ export default function CourseManagement() {
       },
       documents: (data.documents || []).map((doc) => ({
         name: doc?.name,
-        // type: doc?.type,
         type: String(doc?.name)?.split(".")[String(doc?.name)?.split(".")?.length - 1]?.toUpperCase(),
         isFree: doc?.isFree,
         size: doc?.size,
@@ -252,14 +148,15 @@ export default function CourseManagement() {
     // console.log('Content data', content);
     // console.log('Files data', files);
 
-    dispatch(addCourse({ course, content, files }))
+    dispatch(courseId ? updateCourse({ courseId, course, content, files, oldCourse }) : addCourse({ course, content, files }))
       .then(res => {
         // console.log('Response for adding course', res);
 
         if (res.meta.requestStatus === "fulfilled") {
-          hotToast('Course added successfully.', "success");
+          hotToast(`Course ${courseId ? 'updated' : 'added'} successfully`, "success");
           setIsModalOpen(false);
           setSelectedCourse(null);
+          dispatch(fetchAllCourses());
         }
         else {
           getSweetAlert('Oops...', res?.payload, 'info');
@@ -297,7 +194,7 @@ export default function CourseManagement() {
         </div>
 
         {/* Stats */}
-        <CourseStats courses={courses} />
+        <CourseStats courses={courseList} />
 
         {/* Courses Grid */}
         <SettingsSection title="All Courses" description="Manage your immigration courses" icon={BookOpen} >
@@ -319,7 +216,7 @@ export default function CourseManagement() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {courseList?.map(course => (
+              {filteredCourses?.map(course => (
                 <CourseCard key={course.id} course={course} onEdit={handleEditCourse}
                   onDelete={handleDeleteCourse} onView={handleViewCourse} />
               ))}
