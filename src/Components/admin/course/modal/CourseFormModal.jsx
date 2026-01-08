@@ -20,19 +20,19 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
         defaultValues: course || {
 
             // Basic Tab
-            course_name: "", description: "", fullDescription: "", skillLevel: "Beginner", language: "", status: "active", icon: "",
+            course_name: "", description: "", fullDescription: course?.full_description || "", skillLevel: "Beginner", language: "", status: "active", icon: "",
 
             // Instructor Tab
-            instructor: "", bio: "",
+            instructor: course?.instructor?.name || "", bio: course?.instructor?.bio ||"",
 
             // Features Tab
-            features: [],
+            features: course?.course_content?.[0]?.features || [],
 
             // Video Tab
-            video: { title: "", url: "", thumbnail: "", isFree: false },
+            video: { title:course?.course_content?.[0]?.video?.title|| "", url:course?.course_content?.[0]?.video?.video_url|| "", thumbnail: course?.course_content?.[0]?.video?.thumbnail_url||"", isFree:course?.course_content?.[0]?.video?.isFree|| false },
 
             // Documents Tab
-            documents: [],
+            documents: course?.course_content?.[0]?.documents||[],
 
             // Pricing Tab
             pricing: "",

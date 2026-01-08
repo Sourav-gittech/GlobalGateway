@@ -2,7 +2,7 @@ import React from 'react'
 import { BookOpen, Edit2, Trash2, Eye, Clock, Users, Video, Star } from 'lucide-react';
 
 const CourseCard = ({ course, onEdit, onDelete, onView }) => {
-console.log(course);
+    console.log(course);
 
     return (
         <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
@@ -37,7 +37,7 @@ console.log(course);
                     </span> */}
                     <span className="flex items-center gap-1">
                         <Video className="w-3 h-3" />
-                        {course?.course_content?.[0]?.documents?.length+1}
+                        {course?.course_content?.[0]?.documents?.length + 1}
                     </span>
                     <span className="flex items-center gap-1">
                         <Users className="w-3 h-3" />
