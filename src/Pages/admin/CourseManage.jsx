@@ -125,7 +125,7 @@ export default function CourseManagement() {
       .then(res => {
         // console.log('Response deleting course', res);
         if (res.meta.requestStatus === "fulfilled") {
-          dispatch(fetchAllCourses()); 
+          dispatch(fetchAllCourses());
           hotToast(`Course ${mode == 'Active' ? 'activated' : 'blocked'} successfully`, "success");
           setAlertModalOpen(false);
           setCurrentCourse(null);
@@ -153,7 +153,6 @@ export default function CourseManagement() {
   }, [dispatch]);
 
   const handleSaveCourse = (data, courseId, oldCourse) => {
-    console.log(courseId);
 
     const course = {
       course_name: data?.course_name,
@@ -259,7 +258,7 @@ export default function CourseManagement() {
               </div>
             )}
 
-            {!isCourseLoading && filteredCourses.length === 0 ? (
+            {!isCourseLoading && filteredCourses?.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <BookOpen className="w-16 h-16 text-slate-600 mb-4" />
                 <p className="text-slate-400 text-lg mb-2">No courses found</p>
@@ -284,9 +283,7 @@ export default function CourseManagement() {
               setIsModalOpen(false);
               setSelectedCourse(null);
             }}
-            course={selectedCourse}
-            onSave={handleSaveCourse}
-          />
+            course={selectedCourse} onSave={handleSaveCourse} />
 
           <CourseDetailsModal iconOptions={iconOptions}
             isOpen={isDetailsOpen}

@@ -14,7 +14,7 @@ const CourseContent = ({ isPurchased, course, activeTab, setActiveTab }) => {
                 <div className="lg:col-span-2">
                     <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
                         <div className="flex border-b border-gray-200 bg-gray-50">
-                            {['overview', 'content', 'instructor'].map((tab) => (
+                            {['overview', 'content', 'instructor']?.map((tab) => (
                                 <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-3.5 px-4 font-semibold capitalize transition-all text-sm ${activeTab === tab ? 'bg-white text-[#FF5252] border-b-2 border-[#FF5252] -mb-px' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}>
                                     {tab}
                                 </button>

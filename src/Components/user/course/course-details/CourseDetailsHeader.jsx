@@ -15,49 +15,49 @@ const CourseDetailsHeader = ({ isPurchased, course }) => {
             {/* Badges */}
             <div className="flex items-center gap-3">
                 <span className="bg-[#FF5252] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide">
-                    {course.skillLevel}
+                    {course?.skill_level ??'N/A'}
                 </span>
                 <div className="flex items-center gap-1.5">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-bold text-lg">{course.rating}</span>
-                    <span className="text-white/70 text-sm">({course.reviews} reviews)</span>
+                    <span className="font-bold text-lg">{course?.rating ??'N/A'}</span>
+                    <span className="text-white/70 text-sm">({course?.reviews ??'N/A'} reviews)</span>
                 </div>
             </div>
 
             {/* Title */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
-                {course.course_name}
+                {course?.course_name ??'N/A'}
             </h1>
 
             {/* Description */}
             <p className="text-lg text-white/90 leading-relaxed">
-                {course.description}
+                {course?.description ??'N/A'}
             </p>
 
             {/* Stats */}
             <div className="flex items-center gap-6 text-white/90">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <Clock className="w-5 h-5 text-[#FF5252]" />
-                    <span className="text-base">{course.duration}</span>
-                </div>
+                    <span className="text-base">{course?.duration ??'N/A'}</span>
+                </div> */}
                 <div className="flex items-center gap-2">
                     <Video className="w-5 h-5 text-[#FF5252]" />
-                    <span className="text-base">{course.lectures} lectures</span>
+                    <span className="text-base">{course?.lectures ??'N/A'} lectures</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-[#FF5252]" />
-                    <span className="text-base">{course.students} students</span>
+                    <span className="text-base">{course?.students ??'N/A'} students</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Globe className="w-5 h-5 text-[#FF5252]" />
-                    <span className="text-base">{course.language}</span>
+                    <span className="text-base">{course?.language ??'N/A'}</span>
                 </div>
             </div>
 
             {/* Instructor */}
             <div>
                 <p className="text-sm text-white/70 mb-2">Instructor</p>
-                <p className="text-xl font-semibold">{course.instructor}</p>
+                <p className="text-xl font-semibold">{course?.instructor?.name ??'N/A'}</p>
             </div>
         </div>
     )

@@ -36,7 +36,7 @@ const PricingCard = ({ isPurchased, course, cartItems, setCartItems, setCartDraw
                             Purchased
                         </div>
                     )}
-                    <img src={course.img_url} alt={course.course_name} className="w-full h-full object-cover" />
+                    <img src={course?.img_url} alt={course?.course_name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
 
                 </div>
@@ -79,7 +79,7 @@ const PricingCard = ({ isPurchased, course, cartItems, setCartItems, setCartDraw
                             <div className="mb-5">
                                 <p className="text-gray-600 text-xs font-semibold mb-2 uppercase tracking-wider">Course Price</p>
                                 <p className="text-5xl font-bold text-white">
-                                    ₹{parseInt(course.price).toLocaleString('en-IN')}
+                                    ₹{parseInt(course?.pricing)?.toLocaleString('en-IN')}
                                 </p>
                             </div>
 

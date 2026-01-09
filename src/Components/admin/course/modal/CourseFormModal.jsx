@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-
 import Tabs from "./tabs/Tabs";
 import BasicTab from "./tabs/BasicTab";
 import DetailsTab from "./tabs/DetailsTab";
@@ -133,8 +132,6 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
     };
 
     const onSubmit = (data) => {
-        console.log(data);
-
         let hasError = false;
 
         const validFeatures = Array.isArray(data.features) && data.features.some(f => f?.trim());

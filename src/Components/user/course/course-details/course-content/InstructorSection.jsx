@@ -7,14 +7,14 @@ const InstructorSection = ({ course }) => {
             <h2 className="text-2xl font-bold text-[#2C3E50] mb-4">About the Instructor</h2>
             <div className="flex mt-10 items-center gap-4 mb-6">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FF5252] to-[#E63946] flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                    {course.instructor.split(' ').map(n => n[0]).join('')}
+                    {course?.instructor?.name?.split(' ')?.map(n => n[0])?.join('')}
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-gray-900">{course.instructor}</h3>
-                    <p className="text-gray-600">{course.instructorTitle}</p>
+                    <h3 className="text-xl font-bold text-gray-900">{course?.instructor?.name ?? 'N/A'}</h3>
+                    <p className="text-gray-600">{course?.instructor?.bio ?? 'N/A'}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                        <span className="flex items-center"><Users className="w-4 h-4 mr-1" />{course.students}+ students</span>
-                        <span className="flex items-center"><Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />{course.rating} rating</span>
+                        <span className="flex items-center"><Users className="w-4 h-4 mr-1" />{course?.students ?? 'N/A'}+ students</span>
+                        <span className="flex items-center"><Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />{course?.rating ?? 'N/A'} rating</span>
                     </div>
                 </div>
             </div>

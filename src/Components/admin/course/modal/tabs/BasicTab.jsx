@@ -1,8 +1,12 @@
-import { useRef } from "react";
+import react, { useRef, useState } from "react";
 import FormInput from "./FormInput";
 import { RotateCcw, Trash2, Upload } from "lucide-react";
 
 export default function BasicTab({ register, errors, iconOptions, watch, setValue, isEdit }) {
+
+    const [iconOpen, setIconOpen] = useState(false);
+    const selectedIcon = iconOptions.find(i => i.value === watch("icon"));
+    const dropdownRef = useRef(null);
     const fileInputRef = useRef(null);
 
     const handleThumbnailChange = (e) => {
@@ -76,10 +80,9 @@ export default function BasicTab({ register, errors, iconOptions, watch, setValu
                     <label className="block text-sm font-medium text-slate-300 mb-2">
                         Status <span className="text-red-400">*</span>
                     </label>
-                    <select
-                        {...register("status", { required: true })}
-                        className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                    >
+                    <select {...register("status", { required: true })}
+                        className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                            
                         <option value="active">Active</option>
                         <option value="draft">Draft</option>
                     </select>
@@ -87,18 +90,46 @@ export default function BasicTab({ register, errors, iconOptions, watch, setValu
             </div>
 
             {/* Course Icon */}
-            <div>
+            <div ref={dropdownRef}>
                 <label className="block text-sm font-medium text-slate-300 mb-2">Course Icon <span className="text-red-400">*</span></label>
-                <select
-                    {...register("icon", { required: "Course icon is required" })}
-                    className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
-                >
-                    {iconOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                        </option>
-                    ))}
-                </select>
+
+                {/* Hidden input for RHF */}
+                <input type="hidden" {...register("icon", { required: "Course icon is required" })} />
+
+                {/* Selected value */}
+                <button type="button"
+                    onClick={() => setIconOpen(prev => !prev)}
+                    className="w-full px-4 py-2.5 bg-slate-700/30 border border-slate-600/50 rounded-lg
+                   text-white flex items-center justify-between focus:outline-none
+                   focus:ring-2 focus:ring-blue-500/50 text-sm" >
+                    {selectedIcon ? (
+                        <span className="flex items-center gap-2">
+                            <selectedIcon.Icon className="w-4 h-4 text-blue-400" />
+                            {selectedIcon.label}
+                        </span>
+                    ) : (
+                        <span className="text-slate-400">Select course icon</span>
+                    )}
+                    <span className="text-slate-400">▾</span>
+                </button>
+
+                {/* Dropdown */}
+                {iconOpen && (
+                    <div className="mt-2 bg-slate-800 border border-slate-600/50 rounded-lg
+                        shadow-lg max-h-56 overflow-auto z-20">
+                        {iconOptions.map(opt => (
+                            <button key={opt.value} type="button" onClick={() => {
+                                setValue("icon", opt.value, { shouldValidate: true });
+                                setIconOpen(false);
+                            }} className="w-full px-4 py-2 flex items-center gap-3 text-sm text-white
+                               hover:bg-slate-700 transition">
+                                <opt.Icon className="w-4 h-4 text-blue-400" />
+                                {opt.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {errors.icon && (
                     <p className="mt-1 text-xs text-red-400">{errors.icon.message}</p>
                 )}
@@ -118,20 +149,14 @@ export default function BasicTab({ register, errors, iconOptions, watch, setValu
 
                             <div className="absolute top-3 right-3 flex gap-2">
                                 {/* Reload */}
-                                <button
-                                    type="button"
-                                    onClick={handleReloadThumbnail}
-                                    className="px-3 py-1.5 bg-white/10 text-white rounded-md text-xs font-medium hover:bg-blue-600 transition"
-                                >
+                                <button type="button" onClick={handleReloadThumbnail}
+                                    className="px-3 py-1.5 bg-white/10 text-white rounded-md text-xs font-medium hover:bg-blue-600 transition">
                                     <RotateCcw className="w-4 h-4" />
                                 </button>
 
                                 {/* Delete */}
-                                <button
-                                    type="button"
-                                    onClick={handleDeleteThumbnail}
-                                    className="px-3 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-md text-xs font-medium transition"
-                                >
+                                <button type="button" onClick={handleDeleteThumbnail}
+                                    className="px-3 py-1.5 bg-red-500/80 hover:bg-red-600 text-white rounded-md text-xs font-medium transition">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>

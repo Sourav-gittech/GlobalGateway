@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { School, Scale, Globe, Hand, BookOpen, FileText, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import CourseDetailsHeader from '../../../../Components/user/course/course-details/CourseDetailsHeader';
 import PricingCard from '../../../../Components/user/course/course-details/PricingCard';
 import CourseContent from '../../../../Components/user/course/course-details/CourseContent';
 import CartDrawer from '../../../../Components/user/course/course-details/CartDrawer';
 import { decodeBase64Url } from '../../../../util/encodeDecode/base64';
+import getSweetAlert from '../../../../util/alert/sweetAlert';
+import { fetchCourseById } from '../../../../Redux/Slice/courseSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const staticCourses = [
   {
@@ -390,29 +393,41 @@ const staticCourses = [
 
 const CourseDetails = () => {
   const { course_id } = useParams();
-  const id=decodeBase64Url(course_id);
+  const id = decodeBase64Url(course_id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [course, setCourse] = useState(null);
   const [cartDrawer, setCartDrawer] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [isPurchased, setIsPurchased] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+  const { isCourseLoading, currentCourse:course, hasCourseError } = useSelector(state => state?.course);
+
   useEffect(() => {
-    const foundCourse = staticCourses.find(c => c.id === parseInt(id));
-    setCourse(foundCourse);
-    const savedCart = localStorage.getItem('courseCart');
-    if (savedCart) setCartItems(JSON.parse(savedCart));
+    // const foundCourse = staticCourses.find(c => c.id === parseInt(id));
+    // setCourse(foundCourse);
+    // const savedCart = localStorage.getItem('courseCart');
+    // if (savedCart) setCartItems(JSON.parse(savedCart));
 
 
-    const mockPurchasedCourseIds = [1, 2, 4];
-    const purchased = mockPurchasedCourseIds.includes(parseInt(id));
-    setIsPurchased(purchased);
+    // const mockPurchasedCourseIds = [1, 2, 4];
+    // const purchased = mockPurchasedCourseIds.includes(parseInt(id));
+    // setIsPurchased(purchased);
+
+    dispatch(fetchCourseById(id))
+      .then(res => {
+        console.log('Response for fetching specific details', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
   }, [id]);
 
+  console.log('current course details', course);
 
-  if (!course) {
+  if (isCourseLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -442,7 +457,7 @@ const CourseDetails = () => {
         </div>
 
         {/* Course Content */}
-        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab}/>
+        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
 
       {/* Cart Drawer */}
