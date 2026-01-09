@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Loader2 } from "lucide-react";
 import MessageCard from "../../Components/admin/contact/ContactMessageCard";
 import ContactMessageModal from "../../Components/admin/contact/ContactMessageModal";
 import ContactHeader from "../../Components/admin/contact/ContactHeader";
@@ -8,44 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllContactMessages } from "../../Redux/Slice/contactSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";
 
-// Mock data
-const MESSAGES = [
-  {
-    id: "MSG-001",
-    name: "Rahul Sharma",
-    email: "rahul.sharma@example.com",
-    phone: "+91 98765 43210",
-    message: "Hello, I need assistance with my work visa application. I submitted all documents last week but haven't received any update. Could you please check the status? Thank you.",
-    date: "2024-12-04",
-    time: "10:30 AM",
-    status: "new",
-  },
-  {
-    id: "MSG-002",
-    name: "Priya Patel",
-    email: "priya.patel@example.com",
-    phone: "+91 87654 32109",
-    message: "I have a question about the IELTS preparation course. Is it available for immediate enrollment? What is the duration and fee structure? Please let me know.",
-    date: "2024-12-03",
-    time: "03:45 PM",
-    status: "replied",
-  },
-];
-
 const ContactMessages = () => {
   const dispatch = useDispatch();
-  const [messages, setMessages] = useState(MESSAGES);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedMessage, setSelectedMessage] = useState(null);
   const { contactLoading, contactData, contactError } = useSelector(state => state.contact);
 
-  const handleDelete = (messageId) => {
-    setMessages(messages.filter(m => m.id !== messageId));
-  };
-
   const filteredMessages = contactData?.filter(msg => {
-    
+
     const matchesSearch =
       msg?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       msg?.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -112,19 +83,22 @@ const ContactMessages = () => {
       </div>
 
       {/* Messages List */}
+      {contactLoading && (
+        <div className="text-center py-12">
+          <Loader2 className="w-16 h-16 text-white animate-spin mx-auto text-center" />
+          <p className="text-slate-400 text-lg">Loading...</p>
+        </div>
+      )}
+
       <div className="rounded-xl bg-slate-800/50 border border-slate-700/50 overflow-hidden">
         <div className="max-h-[600px] overflow-y-auto">
-          {filteredMessages.length === 0 ? (
+          {!contactLoading && filteredMessages?.length === 0 ? (
             <div className="px-6 py-12 text-center text-slate-400">
               No messages found matching your criteria
             </div>
           ) : (
-            filteredMessages.map((message) => (
-              <MessageCard
-                key={message.id}
-                message={message}
-                onView={setSelectedMessage}
-              />
+            filteredMessages?.map(message => (
+              <MessageCard key={message.id} message={message} onView={setSelectedMessage} />
             ))
           )}
         </div>
@@ -132,11 +106,7 @@ const ContactMessages = () => {
 
       {/* Modal */}
       {selectedMessage && (
-        <ContactMessageModal
-          message={selectedMessage}
-          onClose={() => setSelectedMessage(null)}
-          onDelete={handleDelete}
-        />
+        <ContactMessageModal message={selectedMessage} onClose={() => setSelectedMessage(null)} />
       )}
     </div>
   );

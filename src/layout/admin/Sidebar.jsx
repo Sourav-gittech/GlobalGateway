@@ -9,6 +9,7 @@ import { getAllUsers } from "../../Redux/Slice/userSlice";
 import "../../../src/App.css";
 import getSweetAlert from "../../util/alert/sweetAlert";
 import { fetchNotifications } from "../../Redux/Slice/notificationSlice";
+import { fetchAllContactMessages } from "../../Redux/Slice/contactSlice";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
 
@@ -52,9 +53,9 @@ export default function Sidebar({ adminData }) {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
-
   const { getUserData, isUserLoading } = useSelector(state => state.userProfile);
+  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
+  const { contactLoading, contactData, contactError } = useSelector(state => state.contact);
 
   useEffect(() => {
     dispatch(getAllUsers())
@@ -72,6 +73,18 @@ export default function Sidebar({ adminData }) {
     dispatch(fetchNotifications({ receiver_type: 'admin', receiver_country_id: null }))
       .then(res => {
         // console.log('Response for fetching notification for admin', res)
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
+  }, []);
+ 
+  // message 
+  useEffect(() => {
+    dispatch(fetchAllContactMessages())
+      .then(res => {
+        // console.log('Response for fetching message for', res)
       })
       .catch(err => {
         console.log('Error occured', err);
@@ -119,9 +132,15 @@ export default function Sidebar({ adminData }) {
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
 
-    { to: "/admin/dashboard/payments", label: "Notifications", icon: BellRing, badge: notificationList?.length },
+    { 
+      to: "/admin/dashboard/payments", label: "Notifications", icon: BellRing, 
+      badge: isNotificationLoading? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (notificationList?.length) 
+    },
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
-    { to: "/admin/dashboard/contact", label: "Messages", icon: MessageSquareText },
+    { 
+      to: "/admin/dashboard/contact", label: "Messages", icon: MessageSquareText,
+      badge: contactLoading? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (contactData?.filter(contact=>contact?.status=="pending")?.length) 
+     },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
   ];
 
