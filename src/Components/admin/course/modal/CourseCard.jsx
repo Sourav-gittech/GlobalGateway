@@ -1,7 +1,7 @@
 import React from 'react'
-import { BookOpen, Edit2, Trash2, Eye, Clock, Users, Video, Star } from 'lucide-react';
+import { Edit2, Trash2, Eye, CircleOff, CircleCheckBig, Users, Video, Star, Section } from 'lucide-react';
 
-const CourseCard = ({ course, onEdit, onDelete, onView }) => {
+const CourseCard = ({ course, onEdit, onDelete, onView, onShow }) => {
 
     return (
         <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
@@ -30,10 +30,6 @@ const CourseCard = ({ course, onEdit, onDelete, onView }) => {
                 <p className="text-slate-400 text-sm mb-3 line-clamp-2">{course?.description}</p>
 
                 <div className="flex items-center gap-3 text-xs text-slate-400 mb-3 flex-wrap">
-                    {/* <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {course?.duration}
-                    </span> */}
                     <span className="flex items-center gap-1">
                         <Video className="w-3 h-3" />
                         {course?.course_content?.[0]?.documents?.length + 1}
@@ -46,26 +42,36 @@ const CourseCard = ({ course, onEdit, onDelete, onView }) => {
                         <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
                         {course?.rating}
                     </span>
+                    <span className="flex items-center gap-1">
+                        <Section className="w-3 h-3" />
+                        {course?.skill_level}
+                    </span>
                 </div>
 
                 <div className="flex gap-2">
                     <button
-                        onClick={() => onView(course)}
-                        className="flex-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+                        onClick={() => onShow(course)}
+                        className={`px-3 py-2 ${course?.status === 'active' ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/30 text-amber-400' : 'bg-green-500/20 hover:bg-green-500/30 border-green-500/30 text-green-400'} border rounded-lg text-sm font-medium transition-colors cursor-pointer`}
                     >
-                        <Eye className="w-4 h-4" />
-                        View
+                        {course?.status === 'active' ? <CircleOff className="w-4 h-4" /> : <CircleCheckBig className="w-4 h-4" />}
                     </button>
                     <button
                         onClick={() => onEdit(course)}
-                        className="flex-1 px-3 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+                        className="flex-1 px-3 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
                     >
                         <Edit2 className="w-4 h-4" />
                         Edit
                     </button>
                     <button
+                        onClick={() => onView(course)}
+                        className="flex-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                        <Eye className="w-4 h-4" />
+                        View
+                    </button>
+                    <button
                         onClick={() => onDelete(course)}
-                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors"
+                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors cursor-pointer"
                     >
                         <Trash2 className="w-4 h-4" />
                     </button>

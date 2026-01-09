@@ -1,10 +1,10 @@
 import React from "react";
-import { X, ShieldBan, ShieldCheck } from "lucide-react";
+import { X, ShieldBan, ShieldCheck, Trash2 } from "lucide-react";
 
 export default function ConfirmBlockUnblockAlert({ open, onClose, onConfirm, buttonText, type, title, message }) {
   if (!open) return null;
-
-  const Icon = type === "block" ? ShieldBan : ShieldCheck;
+  
+  const Icon = type === "block" || type === "draft" ? ShieldBan : type === "delete" ? Trash2 : ShieldCheck;
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">

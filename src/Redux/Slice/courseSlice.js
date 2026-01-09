@@ -25,11 +25,11 @@ export const fetchAllCourses = createAsyncThunk("courseSlice/fetchAllCourses",
 // fatch single course slice 
 export const fetchCourseById = createAsyncThunk("courseSlice/fetchCourseById",
     async (courseId, { rejectWithValue }) => {
-        console.log('Received data for fetching course details for specific id', courseId);
+        // console.log('Received data for fetching course details for specific id', courseId);
 
         try {
             const res = await supabase.from("courses").select(`*, course_content (*)`).eq("id", courseId).single();
-            console.log('Response for fetching specific course', res);
+            // console.log('Response for fetching specific course', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);
             return res?.data;
@@ -206,11 +206,11 @@ export const updateCourse = createAsyncThunk("courseSlice/updateCourse",
 // block/unblock course slice 
 export const toggleBlockCourse = createAsyncThunk("courseSlice/toggleBlockCourse",
     async ({ courseId, block }, { rejectWithValue }) => {
-        console.log('Received data for block/unblock course', courseId, block);
+        // console.log('Received data for block/unblock course', courseId, block);
 
         try {
             const res = await supabase.from("courses").update({ status: block }).eq("id", courseId).select().single();
-            console.log('Response for block/unblock course', res);
+            // console.log('Response for block/unblock course', res);
 
             if (res?.error) return rejectWithValue(res?.error.message);
             return res?.data;
@@ -223,7 +223,7 @@ export const toggleBlockCourse = createAsyncThunk("courseSlice/toggleBlockCourse
 // delete course slice
 export const deleteCourse = createAsyncThunk("courseSlice/deleteCourse",
     async (courseId, { rejectWithValue }) => {
-        console.log('Received data for deleting course'.courseId);
+        // console.log('Received data for deleting course'.courseId);
 
         try {
             const { error } = await supabase.from("courses").delete().eq("id", courseId);
