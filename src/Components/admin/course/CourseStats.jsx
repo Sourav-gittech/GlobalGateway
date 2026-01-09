@@ -10,7 +10,7 @@ const CourseStats = ({courses}) => {
                         <BookOpen className="w-5 h-5 text-blue-400" />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold text-white">{courses.length}</p>
+                        <p className="text-2xl font-bold text-white">{courses?.length}</p>
                         <p className="text-sm text-slate-400">Total Courses</p>
                     </div>
                 </div>
@@ -25,7 +25,7 @@ const CourseStats = ({courses}) => {
                         <p className="text-2xl font-bold text-white">
                             {courses.reduce((sum, c) => sum + (c.students || 0), 0)}
                         </p>
-                        <p className="text-sm text-slate-400">Total Students</p>
+                        <p className="text-sm text-slate-400">Total Lerners</p>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@ const CourseStats = ({courses}) => {
                     </div>
                     <div>
                         <p className="text-2xl font-bold text-white">
-                            {courses.filter(c => c.status === 'active').length}
+                            {courses?.filter(c => c?.status === 'active')?.length}
                         </p>
                         <p className="text-sm text-slate-400">Active Courses</p>
                     </div>
