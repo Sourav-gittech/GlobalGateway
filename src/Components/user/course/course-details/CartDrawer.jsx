@@ -16,7 +16,6 @@ const CartDrawer = ({ cartItems, cartId, setCartDrawer }) => {
         dispatch(removeCartItem({ cartId, courseId: cid }))
             .then(res => {
                 // console.log('Response for removing items from cart',res);
-                
                 hotToast(`Course removed from cart`, "success");
             })
             .catch(err => {

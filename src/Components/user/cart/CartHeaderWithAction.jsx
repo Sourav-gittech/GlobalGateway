@@ -1,11 +1,21 @@
 import React from 'react'
+import { useDispatch } from 'react-redux';
+import { deleteCart } from '../../../Redux/Slice/cartSlice';
+import hotToast from '../../../util/alert/hot-toast';
+import getSweetAlert from '../../../util/alert/sweetAlert';
 
-const CartHeaderWithAction = ({ cartItems,setCartItems }) => {
+const CartHeaderWithAction = ({ cartItems, cartId }) => {
+    const dispatch = useDispatch();
 
     const handleClearCart = () => {
-        if (window.confirm('Are you sure you want to remove all items from cart?')) {
-            setCartItems([]);
-        }
+        dispatch(deleteCart(cartId))
+            .then(res => {
+                hotToast(`All course removed from cart`, "success");
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
     };
 
     return (
@@ -16,7 +26,7 @@ const CartHeaderWithAction = ({ cartItems,setCartItems }) => {
                         Your Selected Services
                     </h2>
                     <p className="text-sm text-slate-600 mt-1">
-                        {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} • Review before checkout
+                        {cartItems?.length} {cartItems?.length === 1 ? 'item' : 'items'} • Review before checkout
                     </p>
                 </div>
                 {cartItems.length > 1 && (

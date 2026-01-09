@@ -21,11 +21,10 @@ const CourseDetails = () => {
   const [cartDrawer, setCartDrawer] = useState(false);
   const [isPurchased, setIsPurchased] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-  const [cartId, setCartId] = useState(null);
 
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isCourseLoading, currentCourse: course, hasCourseError } = useSelector(state => state?.course);
-  const { isCartLoading, cartItems, hasCartError } = useSelector(state => state?.cart);
+  const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state?.cart);
 
   useEffect(() => {
     dispatch(fetchCourseById(id))
@@ -42,7 +41,6 @@ const CourseDetails = () => {
     dispatch(getOrCreateCart(userAuthData?.id))
       .then(res => {
         // console.log('Response for getting cart details for specific user', res);
-        setCartId(res?.payload?.id);
 
         dispatch(fetchCartItems(res?.payload?.id))
           .then(res => {
@@ -70,11 +68,6 @@ const CourseDetails = () => {
       });
   }, [dispatch]);
 
-  const backToCourse = () => {
-    setCartId(null);
-    navigate('/course');
-  }
-
   // console.log('current course details', course);
   // console.log('User data', userAuthData);
   // console.log('Available cart items', cartItems);
@@ -96,7 +89,7 @@ const CourseDetails = () => {
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-gray-900 to-[#556b7a] text-white shadow-2xl">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 sm:py-12">
-            <button onClick={() => backToCourse()} className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm cursor-pointer">
+            <button onClick={() => navigate('/course')} className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm cursor-pointer">
               <ArrowLeft className="w-4 h-4 mr-2" />Back to Courses
             </button>
 
@@ -114,7 +107,7 @@ const CourseDetails = () => {
 
       {/* Cart Drawer */}
       {cartDrawer && (
-        <CartDrawer cartItems={cartItems} cartId={cartId} setCartDrawer={setCartDrawer} />
+        <CartDrawer cartItems={cartItems} cartId={currentCart?.id} setCartDrawer={setCartDrawer} />
       )}
     </>
   );

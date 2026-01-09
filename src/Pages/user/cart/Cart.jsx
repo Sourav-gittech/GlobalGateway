@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import CartHeader from '../../../Components/user/cart/CartHeader';
@@ -11,51 +11,62 @@ import SecurityTrust from '../../../Components/user/cart/SecurityTrust';
 import TrustBadage from '../../../Components/user/cart/TrustBadage';
 import SupportCard from '../../../Components/user/cart/SupportCard';
 import SupportModal from '../../../Components/user/cart/SupportModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { fetchCartItems, getOrCreateCart } from '../../../Redux/Slice/cartSlice';
 
-// Static cart items for production demo
-const staticCartItems = [
-  {
-    id: 1,
-    course_name: "Study Visa Consultation - Complete Package",
-    description: "End-to-end visa application support with document review, interview prep, and post-visa assistance",
-    price: "15000",
-    img_url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop",
-    duration: "10 hours",
-    lectures: 15,
-    skillLevel: "Advanced",
-    category: "Study Visa",
-    deliveryTime: "Instant Access",
-    includes: ["Document Review", "Mock Interview", "Email Support"]
-  },
-  {
-    id: 2,
-    course_name: "IELTS Preparation - Band 7+ Guaranteed",
-    description: "Comprehensive IELTS training with expert tutors, practice tests, and personalized feedback",
-    price: "12000",
-    img_url: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=600&fit=crop",
-    duration: "8 hours",
-    lectures: 12,
-    skillLevel: "Intermediate",
-    category: "Language Test",
-    deliveryTime: "Instant Access",
-    includes: ["Practice Tests", "Speaking Sessions", "Writing Feedback"]
-  }
-];
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(staticCartItems);
+  const dispatch = useDispatch();
   const [discount, setDiscount] = useState(0);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
+  const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state.cart);
+
   // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + parseInt(item.price), 0);
+  const subtotal = cartItems?.reduce((sum, item) => sum + parseInt(item?.courses?.pricing), 0);
   const discountAmount = Math.round(subtotal * (discount / 100));
-  const tax = Math.round((subtotal - discountAmount) * 0.18);
+  const tax = Math?.round((subtotal - discountAmount) * 0.18);
   const total = subtotal - discountAmount + tax;
 
   const navigateBack = () => {
     window.history.back();
   };
+
+  useEffect(() => {
+    dispatch(checkLoggedInUser())
+      .then(res => {
+        // console.log('Response for fetching user profile', res);
+      })
+      .catch((err) => {
+        console.log("Error occurred", err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getOrCreateCart(userAuthData?.id))
+      .then(res => {
+        // console.log('Response for getting cart details for specific user', res);
+
+        dispatch(fetchCartItems(res?.payload?.id))
+          .then(res => {
+            // console.log('Response for fetching cart items', res);
+          })
+          .catch(err => {
+            console.log(err);
+            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+          })
+      })
+      .catch(err => {
+        console.log(err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, [userAuthData?.id, dispatch]);
+
+  // console.log('Available cart items', cartItems);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -76,8 +87,14 @@ const Cart = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl">
-        {cartItems.length === 0 ? (
-
+        {isCartLoading ? (
+          <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF5252] mx-auto mb-4" />
+              <p className="text-gray-600 font-medium">Loading course details...</p>
+            </div>
+          </div>
+        ) : cartItems?.length === 0 ? (
           // Empty Cart - Professional
           <EmptyCart navigateBack={navigateBack} />
         ) : (
@@ -86,12 +103,12 @@ const Cart = () => {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
               {/* Header with Actions */}
-              <CartHeaderWithAction cartItems={cartItems} setCartItems={setCartItems} />
+              <CartHeaderWithAction cartItems={cartItems} cartId={currentCart?.id} />
 
               {/* Cart Items */}
               <AnimatePresence mode="popLayout">
-                {cartItems.map((item, index) => (
-                  <CartItemCard key={item.id} item={item} index={index} setCartItems={setCartItems} cartItems={cartItems} />
+                {cartItems?.map((item, index) => (
+                  <CartItemCard key={item.id} item={item} index={index} cartId={currentCart?.id} />
                 ))}
               </AnimatePresence>
 
