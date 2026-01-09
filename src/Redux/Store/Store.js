@@ -19,6 +19,7 @@ import timingSliceReducer from '../Slice/timingSlice';
 import notificationSliceReducer from '../Slice/notificationSlice';
 import loadingReducer from '../Slice/loadingSlice';
 import courseSliceReducer from '../Slice/courseSlice';
+import cartSliceReducer from '../Slice/cartSlice';
 
 export const store = configureStore({
   reducer: {
@@ -40,7 +41,8 @@ export const store = configureStore({
     appointmentReason: appointmentReasonSliceReducer,
     notification: notificationSliceReducer,
     loading: loadingReducer,
-    course: courseSliceReducer
+    course: courseSliceReducer,
+    cart: cartSliceReducer
   }
 });
 

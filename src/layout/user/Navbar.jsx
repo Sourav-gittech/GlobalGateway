@@ -67,8 +67,8 @@ const Navbar = () => {
         // console.log('Response for fetching user profile', res);
       })
       .catch((err) => {
-        getSweetAlert('Oops...', 'Something went wrong!', 'error');
         console.log("Error occurred", err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
       });
   }, [dispatch]);
 

@@ -71,7 +71,6 @@ export default function CourseFormModal({ isOpen, onClose, onSave, course, iconO
     useEffect(() => {
         if (!course) {
             reset({
-                // If editing a course, use course values; otherwise fallback to empty/new defaults
                 course_name: course?.course_name || "",
                 description: course?.description || "",
                 fullDescription: course?.full_description || "",

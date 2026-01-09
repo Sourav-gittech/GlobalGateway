@@ -102,6 +102,7 @@ export default function CourseManagement() {
   const handleDeleteOrKeepCourse = () => {
     dispatch(deleteCourse(currentCourse?.id))
       .then(res => {
+        
         if (res.meta.requestStatus === "fulfilled") {
           // console.log('Response deleting course', res);
           dispatch(fetchAllCourses())

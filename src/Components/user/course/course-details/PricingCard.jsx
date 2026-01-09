@@ -1,26 +1,48 @@
 import React from 'react'
-import { BookOpen, CheckCircle, ShoppingCart, ArrowLeft, Award, Calendar } from 'lucide-react';
+import { BookOpen, CheckCircle, ShoppingCart, ArrowLeft, Award, Calendar, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addCartItem, fetchCartItems, getOrCreateCart } from '../../../../Redux/Slice/cartSlice';
+import getSweetAlert from '../../../../util/alert/sweetAlert';
+import hotToast from '../../../../util/alert/hot-toast';
 
-const PricingCard = ({ isPurchased, course, cartItems, setCartItems, setCartDrawer, setActiveTab }) => {
+const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId }) => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const addToCart = () => {
+    const addToCart = (course) => {
         if (!course) return;
 
-        if (isPurchased) {
-            alert('You have already purchased this course!');
-            return;
-        }
+        dispatch(getOrCreateCart(userId))
+            .then(res => {
+                // console.log('Response for getting cart details for specific user', res);
 
-        const existing = cartItems.find(i => i.id === course.id);
-        if (!existing) {
-            const newCart = [...cartItems, course];
-            setCartItems(newCart);
-            localStorage.setItem('courseCart', JSON.stringify(newCart));
-        }
-        setCartDrawer(true);
+                dispatch(addCartItem({ cartId: res?.payload?.id, courseId: course?.id }))
+                    .then(res => {
+                        // console.log('Response for adding new product', res);
+
+                        if (res.meta.requestStatus === "fulfilled") {
+                            hotToast(`Course added to cart`, "success");
+                            setCartDrawer(true);
+                            dispatch(fetchCartItems(res?.payload?.cart_id))
+                        }
+                        else if (res?.payload == 'duplicate key value violates unique constraint "cart_items_cart_id_course_id_key"') {
+                            hotToast(`Course already added in cart`, "info", <Info className='text-orange-400' />);
+                        }
+                        else {
+                            getSweetAlert("Error", "Update failed", "error");
+                        }
+                    })
+                    .catch(err => {
+                        console.log('Error occured', err);
+                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
     };
 
     return (
@@ -85,8 +107,8 @@ const PricingCard = ({ isPurchased, course, cartItems, setCartItems, setCartDraw
 
                             {/* Add to Cart Button */}
                             <button
-                                onClick={addToCart}
-                                className="w-full bg-red-400 hover:bg-[#E63946] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg"
+                                onClick={() => addToCart(course)}
+                                className="w-full bg-red-400 hover:bg-[#E63946] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg cursor-pointer"
                             >
                                 <ShoppingCart className="w-6 h-6" />
                                 Add to Cart
