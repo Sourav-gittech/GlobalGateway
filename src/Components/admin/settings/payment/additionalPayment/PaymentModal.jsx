@@ -44,11 +44,10 @@ const PaymentModal = ({ showAddModal, setShowAddModal, charges }) => {
                 charge_type: data?.label?.trim()?.split(" ")?.map(charge => charge?.charAt(0)?.toUpperCase() + charge?.slice(1)?.toLowerCase())?.join(" "),
                 amount: data?.amount,
                 purpose: 'visa',
-                percentage:null,
-                percentage_conversion:null
+                percentage: null
             }
 
-            dispatch(addCharge(newChargeData))
+            dispatch(addCharge({ type: 'visa', chargeData: newChargeData }))
                 .then(res => {
                     // console.log('Response for adding charges', res);
 

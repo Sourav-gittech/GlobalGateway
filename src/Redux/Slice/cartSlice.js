@@ -85,7 +85,7 @@ export const removeCartItem = createAsyncThunk("cartSlice/removeCartItem",
 // delete Cart
 export const deleteCart = createAsyncThunk("cartSlice/deleteCart",
     async (cartId, { rejectWithValue }) => {
-        console.log('Deleting cart id', cartId);
+        // console.log('Deleting cart id', cartId);
 
         try {
             const { error } = await supabase.from("carts").delete().eq("id", cartId);

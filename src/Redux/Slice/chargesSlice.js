@@ -3,7 +3,7 @@ import supabase from "../../util/Supabase/supabase";
 
 // slice to add new charges
 export const addCharge = createAsyncThunk("chargesSlice/addCharge",
-    async (chargeData, { rejectWithValue }) => {
+    async ({ type, chargeData }, { rejectWithValue }) => {
         // console.log('New Charge details',chargeData);
 
         try {
@@ -11,7 +11,10 @@ export const addCharge = createAsyncThunk("chargesSlice/addCharge",
             // console.log('Response for adding new charge', res);
 
             if (res.error) return rejectWithValue(res.error.message);
-            return res.data[0];
+            return {
+                type,
+                data: res.data[0]
+            };
         } catch (err) {
             return rejectWithValue(err.message);
         }
@@ -32,7 +35,10 @@ export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
 
             if (res.error) return rejectWithValue(res.error.message);
 
-            return res.data;
+            return {
+                type,
+                data: res.data,
+            };
         }
         catch (err) {
             return rejectWithValue(err.message);
@@ -42,7 +48,7 @@ export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
 
 // slice to update charges
 export const updateCharge = createAsyncThunk("chargesSlice/updateCharge",
-    async ({ id, updatedData }, { rejectWithValue }) => {
+    async ({ type, id, updatedData }, { rejectWithValue }) => {
         // console.log('Updated Charge details',id, updatedData);
 
         try {
@@ -50,7 +56,10 @@ export const updateCharge = createAsyncThunk("chargesSlice/updateCharge",
             // console.log('Response for updating charges', res);
 
             if (res.error) return rejectWithValue(res.error.message);
-            return res.data[0];
+            return {
+                type,
+                data: res.data[0]
+            };
         } catch (err) {
             return rejectWithValue(err.message);
         }
@@ -76,7 +85,10 @@ export const deleteCharge = createAsyncThunk("chargesSlice/deleteCharge",
 
 
 const initialState = {
-    allCharges: [],
+    allCharges: {
+        visa: [],
+        course: [],
+    },
     isChargesLoading: false,
     hasChargesError: null
 }
@@ -94,7 +106,8 @@ export const chargesSlice = createSlice({
             })
             .addCase(addCharge.fulfilled, (state, action) => {
                 state.isChargesLoading = false;
-                state.allCharges.push(action.payload);
+                const { type, data } = action.payload;
+                state.allCharges[type].push(data);
             })
             .addCase(addCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;
@@ -107,7 +120,8 @@ export const chargesSlice = createSlice({
             })
             .addCase(fetchCharges.fulfilled, (state, action) => {
                 state.isChargesLoading = false;
-                state.allCharges = action.payload;
+                const { type, data } = action.payload;
+                state.allCharges[type] = data;
             })
             .addCase(fetchCharges.rejected, (state, action) => {
                 state.isChargesLoading = false;

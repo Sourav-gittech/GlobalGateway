@@ -1,7 +1,7 @@
 import React from 'react'
 import { IndianRupee, Trash2, Edit2 } from 'lucide-react';
 
-const ChargesRow = ({ charge, charges,setCharges,setNewCharge,setEditingId,setErrors,setIsModalOpen }) => {
+const ChargesRow = ({ charge, charges, setCharges, setNewCharge, setEditingId, setErrors, setIsModalOpen }) => {
 
     const handleEdit = (id) => {
         const charge = charges.find((c) => c.id === id);

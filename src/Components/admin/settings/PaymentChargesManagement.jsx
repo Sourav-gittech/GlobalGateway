@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IndianRupee, Plus, AlertCircle, Loader2 } from 'lucide-react';
 import ChargesRow from './payment/paymentCharges/ChargesRow';
 import ChargesModal from './payment/paymentCharges/ChargesModal';
+import { fetchCharges } from '../../../Redux/Slice/chargesSlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { useDispatch } from 'react-redux';
 
-export default function PaymentChargesManagement({ SettingsSection,Modal }) {
+export default function PaymentChargesManagement({ SettingsSection, Modal }) {
   const [charges, setCharges] = useState([
     { id: 1, name: 'GST', percentage: 0, active: true, createdAt: '2024-01-15', isGST: true, sgst: 9, cgst: 9 },
     { id: 2, name: 'Service Charge', percentage: 5, active: true, createdAt: '2024-01-20' },
@@ -15,6 +18,7 @@ export default function PaymentChargesManagement({ SettingsSection,Modal }) {
   const [newCharge, setNewCharge] = useState({ name: '', percentage: '', sgst: '', cgst: '' });
   const [errors, setErrors] = useState({ name: '', percentage: '', sgst: '', cgst: '' });
   const [isLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleOpenModal = () => {
     setNewCharge({ name: '', percentage: '', sgst: '', cgst: '' });
@@ -22,6 +26,19 @@ export default function PaymentChargesManagement({ SettingsSection,Modal }) {
     setEditingId(null);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    dispatch(fetchCharges({ type: 'course' }))
+      .then(res => {
+        // console.log('Response for fetching all charges for course', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, [])
+
+  // console.log('All available charges for course', allCharges?.course);
 
   return (
     <SettingsSection

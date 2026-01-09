@@ -35,21 +35,21 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
 
         dispatch(updateCharge({
             id: charge.id,
+            type:'visa',
             updatedData: {
                 charge_type: data.charge_type.trim(),
                 amount: Number(data.amount),
-                purpose:'visa',
-                percentage:null,
-                percentage_conversion:null
+                purpose: 'visa',
+                percentage: null
             }
         }))
             .then(res => {
                 // console.log('Response for updating charges', res);
 
-                if (res.meta.requestStatus === "fulfilled") {
+                if (res?.meta?.requestStatus === "fulfilled") {
                     hotToast("Charge updated successfully", "success");
                     setEditingId(null);
-                     dispatch(fetchCharges({type:'visa'}));
+                    dispatch(fetchCharges({ type: 'visa' }));
                 } else {
                     getSweetAlert("Error", "Update failed", "error");
                 }
@@ -70,7 +70,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
                         hotToast("Charge deleted successfully", "success");
                         setAlertModalOpen(false);
                         setCurrentChargeId(null);
-                         dispatch(fetchCharges({type:'visa'}));
+                        dispatch(fetchCharges({ type: 'visa' }));
                     }
                     else {
                         getSweetAlert('Oops...', 'Something went wrong!', 'error');

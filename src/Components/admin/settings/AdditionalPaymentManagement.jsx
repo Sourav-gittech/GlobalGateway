@@ -12,14 +12,13 @@ export default function AdditionalPaymentManagement({SettingsSection}) {
   const [editingId, setEditingId] = useState(null);
   const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
 
-  // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [newCharge, setNewCharge] = useState({ label: '', amount: '' });
 
   useEffect(() => {
     dispatch(fetchCharges({type:'visa'}))
       .then(res => {
-        // console.log('Response for fetching all charges', res);
+        // console.log('Response for fetching all charges for visa', res);
       })
       .catch(err => {
         console.log('Error occured', err);
@@ -32,10 +31,9 @@ export default function AdditionalPaymentManagement({SettingsSection}) {
     setShowAddModal(true);
   };
 
-  const totalAdditional = allCharges?.reduce((sum, charge) => sum + Number(charge.amount || 0), 0);
+  const totalAdditional = allCharges?.visa?.reduce((sum, charge) => sum + Number(charge.amount || 0), 0);
 
-
-  // console.log('All available charges', allCharges);
+  // console.log('All available charges for visa', allCharges?.visa);
 
   if (isChargesLoading) {
     return (
@@ -87,22 +85,22 @@ export default function AdditionalPaymentManagement({SettingsSection}) {
             <div className="flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between mb-3 flex-shrink-0">
                 <h4 className="text-sm font-medium text-slate-300">Payment Charges</h4>
-                {allCharges?.length > 0 && (
+                {allCharges?.visa?.length > 0 && (
                   <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-                    {allCharges?.length} {allCharges?.length === 1 ? 'charge' : 'charges'}
+                    {allCharges?.visa?.length} {allCharges?.visa?.length === 1 ? 'charge' : 'charges'}
                   </span>
                 )}
               </div>
 
               {/* Scrollable Charges List */}
               <div className="h-full flex-1 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
-                {allCharges?.length === 0 ? (
+                {allCharges?.visa?.length === 0 ? (
                   <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
                     <Info className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
                     <p className="text-xs text-slate-400">No charges configured. Add your first charge to get started.</p>
                   </div>
                 ) : (
-                  allCharges?.map(charge => (
+                  allCharges?.visa?.map(charge => (
                     <PaymentRow key={charge.id} charge={charge} editingId={editingId} setEditingId={setEditingId} isSaving={isChargesLoading} />
                   ))
                 )}
@@ -110,7 +108,7 @@ export default function AdditionalPaymentManagement({SettingsSection}) {
             </div>
 
             {/* Total Summary - Fixed at Bottom */}
-            {allCharges?.length > 0 && (
+            {allCharges?.visa?.length > 0 && (
               <div className="p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg flex-shrink-0 mt-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-slate-300">Total Additional Charges</span>
@@ -124,7 +122,7 @@ export default function AdditionalPaymentManagement({SettingsSection}) {
         </SettingsSection>
 
         {/* Add Charge Modal */}
-        <PaymentModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} charges={allCharges} />
+        <PaymentModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} charges={allCharges?.visa} />
 
       </div>
     </div>
