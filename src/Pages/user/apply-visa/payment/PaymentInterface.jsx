@@ -36,7 +36,7 @@ export default function Payment({ onBack, countryWiseVisaDetails, application_id
 
 
   useEffect(() => {
-    dispatch(fetchCharges({ type: 'visa' }))
+    dispatch(fetchCharges({ type: 'visa', status: true }))
       .then(res => {
         // console.log('Response for fetching all charges for visa', res);
       })

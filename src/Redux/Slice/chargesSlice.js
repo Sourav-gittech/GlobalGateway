@@ -23,12 +23,15 @@ export const addCharge = createAsyncThunk("chargesSlice/addCharge",
 
 // slice to fetch all charges
 export const fetchCharges = createAsyncThunk("chargesSlice/fetchCharges",
-    async ({ type } = {}, { rejectWithValue }) => {
+    async ({ type,status } = {}, { rejectWithValue }) => {
         try {
             let query = supabase.from("charges").select("*").order("created_at", { ascending: true });
 
             if (type) {
-                query = query.eq("purpose", type)
+                query = query.eq("purpose", type);
+            }
+            if (status) {
+                query = query.eq("status", status);
             }
             const res = await query;
             // console.log('Response for fetching all charges', res);
@@ -66,6 +69,23 @@ export const updateCharge = createAsyncThunk("chargesSlice/updateCharge",
     }
 );
 
+// slice to update charges status
+export const updateChargeStatus = createAsyncThunk("chargesSlice/updateChargeStatus",
+    async ({ id, updateStatus, type }, { rejectWithValue }) => {
+        // console.log('Updated Charge status', id, updateStatus);
+
+        try {
+            const res = await supabase.from("charges").update({ status: updateStatus }).eq("id", id).select();
+            // console.log('Response for updating charge status', res);
+
+            if (res.error) return rejectWithValue(res.error.message);
+            return { id, status: updateStatus, type };
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 // slice to delete charges
 export const deleteCharge = createAsyncThunk("chargesSlice/deleteCharge",
     async (id, { rejectWithValue }) => {
@@ -90,6 +110,7 @@ const initialState = {
         course: [],
     },
     isChargesLoading: false,
+    isChargesStatusLoading: false,
     hasChargesError: null
 }
 
@@ -138,6 +159,24 @@ export const chargesSlice = createSlice({
             })
             .addCase(updateCharge.rejected, (state, action) => {
                 state.isChargesLoading = false;
+                state.hasChargesError = action.payload;
+            })
+
+            // update charges status
+            .addCase(updateChargeStatus.pending, (state) => {
+                state.isChargesStatusLoading = true;
+            })
+            .addCase(updateChargeStatus.fulfilled, (state, action) => {
+                state.isChargesStatusLoading = false;
+
+                const { id, status, type } = action.payload;
+                const charge = state.allCharges[type].find(c => c.id === id);
+                if (charge) {
+                    charge.status = status;
+                }
+            })
+            .addCase(updateChargeStatus.rejected, (state, action) => {
+                state.isChargesStatusLoading = false;
                 state.hasChargesError = action.payload;
             })
 

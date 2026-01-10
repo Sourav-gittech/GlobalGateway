@@ -44,7 +44,8 @@ const PaymentModal = ({ showAddModal, setShowAddModal, charges }) => {
                 charge_type: data?.label?.trim()?.split(" ")?.map(charge => charge?.charAt(0)?.toUpperCase() + charge?.slice(1)?.toLowerCase())?.join(" "),
                 amount: data?.amount,
                 purpose: 'visa',
-                percentage: null
+                percentage: null,
+                status: false
             }
 
             dispatch(addCharge({ type: 'visa', chargeData: newChargeData }))

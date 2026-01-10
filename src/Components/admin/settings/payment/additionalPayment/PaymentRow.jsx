@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
-import { deleteCharge, fetchCharges, updateCharge } from '../../../../../Redux/Slice/chargesSlice';
+import { deleteCharge, fetchCharges, updateCharge, updateChargeStatus } from '../../../../../Redux/Slice/chargesSlice';
 import hotToast from '../../../../../util/alert/hot-toast';
 import { createPortal } from 'react-dom';
 import ConfirmBlockUnblockAlert from '../../../common/alerts/ConfirmBlockUnblockAlert';
 import { useForm } from 'react-hook-form';
 
-const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
+const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = null }) => {
     const [currentChargeId, setCurrentChargeId] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
     const [savingEdit, setSavingEdit] = useState(false);
@@ -16,16 +16,16 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: {
-            charge_type: charge.charge_type,
-            amount: charge.amount,
+            charge_type: charge?.charge_type,
+            amount: charge?.amount,
         }
     });
 
     useEffect(() => {
-        if (editingId === charge.id) {
+        if (editingId === charge?.id) {
             reset({
-                charge_type: charge.charge_type,
-                amount: charge.amount,
+                charge_type: charge?.charge_type,
+                amount: charge?.amount,
             });
         }
     }, [editingId, charge, reset]);
@@ -34,13 +34,14 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
         setSavingEdit(true);
 
         dispatch(updateCharge({
-            id: charge.id,
-            type:'visa',
+            id: charge?.id,
+            type: 'visa',
             updatedData: {
                 charge_type: data.charge_type.trim(),
                 amount: Number(data.amount),
                 purpose: 'visa',
-                percentage: null
+                percentage: null,
+                status: false
             }
         }))
             .then(res => {
@@ -90,12 +91,28 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
         setCurrentChargeId(id);
     }
 
+    const handleToggle = (id, updateStatus) => {
+        dispatch(updateChargeStatus({ id, updateStatus, type: 'visa' }))
+            .then(res => {
+                // console.log('Response for updating charges status', res);
+
+                if (res?.meta?.requestStatus === "fulfilled") {
+                    hotToast(`Charge ${updateStatus ? 'activeted' : 'inactivated'} successfully`, "success");
+                } else {
+                    getSweetAlert("Error", "Update failed", "error");
+                }
+            }).catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    };
+
     return (
         <>
             <div className="flex items-center gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 transition-all group">
 
                 <div className="flex-1 min-w-0">
-                    {editingId === charge.id ? (
+                    {editingId === charge?.id ? (
                         <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-2">
                             <input
                                 {...register("charge_type", {
@@ -130,17 +147,32 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
                             </button>
                         </form>
                     ) : (
-                        <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-white">{charge.charge_type}</p>
-                            <button
-                                onClick={() => setEditingId(charge.id)}
-                                className="p-1 text-slate-400 hover:text-blue-400 cursor-pointer"
-                            >
+                        <div className="flex items-center gap-2 relative">
+                            <div className="relative">
+                                <p className="text-sm font-medium text-white">
+                                    {charge?.charge_type?.length > 30 ? charge?.charge_type?.slice(0, 30) + "..." : charge?.charge_type}
+                                </p>
+
+                                <span className={`absolute -top-2 right-[-10px] text-[8px] ${charge?.status ? "text-green-400" : "text-red-400"}`}>
+                                    {charge?.status ? "Active" : "In-active"}
+                                </span>
+                            </div>
+
+                            <button onClick={() => setEditingId(charge?.id)} className="p-1 text-slate-400 hover:text-blue-400 cursor-pointer">
                                 <Edit2 className="w-3 h-3" />
                             </button>
                         </div>
                     )}
                 </div>
+
+                <button
+                    onClick={() => handleToggle(charge?.id, !charge?.status)}
+                    className={`relative w-11 h-6 rounded-full transition-all duration-200 focus:outline-none cursor-pointer ${charge?.status ? 'bg-green-500' : 'bg-slate-600'}`}
+                    title={charge?.status ? 'Deactivate' : 'Activate'}
+                >
+                    <span
+                        className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-200 ${charge?.status ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
 
                 {/* Amount Input */}
                 <div className="relative w-25">
