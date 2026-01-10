@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tag, Plus, AlertCircle, Loader2 } from 'lucide-react';
-import PromocodeRow from './payment/promocode/PromocodeRow';
-import PromocodeModal from './payment/promocode/PromocodeModal';
+import PromocodeRow from '../charges/payment/promocode/PromocodeRow';
+import PromocodeModal from '../charges/payment/promocode/PromocodeModal';
 import { fetchCodes } from '../../../Redux/Slice/promocodeSlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,10 +54,10 @@ export default function PromoCodeManagement({ SettingsSection, Modal }) {
       {/* List Section */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-slate-300">Active Promo Codes</h4>
+          <h4 className="text-sm font-medium text-slate-300">Promo Codes</h4>
           {promoCodes?.length > 0 && (
             <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-              {promoCodes?.length}
+              {promoCodes?.length} {promoCodes?.length === 1 ? 'code' : 'codes'}
             </span>
           )}
         </div>

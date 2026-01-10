@@ -44,6 +44,7 @@ import ViewApplications from "../Pages/admin/ViewApplications";
 import CourseManage from "../Pages/admin/CourseManage";
 import AddAdmin from "../Pages/admin/ManageAdmin";
 import VisaManage from "../Pages/admin/ManageVisa";
+import ManageCharges from "../Pages/admin/ManageCharges";
 import AdminProfile from "../Pages/admin/AdminProfile";
 
 /* ---------- Embassy ---------- */
@@ -77,15 +78,15 @@ const Routing = () => {
         <Routes>
 
           {/* ================= AUTH (NO LAYOUT) ================= */}
-            <Route path="/country/:country_id" element={<CountryDetails />} />
-            <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
-            <Route path="/payment-preview" element={<PaymentPreview />} />
-            <Route path="/payment-status" element={<PaymentStatus />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/country/:country_id" element={<CountryDetails />} />
+          <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
+          <Route path="/payment-preview" element={<PaymentPreview />} />
+          <Route path="/payment-status" element={<PaymentStatus />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* Course */}
-            <Route path="/course/:course_id" element={<CourseDetails />} />
-            <Route path="/cart" element={<Cart />} />
+          {/* Course */}
+          <Route path="/course/:course_id" element={<CourseDetails />} />
+          <Route path="/cart" element={<Cart />} />
 
           {/* ================= USER ================= */}
           <Route element={<UserLayout />}>
@@ -120,7 +121,8 @@ const Routing = () => {
             <Route path="admin" element={<AddAdmin />} />
             <Route path="visaManage" element={<VisaManage />} />
             <Route path="adminProfile" element={<AdminProfile />} />
-             <Route path="adminNotification" element={<AdminNotifications />} />
+            <Route path="adminNotification" element={<AdminNotifications />} />
+            <Route path="charges" element={<ManageCharges />} />
           </Route>
 
           {/* ================= EMBASSY PUBLIC ================= */}
@@ -146,7 +148,7 @@ const Routing = () => {
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />
             <Route path="visa-policy-manage" element={<VisaPolicyManage />} />
             <Route path="analytics" element={<EmbassyAnalytics />} />
-             <Route path="notifications/:countryId" element={<EmbassyNotifications />} />
+            <Route path="notifications/:countryId" element={<EmbassyNotifications />} />
           </Route>
 
           {/* ================= FALLBACK ================= */}

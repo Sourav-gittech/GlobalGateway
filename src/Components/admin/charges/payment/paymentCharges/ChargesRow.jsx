@@ -100,7 +100,7 @@ const ChargesRow = ({ charge, setEditingCourse, setIsModalOpen }) => {
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                         onClick={() => handleToggle(charge?.id, !charge?.status)}
-                        className={`relative w-11 h-6 rounded-full transition-all duration-200 focus:outline-none ${charge?.status ? 'bg-green-500' : 'bg-slate-600'
+                        className={`relative w-11 h-6 rounded-full transition-all duration-200 focus:outline-none cursor-pointer ${charge?.status ? 'bg-green-500' : 'bg-slate-600'
                             }`}
                         title={charge?.status ? 'Deactivate' : 'Activate'}
                     >
@@ -111,7 +111,7 @@ const ChargesRow = ({ charge, setEditingCourse, setIsModalOpen }) => {
 
                     <button
                         onClick={() => handleEdit(charge)}
-                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
                         title="Edit"
                     >
                         <Edit2 className="w-4 h-4 text-blue-400" />
@@ -119,7 +119,7 @@ const ChargesRow = ({ charge, setEditingCourse, setIsModalOpen }) => {
 
                     <button
                         onClick={() => { handleCurrentCharge(charge?.id); setAlertModalOpen(true); }}
-                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
                         title="Delete"
                     >
                         <Trash2 className="w-4 h-4 text-red-400" />

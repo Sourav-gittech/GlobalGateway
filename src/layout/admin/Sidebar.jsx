@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Library, Loader2, UserRoundCog, FileChartColumnIncreasing, Earth, BellRing, MessageSquareText } from "lucide-react";
+import { Home, Users, CreditCard, Settings, Bell, IdCard, UserCircle, BarChart2, Menu, LogOut, X, ChevronLeft, ChevronRight, User, Landmark, Library, Loader2, UserRoundCog, FileChartColumnIncreasing, Earth, BellRing, MessageSquareText, HandCoins } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -79,7 +79,7 @@ export default function Sidebar({ adminData }) {
         getSweetAlert("Oops...", "Something went wrong!", "error");
       })
   }, []);
- 
+
   // message 
   useEffect(() => {
     dispatch(fetchAllContactMessages())
@@ -131,16 +131,17 @@ export default function Sidebar({ adminData }) {
     { to: "/admin/dashboard/embassyManage", label: "Manage Embassies", icon: Landmark },
     { to: "/admin/dashboard/courseManage", label: "Manage Courses", icon: Library },
     { to: "/admin/dashboard/payments", label: "Payments", icon: CreditCard },
+    { to: "/admin/dashboard/charges", label: "Manage Charges", icon: HandCoins },
 
-    { 
-      to: "/admin/dashboard/payments", label: "Notifications", icon: BellRing, 
-      badge: isNotificationLoading? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (notificationList?.length) 
+    {
+      to: "/admin/dashboard/payments", label: "Notifications", icon: BellRing,
+      badge: isNotificationLoading ? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (notificationList?.length)
     },
     { to: "/admin/dashboard/analytics", label: "Analytics", icon: BarChart2 },
-    { 
+    {
       to: "/admin/dashboard/contact", label: "Messages", icon: MessageSquareText,
-      badge: contactLoading? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (contactData?.filter(contact=>contact?.status=="pending")?.length) 
-     },
+      badge: contactLoading ? (<Loader2 className="w-4 h-4 text-white animate-spin" />) : (contactData?.filter(contact => contact?.status == "pending")?.length)
+    },
     { to: "/admin/dashboard/settings", label: "Settings", icon: Settings },
   ];
 

@@ -7,7 +7,7 @@ import { fetchHolidays } from "../../../Redux/Slice/holidaySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { fetchAllEmbassy } from "../../../Redux/Slice/embassySlice";
 
-export default function HolidayManagement({SettingsSection}) {
+export default function HolidayManagement({ SettingsSection }) {
   const dispatch = useDispatch();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -57,61 +57,58 @@ export default function HolidayManagement({SettingsSection}) {
   // console.log('Embassy list',uniqueCountryIds);
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-6xl mx-auto">
-        <SettingsSection
-          title="Holiday Management"
-          description="Set recurring holidays for the appointment calendar (date repeats annually)"
-          icon={Calendar}
-        >
-          {/* Add Holiday Button */}
-          <div className="mb-4">
-            <button disabled={isHolidayLoading}
-              onClick={openModal}
-              className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
-            >
-              <Plus className="w-4 h-4" />
-              Add New Holiday
-            </button>
+    <>
+      <SettingsSection
+        title="Holiday Management"
+        description="Set recurring holidays for the appointment calendar (date repeats annually)"
+        icon={Calendar}
+      >
+        {/* Add Holiday Button */}
+        <div className="mb-4">
+          <button disabled={isHolidayLoading}
+            onClick={openModal}
+            className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
+          >
+            <Plus className="w-4 h-4" />
+            Add New Holiday
+          </button>
+        </div>
+
+        {/* Holidays List - Fixed Height Container */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-slate-300">Scheduled Holidays</h4>
+            {holidayData?.length > 0 && (
+              <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
+                {holidayData?.length}
+              </span>
+            )}
           </div>
 
-          {/* Holidays List - Fixed Height Container */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium text-slate-300">Scheduled Holidays</h4>
-              {holidayData?.length > 0 && (
-                <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-                  {holidayData?.length}
-                </span>
-              )}
-            </div>
-
-            {/* Fixed Height Scrollable Area - Shows exactly 4 items */}
-            <div className="h-[420px] overflow-hidden">
-              {isHolidayLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
-                </div>
-              ) : (!isHolidayLoading && holidayData?.length == 0) ? (
-                <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
-                  <AlertCircle className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-slate-400">No holidays scheduled</p>
-                </div>
-              ) : (
-                <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
-                  {holidayData?.map(holiday => (
-                    <HolidayRow key={holiday?.id} holiday={holiday} monthNames={monthNames} uniqueCountryIds={uniqueCountryIds} />
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Fixed Height Scrollable Area - Shows exactly 4 items */}
+          <div className="h-[420px] overflow-hidden">
+            {isHolidayLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
+              </div>
+            ) : (!isHolidayLoading && holidayData?.length == 0) ? (
+              <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
+                <AlertCircle className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-slate-400">No holidays scheduled</p>
+              </div>
+            ) : (
+              <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
+                {holidayData?.map(holiday => (
+                  <HolidayRow key={holiday?.id} holiday={holiday} monthNames={monthNames} uniqueCountryIds={uniqueCountryIds} />
+                ))}
+              </div>
+            )}
           </div>
-        </SettingsSection>
+        </div>
+      </SettingsSection>
 
-        {/* Modal for Adding Holiday */}
-        <HolidayModal showModal={showModal} setShowModal={setShowModal} holidays={holidayData} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} uniqueCountryIds={uniqueCountryIds} monthNames={monthNames} />
-
-      </div>
-    </div>
+      {/* Modal for Adding Holiday */}
+      <HolidayModal showModal={showModal} setShowModal={setShowModal} holidays={holidayData} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} uniqueCountryIds={uniqueCountryIds} monthNames={monthNames} />
+    </>
   );
 }

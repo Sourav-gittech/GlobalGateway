@@ -194,7 +194,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = nu
                 {/* Delete Button */}
                 <button
                     onClick={() => { handleCurrentCharge(charge?.id); setAlertModalOpen(true); }}
-                    className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+                    className="p-1.5 text-red-400 hover:bg-slate-500/10 rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
                     title="Delete"
                 >
                     <Trash2 className="w-4 h-4" />

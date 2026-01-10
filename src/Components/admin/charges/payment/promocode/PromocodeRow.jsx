@@ -91,7 +91,7 @@ const PromocodeRow = ({ promo, setEditingPromoCode, setIsModalOpen }) => {
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                         onClick={() => handleToggle(promo?.id, !promo?.status)}
-                        className={`relative w-11 h-6 rounded-full transition-all duration-200 focus:outline-none ${promo?.status ? 'bg-green-500' : 'bg-slate-600'
+                        className={`relative w-11 h-6 rounded-full transition-all duration-200 focus:outline-none cursor-pointer ${promo?.status ? 'bg-green-500' : 'bg-slate-600'
                             }`}
                         title={promo?.status ? 'Deactivate' : 'Activate'}
                     >
@@ -102,7 +102,7 @@ const PromocodeRow = ({ promo, setEditingPromoCode, setIsModalOpen }) => {
 
                     <button
                         onClick={() => handleEdit(promo)}
-                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
                         title="Edit"
                     >
                         <Edit2 className="w-4 h-4 text-blue-400" />
@@ -110,7 +110,7 @@ const PromocodeRow = ({ promo, setEditingPromoCode, setIsModalOpen }) => {
 
                     <button
                         onClick={() => { handleCurrentCode(promo?.id); setAlertModalOpen(true); }}
-                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors"
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
                         title="Delete"
                     >
                         <Trash2 className="w-4 h-4 text-red-400" />
