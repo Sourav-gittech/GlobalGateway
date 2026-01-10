@@ -54,7 +54,7 @@ const CourseCard = ({ course, index }) => {
 
                 <div className="flex justify-center mt-auto">
                     <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => handleViewCourse(course?.id)}
-                        className="flex items-center border border-[#E0E0E0] text-[#666] px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:border-[#FF5252] hover:text-[#FF5252] hover:bg-[rgba(255,82,82,0.04)] transition-all duration-200"
+                        className="flex items-center border border-[#E0E0E0] text-[#666] px-4 sm:px-6 py-2 rounded-lg text-sm sm:text-base font-medium hover:border-[#FF5252] hover:text-[#FF5252] hover:bg-[rgba(255,82,82,0.04)] transition-all duration-200 cursor-pointer"
                     >
                         View Course
                         <ArrowIcon />

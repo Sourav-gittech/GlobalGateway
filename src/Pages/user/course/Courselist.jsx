@@ -33,20 +33,18 @@ const CourseList = () => {
       <div className="py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
-          {isCourseLoading && (
+          {isCourseLoading ? (
             <div className="text-center py-12">
               <Loader2 className="w-16 h-16 text-white animate-spin mx-auto text-center" />
               <p className="text-slate-400 text-lg">Loading...</p>
             </div>
-          )}
-
-          {!isCourseLoading && courseList?.length === 0 ? (
+          ) : courseList?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
               <p className="text-slate-400 text-lg mb-2">No courses found</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {courseList?.map((course, index) => (
+              {courseList?.filter(course => course?.status == 'active')?.map((course, index) => (
                 <CourseCard key={course.id} index={index} course={course} />
               ))}
             </div>

@@ -37,7 +37,7 @@ const FeeBreakDown = ({ applicationFee, serviceFee, totalAmount }) => {
             <div className="flex justify-between items-center py-3 mt-2 bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-lg px-4">
                 <span className="text-base font-bold text-white">Total Amount to Pay</span>
                 <span className="text-2xl font-bold text-white">
-                    ₹{totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? 'N/A'}
+                    ₹{Number(totalAmount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? 'N/A'}
                 </span>
             </div>
             <p className="text-xs text-gray-500 mt-2">Amount payable now</p>

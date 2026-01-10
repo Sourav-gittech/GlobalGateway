@@ -12,15 +12,15 @@ import { usePassportByApplicationId } from "../../../../tanstack/query/getApplic
 
 export default function Payment({ onBack, countryWiseVisaDetails, application_id, applicationDetails }) {
   const { country_id } = useParams();
-  const dispatch = useDispatch(),
-    { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state.charge);
+  const dispatch = useDispatch();
 
+  const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state.charge);
   const { data: personalInfoData, isLoading: isApplicationDataLoading, error: isApplicationSDataError } = usePersonalInfoByApplicationId(application_id);
   const { data: visaData, isLoading: isVisaDataLoading, error: isVisaDataError } = useVisaDetailsByApplicationId(application_id);
   const { data: passportData, isLoading: isPassportDataLoading, error: isPassportDataError } = usePassportByApplicationId(application_id);
 
   const application_fees = Number(countryWiseVisaDetails?.find(visa => visa?.id == visaData?.visaId)?.visa_fees);
-  const totalCharge = Number(allCharges?.reduce((sum, charge) => sum + Number(charge.amount), 0).toFixed(2));
+  const totalCharge = Number(allCharges?.visa?.reduce((sum, charge) => sum + Number(charge.amount), 0).toFixed(2));
   const total_amount = (application_fees + totalCharge).toFixed(2);
 
   const visaTypeSpecification = countryWiseVisaDetails?.find(visa => visa?.id == visaData?.visaId);
@@ -30,15 +30,15 @@ export default function Payment({ onBack, countryWiseVisaDetails, application_id
   // console.log('Specific visa details', visaTypeSpecification);
   // console.log('Application fees', application_fees);
   // console.log('Application total charge', totalCharge);
-  // console.log('All charges', allCharges);
+  // console.log('All charges', allCharges?.visa);
   // console.log('User Information', personalInfoData);
   // console.log('Application details in payment interface',applicationDetails);
-  
+
 
   useEffect(() => {
-    dispatch(fetchCharges())
+    dispatch(fetchCharges({ type: 'visa' }))
       .then(res => {
-        // console.log('Response for fetching all charges', res);
+        // console.log('Response for fetching all charges for visa', res);
       })
       .catch(err => {
         console.log('Error occured', err);
@@ -62,10 +62,10 @@ export default function Payment({ onBack, countryWiseVisaDetails, application_id
       <div className="flex flex-col lg:h-full lg:grid lg:grid-cols-2">
 
         {/* Left Panel - Order Summary */}
-        <OrderSummary onBack={onBack} allCharges={allCharges} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} />
+        <OrderSummary onBack={onBack} allCharges={allCharges?.visa} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} />
 
         {/* Right Panel - Payment Form */}
-        <PaymentForm personalInfoData={personalInfoData} allCharges={allCharges} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} application_id={application_id} country_id={country_id} passportData={passportData} />
+        <PaymentForm personalInfoData={personalInfoData} allCharges={allCharges?.visa} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} application_id={application_id} country_id={country_id} passportData={passportData} />
 
       </div>
 

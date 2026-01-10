@@ -75,7 +75,7 @@ const Cart = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 sm:py-12">
           <button
             onClick={navigateBack}
-            className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm group"
+            className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Continue Shopping
