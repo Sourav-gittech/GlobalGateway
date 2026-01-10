@@ -7,11 +7,6 @@ import getSweetAlert from '../../../util/alert/sweetAlert';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function PaymentChargesManagement({ SettingsSection, Modal }) {
-  const [charges, setCharges] = useState([
-    { id: 1, name: 'GST', percentage: 0, active: true, createdAt: '2024-01-15', isGST: true, sgst: 9, cgst: 9 },
-    { id: 2, name: 'Service Charge', percentage: 5, active: true, createdAt: '2024-01-20' },
-    { id: 3, name: 'Platform Fee', percentage: 2, active: false, createdAt: '2024-02-01' },
-  ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
@@ -34,7 +29,7 @@ export default function PaymentChargesManagement({ SettingsSection, Modal }) {
         console.log('Error occured', err);
         getSweetAlert('Oops...', 'Something went wrong!', 'error');
       })
-  }, [])
+  }, []);
 
   // console.log('All available charges for course', allCharges?.course);
 
@@ -60,7 +55,7 @@ export default function PaymentChargesManagement({ SettingsSection, Modal }) {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-medium text-slate-300">Payment Charges</h4>
-          {charges.length > 0 && (
+          {allCharges?.course?.length > 0 && (
             <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
               {allCharges?.course?.length}
             </span>
@@ -89,7 +84,7 @@ export default function PaymentChargesManagement({ SettingsSection, Modal }) {
       </div>
 
       {/* Modal */}
-      <ChargesModal Modal={Modal} charges={charges} setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} editingCourse={editingCourse} />
+      <ChargesModal Modal={Modal} charges={allCharges?.course} setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} editingCourse={editingCourse} />
 
     </SettingsSection>
   );

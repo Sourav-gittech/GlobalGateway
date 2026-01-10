@@ -72,12 +72,13 @@ const ChargesRow = ({ charge, setEditingCourse, setIsModalOpen }) => {
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                            <span className={`font-semibold text-sm ${charge?.status ? 'text-white' : 'text-slate-400'}`}>
+                            <p className={`relative font-semibold text-sm ${charge?.status ? 'text-white' : 'text-slate-400'}`}>
                                 {charge?.charge_type?.length > 30 ? charge?.charge_type?.slice(0, 30) + "..." : charge?.charge_type ?? 'N/A'}
-                            </span>
-                            <span className={`text-xs px-2 py-0.5 bg-slate-700/50 ${!charge?.status?'text-red-500':'text-green-600'} rounded`}>
-                                {!charge?.status ? 'In-active' : 'Active'}
-                            </span>
+                                
+                                <span className={`absolute w-full text-[8px] mb-5 ml-3 ${!charge?.status ? 'text-red-500' : 'text-green-600'}`}>
+                                    {!charge?.status ? 'In-active' : 'Active'}
+                                </span>
+                            </p>
                             {charge?.percentage == 0 && (
                                 <span className="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded">
                                     Free

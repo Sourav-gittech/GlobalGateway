@@ -23,11 +23,15 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        reset();
+        reset({
+            label: "",
+            percentage: "",
+        });
     };
 
     const onSubmit = (data) => {
-        
+console.log(data,charges);
+
         const labelExists = charges?.some(c => (c?.purpose?.toLowerCase() === 'course' && c?.charge_type?.toLowerCase() === data?.label?.trim()?.toLowerCase()));
 
         if (labelExists) {
@@ -59,7 +63,7 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
                     // console.log('Response for adding charges', res);
 
                     if (res.meta.requestStatus === "fulfilled") {
-                        reset();
+                        reset({ label: "", percentage: "" });
                         setIsModalOpen(false);
                         hotToast(`${editingCourse ? 'Charge updated' : 'New charge added'} successfully`, "success");
                         dispatch(fetchCharges({ type: 'course' }))
@@ -97,16 +101,14 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
                     <div>
                         <label className="block text-sm text-slate-300 mb-2">Charge Name</label>
                         <input
-                            type="text"
-                            placeholder="Service Charge"
-                            disabled={isChargesLoading}
-                            maxLength={100}
+                            type="text" placeholder="Service Charge"
+                            disabled={isChargesLoading} maxLength={100}
                             {...register("label", {
                                 required: "Charge name is required",
                             })}
                             className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 ${errors?.label ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50'}`}
                         />
-                        {errors.label && (
+                        {errors?.label && (
                             <div className="flex items-center gap-1 mt-1.5 text-red-400 text-xs">
                                 <AlertCircle className="w-3 h-3" />
                                 {errors?.label?.message}
@@ -184,8 +186,7 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
                                 },
                             })}
                             className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${errors.percentage ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50'
-                                }`}
-                        />
+                                }`} />
                         {errors?.percentage && (
                             <div className="flex items-center gap-1 mt-1.5 text-red-400 text-xs">
                                 <AlertCircle className="w-3 h-3" />
@@ -199,13 +200,13 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
                 <div className="flex gap-3 mt-6">
                     <button
                         type="submit" disabled={isChargesLoading}
-                        className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed">
+                        className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
                         <Icon className={`w-4 h-4 ${isChargesLoading ? 'animate-spin' : ''}`} />
                         {editingCourse ? 'Update Charge' : 'Add Charge'}
                     </button>
                     <button
                         onClick={handleCloseModal} disabled={isChargesLoading}
-                        className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed">
+                        className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed">
                         <X className="w-4 h-4" />
                         Cancel
                     </button>

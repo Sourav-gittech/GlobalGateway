@@ -1,30 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tag, Plus, AlertCircle, Loader2 } from 'lucide-react';
 import PromocodeRow from './payment/promocode/PromocodeRow';
 import PromocodeModal from './payment/promocode/PromocodeModal';
-
+import { fetchCodes } from '../../../Redux/Slice/promocodeSlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function PromoCodeManagement({ SettingsSection, Modal }) {
-  const [promoCodes, setPromoCodes] = useState([
-    { id: 1, code: 'SAVE10', discount: 10, active: true, createdAt: '2024-01-15' },
-    { id: 2, code: 'FIRST10', discount: 10, active: true, createdAt: '2024-01-20' },
-    { id: 3, code: 'SAVE20', discount: 20, active: true, createdAt: '2024-02-01' },
-    { id: 4, code: 'WELCOME20', discount: 20, active: false, createdAt: '2024-02-10' },
-    { id: 5, code: 'STUDENT15', discount: 15, active: true, createdAt: '2024-02-15' },
-  ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [newCode, setNewCode] = useState({ code: '', discount: '' });
-  const [errors, setErrors] = useState({ code: '', discount: '' });
+  const [editingPromoCode, setEditingPromoCode] = useState(null);
   const [isLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const { isCodeLoading, allCode: promoCodes, hasCodesError } = useSelector(state => state?.promocode);
 
   const handleOpenModal = () => {
-    setNewCode({ code: '', discount: '' });
-    setErrors({ code: '', discount: '' });
-    setEditingId(null);
+    setEditingPromoCode(null);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    dispatch(fetchCodes())
+      .then(res => {
+        // console.log('Response for fetching all codes', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, []);
+
+  // console.log('All available Promocodes', promoCodes);
 
   return (
     <SettingsSection
@@ -48,28 +55,28 @@ export default function PromoCodeManagement({ SettingsSection, Modal }) {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-medium text-slate-300">Active Promo Codes</h4>
-          {promoCodes.length > 0 && (
+          {promoCodes?.length > 0 && (
             <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-              {promoCodes.length}
+              {promoCodes?.length}
             </span>
           )}
         </div>
 
         {/* Fixed Height Scrollable Container */}
         <div className="h-[420px] overflow-hidden">
-          {isLoading ? (
+          {isCodeLoading ? (
             <div className="flex items-center justify-center h-full">
               <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
             </div>
-          ) : promoCodes.length === 0 ? (
+          ) : promoCodes?.length === 0 ? (
             <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
               <AlertCircle className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-slate-400">No promo codes created yet</p>
             </div>
           ) : (
             <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
-              {promoCodes.map(promo => (
-                <PromocodeRow key={promo.id} promo={promo} promoCodes={promoCodes} setPromoCodes={setPromoCodes} setNewCode={setNewCode} setEditingId={setEditingId} setErrors={setErrors} setIsModalOpen={setIsModalOpen} />
+              {promoCodes?.map(promo => (
+                <PromocodeRow key={promo?.id} promo={promo} setEditingPromoCode={setEditingPromoCode} setIsModalOpen={setIsModalOpen} />
               ))}
             </div>
           )}
@@ -77,7 +84,7 @@ export default function PromoCodeManagement({ SettingsSection, Modal }) {
       </div>
 
       {/* Modal */}
-      <PromocodeModal Modal={Modal} isModalOpen={isModalOpen} promoCodes={promoCodes} setPromoCodes={setPromoCodes} newCode={newCode} setNewCode={setNewCode} setEditingId={setEditingId} errors={errors} setErrors={setErrors} setIsModalOpen={setIsModalOpen} editingId={editingId} />
+      <PromocodeModal Modal={Modal} isModalOpen={isModalOpen} promoCodes={promoCodes} setIsModalOpen={setIsModalOpen} editingPromoCode={editingPromoCode} />
 
     </SettingsSection>
   );

@@ -137,7 +137,7 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
                 className="flex items-center justify-between gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 hover:bg-slate-700/40 transition-all group"
             >
                 <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate relative">
+                    <p className={`text-sm font-medium truncate relative ${holiday?.status ? 'text-white' : 'text-slate-400'}`}>
                         {holiday?.event_name}
                         <span className={`absolute text-[8px] mb-5 ml-3 ${holiday?.status ? 'text-green-400' : 'text-red-400'}`}>{holiday?.status ? 'Active' : 'In-active'}</span>
                     </p>
@@ -153,9 +153,9 @@ const HolidayRow = ({ holiday, monthNames, uniqueCountryIds }) => {
                     }} className={`p-1.5 text-slate-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${holiday?.status ? 'hover:text-red-400 hover:bg-red-500/10' : 'hover:text-green-400 hover:bg-green-500/10'}`}
                     title={`${holiday?.status ? 'Block' : 'Unblock'}`}>
                     {holiday?.status ? (
-                        <Ban className="w-4 h-4" />
+                        <Ban className="text-red-500 w-4 h-4" />
                     ) : (
-                        <CircleCheckBig className="w-4 h-4" />
+                        <CircleCheckBig className="text-green-600 w-4 h-4" />
                     )}
                 </button>
                 <button

@@ -1,163 +1,203 @@
-import React from 'react'
-import { Check, X, AlertCircle } from 'lucide-react';
+import React, { useEffect } from 'react'
+import { Check, X, AlertCircle, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { addCode, fetchCodes, updateCode } from '../../../../../Redux/Slice/promocodeSlice';
+import hotToast from '../../../../../util/alert/hot-toast';
+import getSweetAlert from '../../../../../util/alert/sweetAlert';
+import { useDispatch, useSelector } from 'react-redux';
 
-const PromocodeModal = ({ Modal, isModalOpen, promoCodes, setPromoCodes, newCode, setNewCode, setEditingId, errors, setErrors, setIsModalOpen, editingId }) => {
-    
-    const isChargesLoading = false;
+const PromocodeModal = ({ Modal, isModalOpen, promoCodes, setIsModalOpen, editingPromoCode }) => {
+
+    const dispatch = useDispatch();
+    const { isCodeLoading, allCode, hasCodesError } = useSelector(state => state?.promocode);
+    const Icon = isCodeLoading ? Loader2 : Check;
+
+    const { register, handleSubmit, reset, setError, formState: { errors } } = useForm({
+        defaultValues: {
+            code: '',
+            available: '',
+            discount: '',
+        }
+    });
+
+    useEffect(() => {
+        if (editingPromoCode) {
+            reset({
+                code: editingPromoCode?.name || '',
+                available: editingPromoCode?.apply_mode || '',
+                discount: editingPromoCode?.discount_amount || '',
+            });
+        }
+    }, [editingPromoCode, promoCodes, reset]);
+
     const handleCloseModal = () => {
-        setNewCode({ code: '', discount: '' });
-        setErrors({ code: '', discount: '' });
+        reset({ code: '', available: '', discount: '' });
         setIsModalOpen(false);
-        setEditingId(null);
     };
 
-    const validateCode = (code) => {
-        if (!code.trim()) return 'Code is required';
-        if (code.length < 3) return 'Code must be at least 3 characters';
-        if (code.length > 20) return 'Code must be less than 20 characters';
-        if (!/^[A-Z0-9]+$/.test(code)) return 'Code must contain only letters and numbers';
+    const onSubmit = (data) => {
+        const code = data?.code?.toUpperCase();
 
-        const isDuplicate = promoCodes.some(
-            p => p.code === code && p.id !== editingId
+        const isDuplicate = promoCodes?.some(
+            p => p?.name === code && p?.id !== editingPromoCode?.id
         );
-        if (isDuplicate) return 'This code already exists';
 
-        return '';
-    };
-
-    const validateDiscount = (discount) => {
-        if (!discount) return 'Discount is required';
-        const num = parseInt(discount);
-        if (isNaN(num) || num < 1) return 'Discount must be at least 1%';
-        if (num > 100) return 'Discount cannot exceed 100%';
-        return '';
-    };
-
-    const handleSubmit = () => {
-        const codeError = validateCode(newCode.code);
-        const discountError = validateDiscount(newCode.discount);
-
-        if (codeError || discountError) {
-            setErrors({ code: codeError, discount: discountError });
+        if (isDuplicate) {
+            setError('code', {
+                type: 'manual',
+                message: 'This code already exists',
+            });
             return;
         }
 
-        if (editingId) {
-            setPromoCodes(
-                promoCodes.map((p) =>
-                    p.id === editingId
-                        ? { ...p, code: newCode.code.toUpperCase(), discount: parseInt(newCode.discount) }
-                        : p
-                )
-            );
-        } else {
-            setPromoCodes([
-                ...promoCodes,
-                {
-                    id: Date.now(),
-                    code: newCode.code.toUpperCase(),
-                    discount: parseInt(newCode.discount),
-                    active: true,
-                    createdAt: new Date().toISOString().split('T')[0],
-                },
-            ]);
-        }
+        try {
+            const newCodeData = {
+                name: code,
+                discount_amount: data?.discount,
+                apply_mode: data?.available,
+                status: false
+            }
 
-        handleCloseModal();
+            dispatch(editingPromoCode ? updateCode({
+                id: editingPromoCode?.id,
+                updatedData: {
+                    name: code,
+                    discount_amount: data?.discount,
+                    apply_mode: data?.available,
+                    status: editingPromoCode?.status
+                }
+            }) : addCode({ codeData: newCodeData }))
+                .then(res => {
+                    // console.log('Response for adding promocodes', res);
+
+                    if (res.meta.requestStatus === "fulfilled") {
+                        reset({ code: '', available: '', discount: '' });
+                        handleCloseModal(false);
+                        hotToast(`${editingPromoCode ? 'Promocode updated' : 'New promocode added'} successfully`, "success");
+                        dispatch(fetchCodes())
+                    }
+                    else {
+                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.log('Error occured', err);
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                })
+        } catch (error) {
+            console.error("Error adding charge:", error);
+            getSweetAlert("Error", "Failed to add charge", "error");
+        }
     };
 
     return (
         <Modal
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            title={editingId ? 'Edit Promo Code' : 'Add New Promo Code'}
+            title={editingPromoCode ? 'Edit Promo Code' : 'Add New Promo Code'}
         >
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+                {/* Code */}
                 <div>
                     <label className="block text-sm text-slate-300 mb-2">Code</label>
-                    <input type="text" placeholder="SAVE20" value={newCode.code}
-                        onChange={(e) => {
-                            setNewCode({ ...newCode, code: e.target.value.toUpperCase() });
-                            setErrors({ ...errors, code: '' });
-                        }}
-                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm font-mono uppercase placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${errors.code ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50'
-                            }`}
+                    <input
+                        type="text"
+                        placeholder="SAVE20"
                         maxLength={20}
+                        {...register('code', {
+                            required: 'Code is required',
+                            minLength: { value: 3, message: 'Code must be at least 3 characters' },
+                            maxLength: { value: 20, message: 'Code must be less than 20 characters' },
+                            pattern: {
+                                value: /^[A-Z0-9]+$/,
+                                message: 'Code must contain only letters and numbers',
+                            },
+                            setValueAs: (v) => v?.toUpperCase(),
+                        })}
+                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm font-mono uppercase
+                            placeholder-slate-500 focus:outline-none focus:ring-2 transition-all
+                            ${errors.code ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50 focus:ring-blue-500'}`}
                     />
                     {errors.code && (
                         <div className="flex items-center gap-1 mt-1.5 text-red-400 text-xs">
                             <AlertCircle className="w-3 h-3" />
-                            {errors.code}
+                            {errors.code.message}
                         </div>
                     )}
                 </div>
 
+                {/* Available */}
                 <div>
-                    <label className="block text-sm text-slate-300 mb-2">
-                        Available
-                    </label>
-
+                    <label className="block text-sm text-slate-300 mb-2">Available</label>
                     <select
-                        value={newCode.available}
-                        onChange={(e) => {
-                            setNewCode({ ...newCode, available: e.target.value });
-                            setErrors({ ...errors, available: "" });
-                        }}
-                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm 
-                            focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all
-                            ${errors.available ? "border-red-500/50 focus:ring-red-500" : "border-slate-700/50"}`}>
-                        <option value="" disabled className="text-slate-500">
-                            Select availability
-                        </option>
+                        {...register('available', {
+                            required: 'Availability is required',
+                        })}
+                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm
+                            focus:outline-none focus:ring-2 transition-all
+                            ${errors.available ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50 focus:ring-blue-500'}`}
+                    >
+                        <option value="" disabled>Select availability</option>
                         <option value="first_time">First Time</option>
                         <option value="always">Always</option>
                     </select>
-
                     {errors.available && (
                         <div className="flex items-center gap-1 mt-1.5 text-red-400 text-xs">
                             <AlertCircle className="w-3 h-3" />
-                            {errors.available}
+                            {errors.available.message}
                         </div>
                     )}
                 </div>
 
+                {/* Discount */}
                 <div>
                     <label className="block text-sm text-slate-300 mb-2">Discount Percentage</label>
-                    <input type="number" placeholder="10" min="1" max="100" value={newCode.discount}
-                        onChange={(e) => {
-                            setNewCode({ ...newCode, discount: e.target.value });
-                            setErrors({ ...errors, discount: '' });
-                        }}
-                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${errors.discount ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50'
-                            }`}
+                    <input
+                        type="number" min="1" max="100" placeholder="10"
+                        {...register('discount', {
+                            required: 'Discount is required',
+                            min: { value: 1, message: 'Discount must be at least 1%' },
+                            max: { value: 100, message: 'Discount cannot exceed 100%' },
+                        })}
+                        className={`w-full px-3 py-2 bg-slate-900/50 border rounded-lg text-white text-sm
+                            placeholder-slate-500 focus:outline-none focus:ring-2 transition-all
+                            ${errors.discount ? 'border-red-500/50 focus:ring-red-500' : 'border-slate-700/50 focus:ring-blue-500'}`}
                     />
                     {errors.discount && (
                         <div className="flex items-center gap-1 mt-1.5 text-red-400 text-xs">
                             <AlertCircle className="w-3 h-3" />
-                            {errors.discount}
+                            {errors.discount.message}
                         </div>
                     )}
                 </div>
-            </div>
 
-            <div className="flex gap-3 mt-6">
-                <button
-                    onClick={handleSubmit} disabled={isChargesLoading}
-                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-                >
-                    <Check className="w-4 h-4" />
-                    {editingId ? 'Update' : 'Add'}
-                </button>
-                <button
-                    onClick={handleCloseModal} disabled={isChargesLoading}
-                    className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-                >
-                    <X className="w-4 h-4" />
-                    Cancel
-                </button>
-            </div>
+                {/* Actions */}
+                <div className="flex gap-3 mt-6">
+                    <button
+                        type="submit"
+                        disabled={isCodeLoading}
+                        className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg
+                            transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+                    >
+                        <Icon className={`w-4 h-4 ${isCodeLoading ? 'animate-spin' : ''}`} />
+                        {editingPromoCode ? 'Update' : 'Add'}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleCloseModal}
+                        disabled={isCodeLoading}
+                        className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg
+                            transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
+                    >
+                        <X className="w-4 h-4" />
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </Modal>
-    )
-}
+    );
+};
 
-export default PromocodeModal
+export default PromocodeModal;

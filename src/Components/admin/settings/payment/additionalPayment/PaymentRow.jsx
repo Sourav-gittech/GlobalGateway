@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Trash2, Edit2, X, Check, Loader2 } from "lucide-react";
-import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
-import { deleteCharge, fetchCharges, updateCharge, updateChargeStatus } from '../../../../../Redux/Slice/chargesSlice';
-import hotToast from '../../../../../util/alert/hot-toast';
 import { createPortal } from 'react-dom';
-import ConfirmBlockUnblockAlert from '../../../common/alerts/ConfirmBlockUnblockAlert';
 import { useForm } from 'react-hook-form';
+import hotToast from '../../../../../util/alert/hot-toast';
+import getSweetAlert from '../../../../../util/alert/sweetAlert';
+import ConfirmBlockUnblockAlert from '../../../common/alerts/ConfirmBlockUnblockAlert';
+import { deleteCharge, fetchCharges, updateCharge, updateChargeStatus } from '../../../../../Redux/Slice/chargesSlice';
 
 const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = null }) => {
     const [currentChargeId, setCurrentChargeId] = useState(null);
@@ -149,7 +149,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = nu
                     ) : (
                         <div className="flex items-center gap-2 relative">
                             <div className="relative">
-                                <p className="text-sm font-medium text-white">
+                                <p className={`text-sm font-medium ${charge?.status ? 'text-white' : 'text-slate-400'}`}>
                                     {charge?.charge_type?.length > 30 ? charge?.charge_type?.slice(0, 30) + "..." : charge?.charge_type ?? 'N/A'}
                                 </p>
 
