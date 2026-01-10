@@ -71,7 +71,7 @@ export default function PromoCodeManagement({ SettingsSection, Modal }) {
           ) : promoCodes?.length === 0 ? (
             <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
               <AlertCircle className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-slate-400">No promo codes created yet</p>
+              <p className="text-xs text-slate-400">No promocode created yet</p>
             </div>
           ) : (
             <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">

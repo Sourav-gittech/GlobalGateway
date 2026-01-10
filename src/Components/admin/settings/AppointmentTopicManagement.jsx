@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Calendar, Plus, AlertCircle, Loader2 } from "lucide-react";
-import HolidayModal from "./holiday/HolidayModal";
-import HolidayRow from "./holiday/HolidayRow";
+import AppointmentTopicModal from "./appointment-topic/AppointmentTopicModal";
+import AppointmentTopicRow from "./appointment-topic/AppointmentTopicRow";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHolidays } from "../../../Redux/Slice/holidaySlice";
 import getSweetAlert from "../../../util/alert/sweetAlert";
 import { fetchAllEmbassy } from "../../../Redux/Slice/embassySlice";
 
-export default function HolidayManagement({ SettingsSection }) {
+export default function AppointmentTopicManagement({ SettingsSection }) {
   const dispatch = useDispatch();
 
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -59,8 +59,8 @@ export default function HolidayManagement({ SettingsSection }) {
   return (
     <>
       <SettingsSection
-        title="Holiday Management"
-        description="Set recurring holidays for the appointment calendar (date repeats annually)"
+        title="Topic Management"
+        description="Set topic of appointment for visa processing"
         icon={Calendar}
       >
         {/* Add Holiday Button */}
@@ -70,17 +70,17 @@ export default function HolidayManagement({ SettingsSection }) {
             className="w-full px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
-            Add New Holiday
+            Add New Topic
           </button>
         </div>
 
         {/* Holidays List - Fixed Height Container */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-slate-300">Scheduled Holidays</h4>
+            <h4 className="text-sm font-medium text-slate-300">Available Topics</h4>
             {holidayData?.length > 0 && (
               <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">
-                {holidayData?.length} {holidayData?.length === 1 ? 'day' : 'days'}
+                {holidayData?.length} {holidayData?.length === 1 ? 'topic' : 'topics'}
               </span>
             )}
           </div>
@@ -94,12 +94,12 @@ export default function HolidayManagement({ SettingsSection }) {
             ) : (!isHolidayLoading && holidayData?.length == 0) ? (
               <div className="flex items-start gap-2 p-3 bg-slate-700/20 border border-slate-600/30 rounded-lg">
                 <AlertCircle className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-400">No holidays scheduled</p>
+                <p className="text-xs text-slate-400">No topics available right now.</p>
               </div>
             ) : (
               <div className="h-full overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-slate-500 glass-scrollbar">
                 {holidayData?.map(holiday => (
-                  <HolidayRow key={holiday?.id} holiday={holiday} monthNames={monthNames} uniqueCountryIds={uniqueCountryIds} />
+                  <AppointmentTopicRow key={holiday?.id} holiday={holiday} monthNames={monthNames} uniqueCountryIds={uniqueCountryIds} />
                 ))}
               </div>
             )}
@@ -108,7 +108,7 @@ export default function HolidayManagement({ SettingsSection }) {
       </SettingsSection>
 
       {/* Modal for Adding Holiday */}
-      <HolidayModal showModal={showModal} setShowModal={setShowModal} holidays={holidayData} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} uniqueCountryIds={uniqueCountryIds} monthNames={monthNames} />
+      <AppointmentTopicModal showModal={showModal} setShowModal={setShowModal} holidays={holidayData} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} uniqueCountryIds={uniqueCountryIds} monthNames={monthNames} />
     </>
   );
 }

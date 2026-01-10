@@ -8,6 +8,7 @@ import SettingsHeader from "../../Components/admin/settings/SettingsHeader";
 import { checkLoggedInUser } from "../../Redux/Slice/auth/checkAuthSlice";
 import getSweetAlert from "../../util/alert/sweetAlert";
 import SettingsChargeBox from "../../Components/admin/common/settings-charge-box/SettingsChargeBox";
+import AppointmentTopicManagement from "../../Components/admin/settings/AppointmentTopicManagement";
 
 
 // Form Field Component
@@ -54,6 +55,7 @@ export default function Settings() {
       <div className="grid grid-cols-1  lg:grid-cols-2 gap-8">
         <HolidayManagement SettingsSection={SettingsChargeBox} />
 
+        <AppointmentTopicManagement SettingsSection={SettingsChargeBox} />
       </div>
 
     </div>
