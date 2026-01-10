@@ -4,10 +4,11 @@ import { motion as Motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
-import getSweetAlert from '../../../util/alert/sweetAlert';
-import VisaProcessSteps from '../../../Components/user/apply-visa/VisaProcessSteps';
-import { decodeBase64Url, encodeBase64Url } from '../../../util/encodeDecode/base64';
+import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
+import getSweetAlert from '../../../../util/alert/sweetAlert';
+import VisaProcessSteps from '../../../../Components/user/apply-visa/process/VisaProcessSteps';
+import { decodeBase64Url, encodeBase64Url } from '../../../../util/encodeDecode/base64';
+import ProcessBanner from '../../../../Components/user/apply-visa/process/ProcessBanner';
 
 const VisaProcess = () => {
   const navigate = useNavigate();
@@ -63,47 +64,7 @@ const VisaProcess = () => {
   return (
     <>
       {/* Top Banner Section */}
-      <Box
-        sx={{
-          height: '300px',
-          backgroundImage: 'url(/PageBanner.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          color: '#fff',
-          position: 'relative',
-        }}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            bgcolor: 'rgba(0, 0, 0, 0.7)',
-          }}
-        />
-        <Box
-          sx={{
-            position: 'relative',
-            zIndex: 1,
-            width: '100%',
-            px: { xs: 2, md: 10 },
-          }}
-        >
-          <Typography variant="h3" fontWeight="bold">
-            Visa Process
-          </Typography>
-          <Breadcrumbs sx={{ color: 'red', mt: 1 }} separator="›">
-            <Link underline="hover" href="/" sx={{ color: 'red' }}>
-              Home
-            </Link>
-            <Typography sx={{ color: 'red' }}>Visa Process</Typography>
-          </Breadcrumbs>
-        </Box>
-      </Box>
+      <ProcessBanner />
 
       {/* Visa Process Section */}
       <Box

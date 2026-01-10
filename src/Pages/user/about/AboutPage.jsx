@@ -3,7 +3,7 @@ import { Box, Typography, Button, Dialog, DialogContent, DialogActions } from '@
 import { useSnackbar } from 'notistack';
 import TeamSection from '../../../Components/user/common/Team';
 import CountrySupportSection from '../../../Components/user/common/Countries';
-import AboutHeader from '../../../Components/user/about/AboutHeader';
+import AboutBanner from '../../../Components/user/about/AboutBanner';
 import MainContent from '../../../Components/user/about/MainContent';
 
 const AboutSection = () => {
@@ -21,7 +21,7 @@ const AboutSection = () => {
 
   return (
     <Box>
-      <AboutHeader />
+      <AboutBanner />
 
       {/* ---------- Main About Content ---------- */}
       <MainContent setOpenConfirmDialog={setOpenConfirmDialog} />

@@ -3,7 +3,7 @@ import { Box, Typography, Breadcrumbs } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const AboutHeader = () => {
+const AboutBanner = () => {
     return (
         <Box
             sx={{
@@ -49,4 +49,4 @@ const AboutHeader = () => {
     )
 }
 
-export default AboutHeader
+export default AboutBanner

@@ -17,7 +17,7 @@ import CountryGrid from "../Pages/user/countries/Country";
 import CountryDetails from "../Pages/user/countries/country-details/CountryDetails";
 import ContactUs from "../Pages/user/get-in-touch/ContactUs";
 import Dashboard from "../Pages/user/dashboard/Dashboard";
-import VisaProcess from "../Pages/user/apply-visa/VisaProcess";
+import VisaProcess from "../Pages/user/apply-visa/process/VisaProcess";
 import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy";
 import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm";
 import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview";

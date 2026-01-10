@@ -2,7 +2,8 @@ import React from 'react'
 import { Check, X, AlertCircle } from 'lucide-react';
 
 const PromocodeModal = ({ Modal, isModalOpen, promoCodes, setPromoCodes, newCode, setNewCode, setEditingId, errors, setErrors, setIsModalOpen, editingId }) => {
-
+    
+    const isChargesLoading = false;
     const handleCloseModal = () => {
         setNewCode({ code: '', discount: '' });
         setErrors({ code: '', discount: '' });
@@ -141,15 +142,15 @@ const PromocodeModal = ({ Modal, isModalOpen, promoCodes, setPromoCodes, newCode
 
             <div className="flex gap-3 mt-6">
                 <button
-                    onClick={handleSubmit}
-                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                    onClick={handleSubmit} disabled={isChargesLoading}
+                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                 >
                     <Check className="w-4 h-4" />
                     {editingId ? 'Update' : 'Add'}
                 </button>
                 <button
-                    onClick={handleCloseModal}
-                    className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                    onClick={handleCloseModal} disabled={isChargesLoading}
+                    className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                 >
                     <X className="w-4 h-4" />
                     Cancel

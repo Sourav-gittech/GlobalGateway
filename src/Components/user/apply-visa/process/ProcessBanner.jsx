@@ -1,8 +1,7 @@
-import React from 'react'
-import { Box, Breadcrumbs, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Box, Typography, Breadcrumbs, Link } from '@mui/material';
 
-const CountryBanner = () => {
+const ProcessBanner = () => {
     return (
         <Box
             sx={{
@@ -35,17 +34,17 @@ const CountryBanner = () => {
                 }}
             >
                 <Typography variant="h3" fontWeight="bold">
-                    Countries to Immigrate
+                    Visa Process
                 </Typography>
-                <Breadcrumbs sx={{ color: '#FF5252', mt: 1 }} separator="›">
-                    <Link underline="hover" to="/" sx={{ color: '#FF5252', '&:hover': { color: '#fff' } }}>
+                <Breadcrumbs sx={{ color: 'red', mt: 1 }} separator="›">
+                    <Link underline="hover" to="/" sx={{ color: 'red' }}>
                         Home
                     </Link>
-                    <Typography sx={{ color: '#FF5252' }}>Countries</Typography>
+                    <Typography sx={{ color: 'red' }}>Visa Process</Typography>
                 </Breadcrumbs>
             </Box>
         </Box>
     )
 }
 
-export default CountryBanner
+export default ProcessBanner

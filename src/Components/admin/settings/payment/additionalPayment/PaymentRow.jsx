@@ -41,7 +41,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = nu
                 amount: Number(data.amount),
                 purpose: 'visa',
                 percentage: null,
-                status: false
+                status: data.status
             }
         }))
             .then(res => {
@@ -97,7 +97,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = nu
                 // console.log('Response for updating charges status', res);
 
                 if (res?.meta?.requestStatus === "fulfilled") {
-                    hotToast(`Charge ${updateStatus ? 'activeted' : 'inactivated'} successfully`, "success");
+                    hotToast(`Charge ${updateStatus ? 'activeted' : 'de-activated'} successfully`, "success");
                 } else {
                     getSweetAlert("Error", "Update failed", "error");
                 }
@@ -150,7 +150,7 @@ const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = nu
                         <div className="flex items-center gap-2 relative">
                             <div className="relative">
                                 <p className="text-sm font-medium text-white">
-                                    {charge?.charge_type?.length > 30 ? charge?.charge_type?.slice(0, 30) + "..." : charge?.charge_type}
+                                    {charge?.charge_type?.length > 30 ? charge?.charge_type?.slice(0, 30) + "..." : charge?.charge_type ?? 'N/A'}
                                 </p>
 
                                 <span className={`absolute -top-2 right-[-10px] text-[8px] ${charge?.status ? "text-green-400" : "text-red-400"}`}>

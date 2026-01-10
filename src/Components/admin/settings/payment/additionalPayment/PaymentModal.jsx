@@ -144,19 +144,14 @@ const PaymentModal = ({ showAddModal, setShowAddModal, charges }) => {
                 {/* Modal Footer */}
                 <div className="flex gap-2 p-4 border-t border-slate-700">
                     <button
-                        type="button"
-                        onClick={() => clearField()}
-                        disabled={isChargesLoading}
-                        className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700/50 text-white rounded-lg text-sm font-medium transition-all disabled:cursor-not-allowed"
-                    >
+                        type="button" onClick={() => clearField()} disabled={isChargesLoading}
+                        className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-700/50 text-white rounded-lg text-sm font-medium transition-all disabled:cursor-not-allowed">
                         Cancel
                     </button>
 
                     <button
-                        type="submit"
-                        disabled={isChargesLoading}
-                        className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed"
-                    >
+                        type="submit" disabled={isChargesLoading}
+                        className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 text-white rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
                         {isChargesLoading ? (
                             <>
                                 <Loader2 className="w-4 h-4 animate-spin" />
