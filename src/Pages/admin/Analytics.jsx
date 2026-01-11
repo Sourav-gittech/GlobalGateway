@@ -4,6 +4,8 @@ import AnalyticsStats from "../../Components/admin/analytics/AnalyticsStats";
 import AnalyticsHeader from "../../Components/admin/analytics/AnalyticsHeader";
 import AnalyticsChart from "../../Components/admin/analytics/AnalyticsChart";
 import AdditionalStats from "../../Components/admin/analytics/AdditionalStats";
+import CoursePurchaseChart from "../../Components/admin/analytics/CoursePurchaseChart";
+import CourseRevenueChart from "../../Components/admin/analytics/CourseRevenueChart";
 
 // Register Chart.js components
 ChartJS.register(
@@ -33,6 +35,12 @@ export default function Analytics() {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AnalyticsChart />
+      </div>
+
+      {/* Course Analytics - New Pie Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CoursePurchaseChart />
+        <CourseRevenueChart />
       </div>
 
       {/* Additional Insights */}
