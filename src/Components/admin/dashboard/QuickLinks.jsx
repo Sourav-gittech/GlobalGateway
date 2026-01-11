@@ -17,10 +17,10 @@ const QuickLinks = () => {
                     <Download className="w-4 h-4" />
                     Export Report
                 </button>
-                <button className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 text-white text-sm sm:text-base transition-all active:scale-95 flex items-center justify-center gap-2">
+                <Link to='/admin/dashboard/adminNotification' className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-slate-400/30 hover:bg-slate-300/50 text-white text-sm sm:text-base transition-all active:scale-95 flex items-center justify-center gap-2">
                     <Bell className="w-4 h-4" />
                     View Alerts
-                </button>
+                </Link>
             </div>
         </div>
     )

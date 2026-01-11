@@ -8,7 +8,7 @@ import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import ConfirmBlockUnblockAlert from '../../../common/alerts/ConfirmBlockUnblockAlert';
 import { deleteCharge, fetchCharges, updateCharge, updateChargeStatus } from '../../../../../Redux/Slice/chargesSlice';
 
-const PaymentRow = ({ charge, editingId, setEditingId, isSaving, setCharges = null }) => {
+const PaymentRow = ({ charge, editingId, setEditingId, isSaving }) => {
     const [currentChargeId, setCurrentChargeId] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
     const [savingEdit, setSavingEdit] = useState(false);

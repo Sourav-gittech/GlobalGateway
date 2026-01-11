@@ -75,8 +75,8 @@ export default function HolidayManagement({ SettingsSection }) {
         </div>
 
         {/* Holidays List - Fixed Height Container */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
+        <div className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
             <h4 className="text-sm font-medium text-slate-300">Scheduled Holidays</h4>
             {holidayData?.length > 0 && (
               <span className="text-xs text-slate-400 bg-slate-700/30 px-2 py-0.5 rounded">

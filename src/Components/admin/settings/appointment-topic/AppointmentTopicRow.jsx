@@ -1,173 +1,135 @@
 import React, { useState } from 'react'
-import { Ban, CircleCheckBig, Loader2, Trash2 } from 'lucide-react';
+import { Trash2, Edit2, CalendarSync, Ban, CircleCheckBig } from 'lucide-react';
 import { useDispatch } from 'react-redux';
-import { deleteHoliday, fetchHolidays, updateHoliday } from '../../../../Redux/Slice/holidaySlice';
-import { addNotification } from '../../../../Redux/Slice/notificationSlice';
+import { deleteAppointmentReason, fetchAppointmentReasons, updateAppointmentReasonStatus } from '../../../../Redux/Slice/appointmentReasonSlice';
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import hotToast from '../../../../util/alert/hot-toast';
 import { createPortal } from 'react-dom';
 import ConfirmBlockUnblockAlert from '../../common/alerts/ConfirmBlockUnblockAlert';
 
-const AppointmentTopicRow = ({ holiday, monthNames, uniqueCountryIds }) => {
-    const dispatch = useDispatch();
-    const unpad2 = (num) => String(num).replace(/^0+/, "") || "0";
+const AppointmentTopicRow = ({ reason, setAppointmentTopic, setIsModalOpen }) => {
 
-    const [specificHoliday, setSpecificHoliday] = useState(null);
+    const [currentReasonId, setCurrentReasonId] = useState(null);
     const [actionType, setActionType] = useState(null);
     const [alertModalOpen, setAlertModalOpen] = useState(false);
+    const [updateStatus, setUpdateStatus] = useState(null);
 
-    const parseHolidayDate = (dateStr) => {
-        if (!dateStr) return null;
+    const dispatch = useDispatch();
 
-        const cleaned = dateStr.replace(/[{}]/g, "");
-        const parts = cleaned.split(",");
-
-        const obj = {};
-        parts.forEach(part => {
-            const [key, value] = part.split(":");
-            obj[key.trim()] = Number(value);
-        });
-
-        return obj;
-    }
-
-    const formatHolidayDate = (dateStr) => {
-        const [, month, day] = dateStr.match(/month:(\d+),day:(\d+)/) || [];
-        if (!month || !day) return 'Invalid date';
-
-        const date = new Date(2024, parseInt(month) - 1, parseInt(day));
-        return date.toLocaleDateString('en-US', {
-            day: 'numeric',
-            month: 'short'
-        });
+    const handleEdit = (reason) => {
+        setAppointmentTopic(reason);
+        setIsModalOpen(true);
     };
 
-    const handleUpdateStatusHoliday = async () => {
+    const handleToggleStatus = (reason) => {
+        setCurrentReasonId(reason?.id);
+        setUpdateStatus(!reason?.status);
+        setActionType("status");
+        setAlertModalOpen(true);
+    }
+
+    const handleDeleteReason = (reason) => {
+        setCurrentReasonId(reason?.id);
+        setActionType("delete");
+        setAlertModalOpen(true);
+    }
+
+    const handleDeleteAppointmentReason = () => {
         try {
-            const updatedStatus = !specificHoliday.status;
+            dispatch(deleteAppointmentReason(currentReasonId))
+                .then(res => {
+                    // console.log('Response for deleting reason', res);
 
-            const dateObj = parseHolidayDate(specificHoliday?.date);
-
-            const notification_obj = {
-                application_id: null,
-                title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month) - 1]?.slice(0, 3)} is ${!updatedStatus ? 'cancelled' : 'applied'}`,
-                receiver_type: 'embassy',
-                receiver_country_id: uniqueCountryIds,
-                mark_read: false
-            }
-
-            dispatch(updateHoliday({
-                id: specificHoliday.id,
-                updatedData: { ...specificHoliday, status: updatedStatus }
-            })).then(res => {
-                dispatch(addNotification(notification_obj))
-                    .then(res => {
-                        // console.log('Response for updating notification', res);
-
-                        if (res?.meta?.requestStatus == "fulfilled") {
-                            hotToast(`Holiday ${updatedStatus ? "unblocked" : "blocked"} successfully`, "success");
-                            setSpecificHoliday(null);
-                            setActionType(null);
-                            setAlertModalOpen(false);
-                            // dispatch(fetchHolidays());
-                        }
-                        else {
-                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                        }
-                    }).catch(err => {
-                        console.log('Error occured', err);
+                    if (res.meta.requestStatus === "fulfilled") {
+                        hotToast("Appointment reason deleted successfully", "success");
+                        setAlertModalOpen(false);
+                        setCurrentReasonId(null);
+                        dispatch(fetchAppointmentReasons());
+                    }
+                    else {
                         getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                    })
+                    }
+                })
+                .catch(err => {
+                    console.log('Error occured', err);
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                })
+        } catch (error) {
+            console.error('Error deleting charge:', error);
+            getSweetAlert('Error', 'Failed to delete charge', 'error');
+        }
+    };
+
+    const handleUpdateStatusReason = () => {
+        dispatch(updateAppointmentReasonStatus({ id: currentReasonId, status: updateStatus }))
+            .then(res => {
+                // console.log('Response for updating reason status', res);
+
+                if (res?.meta?.requestStatus === "fulfilled") {
+                    hotToast(`Appointment reason ${updateStatus ? 'activeted' : 'de-activated'} successfully`, "success");
+                    setAlertModalOpen(false);
+                    setCurrentReasonId(null);
+                    setUpdateStatus(null);
+                    dispatch(fetchAppointmentReasons());
+                } else {
+                    getSweetAlert("Error", "Update failed", "error");
+                }
             }).catch(err => {
                 console.log('Error occured', err);
                 getSweetAlert('Oops...', 'Something went wrong!', 'error');
             })
-
-        } catch (err) {
-            console.error(err);
-            getSweetAlert("Error", "Failed to update holiday status", "error");
-        }
     };
-
-
-    const handleDeleteHoliday = async () => {
-        const dateObj = parseHolidayDate(specificHoliday?.date);
-
-        const notification_obj = {
-            application_id: null,
-            title: `Holiday held in the occassion of ${specificHoliday?.event_name} on ${dateObj?.day},${monthNames[unpad2(dateObj?.month) - 1]?.slice(0, 3)} is cancelled`,
-            receiver_type: 'embassy',
-            receiver_country_id: uniqueCountryIds,
-            mark_read: false
-        }
-
-        dispatch(deleteHoliday(specificHoliday.id))
-            .then(res => {
-                dispatch(addNotification(notification_obj))
-                    .then(res => {
-                        // console.log('Response for adding notification', res);
-
-                        if (res?.meta?.requestStatus == "fulfilled") {
-                            hotToast("Holiday deleted successfully", "success");
-                            setSpecificHoliday(null);
-                            dispatch(fetchHolidays());
-                        }
-                        else {
-                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Error occured', err);
-                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                    })
-            })
-            .catch(err => {
-                console.log('Error occured', err);
-                getSweetAlert('Oops...', 'Something went wrong!', 'error');
-            })
-    }
-
-    const handleHolidayData = (holiday) => {
-        setSpecificHoliday(holiday);
-    }
 
     return (
         <>
-            <div
-                className="flex items-center justify-between gap-3 p-3 bg-slate-700/30 border border-slate-600/40 rounded-lg hover:border-slate-500/50 hover:bg-slate-700/40 transition-all group"
-            >
-                <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate relative ${holiday?.status ? 'text-white' : 'text-slate-400'}`}>
-                        {holiday?.event_name}
-                        <span className={`absolute text-[8px] mb-5 ml-3 ${holiday?.status ? 'text-green-400' : 'text-red-400'}`}>{holiday?.status ? 'Active' : 'In-active'}</span>
-                    </p>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                        {formatHolidayDate(holiday?.date)} (Annual)
-                    </p>
+            <div className="flex items-center justify-between p-3.5 bg-slate-700/30 border border-slate-600/30 rounded-lg hover:border-slate-500/50 transition-all">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <CalendarSync className={`w-4 h-4 flex-shrink-0 ${reason?.status ? 'text-blue-400' : 'text-slate-500'}`} />
+
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                            <p className={`relative w-full font-semibold text-sm ${reason?.status ? 'text-white' : 'text-slate-400'}`}>
+                                {reason?.type?.length > 25 ? reason?.type?.slice(0, 25) + '...' : reason?.type ?? 'N/A'}
+                                <span className={`absolute text-[8px] mb-5 ml-3 px-2 py-0.5 bg-slate-700/50 rounded ${!reason?.status ? 'text-red-500' : 'text-green-600'}`}>
+                                    {!reason?.status ? 'In-active' : 'Active'}
+                                </span>
+                            </p>
+                        </div>
+                        <span className={`text-xs ${reason.active ? 'text-slate-400' : 'text-slate-500'}`}>
+                            {reason?.description?.length > 60 ? reason?.description?.slice(0, 60) + '...' : reason?.description}
+                        </span>
+                    </div>
                 </div>
-                <button
-                    onClick={() => {
-                        setSpecificHoliday(holiday);
-                        setActionType("status");
-                        setAlertModalOpen(true);
-                    }} className={`p-1.5 text-slate-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${holiday?.status ? 'hover:text-red-400 hover:bg-red-500/10' : 'hover:text-green-400 hover:bg-green-500/10'}`}
-                    title={`${holiday?.status ? 'Block' : 'Unblock'}`}>
-                    {holiday?.status ? (
-                        <Ban className="text-red-500 w-4 h-4" />
-                    ) : (
-                        <CircleCheckBig className="text-green-600 w-4 h-4" />
-                    )}
-                </button>
-                <button
-                    onClick={() => {
-                        setSpecificHoliday(holiday);
-                        setActionType("delete");
-                        setAlertModalOpen(true);
-                    }} className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                    title="Delete"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
+
+                <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                        onClick={() => {
+                            handleToggleStatus(reason);
+                        }} className={`p-1.5 text-slate-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${reason?.status ? 'hover:text-red-400 hover:bg-red-500/10' : 'hover:text-green-400 hover:bg-green-500/10'}`}
+                        title={`${reason?.status ? 'Block' : 'Unblock'}`}>
+                        {reason?.status ? (
+                            <Ban className="text-red-500 w-4 h-4" />
+                        ) : (
+                            <CircleCheckBig className="text-green-600 w-4 h-4" />
+                        )}
+                    </button>
+
+                    <button
+                        onClick={() => handleEdit(reason)}
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
+                        title="Edit"
+                    >
+                        <Edit2 className="w-4 h-4 text-blue-400" />
+                    </button>
+
+                    <button
+                        onClick={() => { handleDeleteReason(reason); }}
+                        className="p-1.5 hover:bg-slate-700/50 rounded transition-colors cursor-pointer"
+                        title="Delete"
+                    >
+                        <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
+                </div>
             </div>
 
             {alertModalOpen && createPortal(
@@ -175,21 +137,21 @@ const AppointmentTopicRow = ({ holiday, monthNames, uniqueCountryIds }) => {
                     open={alertModalOpen}
                     onClose={() => setAlertModalOpen(false)}
                     onConfirm={
-                        actionType === "delete" ? handleDeleteHoliday : handleUpdateStatusHoliday
+                        actionType === "delete" ? handleDeleteAppointmentReason : handleUpdateStatusReason
                     }
                     buttonText={
-                        actionType === "delete" ? "Delete" : specificHoliday?.status ? "Block" : "Unblock"
+                        actionType === "delete" ? "Delete" : updateStatus?.status ? "Block" : "Unblock"
                     }
                     type={
-                        actionType === "delete" ? "Delete" : specificHoliday?.status ? "Block" : "Unblock"
+                        actionType === "delete" ? "Delete" : updateStatus?.status ? "Block" : "Unblock"
                     }
                     title={
-                        actionType === "delete" ? "Delete Holiday Globally" : specificHoliday?.status ? "Block Holiday" : "Unblock Holiday"
+                        (actionType === "delete" ? "Delete " : updateStatus?.status ? "Block " : "Unblock ") + "Reason"
                     }
                     message={
                         actionType === "delete"
-                            ? "Are you sure you want to delete this holiday?"
-                            : `Are you sure you want to ${specificHoliday?.status ? "block" : "unblock"} this holiday?`
+                            ? "Are you sure you want to delete this appointment reason?"
+                            : `Are you sure you want to ${updateStatus?.status ? "block" : "unblock"} this appointment reason?`
                     }
                 />,
                 document.body

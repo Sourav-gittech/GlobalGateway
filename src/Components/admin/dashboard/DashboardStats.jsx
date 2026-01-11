@@ -32,10 +32,10 @@ const DashboardStats = () => {
     const { data: applicationStatusStats, isLoading: isApplicationStatusLoading } = useApplicationStatusStats(null);
 
     const stats = [
-        { id: 1, title: "Total Applications", isValueLoading: isApplicationStatsLoading, value: applicationStats?.totalApplications, icon: FileText, isTrendLoading: isApplicationStatsLoading, trend: `${applicationStats?.rate}%` },
-        { id: 2, title: "Approved Visas", isValueLoading: isApplicationApprovedLoading, value: applicationApprovedStats?.totalApproved, icon: CheckCircle, isTrendLoading: isApplicationApprovedLoading, trend: `${applicationApprovedStats?.isIncrease ? '+' : '-'}${applicationApprovedStats?.rate}%` },
-        { id: 3, title: "Pending Visas", isValueLoading: isApplicationPendingLoading, value: `${applicationPendingStats?.totalPending}%`, icon: Clock, isTrendLoading: isApplicationPendingLoading, trend: `${applicationPendingStats?.isIncrease ? '+' : '-'}${applicationPendingStats?.rate}%` },
-        { id: 4, title: "Success Rate", isValueLoading: isApplicationPendingLoading, value: `${applicationStatusStats?.successRate}%`, icon: TrendingUp, isTrendLoading: isApplicationStatusLoading, trend: `${applicationStatusStats?.approvedStats.isIncrease ? "+" : "-"}${applicationStatusStats?.approvedStats.rate}%` },
+        { id: 1, title: "Total Applications", isValueLoading: isApplicationStatsLoading, value: applicationStats?.totalApplications ?? 0, icon: FileText, isTrendLoading: isApplicationStatsLoading, trend: `${applicationStats?.rate ?? 0}%` },
+        { id: 2, title: "Approved Visas", isValueLoading: isApplicationApprovedLoading, value: applicationApprovedStats?.totalApproved ?? 0, icon: CheckCircle, isTrendLoading: isApplicationApprovedLoading, trend: `${applicationApprovedStats?.isIncrease ? '+' : '-'}${applicationApprovedStats?.rate ?? 0}%` },
+        { id: 3, title: "Pending Visas", isValueLoading: isApplicationPendingLoading, value: `${applicationPendingStats?.totalPending ?? 0}%`, icon: Clock, isTrendLoading: isApplicationPendingLoading, trend: `${applicationPendingStats?.isIncrease ? '+' : '-'}${applicationPendingStats?.rate ?? 0}%` },
+        { id: 4, title: "Success Rate", isValueLoading: isApplicationPendingLoading, value: `${applicationStatusStats?.successRate ?? 0}%`, icon: TrendingUp, isTrendLoading: isApplicationStatusLoading, trend: `${applicationStatusStats?.approvedStats.isIncrease ? "+" : "-"}${applicationStatusStats?.approvedStats.rate ?? 0}%` },
     ]
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

@@ -56,7 +56,7 @@ export default function EmbassyDashboard() {
     {
       icon: FileText,
       title: "Total Applications",
-      value: allTypeApplications?.length,
+      value: allTypeApplications?.length??0,
       change: totalChange?.changeText,
       trend: totalChange?.trend,
       bgColor: "bg-blue-100",
@@ -66,7 +66,7 @@ export default function EmbassyDashboard() {
     {
       icon: CheckCircle,
       title: "Approved Visas",
-      value: fulfilledTypeApplications?.length,
+      value: fulfilledTypeApplications?.length??0,
       change: fulfilledChange?.changeText,
       trend: fulfilledChange?.trend,
       bgColor: "bg-green-100",
@@ -76,7 +76,7 @@ export default function EmbassyDashboard() {
     {
       icon: Clock,
       title: "Pending Review",
-      value: processingTypeApplications?.length,
+      value: processingTypeApplications?.length??0,
       change: processingChange?.changeText,
       trend: processingChange?.trend,
       bgColor: "bg-yellow-100",
@@ -86,7 +86,7 @@ export default function EmbassyDashboard() {
     {
       icon: Calendar,
       title: "Upcoming Interviews",
-      value: appointmentStats?.length,
+      value: appointmentStats?.length??0,
       change: appointmentChange?.changeText,
       trend: appointmentChange?.trend,
       bgColor: "bg-purple-100",
@@ -104,14 +104,14 @@ export default function EmbassyDashboard() {
     {
       icon: FileText,
       label: "Review Applications",
-      count: processingTypeApplications?.length + " pending",
+      count: processingTypeApplications?.length??0 + " pending",
       path: "/embassy/dashboard/applications",
       color: "bg-blue-500 hover:bg-blue-600"
     },
     {
       icon: Calendar,
       label: "Schedule Interview",
-      count: appointmentStats.length + " upcoming",
+      count: appointmentStats.length??0 + " upcoming",
       path: "/embassy/dashboard/applications",
       color: "bg-purple-500 hover:bg-purple-600"
     },

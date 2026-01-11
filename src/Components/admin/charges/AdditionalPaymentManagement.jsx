@@ -10,10 +10,8 @@ export default function AdditionalPaymentManagement({ SettingsSection }) {
   const dispatch = useDispatch();
 
   const [editingId, setEditingId] = useState(null);
-  const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
-
   const [showAddModal, setShowAddModal] = useState(false);
-  // const [newCharge, setNewCharge] = useState({ label: '', amount: '' });
+  const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
 
   useEffect(() => {
     dispatch(fetchCharges({ type: 'visa' }))
@@ -27,7 +25,6 @@ export default function AdditionalPaymentManagement({ SettingsSection }) {
   }, []);
 
   const openAddModal = () => {
-    // setNewCharge({ label: '', amount: '' });
     setShowAddModal(true);
   };
 

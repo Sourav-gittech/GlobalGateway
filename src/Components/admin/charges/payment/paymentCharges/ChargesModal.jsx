@@ -30,7 +30,6 @@ const ChargesModal = ({ Modal, isModalOpen, charges, setIsModalOpen, editingCour
     };
 
     const onSubmit = (data) => {
-console.log(data,charges);
 
         const labelExists = charges?.some(c => (c?.purpose?.toLowerCase() === 'course' && c?.charge_type?.toLowerCase() === data?.label?.trim()?.toLowerCase()));
 

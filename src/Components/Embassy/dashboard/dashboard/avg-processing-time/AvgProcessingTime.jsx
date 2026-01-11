@@ -6,7 +6,7 @@ const AvgProcessingTime = ({ countryDetails }) => {
     const { data, isLoading, isError } = useCountryVisas(countryDetails?.id);
 
     if (isLoading) return <p>Loading...</p>;
-    if (isError || !data?.visaTypes?.length) return <p>No visa data available</p>;
+    // if (isError || !data?.visaTypes?.length) return <p>No visa data available</p>;
 
     // Map all visa types dynamically
     const visaWithDays = data?.visas?.map(visa => ({
@@ -19,7 +19,7 @@ const AvgProcessingTime = ({ countryDetails }) => {
 
     const visaMap = {};
 
-    visaWithDays.forEach(visa => {
+    visaWithDays?.forEach(visa => {
         if (!visaMap[visa.type]) {
             visaMap[visa.type] = { ...visa, totalDays: visa.days, count: 1 };
         } else {
@@ -45,9 +45,10 @@ const AvgProcessingTime = ({ countryDetails }) => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Avg Processing Times</h2>
             <div className="space-y-4 h-50 overflow-auto glass-scrollbar">
-                {avgProcessingTimes.map((item, idx) => (
+                {avgProcessingTimes?.length>0?
+                avgProcessingTimes.map((item, idx) => (
                     <AvgProcessingTimeRow key={idx} item={item} />
-                ))}
+                )): 'No visa data available'}
             </div>
             <div className="mt-5 pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-600 leading-relaxed">
