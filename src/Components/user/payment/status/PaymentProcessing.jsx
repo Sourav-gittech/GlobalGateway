@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Shield, XCircle, Zap } from "lucide-react";
 import Lottie from "lottie-react";
-import processingAnimation from '../../../../../assets/payment/processing.json'
+import processingAnimation from '../../../../assets/payment/processing.json'
 
 const PaymentProcessing = ({ handleCancelPayment, processingProgress }) => {
     const [cancelBtn, setCancelBtn] = useState(false);

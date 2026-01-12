@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import OrderSummary from "../../../../Components/user/apply-visa/payment/OrderSummary";
-import PaymentForm from "../../../../Components/user/apply-visa/payment/PaymentForm";
+import OrderSummary from "./payment-interface/OrderSummary";
+import PaymentForm from "./payment-interface/PaymentForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCharges } from "../../../../Redux/Slice/chargesSlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";
@@ -65,7 +65,7 @@ export default function Payment({ onBack, countryWiseVisaDetails, application_id
         <OrderSummary onBack={onBack} allCharges={allCharges?.visa} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} />
 
         {/* Right Panel - Payment Form */}
-        <PaymentForm personalInfoData={personalInfoData} allCharges={allCharges?.visa} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} application_id={application_id} country_id={country_id} passportData={passportData} />
+        <PaymentForm type={'visa'} personalInfoData={personalInfoData} allCharges={allCharges?.visa} visaData={visaData} visaSpecification={visaTypeSpecification} application_fees={application_fees} total_amount={total_amount} application_id={application_id} country_id={country_id} passportData={passportData} />
 
       </div>
 

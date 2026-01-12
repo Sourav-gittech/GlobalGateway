@@ -6,7 +6,7 @@ import Step2PassportDetails from "../../../../Components/user/apply-visa/applica
 import Step3VisaType from "../../../../Components/user/apply-visa/application-form/form/Step3SelectVisa";
 import Step4UploadDocuments from "../../../../Components/user/apply-visa/application-form/form/Step4UploadDocuments";
 import Step5Review from "../../../../Components/user/apply-visa/application-form/form/Step5Review";
-import Payment from "../payment/PaymentInterface";
+import Payment from "../../../../Components/user/apply-visa/payment/PaymentInterface";
 import { useNavigate, useParams } from "react-router-dom";
 import { checkLoggedInUser } from "../../../../Redux/Slice/auth/checkAuthSlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";
@@ -104,7 +104,7 @@ export default function VisaApplicationForm() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Visa Application</h1>
               <p className="text-sm text-gray-600 mt-1">
-                Complete your application in {step < 7 ? "6 simple steps" : "a few minutes"}
+                Complete your application in {step < 6 ? "6 simple steps" : "a few minutes"}
               </p>
             </div>
 

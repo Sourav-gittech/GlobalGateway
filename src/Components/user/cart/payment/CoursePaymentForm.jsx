@@ -6,7 +6,8 @@ import { useNavigate } from "react-router-dom";
 import FormHeader from "./form/FormHeader";
 import FormFooter from "./form/FormFooter";
 
-const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharges, visaData, visaSpecification, application_fees, country_id, passportData }) => {
+const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems }) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("card");
     const navigate = useNavigate();
@@ -31,13 +32,9 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
             navigate("/payment-preview", {
                 state: {
                     paymentDetails: details,
-                    personalInfoData: personalInfoData,
-                    allCharges: allCharges,
-                    visaData: visaData,
-                    visaSpecification: visaSpecification,
-                    application_fees: application_fees,
-                    country_id: country_id,
-                    passportData: passportData
+                    personalInfoData: userAuthData,
+                    allCharges, type, subtotal, total, discountAmount, discount, cartItems,
+                    visaData: null, visaSpecification: null, application_fees: null, country_id: null, passportData: null
                 }
             });
         }
@@ -53,13 +50,9 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
             navigate("/payment-preview", {
                 state: {
                     paymentDetails: details,
-                    personalInfoData: personalInfoData,
-                    allCharges: allCharges,
-                    visaData: visaData,
-                    visaSpecification: visaSpecification,
-                    application_fees: application_fees,
-                    country_id: country_id,
-                    passportData: passportData
+                    personalInfoData: userAuthData,
+                    allCharges, type, subtotal, total, discountAmount, discount, cartItems,
+                    visaData: null, visaSpecification: null, application_fees: null, country_id: null, passportData: null
                 }
             });
         }
@@ -78,7 +71,7 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                    <FormHeader email={personalInfoData?.email} />
+                    <FormHeader email={userAuthData?.email} />
 
                     {/* Payment Method Selection */}
                     <div className="mb-6">
@@ -87,11 +80,8 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
                             <button
                                 type="button"
                                 onClick={() => setPaymentMethod("card")}
-                                className={`border-2 rounded-lg px-4 py-4 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === "card"
-                                    ? "border-cyan-700 bg-cyan-900/10"
-                                    : "border-gray-300 hover:border-gray-400 bg-white"
-                                    }`}
-                            >
+                                className={`border-2 rounded-lg px-4 py-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${paymentMethod === "card"
+                                    ? "border-cyan-700 bg-cyan-900/10" : "border-gray-300 hover:border-gray-400 bg-white"}`} >
                                 <CreditCard size={24} className={paymentMethod === "card" ? "text-cyan-700" : "text-gray-600"} />
                                 <span className={`text-sm font-semibold ${paymentMethod === "card" ? "text-cyan-800" : "text-gray-700"}`}>
                                     Card
@@ -101,11 +91,8 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
                             <button
                                 type="button"
                                 onClick={() => setPaymentMethod("upi")}
-                                className={`border-2 rounded-lg px-4 py-4 flex flex-col items-center justify-center gap-2 transition-all ${paymentMethod === "upi"
-                                    ? "border-cyan-700 bg-cyan-900/10"
-                                    : "border-gray-300 hover:border-gray-400 bg-white"
-                                    }`}
-                            >
+                                className={`border-2 rounded-lg px-4 py-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${paymentMethod === "upi"
+                                    ? "border-cyan-700 bg-cyan-900/10" : "border-gray-300 hover:border-gray-400 bg-white"}`}>
                                 <Smartphone size={24} className={paymentMethod === "upi" ? "text-cyan-700" : "text-gray-600"} />
                                 <span className={`text-sm font-semibold ${paymentMethod === "upi" ? "text-cyan-800" : "text-gray-700"}`}>
                                     UPI
@@ -116,20 +103,20 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
 
                     {/* Card Payment Form */}
                     {paymentMethod === "card" && (
-                        <CardPayment ref={cardRef} application_id={application_id} total_amount={total_amount} />
+                        <CardPayment ref={cardRef} />
                     )}
 
 
                     {/* UPI Payment Form */}
                     {paymentMethod === "upi" && (
-                        <UPIPayment ref={upiRef} application_id={application_id} total_amount={total_amount} />
+                        <UPIPayment ref={upiRef} />
                     )}
 
                     {/* Submit Button */}
                     <button
                         onClick={handlePayment}
                         disabled={isLoading}
-                        className={`w-full bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white font-bold py-4 rounded-lg hover:from-gray-950 hover:to-black transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-x ${isLoading?'cursor-not-allowed':'cursor-pointer'}`}>
+                        className={`w-full bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white font-bold py-4 rounded-lg hover:from-gray-950 hover:to-black transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-x ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                         {isLoading ? (
                             <>
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -155,4 +142,4 @@ const PaymentForm = ({ personalInfoData, total_amount, application_id, allCharge
     )
 }
 
-export default PaymentForm
+export default CoursePaymentForm

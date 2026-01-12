@@ -32,7 +32,7 @@ const PaymentFailed = ({ handleRetryPayment, currentDate, totalAmount }) => {
                             <div>
                                 <h3 className="font-bold text-red-900 mb-2">Error Details</h3>
                                 <p className="text-sm text-red-800 mb-3">
-                                    The transaction was <span className="font-bold">cancelled by the user</span> or failed due to an unexpected error. No charges have been applied to your card or bank account.
+                                    The transaction was <span className="font-bold">cancelled or failed </span> due to an unexpected error. No charges have been applied to your card or bank account.
                                 </p>
 
                                 <p className="text-xs text-red-700">
@@ -59,7 +59,7 @@ const PaymentFailed = ({ handleRetryPayment, currentDate, totalAmount }) => {
                                     <CreditCard className="text-red-600" size={16} />
                                 </div>
                                 <p className="text-sm text-gray-700 pt-1">
-                                    <span className="font-semibold">Verify Funds : </span> Ensure your card or bank account has sufficient balance for the transaction amount (₹{totalAmount}).
+                                    <span className="font-semibold">Verify Funds : </span> Ensure your card or bank account has sufficient balance for the transaction amount (₹{Number(totalAmount)?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}).
                                 </p>
 
                             </div>

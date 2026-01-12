@@ -12,6 +12,7 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+    const { currentCart, cartItems, isCartLoading,isCartAddLoading, hasCartError } = useSelector(state => state.cart);
 
     useEffect(() => {
         dispatch(checkLoggedInUser())
@@ -25,7 +26,7 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
     }, [dispatch]);
 
     const addToCart = (course) => {
-        
+
         if (!userAuthData) {
             navigate('/authentication');
         } else {
@@ -128,7 +129,9 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
                                 onClick={() => addToCart(course)}
                                 className="w-full bg-red-400 hover:bg-[#E63946] text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg cursor-pointer"
                             >
-                                <ShoppingCart className="w-6 h-6" />
+                                {isCartAddLoading ? (
+                                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                ) : (<ShoppingCart className="w-6 h-6" />)}
                                 Add to Cart
                             </button>
                         </>

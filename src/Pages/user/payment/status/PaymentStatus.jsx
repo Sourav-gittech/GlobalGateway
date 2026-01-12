@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import Lottie from "lottie-react";
 import successAnimation from "../../../../assets/payment/payment-success.json";
 import errorAnimation from "../../../../assets/payment/payment-error.json";
-import PaymentSuccess from "../../../../Components/user/apply-visa/payment/status/PaymentSuccess";
-import PaymentFailed from "../../../../Components/user/apply-visa/payment/status/PaymentFailed";
-import PaymentProcessing from "../../../../Components/user/apply-visa/payment/status/PaymentProcessing";
+import PaymentSuccess from "../../../../Components/user/payment/status/PaymentSuccess";
+import PaymentFailed from "../../../../Components/user/payment/status/PaymentFailed";
+import PaymentProcessing from "../../../../Components/user/payment/status/PaymentProcessing";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveTransaction } from "../../../../Redux/Slice/transactionSlice";
@@ -41,7 +41,7 @@ export default function PaymentStatus() {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
-    const { paymentDetails, personalInfoData, passportData, visaData, visaSpecification, country_id } = location.state || {};
+    const { type, paymentDetails, personalInfoData, passportData, visaData, visaSpecification, country_id } = location.state || {};
 
     const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
@@ -59,7 +59,8 @@ export default function PaymentStatus() {
         masked_card: paymentDetails?.masked_card ? paymentDetails?.masked_card : null,
         card_holder_name: paymentDetails?.card_holder_name ? paymentDetails?.card_holder_name : null,
         card_expiry: paymentDetails?.expiry_card ? paymentDetails?.expiry_card : null,
-        amount: paymentDetails?.total_amount
+        amount: paymentDetails?.total_amount,
+        txn_for:type
     }
 
     const application_payment_obj = {

@@ -13,6 +13,7 @@ import { fetchCartItems, getOrCreateCart } from '../../../../Redux/Slice/cartSli
 import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
 
 const CourseDetails = () => {
+  
   const { course_id } = useParams();
   const id = decodeBase64Url(course_id);
   const navigate = useNavigate();

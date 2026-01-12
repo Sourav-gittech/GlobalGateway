@@ -2,16 +2,20 @@ import React, { useState } from 'react'
 import { ArrowRight, Tag, CheckCircle, Package, X, CreditCard, Lock, Info, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import hotToast from '../../../util/alert/hot-toast';
+import getSweetAlert from '../../../util/alert/sweetAlert';
+import { useNavigate } from 'react-router-dom';
 
 const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, subtotal, tax, total, discountAmount, discount, setDiscount }) => {
 
     const [promoCode, setPromoCode] = useState('');
     const [agreeTerms, setAgreeTerms] = useState(false);
     const [promoApplied, setPromoApplied] = useState(false);
+    const navigate = useNavigate();
 
     const handleApplyPromo = () => {
         let isPromocodeAdded = false;
         const code = promoCode.toUpperCase();
+
         const isAvailable = promoCodes?.some(p => p?.name == code);
         if (!isAvailable) {
             hotToast('Oops! Invalid promocode.', 'info', <Info className='text-orange-600' />);
@@ -35,8 +39,8 @@ const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, s
             }
         })
 
-        if(!isPromocodeAdded){
-                hotToast('Oops! Promocode not applicable.', 'error');
+        if (!isPromocodeAdded) {
+            hotToast('Oops! Promocode not applicable.', 'error');
         }
     };
 
@@ -48,10 +52,23 @@ const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, s
 
     const handleProceedToBuy = () => {
         if (!agreeTerms) {
-            alert('Please agree to the Terms & Conditions and Refund Policy to continue.');
+            getSweetAlert('oops!', 'Please agree to the Terms & Conditions and Refund Policy to continue.', 'warning');
             return;
         }
-        alert(`Processing secure payment of ₹${total.toLocaleString('en-IN')}\n\nYou will be redirected to our secure payment gateway.`);
+
+        const hasInactiveCourse = cartItems?.some(
+            (item) => item?.courses?.status !== "active"
+        );
+
+        if (hasInactiveCourse) {
+            hotToast("All cart items not available right now. Please check", 'info', <Info className='text-orange-600' />);
+            return;
+        }
+
+        navigate("/payment", {
+            state: { subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems }
+        });
+
     };
 
     return (
@@ -85,7 +102,7 @@ const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, s
                     </div>
                 )}
                 {allCharges?.map(charge => (
-                    <div className="flex justify-between text-slate-700">
+                    <div key={charge?.id} className="flex justify-between text-slate-700">
                         <span className="flex items-center gap-1">
                             {charge?.charge_type} ({charge?.percentage}%)
                             <Info className="w-3 h-3 text-slate-400" />

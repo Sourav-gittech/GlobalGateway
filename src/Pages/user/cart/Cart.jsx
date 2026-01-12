@@ -17,9 +17,12 @@ import getSweetAlert from '../../../util/alert/sweetAlert';
 import { fetchCartItems, getOrCreateCart } from '../../../Redux/Slice/cartSlice';
 import { fetchCharges } from '../../../Redux/Slice/chargesSlice';
 import { fetchCodes } from '../../../Redux/Slice/promocodeSlice';
+import { useNavigate } from 'react-router-dom';
 
 
 const Cart = () => {
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [discount, setDiscount] = useState(0);
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -39,7 +42,7 @@ const Cart = () => {
   const total = subtotal - discountAmount + tax;
 
   const navigateBack = () => {
-    window.history.back();
+    navigate('/course');
   };
 
   useEffect(() => {
@@ -74,7 +77,7 @@ const Cart = () => {
   }, [userAuthData?.id, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCharges({ type: 'course',status: true }))
+    dispatch(fetchCharges({ type: 'course', status: true }))
       .then(res => {
         // console.log('Response for fetching all charges for course', res);
       })
@@ -105,7 +108,7 @@ const Cart = () => {
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 text-white shadow-2xl">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8 sm:py-12">
           <button
-            onClick={navigateBack}
+            onClick={() => navigateBack()}
             className="flex items-center text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />

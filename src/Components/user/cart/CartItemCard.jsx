@@ -8,6 +8,8 @@ import getSweetAlert from '../../../util/alert/sweetAlert';
 import hotToast from '../../../util/alert/hot-toast';
 
 const CartItemCard = ({ item, index, cartId }) => {
+
+    const isInactive = item?.courses?.status !== "active";
     const dispatch = useDispatch();
 
     const handleRemoveFromCart = (courseId) => {
@@ -29,8 +31,9 @@ const CartItemCard = ({ item, index, cartId }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, x: -100, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all p-5 sm:p-6 border border-slate-200 group"
-        >
+            className={`relative bg-white rounded-xl shadow-sm transition-all p-5 sm:p-6 border border-slate-200 group
+            ${isInactive ? "opacity-50 grayscale" : "hover:shadow-lg"} `}>
+
             <div className="flex flex-col sm:flex-row gap-5">
                 {/* Image */}
                 <div className="relative w-full sm:w-44 h-52 sm:h-36 flex-shrink-0 rounded-xl overflow-hidden">
@@ -60,9 +63,9 @@ const CartItemCard = ({ item, index, cartId }) => {
                         </div>
                         <button
                             onClick={() => handleRemoveFromCart(item?.courses?.id)}
-                            className="flex-shrink-0 w-10 h-10 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all flex items-center justify-center"
-                            title="Remove from cart"
-                        >
+                            className="pointer-events-auto filter-none z-20 relative flex-shrink-0 w-10 h-10 rounded-lg bg-red-50 text-red-600
+                                hover:bg-red-100 hover:text-red-700 transition-all flex items-center justify-center cursor-pointer"
+                            title="Remove from cart">
                             <Trash2 className="w-4 h-4" />
                         </button>
                     </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Calendar, Clock, Shield } from 'lucide-react';
-import { calculateProcessingRange } from '../../../../../../functions/calculateExpectedDate';
+import { calculateProcessingRange } from '../../../../../functions/calculateExpectedDate';
 
 const StatusCard = ({ visaSpecification, currentDate }) => {
 

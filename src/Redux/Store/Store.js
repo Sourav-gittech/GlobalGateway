@@ -4,7 +4,7 @@ import authSliceReducer from '../Slice/auth/authSlice';
 import countrySliceReducer from '../Slice/countrySlice';
 import applicationSliceReducer from '../Slice/applicationSlice';
 import visaSliceReducer from '../Slice/visaSlice';
-import visaDetailsSliceReducer from '../Slice/visaDetailsSlice';
+import visaDetailsSliceReducer from '../Slice/VisaDetailsSlice';
 import fetchChargesReducer from '../Slice/chargesSlice';
 import transactionSliceReducer from '../Slice/transactionSlice';
 import contactSliceReducer from '../Slice/contactSlice';
@@ -21,6 +21,7 @@ import loadingReducer from '../Slice/loadingSlice';
 import courseSliceReducer from '../Slice/courseSlice';
 import cartSliceReducer from '../Slice/cartSlice';
 import promocodeSliceReducer from '../Slice/promocodeSlice';
+import ordersSliceReducer from '../Slice/orderSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,7 +45,8 @@ export const store = configureStore({
     loading: loadingReducer,
     course: courseSliceReducer,
     cart: cartSliceReducer,
-    promocode: promocodeSliceReducer
+    promocode: promocodeSliceReducer,
+    orders: ordersSliceReducer
   }
 });
 

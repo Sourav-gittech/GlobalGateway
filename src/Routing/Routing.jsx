@@ -20,10 +20,11 @@ import Dashboard from "../Pages/user/dashboard/Dashboard";
 import VisaProcess from "../Pages/user/apply-visa/process/VisaProcess";
 import VisaPolicies from "../Pages/user/apply-visa/policy/VisaPolicy";
 import VisaApplicationForm from "../Pages/user/apply-visa/application-form/VisaApplicationForm";
-import PaymentPreview from "../Pages/user/apply-visa/payment/PaymentPreview";
-import PaymentStatus from "../Pages/user/apply-visa/payment/PaymentStatus";
+import PaymentPreview from "../Pages/user/payment/PaymentPreview";
+import PaymentStatus from "../Pages/user/payment/status/PaymentStatus";
 import Courselist from "../Pages/user/course/Courselist";
 import CourseDetails from "../Pages/user/course/course-details/CourseDetails";
+import PaymentInterfaceCourse from "../Pages/user/cart/payment/PaymentInterfaceCourse";
 import Cart from "../Pages/user/cart/Cart";
 
 /* ---------- Auth ---------- */
@@ -79,6 +80,7 @@ const Routing = () => {
 
           {/* ================= AUTH (NO LAYOUT) ================= */}
           <Route path="/country/:country_id" element={<CountryDetails />} />
+          <Route path="/payment" element={<PaymentInterfaceCourse />} />
           <Route path="/application-form/:country_id" element={<VisaApplicationForm />} />
           <Route path="/payment-preview" element={<PaymentPreview />} />
           <Route path="/payment-status" element={<PaymentStatus />} />

@@ -103,6 +103,7 @@ const initialState = {
     currentCart: null,
     cartItems: [],
     isCartLoading: false,
+    isCartAddLoading: false,
     hasCartError: null
 }
 
@@ -145,14 +146,14 @@ export const cartSlice = createSlice({
 
             /* Add Item */
             .addCase(addCartItem.pending, (state) => {
-                state.isCartLoading = true;
+                state.isCartAddLoading = true;
             })
             .addCase(addCartItem.fulfilled, (state, action) => {
-                state.isCartLoading = false;
+                state.isCartAddLoading = false;
                 state.cartItems.push(action.payload);
             })
             .addCase(addCartItem.rejected, (state, action) => {
-                state.isCartLoading = false;
+                state.isCartAddLoading = false;
                 state.hasCartError = action.payload;
             })
 

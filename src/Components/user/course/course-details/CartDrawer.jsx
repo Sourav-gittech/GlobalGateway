@@ -59,7 +59,7 @@ const CartDrawer = ({ cartItems, cartId, setCartDrawer }) => {
                                             <p className="text-sm text-gray-600 mb-2">{item?.courses?.skill_level} • {item?.courses?.course_content?.[0]?.documents?.length + 1} lectures</p>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-lg font-bold text-[#FF5252]">₹{parseInt(item?.courses?.pricing).toLocaleString('en-IN')}</span>
-                                                <button onClick={() => removeFromCart(item?.courses?.id)} className="text-red-500 hover:text-red-700 transition-colors p-1">
+                                                <button onClick={() => removeFromCart(item?.courses?.id)} className="text-red-500 hover:text-red-700 transition-colors p-1 cursor-pointer">
                                                     <X className="w-5 h-5" />
                                                 </button>
                                             </div>
