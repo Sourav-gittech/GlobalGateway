@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ArrowLeft, CheckCircle, Lock, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -73,7 +73,7 @@ const CourseOrderSummary = ({ subtotal, total, discountAmount, discount, allChar
                     </div>
                     {Number(discount) > 0 && (
                         <div className="flex justify-between items-center">
-                            <span className="flex items-center gap-2 font-medium">
+                            <span className="flex items-center gap-2 text-gray-400 text-sm">
                                 Discount ({discount}%)
                             </span>
                             <span className="font-bold">-₹{discountAmount.toLocaleString('en-IN')}</span>
@@ -82,14 +82,13 @@ const CourseOrderSummary = ({ subtotal, total, discountAmount, discount, allChar
                     {
                         allCharges?.map(charge => (
                             <div className="flex justify-between items-center" key={charge?.id}>
-                                <span className="flex items-center gap-1">
+                                <span className="flex items-center gap-1 text-gray-400 text-sm">
                                     {charge?.charge_type} ({charge?.percentage}%)
                                 </span>
-                                <span className="font-semibold">{Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN') ?? 'N/A'}</span>
+                                <span className="font-semibold">₹{Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN') ?? 'N/A'}</span>
                             </div>
                         ))
                     }
-
                     <div className="border-t border-gray-700 pt-4 mt-4">
                         <div className="flex justify-between items-center">
                             <span className="text-lg font-semibold">Total Amount</span>

@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import FormHeader from "./form/FormHeader";
 import FormFooter from "./form/FormFooter";
 
-const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems }) => {
-
+const PaymentForm = ({ type, personalInfoData, total_amount, application_id, allCharges, visaData, visaSpecification, application_fees, country_id, passportData,
+    cartId, subtotal, total, discountAmount, discount, userAuthData, cartItems}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("card");
     const navigate = useNavigate();
@@ -32,9 +32,20 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
             navigate("/payment-preview", {
                 state: {
                     paymentDetails: details,
-                    personalInfoData: userAuthData,
-                    allCharges, type, subtotal, total, discountAmount, discount, cartItems,
-                    visaData: null, visaSpecification: null, application_fees: null, country_id: null, passportData: null
+                    personalInfoData: personalInfoData || userAuthData,
+                    allCharges,
+                    visaData: visaData || null,
+                    visaSpecification: visaSpecification || null,
+                    application_fees: application_fees || null,
+                    country_id: country_id || null,
+                    passportData: passportData || null,
+                    subtotal: subtotal || null,
+                    total: total || null,
+                    discountAmount: discountAmount || null,
+                    discount: discount || null,
+                    cartItems: cartItems || null,
+                    cartId: cartId || null,
+                    type
                 }
             });
         }
@@ -50,9 +61,20 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
             navigate("/payment-preview", {
                 state: {
                     paymentDetails: details,
-                    personalInfoData: userAuthData,
-                    allCharges, type, subtotal, total, discountAmount, discount, cartItems,
-                    visaData: null, visaSpecification: null, application_fees: null, country_id: null, passportData: null
+                    personalInfoData: personalInfoData || userAuthData,
+                    allCharges,
+                    visaData: visaData || null,
+                    visaSpecification: visaSpecification || null,
+                    application_fees: application_fees || null,
+                    country_id: country_id || null,
+                    passportData: passportData || null,
+                    subtotal: subtotal || null,
+                    total: total || null,
+                    discountAmount: discountAmount || null,
+                    discount: discount || null,
+                    cartItems: cartItems || null,
+                    cartId: cartId || null,
+                    type
                 }
             });
         }
@@ -71,7 +93,7 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                    <FormHeader email={userAuthData?.email} />
+                    <FormHeader email={personalInfoData?.email || userAuthData?.email} />
 
                     {/* Payment Method Selection */}
                     <div className="mb-6">
@@ -81,7 +103,7 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
                                 type="button"
                                 onClick={() => setPaymentMethod("card")}
                                 className={`border-2 rounded-lg px-4 py-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer ${paymentMethod === "card"
-                                    ? "border-cyan-700 bg-cyan-900/10" : "border-gray-300 hover:border-gray-400 bg-white"}`} >
+                                    ? "border-cyan-700 bg-cyan-900/10" : "border-gray-300 hover:border-gray-400 bg-white"}`}>
                                 <CreditCard size={24} className={paymentMethod === "card" ? "text-cyan-700" : "text-gray-600"} />
                                 <span className={`text-sm font-semibold ${paymentMethod === "card" ? "text-cyan-800" : "text-gray-700"}`}>
                                     Card
@@ -103,13 +125,13 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
 
                     {/* Card Payment Form */}
                     {paymentMethod === "card" && (
-                        <CardPayment ref={cardRef} />
+                        <CardPayment ref={cardRef} total_amount={type == 'visa' ? total_amount : total} />
                     )}
 
 
                     {/* UPI Payment Form */}
                     {paymentMethod === "upi" && (
-                        <UPIPayment ref={upiRef} />
+                        <UPIPayment ref={upiRef} total_amount={type == 'visa' ? total_amount : total} />
                     )}
 
                     {/* Submit Button */}
@@ -142,4 +164,4 @@ const CoursePaymentForm = ({ type, subtotal, total, discountAmount, discount, al
     )
 }
 
-export default CoursePaymentForm
+export default PaymentForm

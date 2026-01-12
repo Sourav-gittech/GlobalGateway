@@ -61,7 +61,7 @@ const PaymentReviewDropdown = ({ personalInfo, paymentMethod, visaData, visaSpec
             {/* Application Details */}
             < CollapsibleSection id="application"
                 title={`${type == 'visa' ? 'Application ' : 'Course '}Information`}
-                icon={FileText} count={cartItems?.length} type={type}>
+                icon={FileText} count={type != 'visa' ? cartItems?.length : '3'} type={type}>
                 {type == 'visa' ?
                     <ApplicationDetails personalInfo={personalInfo} InfoRow={InfoRow} visaData={visaData} visaSpecification={visaSpecification} />
                     : <CourseDetails InfoRow={InfoRow} cartItems={cartItems} />

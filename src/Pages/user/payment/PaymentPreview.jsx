@@ -32,6 +32,7 @@ const PaymentPreview = () => {
         discountAmount: state?.discountAmount,
         discount: state?.discount,
         cartItems: state?.cartItems,
+        cartId: state?.cartId,
         type: state?.type
       }
     })

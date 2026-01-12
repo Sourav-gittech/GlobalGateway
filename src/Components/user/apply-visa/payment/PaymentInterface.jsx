@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import OrderSummary from "./payment-interface/OrderSummary";
-import PaymentForm from "./payment-interface/PaymentForm";
+import PaymentForm from "./../../common/payment/PaymentForm";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCharges } from "../../../../Redux/Slice/chargesSlice";
 import getSweetAlert from "../../../../util/alert/sweetAlert";

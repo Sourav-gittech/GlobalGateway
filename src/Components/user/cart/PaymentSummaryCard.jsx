@@ -5,7 +5,7 @@ import hotToast from '../../../util/alert/hot-toast';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import { useNavigate } from 'react-router-dom';
 
-const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, subtotal, tax, total, discountAmount, discount, setDiscount }) => {
+const PaymentSummaryCard = ({ cartId, cartItems, userAuthData, allCharges, promoCodes, subtotal, tax, total, discountAmount, discount, setDiscount }) => {
 
     const [promoCode, setPromoCode] = useState('');
     const [agreeTerms, setAgreeTerms] = useState(false);
@@ -66,7 +66,7 @@ const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, s
         }
 
         navigate("/payment", {
-            state: { subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems }
+            state: { cartId, subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems }
         });
 
     };
@@ -107,7 +107,7 @@ const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, s
                             {charge?.charge_type} ({charge?.percentage}%)
                             <Info className="w-3 h-3 text-slate-400" />
                         </span>
-                        <span className="font-semibold">{Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN')}</span>
+                        <span className="font-semibold">₹{Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN')}</span>
                     </div>
                 ))}
             </div>

@@ -80,6 +80,25 @@ export const updateLastSignInAt = createAsyncThunk("userProfileSlice/updateLastS
     }
 );
 
+// updates `course purchase or not`
+export const updateCoursePurchaseStatus = createAsyncThunk("userProfileSlice/updateCoursePurchaseStatus",
+    async ({ id }, { rejectWithValue }) => {
+        // console.log('update purchase course data', id,user_type);
+
+        try {
+            const res = await supabase.from("users").update({ has_purchase_course: true }).eq("id", id).select();
+
+            // console.log('Response for updating purchase status', res);
+
+            if (res?.error) return rejectWithValue(res?.error);
+
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
 // get all users 
 export const getAllUsers = createAsyncThunk("userProfileSlice/getAllUsers",
     async (_, { rejectWithValue }) => {
@@ -155,6 +174,21 @@ export const userProfileSlice = createSlice({
                 state.isUserError = null;
             })
             .addCase(updateLastSignInAt.rejected, (state, action) => {
+                state.isUserLoading = false;
+                state.getUserData = {};
+                state.isUserError = action.error?.message;
+            })
+            
+            // updates `course purchase ststua` reducer 
+            .addCase(updateCoursePurchaseStatus.pending, (state) => {
+                state.isUserLoading = true;
+            })
+            .addCase(updateCoursePurchaseStatus.fulfilled, (state, action) => {
+                state.isUserLoading = false;
+                state.getUserData = action.payload;
+                state.isUserError = null;
+            })
+            .addCase(updateCoursePurchaseStatus.rejected, (state, action) => {
                 state.isUserLoading = false;
                 state.getUserData = {};
                 state.isUserError = action.error?.message;

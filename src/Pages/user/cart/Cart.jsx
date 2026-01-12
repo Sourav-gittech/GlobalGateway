@@ -154,7 +154,7 @@ const Cart = () => {
             <div className="lg:col-span-1">
               <div className="sticky top-4 space-y-5">
                 {/* Main Summary Card */}
-                <PaymentSummaryCard cartItems={cartItems} userAuthData={userAuthData} allCharges={allCharges?.course} promoCodes={promoCodes} subtotal={subtotal} tax={tax} total={total} discountAmount={discountAmount} discount={discount} setDiscount={setDiscount} />
+                <PaymentSummaryCard cartId={currentCart?.id} cartItems={cartItems} userAuthData={userAuthData} allCharges={allCharges?.course} promoCodes={promoCodes} subtotal={subtotal} tax={tax} total={total} discountAmount={discountAmount} discount={discount} setDiscount={setDiscount} />
 
                 {/* Security & Trust */}
                 <SecurityTrust />

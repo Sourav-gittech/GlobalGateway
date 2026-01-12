@@ -20,8 +20,6 @@ const UPIPayment = forwardRef((props, ref) => {
         return result;
     }
 
-    const dispatch = useDispatch();
-
     const formik = useFormik({
         initialValues: { upiId: "" },
         validationSchema: Yup.object({

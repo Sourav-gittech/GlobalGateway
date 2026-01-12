@@ -4,11 +4,11 @@ import supabase from "../../util/Supabase/supabase";
 // add order 
 export const addOrder = createAsyncThunk("ordersSlice/addOrder",
     async ({ orderData, items }, { rejectWithValue }) => {
-        console.log('Received data to add new order in slice', orderData, items);
+        // console.log('Received data to add new order in slice', orderData, items);
 
         try {
             const res = await supabase.from("orders").insert([orderData]).select().single();
-            console.log('Response for adding new course order', res);
+            // console.log('Response for adding new course order', res);
 
             if (res?.error) throw res?.error;
 

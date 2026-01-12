@@ -7,43 +7,46 @@ import SuccessFooter from "./success/SuccessFooter";
 import ActionButton from "./success/ActionButton";
 import Confetti from "./success/Confetti";
 
-const PaymentSuccess = ({ paymentDetails, personalInfoData, currentDate, passportData, visaData, visaSpecification, handlePrintReceipt, handleShareStatus, showConfetti }) => {
+const PaymentSuccess = ({ type, paymentDetails, personalInfoData, currentDate, passportData, visaData, visaSpecification, handlePrintReceipt,
+  handleShareStatus, showConfetti, no_course, promocode }) => {
 
-    return (
-        <div className="min-h-screen bg-gray-50 font-inter">
-            <Confetti showConfetti={showConfetti} />
+  return (
+    <div className="min-h-screen bg-gray-50 font-inter">
+      <Confetti showConfetti={showConfetti} />
 
-            <div className="print-receipt">
-                {/* Blue Header Section - Full Width */}
-                <SuccessHeader paymentDetails={paymentDetails} />
+      <div className="print-receipt">
+        {/* Blue Header Section - Full Width */}
+        <SuccessHeader paymentDetails={paymentDetails} type={type} />
 
-                {/* White Content Section - Full Width */}
-                <div className="bg-gray-50 px-4 md:px-6 lg:px-12 py-8 md:py-12 lg:py-16 print:p-0 print:pt-4">
-                    <div className="max-w-6xl mx-auto">
+        {/* White Content Section - Full Width */}
+        <div className="bg-gray-50 px-4 md:px-6 lg:px-12 py-8 md:py-12 lg:py-16 print:p-0 print:pt-4">
+          <div className="max-w-6xl mx-auto">
 
-                        {/* Payment and Applicant Info Cards - Production Ready Style */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 print:mb-0">
+            {/* Payment and Applicant Info Cards - Production Ready Style */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 print:mb-0">
 
-                            {/* Payment Details Card */}
-                            <PaymentDetailsCard paymentDetails={paymentDetails} currentDate={currentDate} />
+              {/* Payment Details Card */}
+              <PaymentDetailsCard paymentDetails={paymentDetails} currentDate={currentDate} />
 
-                            {/* Applicant Info Card */}
-                            <ApplicantInfo personalInfoData={personalInfoData} passportData={passportData} visaData={visaData} />
-                        </div>
-
-                        {/* What Happens Next Section - Hidden in Print */}
-                        <StatusCard visaSpecification={visaSpecification} currentDate={currentDate} />
-
-                        {/* Action Buttons - Hidden in Print */}
-                        <ActionButton handlePrintReceipt={handlePrintReceipt} handleShareStatus={handleShareStatus} />
-
-                        {/* Footer Contact Info */}
-                        <SuccessFooter />
-                    </div>
-                </div>
+              {/* Applicant Info Card */}
+              <ApplicantInfo personalInfoData={personalInfoData} passportData={passportData} visaData={visaData} type={type} no_course={no_course} promocode={promocode} />
             </div>
 
-            <style jsx="true">{`
+            {/* What Happens Next Section - Hidden in Print */}
+            {type == 'visa' &&
+              <StatusCard visaSpecification={visaSpecification} currentDate={currentDate} />
+            }
+
+            {/* Action Buttons - Hidden in Print */}
+            <ActionButton handlePrintReceipt={handlePrintReceipt} handleShareStatus={handleShareStatus} />
+
+            {/* Footer Contact Info */}
+            <SuccessFooter />
+          </div>
+        </div>
+      </div>
+
+      <style jsx="true">{`
         @keyframes confetti {
           0% {
             transform: translateY(-20px) rotate(0deg);
@@ -112,8 +115,8 @@ const PaymentSuccess = ({ paymentDetails, personalInfoData, currentDate, passpor
           }
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }
 
 export default PaymentSuccess

@@ -13,6 +13,9 @@ import getSweetAlert from "../../../../util/alert/sweetAlert";
 import { addActivity } from "../../../../Redux/Slice/activitySlice";
 import { addNotification } from "../../../../Redux/Slice/notificationSlice";
 import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
+import { addOrder } from "../../../../Redux/Slice/orderSlice";
+import { deleteCart } from "../../../../Redux/Slice/cartSlice";
+import { updateCoursePurchaseStatus } from "../../../../Redux/Slice/userSlice";
 
 const LottieAnimation = ({ animationData, isSuccess }) => {
     if (!animationData) return null;
@@ -20,14 +23,8 @@ const LottieAnimation = ({ animationData, isSuccess }) => {
     return (
         <div className={`
       w-auto h-auto md:w-60 md:h-60 rounded-full flex items-center justify-center transition-all duration-500 ease-in-out  
-      ${isSuccess ? 'bg-blue-100/10' : 'bg-red-100/10'}
-    `}>
-            <Lottie
-                animationData={animationData}
-                loop={false}
-                autoplay={true}
-                className="w-full h-full"
-            />
+      ${isSuccess ? 'bg-blue-100/10' : 'bg-red-100/10'}`}>
+            <Lottie animationData={animationData} loop={false} autoplay={true} className="w-full h-full" />
         </div>
     );
 };
@@ -41,7 +38,8 @@ export default function PaymentStatus() {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
-    const { type, paymentDetails, personalInfoData, passportData, visaData, visaSpecification, country_id } = location.state || {};
+    const { type, paymentDetails, personalInfoData, passportData, visaData, visaSpecification, country_id,
+        subtotal, total, discountAmount, discount, cartItems, cartId } = location.state || {};
 
     const currentDate = new Date().toLocaleDateString('en-US', {
         year: 'numeric',
@@ -60,7 +58,7 @@ export default function PaymentStatus() {
         card_holder_name: paymentDetails?.card_holder_name ? paymentDetails?.card_holder_name : null,
         card_expiry: paymentDetails?.expiry_card ? paymentDetails?.expiry_card : null,
         amount: paymentDetails?.total_amount,
-        txn_for:type
+        txn_for: type
     }
 
     const application_payment_obj = {
@@ -93,8 +91,35 @@ export default function PaymentStatus() {
         application_id: personalInfoData?.application_id,
         title: "New application received with application i'd ",
         receiver_type: 'embassy',
+        user_id: null,
         receiver_country_id: decodeBase64Url(country_id),
         mark_read: false
+    }
+
+    const user_notification_obj = {
+        application_id: null,
+        title: "Course purchased successfully",
+        receiver_type: 'user',
+        user_id: personalInfoData?.id,
+        receiver_country_id: null,
+        mark_read: false
+    }
+
+    const orderObj = {
+        orderData: {
+            user_id: personalInfoData?.id,
+            transaction_id: paymentDetails?.transaction_id,
+            status: "success",
+            amount: total,
+            currency: 'Rupee',
+            provider: 'Paypal',
+            promocode: discount && Number(discount) > 0 ? true : false,
+            purchase_date: new Date().toISOString()
+        },
+        items: cartItems?.map(item => ({
+            course_id: item.course_id,
+            price: item.courses.pricing
+        }))
     }
 
     useEffect(() => {
@@ -121,67 +146,144 @@ export default function PaymentStatus() {
                             // console.log('Response after adding transaction details', res);
 
                             if (res.meta.requestStatus === "fulfilled") {
-                                dispatch(saveStepPayment({ applicationId: personalInfoData?.application_id, payload: { ...application_payment_obj, status: 'success' } }))
-                                    .then(res => {
-                                        // console.log('Response after adding payment data in application table', res);
 
-                                        if (res.meta.requestStatus === "fulfilled") {
-                                            dispatch(saveStepProgress({ applicationId: personalInfoData?.application_id, ...application_obj }))
-                                                .then(res => {
-                                                    // console.log('Response after updating application complitation status', res);
+                                if (type == 'visa') {
+                                    dispatch(saveStepPayment({ applicationId: personalInfoData?.application_id, payload: { ...application_payment_obj, status: 'success' } }))
+                                        .then(res => {
+                                            // console.log('Response after adding payment data in application table', res);
 
-                                                    dispatch(addActivity({ ...activity_obj_success, application_id: res?.meta?.arg?.applicationId }))
-                                                        .then(res => {
-                                                            // console.log('Response for adding activity', res);
+                                            if (res.meta.requestStatus === "fulfilled") {
+                                                dispatch(saveStepProgress({ applicationId: personalInfoData?.application_id, ...application_obj }))
+                                                    .then(res => {
+                                                        // console.log('Response after updating application complitation status', res);
 
-                                                            if (res.meta.requestStatus === "fulfilled") {
+                                                        dispatch(addActivity({ ...activity_obj_success, application_id: res?.meta?.arg?.applicationId }))
+                                                            .then(res => {
+                                                                // console.log('Response for adding activity', res);
 
-                                                                dispatch(addNotification(notification_obj))
-                                                                    .then(res => {
-                                                                        console.log('Response for adding notification', res);
+                                                                if (res.meta.requestStatus === "fulfilled") {
 
-                                                                        if (res.meta.requestStatus === "fulfilled") {
-                                                                            setIsLottieTransitioning(true);
-                                                                            setTimeout(() => {
-                                                                                setPaymentStage('success');
-                                                                                setIsLottieTransitioning(false);
-                                                                                setShowConfetti(true);
-                                                                                setTimeout(() => setShowConfetti(false), 4000);
-                                                                            }, 3000);
-                                                                        }
-                                                                        else {
+                                                                    dispatch(addNotification(notification_obj))
+                                                                        .then(res => {
+                                                                            console.log('Response for adding notification', res);
+
+                                                                            if (res.meta.requestStatus === "fulfilled") {
+
+                                                                                setIsLottieTransitioning(true);
+                                                                                setTimeout(() => {
+                                                                                    setPaymentStage('success');
+                                                                                    setIsLottieTransitioning(false);
+                                                                                    setShowConfetti(true);
+                                                                                    setTimeout(() => setShowConfetti(false), 4000);
+                                                                                }, 3000);
+                                                                            }
+                                                                            else {
+                                                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log('Error occured', err);
                                                                             getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                                                        }
-                                                                    })
-                                                                    .catch(err => {
-                                                                        console.log('Error occured', err);
-                                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                                                    })
-                                                            }
-                                                            else {
-                                                                getSweetAlert('Oops...', 'Something went wrong!', 'info');
-                                                            }
-                                                        })
-                                                        .catch(err => {
-                                                            console.log('Error occured', err);
-                                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                                        })
-                                                })
-                                                .catch(err => {
-                                                    console.log('Error occured', err);
-                                                    handleCancelPayment();
-                                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                                })
-                                        }
-                                        else {
+                                                                        })
+                                                                }
+                                                                else {
+                                                                    getSweetAlert('Oops...', 'Something went wrong!', 'info');
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log('Error occured', err);
+                                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                            })
+                                                    })
+                                                    .catch(err => {
+                                                        console.log('Error occured', err);
+                                                        handleCancelPayment();
+                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                    })
+                                            }
+                                            else {
+                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('Error occured', err);
+                                            handleCancelPayment();
                                             getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                        }
-                                    })
-                                    .catch(err => {
-                                        console.log('Error occured', err);
-                                        handleCancelPayment();
-                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                    })
+                                        })
+                                }
+                                else {
+                                    dispatch(addOrder(orderObj))
+                                        .then(res => {
+                                            // console.log('Response after adding order details', res);
+
+                                            if (res.meta.requestStatus === "fulfilled") {
+
+                                                dispatch(deleteCart(cartId))
+                                                    .then(res => {
+                                                        // console.log('Response after deleting cart', res);
+
+                                                        if (res.meta.requestStatus === "fulfilled") {
+
+                                                            dispatch(updateCoursePurchaseStatus({ id: personalInfoData?.id }))
+                                                                .then(res => {
+                                                                    // console.log('Response after updating user data', res);
+
+                                                                    if (res.meta.requestStatus === "fulfilled") {
+
+                                                                        dispatch(addNotification(user_notification_obj))
+                                                                            .then(res => {
+                                                                                // console.log('Response after adding notification', res);
+
+                                                                                if (res.meta.requestStatus === "fulfilled") {
+
+                                                                                    setIsLottieTransitioning(true);
+                                                                                    setTimeout(() => {
+                                                                                        setPaymentStage('success');
+                                                                                        setIsLottieTransitioning(false);
+                                                                                        setShowConfetti(true);
+                                                                                        setTimeout(() => setShowConfetti(false), 4000);
+                                                                                    }, 3000);
+                                                                                }
+                                                                                else {
+                                                                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                                }
+                                                                            })
+                                                                            .catch(err => {
+                                                                                console.log('Error occured', err);
+                                                                                handleCancelPayment();
+                                                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                            })
+                                                                    }
+                                                                    else {
+                                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                    }
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log('Error occured', err);
+                                                                    handleCancelPayment();
+                                                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                })
+                                                        }
+                                                        else {
+                                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log('Error occured', err);
+                                                        handleCancelPayment();
+                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                    })
+                                            }
+                                            else {
+                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('Error occured', err);
+                                            handleCancelPayment();
+                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                        })
+                                }
                             }
                             else {
                                 getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -209,42 +311,52 @@ export default function PaymentStatus() {
                 // console.log('Response after adding transaction details', res);
 
                 if (res.meta.requestStatus === "fulfilled") {
-                    dispatch(saveStepPayment({ applicationId: personalInfoData?.application_id, payload: { ...application_payment_obj, status: 'failed' } }))
-                        .then(res => {
-                            // console.log('Response after adding payment data in application table', res);
+                    if (type == 'visa') {
+                        dispatch(saveStepPayment({ applicationId: personalInfoData?.application_id, payload: { ...application_payment_obj, status: 'failed' } }))
+                            .then(res => {
+                                // console.log('Response after adding payment data in application table', res);
 
-                            if (res.meta.requestStatus === "fulfilled") {
+                                if (res.meta.requestStatus === "fulfilled") {
 
-                                dispatch(addActivity({ ...activity_obj_failed, application_id: res?.meta?.arg?.applicationId }))
-                                    .then(res => {
-                                        // console.log('Response for adding activity', res);
+                                    dispatch(addActivity({ ...activity_obj_failed, application_id: res?.meta?.arg?.applicationId }))
+                                        .then(res => {
+                                            // console.log('Response for adding activity', res);
 
-                                        if (res.meta.requestStatus === "fulfilled") {
+                                            if (res.meta.requestStatus === "fulfilled") {
 
-                                            setIsCancelled(true);
-                                            setIsLottieTransitioning(true);
-                                            setTimeout(() => {
-                                                setPaymentStage('failed');
-                                                setIsLottieTransitioning(false);
-                                            }, 1200);
-                                        }
-                                        else {
-                                            getSweetAlert('Oops...', 'Something went wrong!', 'info');
-                                        }
-                                    })
-                                    .catch(err => {
-                                        console.log('Error occured', err);
-                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                                    })
-                            }
-                            else {
+                                                setIsCancelled(true);
+                                                setIsLottieTransitioning(true);
+                                                setTimeout(() => {
+                                                    setPaymentStage('failed');
+                                                    setIsLottieTransitioning(false);
+                                                }, 1200);
+                                            }
+                                            else {
+                                                getSweetAlert('Oops...', 'Something went wrong!', 'info');
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('Error occured', err);
+                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                        })
+                                }
+                                else {
+                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                }
+                            })
+                            .catch(err => {
+                                console.log('Error occured', err);
                                 getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                            }
-                        })
-                        .catch(err => {
-                            console.log('Error occured', err);
-                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                        })
+                            })
+                    }
+                    else {
+                        setIsCancelled(true);
+                        setIsLottieTransitioning(true);
+                        setTimeout(() => {
+                            setPaymentStage('failed');
+                            setIsLottieTransitioning(false);
+                        }, 1200);
+                    }
                 }
                 else {
                     getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -258,7 +370,7 @@ export default function PaymentStatus() {
 
     const handleRetryPayment = () => {
         // console.log("Redirecting to payment retry...");
-        navigate(`/application-form/${country_id}`);
+        navigate(type == 'visa' ? `/application-form/${country_id}` : '/payment');
     };
 
     const handlePrintReceipt = () => {
@@ -313,12 +425,13 @@ export default function PaymentStatus() {
     // Failed Screen - ALL RED
     if (paymentStage === 'failed') {
         return (
-            <PaymentFailed currentDate={currentDate} handleRetryPayment={handleRetryPayment} totalAmount={paymentDetails?.total_amount} />
+            <PaymentFailed currentDate={currentDate} handleRetryPayment={handleRetryPayment} totalAmount={type == 'visa' ? paymentDetails?.total_amount : total} />
         )
     }
 
     // Success Screen
     return (
-        <PaymentSuccess paymentDetails={paymentDetails} personalInfoData={personalInfoData} currentDate={currentDate} passportData={passportData} visaData={visaData} visaSpecification={visaSpecification} handlePrintReceipt={handlePrintReceipt} handleShareStatus={handleShareStatus} showConfetti={showConfetti} />
+        <PaymentSuccess paymentDetails={paymentDetails} personalInfoData={personalInfoData} currentDate={currentDate} passportData={passportData} visaData={visaData} visaSpecification={visaSpecification} handlePrintReceipt={handlePrintReceipt} handleShareStatus={handleShareStatus} showConfetti={showConfetti}
+            type={type} no_course={cartItems?.length} promocode={discount && Number(discount) > 0 ? true : false} />
     )
 }

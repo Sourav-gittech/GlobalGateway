@@ -1,7 +1,7 @@
 import { CheckCircle } from 'lucide-react'
 import React from 'react'
 
-const SuccessHeader = ({ paymentDetails }) => {
+const SuccessHeader = ({ paymentDetails, type }) => {
     return (
         <div className="relative bg-gradient-to-br from-cyan-500 via-blue-600 to-blue-700 px-6 md:px-12 py-12 md:py-16 lg:py-20 text-center shadow-lg print:p-8 print:py-12 print:bg-none print:shadow-none print:border-b-4 print:border-cyan-500">
             <div className="relative max-w-4xl mx-auto">
@@ -23,7 +23,8 @@ const SuccessHeader = ({ paymentDetails }) => {
                     Transaction Successful!
                 </h1>
                 <p className="text-base mb-5 md:text-lg lg:text-xl text-white print:text-gray-600 max-w-auto mx-auto">
-                    Your visa application has been successfully submitted and processed
+                    {type == 'visa' ? 'Your visa application has been successfully submitted and processed' :
+                        'You have successfully purchased your selected course'}
                 </p>
 
                 <div className="inline-flex flex-col items-center gap-1.5 px-4 md:px-6 py-3 bg-white/20 print:bg-gray-100 print:border print:border-gray-300 print:shadow-inner backdrop-blur-sm rounded-xl mt-4 border border-white/30">

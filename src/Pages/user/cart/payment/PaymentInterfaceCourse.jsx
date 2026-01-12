@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import CourseOrderSummary from "../../../../Components/user/cart/payment/CourseOrderSummary";
-import CoursePaymentForm from "../../../../Components/user/cart/payment/CoursePaymentForm";
+import PaymentForm from "../../../../Components/user/common/payment/PaymentForm";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function PaymentInterfaceCourse() {
@@ -19,7 +19,7 @@ export default function PaymentInterfaceCourse() {
     return null;
   }
 
-  const { subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems } = state;
+  const { cartId, subtotal, total, discountAmount, discount, allCharges, userAuthData, cartItems } = state;
 
   return (
     <div className="min-h-screen w-screen bg-white lg:h-screen lg:overflow-hidden">
@@ -29,7 +29,7 @@ export default function PaymentInterfaceCourse() {
         <CourseOrderSummary subtotal={subtotal} total={total} discountAmount={discountAmount} discount={discount} allCharges={allCharges} cartItems={cartItems} />
 
         {/* Right Panel - Payment Form */}
-        <CoursePaymentForm type={type} subtotal={subtotal} total={total} discountAmount={discountAmount} discount={discount} allCharges={allCharges} userAuthData={userAuthData} cartItems={cartItems} />
+        <PaymentForm type={type} cartId={cartId} subtotal={subtotal} total={total} discountAmount={discountAmount} discount={discount} allCharges={allCharges} userAuthData={userAuthData} cartItems={cartItems} />
 
       </div>
 

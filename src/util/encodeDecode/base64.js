@@ -6,6 +6,7 @@ export const encodeBase64Url = (str) =>
 
 
 export const decodeBase64Url = (str) => {
+    if (!str) return;
     const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
     return new TextDecoder().decode(
         Uint8Array.from(atob(base64), c => c.charCodeAt(0))

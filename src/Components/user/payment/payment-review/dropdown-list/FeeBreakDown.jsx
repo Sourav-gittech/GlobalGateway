@@ -35,10 +35,10 @@ const FeeBreakDown = ({ applicationFee, serviceFee, totalAmount, discountAmount,
                         <div className="flex justify-between items-center py-2 border-b border-gray-300" key={charge?.id}>
                             <div className="flex items-center gap-2">
                                 <Icon size={16} className="text-gray-400" />
-                                <span className="text-sm text-gray-700 font-medium">{charge?.charge_type ?? 'N/A'}</span>
+                                <span className="text-sm text-gray-700 font-medium">{charge?.charge_type ?? 'N/A'} {type != 'visa' ? `(${charge?.percentage}%)` : ''}</span>
                             </div>
                             <span className="font-semibold text-gray-900">
-                                {type != 'visa' ? Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN') :
+                                {type != 'visa' ? `₹${Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN')}` :
                                     charge?.amount == '0' ? 'Free' : `₹${Number(charge?.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` ?? 'N/A'}
                             </span>
                         </div>

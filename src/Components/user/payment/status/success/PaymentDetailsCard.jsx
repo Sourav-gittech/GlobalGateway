@@ -13,7 +13,7 @@ const PaymentDetailsCard = ({ paymentDetails, currentDate }) => {
             <div className="space-y-4">
                 <div className="flex justify-between items-center pb-2 border-b border-gray-100">
                     <span className="text-sm font-medium text-gray-600">Amount Paid</span>
-                    <span className="text-2xl font-bold text-gray-900">₹{paymentDetails?.total_amount}</span>
+                    <span className="text-2xl font-bold text-gray-900">₹{Number(paymentDetails?.total_amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
