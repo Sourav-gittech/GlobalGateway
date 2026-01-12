@@ -42,7 +42,7 @@ export default function CoursePurchaseChart() {
       }`}
     >
       <div className="mb-6">
-        <h3 className="text-md font-semibold text-white mb-1">Visa Course Enrollments</h3>
+        <h3 className="text-mdi font-semibold text-white mb-1">Visa Course Enrollments</h3>
         <p className="text-gray-400 text-sm">Distribution of enrollments by visa immigration course</p>
       </div>
 
