@@ -24,11 +24,11 @@ export async function getApplicationStatusStats(country_id) {
     };
 
     // Approved data
-    const approved = data.filter((item) => item.status === "approved");
+    const approved = data.filter((item) => item.status == "approved");
     const approvedMonthCount = groupByMonth(approved);
 
     // Rejected data
-    const rejected = data.filter((item) => item.status === "rejected");
+    const rejected = data.filter((item) => item.status == "rejected");
     const rejectedMonthCount = groupByMonth(rejected);
 
     // All applications

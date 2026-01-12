@@ -17,25 +17,25 @@ const AnalyticsStats = ({ totalApplication, aplicationApprovalStats, avgProcessi
                 {
                     icon: FileText,
                     title: 'Total Applications',
-                    value: totalApplications?.toLocaleString(),
+                    value: totalApplications?.toLocaleString() ?? 0,
                     change: totalApplication?.changeText,
-                    subtitle: `Avg: ${Math.round(totalApplications / 12)}/month`,
+                    subtitle: `Avg: ${Math.round(totalApplications / 12) ?? 0}/month`,
                     bgColor: 'bg-green-50',
                     iconBg: 'bg-green-600'
                 },
                 {
                     icon: Users,
                     title: 'Approval Rate',
-                    value: aplicationApprovalStats?.successRate + '%',
+                    value: aplicationApprovalStats?.successRate ?? 0 + '%',
                     change: '+8.2%',
-                    subtitle: aplicationApprovalStats?.approvedStats?.totalApproved + ' approved this year',
+                    subtitle: (aplicationApprovalStats?.approvedStats?.totalApproved ?? 0) + ' approved this year',
                     bgColor: 'bg-purple-50',
                     iconBg: 'bg-purple-600'
                 },
                 {
                     icon: Activity,
                     title: 'Avg Processing Time',
-                    value: avgProcessingTime + `${avgProcessingTime>1?' days':' day'}`,
+                    value: avgProcessingTime + `${avgProcessingTime > 1 ? ' days' : ' day'}`,
                     change: '+5.1%',
                     subtitle: 'Target: 5 days',
                     bgColor: 'bg-orange-50',

@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import getSweetAlert from '../../../util/alert/sweetAlert';
 import { fetchCartItems, getOrCreateCart } from '../../../Redux/Slice/cartSlice';
+import { fetchCharges } from '../../../Redux/Slice/chargesSlice';
+import { fetchCodes } from '../../../Redux/Slice/promocodeSlice';
 
 
 const Cart = () => {
@@ -24,11 +26,16 @@ const Cart = () => {
 
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state.cart);
+  const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
+  const { isCodeLoading, allCode: promoCodes, hasCodesError } = useSelector(state => state?.promocode);
 
   // Calculate totals
+  let tax = 0;
   const subtotal = cartItems?.reduce((sum, item) => sum + parseInt(item?.courses?.pricing), 0);
   const discountAmount = Math.round(subtotal * (discount / 100));
-  const tax = Math?.round((subtotal - discountAmount) * 0.18);
+  allCharges?.course?.forEach(charge => {
+    tax += Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100);
+  })
   const total = subtotal - discountAmount + tax;
 
   const navigateBack = () => {
@@ -56,7 +63,7 @@ const Cart = () => {
             // console.log('Response for fetching cart items', res);
           })
           .catch(err => {
-            console.log(err);
+            console.log('Error occured', err);
             getSweetAlert('Oops...', 'Something went wrong!', 'error');
           })
       })
@@ -66,7 +73,31 @@ const Cart = () => {
       })
   }, [userAuthData?.id, dispatch]);
 
+  useEffect(() => {
+    dispatch(fetchCharges({ type: 'course',status: true }))
+      .then(res => {
+        // console.log('Response for fetching all charges for course', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchCodes({ status: true }))
+      .then(res => {
+        // console.log('Response for fetching all codes', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, []);
+
   // console.log('Available cart items', cartItems);
+  // console.log('Available promocode', promoCodes);
+  // console.log('Available charges', allCharges?.course);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -87,7 +118,7 @@ const Cart = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl">
-        {isCartLoading ? (
+        {(isCartLoading || isChargesLoading || isCodeLoading) ? (
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF5252] mx-auto mb-4" />
@@ -120,7 +151,7 @@ const Cart = () => {
             <div className="lg:col-span-1">
               <div className="sticky top-4 space-y-5">
                 {/* Main Summary Card */}
-                <PaymentSummaryCard cartItems={cartItems} subtotal={subtotal} tax={tax} total={total} discountAmount={discountAmount} discount={discount} setDiscount={setDiscount} />
+                <PaymentSummaryCard cartItems={cartItems} userAuthData={userAuthData} allCharges={allCharges?.course} promoCodes={promoCodes} subtotal={subtotal} tax={tax} total={total} discountAmount={discountAmount} discount={discount} setDiscount={setDiscount} />
 
                 {/* Security & Trust */}
                 <SecurityTrust />

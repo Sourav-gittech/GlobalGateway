@@ -132,7 +132,7 @@ export default function Profile() {
     {
       icon: CheckCircle,
       label: "Applications Processed",
-      value: allTypeApplications?.length,
+      value: allTypeApplications?.length ?? 0,
       change: totalChange?.trend,
       changeType: totalChange?.changeText,
       bgColor: "bg-blue-50",
@@ -142,7 +142,7 @@ export default function Profile() {
     {
       icon: Clock,
       label: "Average Processing Time",
-      value: avgProcessingTime + `${avgProcessingTime>1?' days':' day'}`,
+      value: avgProcessingTime + `${avgProcessingTime > 1 ? ' days' : ' day'}`,
       change: "5 days",
       changeType: "positive",
       bgColor: "bg-green-50",
@@ -152,7 +152,7 @@ export default function Profile() {
     {
       icon: AlertCircle,
       label: "Pending Reviews",
-      value: processingTypeApplications?.length,
+      value: processingTypeApplications?.length ?? 0,
       change: processingChange?.trend,
       changeType: processingChange?.changeText,
       bgColor: "bg-yellow-50",

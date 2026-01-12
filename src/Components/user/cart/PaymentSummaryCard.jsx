@@ -1,26 +1,42 @@
 import React, { useState } from 'react'
 import { ArrowRight, Tag, CheckCircle, Package, X, CreditCard, Lock, Info, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
+import hotToast from '../../../util/alert/hot-toast';
 
-const PaymentSummaryCard = ({ cartItems, subtotal, tax, total, discountAmount, discount, setDiscount }) => {
+const PaymentSummaryCard = ({ cartItems, userAuthData, allCharges, promoCodes, subtotal, tax, total, discountAmount, discount, setDiscount }) => {
 
     const [promoCode, setPromoCode] = useState('');
     const [agreeTerms, setAgreeTerms] = useState(false);
     const [promoApplied, setPromoApplied] = useState(false);
 
     const handleApplyPromo = () => {
+        let isPromocodeAdded = false;
         const code = promoCode.toUpperCase();
-        if (code === 'SAVE10' || code === 'FIRST10') {
-            setDiscount(10);
-            setPromoApplied(true);
-        } else if (code === 'SAVE20' || code === 'WELCOME20') {
-            setDiscount(20);
-            setPromoApplied(true);
-        } else if (code === 'STUDENT15') {
-            setDiscount(15);
-            setPromoApplied(true);
-        } else {
-            alert('Invalid promo code. Please check and try again.');
+        const isAvailable = promoCodes?.some(p => p?.name == code);
+        if (!isAvailable) {
+            hotToast('Oops! Invalid promocode.', 'info', <Info className='text-orange-600' />);
+            return;
+        }
+
+        promoCodes?.forEach(promo => {
+            if (promo?.name == code && promo?.apply_mode == 'first_time' && !userAuthData?.has_purchase_course) {
+                setDiscount(promo?.discount_amount);
+                setPromoApplied(true);
+                isPromocodeAdded = true;
+                hotToast('Congrates! Promocode added.', 'success');
+                return;
+            }
+            if (promo?.name == code && promo?.apply_mode == 'always') {
+                setDiscount(promo?.discount_amount);
+                setPromoApplied(true);
+                isPromocodeAdded = true;
+                hotToast('Congrates! Promocode added.', 'success');
+                return;
+            }
+        })
+
+        if(!isPromocodeAdded){
+                hotToast('Oops! Promocode not applicable.', 'error');
         }
     };
 
@@ -68,14 +84,15 @@ const PaymentSummaryCard = ({ cartItems, subtotal, tax, total, discountAmount, d
                         <span className="font-bold">-₹{discountAmount.toLocaleString('en-IN')}</span>
                     </div>
                 )}
-
-                <div className="flex justify-between text-slate-700">
-                    <span className="flex items-center gap-1">
-                        GST (18%)
-                        <Info className="w-3 h-3 text-slate-400" />
-                    </span>
-                    <span className="font-semibold">₹{tax.toLocaleString('en-IN')}</span>
-                </div>
+                {allCharges?.map(charge => (
+                    <div className="flex justify-between text-slate-700">
+                        <span className="flex items-center gap-1">
+                            {charge?.charge_type} ({charge?.percentage}%)
+                            <Info className="w-3 h-3 text-slate-400" />
+                        </span>
+                        <span className="font-semibold">{Math?.round((subtotal - discountAmount) * (Number.parseInt(charge?.percentage)) / 100).toLocaleString('en-IN')}</span>
+                    </div>
+                ))}
             </div>
 
             {/* Total */}
@@ -153,16 +170,15 @@ const PaymentSummaryCard = ({ cartItems, subtotal, tax, total, discountAmount, d
                 {!promoApplied ? (
                     <div className="flex gap-2">
                         <input
-                            type="text"
-                            value={promoCode}
+                            type="text" value={promoCode}
                             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                             placeholder="Enter code"
                             className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5252] focus:border-transparent text-sm uppercase"
                         />
                         <button
-                            onClick={handleApplyPromo}
-                            className="px-5 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-semibold"
-                        >
+                            onClick={handleApplyPromo} disabled={!promoCode.trim()}
+                            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer
+                            ${promoCode.trim() ? "bg-slate-900 text-white hover:bg-slate-800" : "bg-slate-400 text-white cursor-not-allowed"}`}>
                             Apply
                         </button>
                     </div>
@@ -176,14 +192,18 @@ const PaymentSummaryCard = ({ cartItems, subtotal, tax, total, discountAmount, d
                         </div>
                         <button
                             onClick={handleRemovePromo}
-                            className="text-green-700 hover:text-green-900 transition-colors"
+                            className="text-green-700 hover:text-green-900 transition-colors cursor-pointer"
                         >
                             <X className="w-5 h-5" />
                         </button>
                     </div>
                 )}
                 <p className="text-xs text-slate-500 mt-2">
-                    Try: SAVE10, WELCOME20, STUDENT15
+                    Try: {
+                        promoCodes?.map((code, index) => (
+                            <span key={index}>{code?.name}{promoCodes?.length > index + 1 ? ',' : ''} </span>
+                        ))
+                    }
                 </p>
             </div>
         </div>

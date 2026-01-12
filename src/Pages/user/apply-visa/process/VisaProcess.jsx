@@ -16,8 +16,8 @@ const VisaProcess = () => {
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
 
   const { country_id } = useParams();
-
   const countryId = decodeBase64Url(country_id);
+
   useEffect(() => {
     dispatch(checkLoggedInUser())
       .then(res => {

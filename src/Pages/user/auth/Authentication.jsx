@@ -115,6 +115,7 @@ const AuthForm = () => {
         is_verified: "pending",
         is_blocked: false,
         last_sign_in_at: null,
+        has_purchase_course: false,
         role: "user"
       };
 

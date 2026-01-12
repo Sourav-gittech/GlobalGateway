@@ -1,48 +1,66 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BookOpen, CheckCircle, ShoppingCart, ArrowLeft, Award, Calendar, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addCartItem, fetchCartItems, getOrCreateCart } from '../../../../Redux/Slice/cartSlice';
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import hotToast from '../../../../util/alert/hot-toast';
+import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
 
 const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+
+    useEffect(() => {
+        dispatch(checkLoggedInUser())
+            .then(res => {
+                // console.log('Response for fetching user profile', res);
+            })
+            .catch((err) => {
+                console.log("Error occurred", err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            });
+    }, [dispatch]);
 
     const addToCart = (course) => {
-        if (!course) return;
+        
+        if (!userAuthData) {
+            navigate('/authentication');
+        } else {
+            if (!course) return;
 
-        dispatch(getOrCreateCart(userId))
-            .then(res => {
-                // console.log('Response for getting cart details for specific user', res);
+            dispatch(getOrCreateCart(userId))
+                .then(res => {
+                    // console.log('Response for getting cart details for specific user', res);
 
-                dispatch(addCartItem({ cartId: res?.payload?.id, courseId: course?.id }))
-                    .then(res => {
-                        // console.log('Response for adding new product', res);
+                    dispatch(addCartItem({ cartId: res?.payload?.id, courseId: course?.id }))
+                        .then(res => {
+                            // console.log('Response for adding new product', res);
 
-                        if (res.meta.requestStatus === "fulfilled") {
-                            hotToast(`Course added to cart`, "success");
-                            setCartDrawer(true);
-                            dispatch(fetchCartItems(res?.payload?.cart_id))
-                        }
-                        else if (res?.payload == 'duplicate key value violates unique constraint "cart_items_cart_id_course_id_key"') {
-                            hotToast(`Course already added in cart`, "info", <Info className='text-orange-400' />);
-                        }
-                        else {
-                            getSweetAlert("Error", "Update failed", "error");
-                        }
-                    })
-                    .catch(err => {
-                        console.log('Error occured', err);
-                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
-                    })
-            })
-            .catch(err => {
-                console.log(err);
-                getSweetAlert('Oops...', 'Something went wrong!', 'error');
-            })
+                            if (res.meta.requestStatus === "fulfilled") {
+                                hotToast(`Course added to cart`, "success");
+                                setCartDrawer(true);
+                                dispatch(fetchCartItems(res?.payload?.cart_id))
+                            }
+                            else if (res?.payload == 'duplicate key value violates unique constraint "cart_items_cart_id_course_id_key"') {
+                                hotToast(`Course already added in cart`, "info", <Info className='text-orange-400' />);
+                            }
+                            else {
+                                getSweetAlert("Error", "Update failed", "error");
+                            }
+                        })
+                        .catch(err => {
+                            console.log('Error occured', err);
+                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                        })
+                })
+                .catch(err => {
+                    console.log(err);
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                })
+        }
     };
 
     return (
