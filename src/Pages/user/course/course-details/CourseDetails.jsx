@@ -13,7 +13,7 @@ import { fetchCartItems, getOrCreateCart } from '../../../../Redux/Slice/cartSli
 import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
 
 const CourseDetails = () => {
-  
+
   const { course_id } = useParams();
   const id = decodeBase64Url(course_id);
   const navigate = useNavigate();
@@ -69,6 +69,31 @@ const CourseDetails = () => {
       });
   }, [dispatch]);
 
+
+
+
+  // const uniqueCourses = useMemo(() => {
+  //   if (!purchasedCourses?.length) return [];
+
+  //   return [
+  //     ...new Map(
+  //       [...purchasedCourses]
+  //         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  //         .flatMap(order =>
+  //           order.order_items.map(item => [
+  //             item.course_id,
+  //             {
+  //               ...item.courses,
+  //               order_created_at: order.created_at,
+  //               purchase_date: order.purchase_date
+  //             }
+  //           ])
+  //         )
+  //     ).values()
+  //   ];
+  // }, [purchasedCourses]);
+
+  
   // console.log('current course details', course);
   // console.log('User data', userAuthData);
   // console.log('Available cart items', cartItems);

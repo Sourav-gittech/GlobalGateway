@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import PurchaseCourseCard from './course/PurchaseCourseCard';
 import NoAvailableCourse from './course/NoAvailableCourse';
 
@@ -41,8 +41,7 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
     }
   ];
 
-  const coursesToDisplay =
-    purchasedCourses.length > 0 ? purchasedCourses : mockPurchasedCourses;
+  const coursesToDisplay = purchasedCourses.length > 0 ? purchasedCourses : mockPurchasedCourses;
 
   // Initialize submitted ratings from course data
   React.useEffect(() => {
@@ -61,7 +60,7 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
     }
   };
 
-  if (coursesToDisplay.length === 0) {
+  if (purchasedCourses?.length === 0) {
     return (
       <NoAvailableCourse handleBrowseCourses={handleBrowseCourses} />
     );
@@ -88,7 +87,7 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate }) => {
 
       {/* Course Cards */}
       <div className="grid gap-6">
-        {coursesToDisplay.map(course => (
+        {purchasedCourses?.map(course => (
           <PurchaseCourseCard key={course.id} course={course} submittedRatings={submittedRatings} setSubmittedRatings={setSubmittedRatings} />
         ))}
       </div>

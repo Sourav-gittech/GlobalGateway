@@ -103,6 +103,7 @@ export const buildISOFormat = (date, time) => {
     return appointment.toISOString();
 };
 
+
 // seperate date and time and return with meridian
 export const getDateAndTimeFromISO = (isoString) => {
     const date = new Date(isoString);
@@ -118,6 +119,7 @@ export const getDateAndTimeFromISO = (isoString) => {
         selectedTime: `${displayHour}:${minutes} ${period}`,
     };
 };
+
 
 // Time → 12-hour format & Date → "Dec 20"
 export const formatAppointmentDateTime = (dateTimeString) => {
@@ -142,6 +144,7 @@ export const formatAppointmentDateTime = (dateTimeString) => {
     };
 };
 
+
 // Time → 12-hour format & Date → "Dec 20"
 export const formatAppointmentDateTimeWithYear = (dateTimeString) => {
     if (!dateTimeString) return { time: "", date: "" };
@@ -165,6 +168,7 @@ export const formatAppointmentDateTimeWithYear = (dateTimeString) => {
         date: formattedDate
     };
 };
+
 
 // "January 12, 2026, 09:34 PM" format
 export function formatTransactionDate(dateStr) {
@@ -191,3 +195,15 @@ export function formatTransactionDate(dateStr) {
         return "N/A";
     }
 }
+
+
+//  Jan 13, 2026
+export const formatDate = (date, options = { month: 'short', day: 'numeric', year: 'numeric' }) => {
+    if (!date) return "N/A";
+
+    const parsedDate = new Date(date);
+
+    if (isNaN(parsedDate)) return "Invalid date";
+
+    return parsedDate.toLocaleDateString('en-US', options);
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, CreditCard, FileText, Clock, CheckCircle, XCircle, AlertCircle, BookOpen } from 'lucide-react';
@@ -14,6 +14,7 @@ import { fetchUserTransactions } from '../../../Redux/Slice/transactionSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
 import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/getAvailableAppointmentForUser';
 import getSweetAlert from '../../../util/alert/sweetAlert';
+import { fetchUserOrders } from '../../../Redux/Slice/orderSlice';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -22,10 +23,9 @@ const Dashboard = () => {
   const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id);
   const { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true);
   const { isTransactionLoading, allTransactions: { all, visa, course } } = useSelector(state => state.transaction);
+  const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
 
-  // TODO: Replace with actual Redux selector when implemented
-  // const { purchasedCourses } = useSelector(state => state.courses);
-  const purchasedCourses = []; // Placeholder - will be populated from Redux/Supabase later
+  const purchasedCourses = [];
 
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -52,6 +52,40 @@ const Dashboard = () => {
         });
     }
   }, [dispatch, userAuthData]);
+
+  useEffect(() => {
+    if (userAuthData) {
+      dispatch(fetchUserOrders({ userId: userAuthData?.id, status: 'success' }))
+        .then(res => {
+          // console.log('Response for fetching all purchased courses', res);
+        })
+        .catch((err) => {
+          getSweetAlert('Oops...', 'Something went wrong!', 'error');
+          console.log("Error occurred", err);
+        });
+    }
+  }, [dispatch, userAuthData]);
+
+  const uniqueCourses = useMemo(() => {
+    if (!allOrders?.length) return [];
+
+    return [
+      ...new Map(
+        [...allOrders]
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .flatMap(order =>
+            order.order_items.map(item => [
+              item.course_id,
+              {
+                ...item.courses,
+                order_created_at: order.created_at,
+                purchase_date: order.purchase_date
+              }
+            ])
+          )
+      ).values()
+    ];
+  }, [allOrders]);
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -96,7 +130,7 @@ const Dashboard = () => {
     navigate(path);
   };
 
-  if (isuserLoading || isApplicationLoading) {
+  if (isuserLoading || isApplicationLoading || isOrderLoading) {
     return (
       <div className='flex flex-col h-screen items-center justify-center bg-black'>
         <div className="w-18 h-18 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -116,7 +150,7 @@ const Dashboard = () => {
       {/* Stats Cards */}
       <StatsCard
         visaApplications={Array.isArray(application) ? application : []}
-        appointments={appointment}
+        appointments={appointment} uniqueCourses={uniqueCourses}
       />
 
       {/* Tabs */}
@@ -134,8 +168,8 @@ const Dashboard = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === tab.id
-                      ? 'border-red-600 text-red-700'
-                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                    ? 'border-red-600 text-red-700'
+                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
                     }`}
                 >
                   <tab.icon className="w-4 h-4" />
@@ -172,7 +206,7 @@ const Dashboard = () => {
 
             {activeTab === 'courses' && (
               <PurchasedCoursesSection
-                purchasedCourses={purchasedCourses}
+                purchasedCourses={uniqueCourses}
                 getStatusColor={getStatusColor}
                 getStatusIcon={getStatusIcon}
                 onNavigate={handleNavigate}

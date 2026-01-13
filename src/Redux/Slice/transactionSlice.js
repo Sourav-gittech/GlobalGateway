@@ -19,111 +19,24 @@ export const saveTransaction = createAsyncThunk("transactionSlice/saveTransactio
   }
 );
 
-// export const fetchUserTransactions = createAsyncThunk(
-//     "transactionSlice/fetchUserTransactions",
-//     async (userId, { rejectWithValue }) => {
 
-//         try {
-//             // for visa 
-//             const { data: applications, error: appErr } = await supabase.from("applications").select("id, country_id").eq("user_id", userId);
-
-//             if (appErr) throw appErr;
-
-//             const appIds = applications.map(a => a.id);
-
-//             let visaTxns = [];
-
-//             if (appIds.length) {
-//                 const { data: payments, error: payErr } = await supabase.from("application_payment").select("*").in("application_id", appIds).order("created_at", { ascending: false });
-
-//                 if (payErr) throw payErr;
-
-//                 const txnIds = payments.map(p => p.transaction_id);
-
-//                 const { data: txnDetails, error: txnErr } = await supabase.from("transaction_details").select("*").in("transaction_id", txnIds);
-
-//                 if (txnErr) throw txnErr;
-
-//                 visaTxns = payments.map(p => ({
-//                     ...p,
-//                     txn_for: "visa",
-//                     application: applications.find(a => a.id === p.application_id) || null,
-//                     transaction_details:
-//                         txnDetails.find(t => t.transaction_id === p.transaction_id) || null
-//                 }));
-//             }
-
-//             // for course 
-//             const { data: orders, error: orderErr } = await supabase.from("orders").select("*").eq("user_id", userId).order("created_at", { ascending: false });
-
-//             if (orderErr) throw orderErr;
-
-//             const orderTxnIds = orders.map(o => o.transaction_id);
-
-//             const { data: courseTxnDetails, error: courseTxnErr } = await supabase.from("transaction_details").select("*").in("transaction_id", orderTxnIds);
-
-//             if (courseTxnErr) throw courseTxnErr;
-
-//             const { data: orderItems, error: itemsErr } = await supabase.from("order_items").select("order_id, course_id");
-
-//             if (itemsErr) throw itemsErr;
-
-//             const courseIds = orderItems.map(i => i.course_id);
-
-//             const { data: courses, error: courseErr } = await supabase.from("courses").select("id, course_name").in("id", courseIds);
-
-//             if (courseErr) throw courseErr;
-
-//             const courseTxns = orders.map(order => ({
-//                 ...order,
-//                 txn_for: "course",
-//                 courses: orderItems
-//                     .filter(i => i.order_id === order.id)
-//                     .map(i => courses.find(c => c.id === i.course_id)),
-//                 transaction_details:
-//                     courseTxnDetails.find(t => t.transaction_id === order.transaction_id) || null
-//             }));
-
-//             // Merge everything manually
-//             return [...visaTxns, ...courseTxns].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-//         } catch (err) {
-//             return rejectWithValue(err.message);
-//         }
-//     }
-// );
-
-
-
-
-
-
-export const fetchUserTransactions = createAsyncThunk(
-  "transactionSlice/fetchUserTransactions",
+export const fetchUserTransactions = createAsyncThunk("transactionSlice/fetchUserTransactions",
   async (userId, { rejectWithValue }) => {
     try {
-      // ------------------- VISA TRANSACTIONS -------------------
-      const { data: applications, error: appErr } = await supabase
-        .from("applications")
-        .select("id, country_id")
-        .eq("user_id", userId);
+      // visa transaction 
+      const { data: applications, error: appErr } = await supabase.from("applications").select("id, country_id").eq("user_id", userId);
       if (appErr) throw appErr;
 
       const appIds = applications.map(a => a.id);
       let visaTxns = [];
+
       if (appIds.length) {
-        const { data: payments, error: payErr } = await supabase
-          .from("application_payment")
-          .select("*")
-          .in("application_id", appIds)
-          .order("created_at", { ascending: false });
+        const { data: payments, error: payErr } = await supabase.from("application_payment").select("*").in("application_id", appIds).order("created_at", { ascending: false });
 
         if (payErr) throw payErr;
 
         const txnIds = payments.map(p => p.transaction_id);
-        const { data: txnDetails, error: txnErr } = await supabase
-          .from("transaction_details")
-          .select("*")
-          .in("transaction_id", txnIds);
+        const { data: txnDetails, error: txnErr } = await supabase.from("transaction_details").select("*").in("transaction_id", txnIds);
 
         if (txnErr) throw txnErr;
 
@@ -136,47 +49,27 @@ export const fetchUserTransactions = createAsyncThunk(
         }));
       }
 
-      // ------------------- COURSE TRANSACTIONS -------------------
-      // ------------------- COURSE TRANSACTIONS -------------------
-      // 1. Fetch all orders for this user
-      const { data: orders, error: orderErr } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
+      // course transaction 
+      const { data: orders, error: orderErr } = await supabase.from("orders").select("*").eq("user_id", userId).order("created_at", { ascending: false });
 
       if (orderErr) throw orderErr;
 
-      // 2. Get all transaction_ids from orders
       const orderTxnIds = orders.map(o => o.transaction_id);
 
-      // 3. Fetch transaction_details for these orders
-      const { data: courseTxnDetails, error: courseTxnErr } = await supabase
-        .from("transaction_details")
-        .select("*")
-        .in("transaction_id", orderTxnIds);
+      const { data: courseTxnDetails, error: courseTxnErr } = await supabase.from("transaction_details").select("*").in("transaction_id", orderTxnIds);
 
       if (courseTxnErr) throw courseTxnErr;
 
-      // 4. Fetch order items
       const orderIds = orders.map(o => o.id);
-      const { data: orderItems, error: itemsErr } = await supabase
-        .from("order_items")
-        .select("*")
-        .in("order_id", orderIds);
+      const { data: orderItems, error: itemsErr } = await supabase.from("order_items").select("*").in("order_id", orderIds);
 
       if (itemsErr) throw itemsErr;
 
-      // 5. Fetch course info
       const courseIds = orderItems.map(i => i.course_id);
-      const { data: courses, error: courseErr } = await supabase
-        .from("courses")
-        .select("id, course_name")
-        .in("id", courseIds);
+      const { data: courses, error: courseErr } = await supabase.from("courses").select("id, course_name").in("id", courseIds);
 
       if (courseErr) throw courseErr;
 
-      // 6. Merge
       const courseTxns = orders.map(order => ({
         ...order,
         txn_for: "course",
@@ -186,11 +79,7 @@ export const fetchUserTransactions = createAsyncThunk(
         transaction_details: courseTxnDetails.find(t => t.transaction_id === order.transaction_id) || null
       }));
 
-
-      // ------------------- MERGE AND SORT -------------------
-      return [...visaTxns, ...courseTxns].sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
-      );
+      return [...visaTxns, ...courseTxns].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     } catch (err) {
       return rejectWithValue(err.message);
     }

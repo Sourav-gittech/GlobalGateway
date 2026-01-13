@@ -98,7 +98,6 @@ export default function PaymentStatus() {
 
     const user_notification_obj = {
         application_id: null,
-        title: "Course purchased successfully",
         receiver_type: 'user',
         user_id: personalInfoData?.id,
         receiver_country_id: null,
@@ -109,7 +108,6 @@ export default function PaymentStatus() {
         orderData: {
             user_id: personalInfoData?.id,
             transaction_id: paymentDetails?.transaction_id,
-            // status: "success",
             amount: total,
             currency: 'Rupee',
             provider: 'Paypal',
@@ -235,7 +233,7 @@ export default function PaymentStatus() {
 
                                                                     if (res.meta.requestStatus === "fulfilled") {
 
-                                                                        dispatch(addNotification(user_notification_obj))
+                                                                        dispatch(addNotification({ ...user_notification_obj, title: "Course purchased successfully" }))
                                                                             .then(res => {
                                                                                 // console.log('Response after adding notification', res);
 
@@ -362,15 +360,30 @@ export default function PaymentStatus() {
                             }
                         }))
                             .then(res => {
-                                // console.log('Response for adding order', res);
+                                // console.log('Response for adding order status', res);
 
                                 if (res.meta.requestStatus === "fulfilled") {
-                                    setIsCancelled(true);
-                                    setIsLottieTransitioning(true);
-                                    setTimeout(() => {
-                                        setPaymentStage('failed');
-                                        setIsLottieTransitioning(false);
-                                    }, 1200);
+
+                                    dispatch(addNotification({ ...user_notification_obj, title: "Payment failed. Try to purchase course again..." }))
+                                        .then(res => {
+                                            // console.log('Response after adding notification', res);
+
+                                            if (res.meta.requestStatus === "fulfilled") {
+                                                setIsCancelled(true);
+                                                setIsLottieTransitioning(true);
+                                                setTimeout(() => {
+                                                    setPaymentStage('failed');
+                                                    setIsLottieTransitioning(false);
+                                                }, 1200);
+                                            }
+                                            else {
+                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('Error occured', err);
+                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                        })
                                 }
                                 else {
                                     getSweetAlert('Oops...', 'Something went wrong!', 'error');
