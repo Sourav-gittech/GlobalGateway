@@ -1,11 +1,11 @@
 import React from 'react'
 import { Calendar, CreditCard, FileText, Info } from 'lucide-react';
 
-const StatsCard = ({ visaApplications, payments, appointments }) => {
+const StatsCard = ({ visaApplications, appointments }) => {
 
     const stats = [
         { label: 'Total Applications', value: visaApplications.length, icon: FileText, color: 'bg-red-600' },
-        { label: 'Pending Applications', value: payments.filter(p => p.status === 'pending').length, icon: Info, color: 'bg-amber-600' },
+        { label: 'Pending Applications', value: visaApplications.filter(p => p.status === 'pending').length, icon: Info, color: 'bg-amber-600' },
         { label: 'Appointments', value: appointments.filter(a => a.status === 'processing').length, icon: Calendar, color: 'bg-violet-600' },
         { label: 'Puchase Course', value: '0', icon: CreditCard, color: 'bg-emerald-600' }
     ];

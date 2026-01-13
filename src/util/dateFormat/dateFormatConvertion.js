@@ -165,3 +165,29 @@ export const formatAppointmentDateTimeWithYear = (dateTimeString) => {
         date: formattedDate
     };
 };
+
+// "January 12, 2026, 09:34 PM" format
+export function formatTransactionDate(dateStr) {
+    if (!dateStr) return "N/A";
+
+    let parsedDate;
+    try {
+        if (dateStr.includes(" at")) {
+            parsedDate = new Date(dateStr.replace(" at", ""));
+        } else {
+            parsedDate = new Date(dateStr);
+        }
+
+        if (isNaN(parsedDate)) return "N/A";
+
+        return parsedDate.toLocaleString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    } catch (err) {
+        return "N/A";
+    }
+}

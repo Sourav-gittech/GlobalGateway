@@ -10,7 +10,7 @@ import PaymentsSection from '../../../Components/user/dashboard/PaymentsSection'
 import AppointmentsSection from '../../../Components/user/dashboard/AppointmentsSection';
 import PurchasedCoursesSection from '../../../Components/user/dashboard/PurchasedCoursesSection';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
-import { fetchUserTransactionsWithApplications } from '../../../Redux/Slice/transactionSlice';
+import { fetchUserTransactions } from '../../../Redux/Slice/transactionSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
 import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/getAvailableAppointmentForUser';
 import getSweetAlert from '../../../util/alert/sweetAlert';
@@ -21,8 +21,8 @@ const Dashboard = () => {
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id);
   const { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true);
-  const { isTransactionLoading, transactions, hasTransactionError } = useSelector(state => state.transaction);
-  
+  const { isTransactionLoading, allTransactions: { all, visa, course } } = useSelector(state => state.transaction);
+
   // TODO: Replace with actual Redux selector when implemented
   // const { purchasedCourses } = useSelector(state => state.courses);
   const purchasedCourses = []; // Placeholder - will be populated from Redux/Supabase later
@@ -42,7 +42,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (userAuthData) {
-      dispatch(fetchUserTransactionsWithApplications(userAuthData?.id))
+      dispatch(fetchUserTransactions(userAuthData?.id))
         .then(res => {
           // console.log('Response for fetching all transaction', res);
         })
@@ -114,10 +114,9 @@ const Dashboard = () => {
       <ProfileCard userAuthData={userAuthData} />
 
       {/* Stats Cards */}
-      <StatsCard 
-        visaApplications={Array.isArray(application) ? application : []} 
-        payments={transactions} 
-        appointments={appointment} 
+      <StatsCard
+        visaApplications={Array.isArray(application) ? application : []}
+        appointments={appointment}
       />
 
       {/* Tabs */}
@@ -134,11 +133,10 @@ const Dashboard = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
-                    activeTab === tab.id
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${activeTab === tab.id
                       ? 'border-red-600 text-red-700'
                       : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                  }`}
+                    }`}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
@@ -149,33 +147,33 @@ const Dashboard = () => {
 
           <div className="p-6">
             {activeTab === 'overview' && (
-              <VisaApplicationsSection 
-                visaApplications={Array.isArray(application) ? application : []} 
-                getStatusColor={getStatusColor} 
-                getStatusIcon={getStatusIcon} 
+              <VisaApplicationsSection
+                visaApplications={Array.isArray(application) ? application : []}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
               />
             )}
 
             {activeTab === 'appointments' && (
-              <AppointmentsSection 
-                appointments={appointment} 
-                getStatusColor={getStatusColor} 
-                getStatusIcon={getStatusIcon} 
+              <AppointmentsSection
+                appointments={appointment}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
               />
             )}
 
             {activeTab === 'payments' && (
-              <PaymentsSection 
-                transactions={transactions} 
-                getStatusColor={getStatusColor} 
-                getStatusIcon={getStatusIcon} 
+              <PaymentsSection
+                transactions={all}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
               />
             )}
 
             {activeTab === 'courses' && (
-              <PurchasedCoursesSection 
+              <PurchasedCoursesSection
                 purchasedCourses={purchasedCourses}
-                getStatusColor={getStatusColor} 
+                getStatusColor={getStatusColor}
                 getStatusIcon={getStatusIcon}
                 onNavigate={handleNavigate}
               />

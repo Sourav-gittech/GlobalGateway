@@ -44,7 +44,7 @@ const EmptyCart = ({ navigateBack }) => {
 
             <button
                 onClick={()=>navigateBack()}
-                className="bg-gradient-to-r from-[#FF5252] to-[#E63946] text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transition-all transform hover:scale-105 inline-flex items-center gap-2"
+                className="bg-gradient-to-r from-[#FF5252] to-[#E63946] text-white px-8 py-4 rounded-xl font-semibold hover:shadow-xl transition-all transform hover:scale-105 inline-flex items-center gap-2 cursor-pointer"
             >
                 <Sparkles className="w-5 h-5" />
                 Explore Our Services

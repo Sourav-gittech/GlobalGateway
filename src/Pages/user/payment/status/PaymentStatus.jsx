@@ -109,7 +109,7 @@ export default function PaymentStatus() {
         orderData: {
             user_id: personalInfoData?.id,
             transaction_id: paymentDetails?.transaction_id,
-            status: "success",
+            // status: "success",
             amount: total,
             currency: 'Rupee',
             provider: 'Paypal',
@@ -212,7 +212,12 @@ export default function PaymentStatus() {
                                         })
                                 }
                                 else {
-                                    dispatch(addOrder(orderObj))
+                                    dispatch(addOrder({
+                                        ...orderObj, orderData: {
+                                            ...orderObj.orderData,
+                                            status: "success"
+                                        }
+                                    }))
                                         .then(res => {
                                             // console.log('Response after adding order details', res);
 
@@ -350,12 +355,31 @@ export default function PaymentStatus() {
                             })
                     }
                     else {
-                        setIsCancelled(true);
-                        setIsLottieTransitioning(true);
-                        setTimeout(() => {
-                            setPaymentStage('failed');
-                            setIsLottieTransitioning(false);
-                        }, 1200);
+                        dispatch(addOrder({
+                            ...orderObj, orderData: {
+                                ...orderObj.orderData,
+                                status: "failed"
+                            }
+                        }))
+                            .then(res => {
+                                // console.log('Response for adding order', res);
+
+                                if (res.meta.requestStatus === "fulfilled") {
+                                    setIsCancelled(true);
+                                    setIsLottieTransitioning(true);
+                                    setTimeout(() => {
+                                        setPaymentStage('failed');
+                                        setIsLottieTransitioning(false);
+                                    }, 1200);
+                                }
+                                else {
+                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                }
+                            })
+                            .catch(err => {
+                                console.log('Error occured', err);
+                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                            })
                     }
                 }
                 else {
