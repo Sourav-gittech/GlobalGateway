@@ -51,7 +51,7 @@ const EmbassyAuth = () => {
 
     if (isSignup) {
       auth_obj = {
-        country_name: data.country.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
+        country_name: data?.country?.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "),
         country_id: null,
         email: data.email,
         password: data.password,
