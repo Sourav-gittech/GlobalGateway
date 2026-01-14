@@ -10,56 +10,62 @@ export const handleDownloadCertificate = async (userAuthData, course, certificat
 
     let printContainer = null;
     try {
+        // Create a fixed-size container for capturing
         printContainer = document.createElement('div');
-        printContainer.id = 'pdf-gen-container';
-        // Position it off-screen effectively
+        printContainer.id = 'certificate-capture-container';
         printContainer.style.position = 'fixed';
-        printContainer.style.left = '-2000px';
+        printContainer.style.left = '-9999px'; // Off-screen
         printContainer.style.top = '0';
-        printContainer.style.width = '1056px'; // Landscape A4 at 96 DPI
-        printContainer.style.background = 'white';
+        printContainer.style.width = '1056px'; // Exact width of the certificate
+        printContainer.style.height = '816px'; // Exact height of the certificate
+        printContainer.style.zIndex = '-9999';
+        printContainer.style.background = '#ffffff';
         document.body.appendChild(printContainer);
 
         const { createRoot } = await import('react-dom/client');
         const root = createRoot(printContainer);
 
+        // Render the Certificate exactly as it should look
         root.render(
-            <div style={{ width: '1056px', backgroundColor: 'white', padding: '0', margin: '0' }}>
+            <div style={{ width: '1056px', height: '816px', padding: 0, margin: 0, backgroundColor: '#ffffff' }}>
                 <CourseCertificate
                     userAuthData={userAuthData}
                     course={course}
                     certificateData={certificateData}
+                    ref={null}
                 />
             </div>
         );
 
-        // Wait significantly for rendering and any images/fonts
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for rendering (fonts, icons, styles)
+        await new Promise(resolve => setTimeout(resolve, 2500));
 
         const canvas = await html2canvas(printContainer, {
-            scale: 3, // Very high quality
+            scale: 4, // High Resolution (approx 300 DPI)
             useCORS: true,
             allowTaint: true,
             backgroundColor: '#ffffff',
-            logging: false,
             width: 1056,
             height: 816,
+            scrollX: 0,
+            scrollY: 0,
+            logging: true,
             onclone: (clonedDoc) => {
-                // Final check to handle any remaining oklab in clone
-                const elements = clonedDoc.getElementsByTagName('*');
-                for (let i = 0; i < elements.length; i++) {
-                    const style = window.getComputedStyle(elements[i]);
-                    if (style.color.includes('oklch') || style.backgroundColor.includes('oklch')) {
-                        // Safe fallback for parsing errors
-                        elements[i].style.color = 'black';
-                    }
+                const element = clonedDoc.getElementById('certificate-capture-container');
+                if (element) {
+                    element.style.display = 'block'; // Ensure it's not hidden in clone
                 }
             }
         });
 
-        console.log('Direct download canvas ready');
+        console.log('Canvas captured successfully');
 
         const imgData = canvas.toDataURL('image/png', 1.0);
+
+        // A4 Landscape is 297mm x 210mm. 
+        // 1px = 1/96 inch. 
+        // 1056px / 96 = 11 inches. 816px / 96 = 8.5 inches. (Letter size actually, close to A4).
+        // Let's use exact pixel mapping for best results.
         const pdf = new jsPDF({
             orientation: 'landscape',
             unit: 'px',
@@ -71,14 +77,22 @@ export const handleDownloadCertificate = async (userAuthData, course, certificat
         pdf.save(fileName);
 
         // Cleanup
-        root.unmount();
-        document.body.removeChild(printContainer);
+        setTimeout(() => {
+            root.unmount();
+            if (document.body.contains(printContainer)) {
+                document.body.removeChild(printContainer);
+            }
+        }, 100);
+
         toast.success('Certificate downloaded successfully!', { id: toastId });
     } catch (error) {
         console.error('Direct PDF download failed:', error);
-        if (printContainer && printContainer.parentNode) {
+
+        // Cleanup on error
+        if (printContainer && document.body.contains(printContainer)) {
             document.body.removeChild(printContainer);
         }
-        toast.error('Failed to generate PDF. Please try again.', { id: toastId });
+
+        toast.error(`Failed to generate PDF: ${error.message}`, { id: toastId });
     }
 };

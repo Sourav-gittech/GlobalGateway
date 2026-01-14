@@ -1,271 +1,232 @@
 import React, { forwardRef } from 'react';
-import { Award, CheckCircle, Calendar, ShieldCheck, Globe, Star } from 'lucide-react';
+import { Award, CheckCircle, Calendar, ShieldCheck, Star } from 'lucide-react';
+import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import { formatDateDDMMYYYY } from '../../../../util/dateFormat/dateFormatConvertion';
 
 const CourseCertificate = forwardRef(({ userAuthData, course, certificateData }, ref) => {
-    const fullName = `${userAuthData?.first_name || ''} ${userAuthData?.last_name || ''}`.trim() || userAuthData?.name || 'N/A';
-    const completionDate = certificateData?.certificate_reg_date
-        ? formatDateDDMMYYYY(certificateData.certificate_reg_date)
-        : formatDateDDMMYYYY(new Date());
+  const fullName = `${userAuthData?.first_name || ''} ${userAuthData?.last_name || ''}`.trim() || userAuthData?.name || 'N/A';
+  const completionDate = certificateData?.certificate_reg_date
+    ? formatDateDDMMYYYY(certificateData.certificate_reg_date)
+    : formatDateDDMMYYYY(new Date());
 
-    return (
-        <div className="w-full h-auto flex items-center justify-center p-0">
-            <div
-                ref={ref}
-                className="bg-white text-gray-900 relative overflow-hidden w-full max-w-[1056px] shadow-2xl"
-                style={{
-                    fontFamily: 'Georgia, serif',
-                    lineHeight: '1.6',
-                    aspectRatio: '1056/816',
-                    background: 'linear-gradient(to bottom right, #ffffff, rgba(239, 246, 255, 0.3), #ffffff)',
-                    border: '1px solid #e2e8f0'
-                }}
-            >
-                {/* Outer Decorative Border - Gold */}
-                <div className="absolute inset-0 border-[20px] border-double pointer-events-none"
-                    style={{ borderColor: '#B8860B' }}></div>
+  return (
+    <div style={{ width: '100%', height: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0' }}>
+      <div
+        ref={ref}
+        style={{
+          fontFamily: 'Georgia, serif',
+          lineHeight: '1.4',
+          width: '1056px',
+          height: '816px',
+          background: 'linear-gradient(to bottom right, #ffffff, rgba(239, 246, 255, 0.3), #ffffff)',
+          border: '1px solid #e2e8f0',
+          boxSizing: 'border-box',
+          backgroundColor: '#ffffff',
+          color: '#111827', // gray-900 equivalent
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' // shadow-2xl equivalent
+        }}
+      >
+        {/* Outer Decorative Border - Gold */}
+        <div style={{ position: 'absolute', inset: '0', borderWidth: '20px', borderStyle: 'double', borderColor: '#B8860B', pointerEvents: 'none' }}></div>
 
-                {/* Inner Premium Border - Navy */}
-                <div className="absolute inset-[28px] border-2 border-blue-950 pointer-events-none"
-                    style={{ borderColor: '#172554' }}></div>
+        {/* Inner Premium Border - Navy */}
+        <div style={{ position: 'absolute', inset: '24px', borderWidth: '2px', borderStyle: 'solid', borderColor: '#172554', pointerEvents: 'none' }}></div>
 
-                {/* Accent Border - Gold */}
-                <div className="absolute inset-[36px] border pointer-events-none"
-                    style={{ borderColor: 'rgba(202, 138, 4, 0.4)' }}></div>
+        {/* Accent Border - Gold */}
+        <div style={{ position: 'absolute', inset: '30px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'rgba(202, 138, 4, 0.4)', pointerEvents: 'none' }}></div>
 
-                {/* Corner Ornaments - Elegant Gold */}
-                <div className="absolute top-[36px] left-[36px] w-16 h-16">
-                    <div className="absolute top-0 left-0 w-full h-0.5" style={{ background: 'linear-gradient(to right, #ca8a04, transparent)' }}></div>
-                    <div className="absolute top-0 left-0 h-full w-0.5" style={{ background: 'linear-gradient(to bottom, #ca8a04, transparent)' }}></div>
-                    <Star className="absolute top-0 left-0 w-4 h-4 text-yellow-600 fill-yellow-600" style={{ color: '#ca8a04' }} />
-                </div>
-                <div className="absolute top-[36px] right-[36px] w-16 h-16">
-                    <div className="absolute top-0 right-0 w-full h-0.5" style={{ background: 'linear-gradient(to left, #ca8a04, transparent)' }}></div>
-                    <div className="absolute top-0 right-0 h-full w-0.5" style={{ background: 'linear-gradient(to bottom, #ca8a04, transparent)' }}></div>
-                    <Star className="absolute top-0 right-0 w-4 h-4 text-yellow-600 fill-yellow-600" style={{ color: '#ca8a04' }} />
-                </div>
-                <div className="absolute bottom-[36px] left-[36px] w-16 h-16">
-                    <div className="absolute bottom-0 left-0 w-full h-0.5" style={{ background: 'linear-gradient(to right, #ca8a04, transparent)' }}></div>
-                    <div className="absolute bottom-0 left-0 h-full w-0.5" style={{ background: 'linear-gradient(to top, #ca8a04, transparent)' }}></div>
-                    <Star className="absolute bottom-0 left-0 w-4 h-4 text-yellow-600 fill-yellow-600" style={{ color: '#ca8a04' }} />
-                </div>
-                <div className="absolute bottom-[36px] right-[36px] w-16 h-16">
-                    <div className="absolute bottom-0 right-0 w-full h-0.5" style={{ background: 'linear-gradient(to left, #ca8a04, transparent)' }}></div>
-                    <div className="absolute bottom-0 right-0 h-full w-0.5" style={{ background: 'linear-gradient(to top, #ca8a04, transparent)' }}></div>
-                    <Star className="absolute bottom-0 right-0 w-4 h-4 text-yellow-600 fill-yellow-600" style={{ color: '#ca8a04' }} />
-                </div>
-
-                {/* Subtle Background Watermark */}
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center" style={{ opacity: 0.015 }}>
-                    <Globe className="w-[650px] h-[650px] text-blue-950" style={{ color: '#172554' }} />
-                </div>
-
-                {/* Decorative Pattern Overlay */}
-                <div className="absolute inset-0 pointer-events-none"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle at 2px 2px, #1e3a8a 1px, transparent 0)',
-                        backgroundSize: '40px 40px',
-                        opacity: 0.02
-                    }}></div>
-
-                {/* Content Container */}
-                <div className="relative p-16 h-full flex flex-col justify-between">
-
-                    {/* Header Section */}
-                    <div className="text-center">
-                        {/* Premium Logo & Emblem */}
-                        <div className="flex justify-center items-center gap-4 mb-7">
-                            <div className="relative">
-                                <div className="w-24 h-24 border-4 border-yellow-600 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 shadow-xl relative"
-                                    style={{ borderColor: '#ca8a04', background: 'linear-gradient(to bottom right, #172554, #1e3a8a, #172554)' }}>
-                                    <Globe className="w-12 h-12 text-yellow-500" strokeWidth={2.5} style={{ color: '#eab308' }} />
-                                    <div className="absolute inset-0 rounded-full border-2 m-1" style={{ borderColor: 'rgba(250, 204, 21, 0.3)' }}></div>
-                                </div>
-                                {/* Laurel Accent */}
-                                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
-                                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full" style={{ backgroundColor: '#ca8a04' }}></div>
-                                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full" style={{ backgroundColor: '#ca8a04' }}></div>
-                                    <div className="w-1.5 h-1.5 bg-yellow-600 rounded-full" style={{ backgroundColor: '#ca8a04' }}></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mb-5">
-                            <h1 className="text-2xl font-bold text-blue-950 uppercase tracking-[0.3em] mb-2" style={{ fontFamily: 'Palatino, serif', color: '#172554' }}>
-                                Global Gateway
-                            </h1>
-                            <p className="text-xs text-yellow-700 uppercase tracking-[0.5em] font-semibold" style={{ color: '#a16207' }}>
-                                International Services
-                            </p>
-                        </div>
-
-                        {/* Elegant Divider */}
-                        <div className="flex items-center justify-center gap-3 mb-5">
-                            <div className="w-16 h-px" style={{ background: 'linear-gradient(to right, transparent, #ca8a04)' }}></div>
-                            <div className="w-2 h-2 bg-yellow-600 rounded-full" style={{ backgroundColor: '#ca8a04' }}></div>
-                            <div className="w-16 h-px" style={{ background: 'linear-gradient(to left, transparent, #ca8a04)' }}></div>
-                        </div>
-
-                        <h2 className="text-5xl font-serif font-bold text-blue-950 mb-2 uppercase tracking-[0.25em]" style={{ fontFamily: 'Palatino, serif', color: '#172554' }}>
-                            Certificate
-                        </h2>
-                        <p className="text-xl font-light text-gray-600 uppercase tracking-[0.4em] mb-4" style={{ color: '#4b5563' }}>
-                            of Completion
-                        </p>
-
-                        {/* Premium Underline */}
-                        <div className="flex justify-center items-center gap-2">
-                            <div className="w-24 h-px" style={{ background: 'linear-gradient(to right, transparent, #ca8a04)' }}></div>
-                            <Award className="w-4 h-4 text-yellow-600" style={{ color: '#ca8a04' }} />
-                            <div className="w-24 h-px" style={{ background: 'linear-gradient(to left, transparent, #ca8a04)' }}></div>
-                        </div>
-                    </div>
-
-                    {/* Certificate Content */}
-                    <div className="text-center flex-1 flex flex-col justify-center py-10">
-                        <p className="text-2xl text-gray-600 mb-6" style={{ fontFamily: 'Palatino, serif', fontStyle: 'italic', color: '#4b5563' }}>
-                            This certifies that
-                        </p>
-
-                        <div className="mb-8">
-                            <h3 className="text-5xl font-bold text-blue-950 mb-3 capitalize" style={{ fontFamily: 'Palatino, serif', color: '#172554' }}>
-                                {fullName}
-                            </h3>
-                            <div className="flex justify-center items-center gap-3 mt-3">
-                                <div className="w-20 h-px" style={{ background: 'linear-gradient(to right, transparent, #9ca3af)' }}></div>
-                                <div className="w-1 h-1 bg-gray-400 rounded-full" style={{ backgroundColor: '#9ca3af' }}></div>
-                                <div className="w-20 h-px" style={{ background: 'linear-gradient(to left, transparent, #9ca3af)' }}></div>
-                            </div>
-                        </div>
-
-                        <p className="text-2xl text-gray-600 mb-8" style={{ fontFamily: 'Palatino, serif', fontStyle: 'italic', color: '#4b5563' }}>
-                            has successfully completed
-                        </p>
-
-                        <div className="py-6 px-8 mb-8 border-t border-b"
-                            style={{
-                                background: 'linear-gradient(to right, rgba(23, 37, 84, 0.05), rgba(30, 58, 138, 0.1), rgba(23, 37, 84, 0.05))',
-                                borderColor: 'rgba(202, 138, 4, 0.2)'
-                            }}>
-                            <h4 className="text-4xl font-bold text-blue-900 uppercase tracking-wider leading-relaxed" style={{ fontFamily: 'Palatino, serif', color: '#1e3a8a' }}>
-                                {course?.course_name || 'N/A'}
-                            </h4>
-                        </div>
-
-                        <p className="text-lg text-gray-700 max-w-2xl mx-auto px-4 leading-relaxed" style={{ fontFamily: 'Palatino, serif', color: '#374151' }}>
-                            demonstrating exceptional commitment and proficiency in all course modules,
-                            assessments, and practical requirements established by Global Gateway International
-                        </p>
-                    </div>
-
-                    {/* Verification Details - Premium Layout */}
-                    <div className="py-8 mb-8" style={{ background: 'linear-gradient(to right, transparent, rgba(23, 37, 84, 0.05), transparent)' }}>
-                        <div className="grid grid-cols-2 gap-12 max-w-4xl mx-auto px-4">
-                            <div className="text-left flex items-start gap-4">
-                                <div className="p-3 rounded-lg shadow-lg flex-shrink-0" style={{ background: 'linear-gradient(to bottom right, #172554, #1e3a8a)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                                    <Calendar className="w-6 h-6 text-yellow-400" strokeWidth={2} style={{ color: '#facc15' }} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-xs uppercase text-yellow-700 font-bold tracking-[0.2em] mb-1" style={{ color: '#a16207' }}>
-                                        Completion Date
-                                    </p>
-                                    <p className="text-xl font-bold text-blue-950 truncate" style={{ fontFamily: 'Palatino, serif', color: '#172554' }}>
-                                        {completionDate}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="text-right flex items-start justify-end gap-4">
-                                <div className="text-right min-w-0">
-                                    <p className="text-xs uppercase text-yellow-700 font-bold tracking-[0.2em] mb-1" style={{ color: '#a16207' }}>
-                                        Certificate ID
-                                    </p>
-                                    <p className="text-xl font-bold text-blue-950 font-mono truncate" style={{ color: '#172554' }}>
-                                        GG-{certificateData?.id?.substring(0, 8).toUpperCase() || 'OFFICIAL'}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-lg shadow-lg flex-shrink-0" style={{ background: 'linear-gradient(to bottom right, #172554, #1e3a8a)', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                                    <ShieldCheck className="w-6 h-6 text-yellow-400" strokeWidth={2} style={{ color: '#facc15' }} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Premium Accreditation Badges */}
-                    <div className="flex flex-wrap justify-center gap-4 mb-10">
-                        <div className="flex items-center gap-2 px-5 py-2 rounded-full border shadow-sm" style={{ background: 'linear-gradient(to right, #ecfdf5, #f0fdf4)', borderColor: '#a7f3d0' }}>
-                            <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" strokeWidth={2.5} style={{ color: '#059669' }} />
-                            <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider whitespace-nowrap" style={{ color: '#065f46' }}>
-                                Verified Curriculum
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 px-5 py-2 rounded-full border shadow-sm" style={{ background: 'linear-gradient(to right, #eff6ff, #eef2ff)', borderColor: '#bfdbfe' }}>
-                            <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" strokeWidth={2.5} style={{ color: '#2563eb' }} />
-                            <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wider whitespace-nowrap" style={{ color: '#1e40af' }}>
-                                Global Recognition
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Signature Section - Premium */}
-                    <div className="grid grid-cols-3 gap-8 items-end border-t pt-8" style={{ borderTopColor: 'rgba(202, 138, 4, 0.2)' }}>
-                        <div className="text-center">
-                            <div className="h-20 flex items-center justify-center mb-3">
-                                <p className="text-3xl text-blue-900 pointer-events-none select-none" style={{ fontFamily: 'Brush Script MT, cursive', color: '#1e3a8a' }}>
-                                    Global Gateway
-                                </p>
-                            </div>
-                            <div className="border-t-2 border-gray-300 pt-2" style={{ borderTopColor: '#d1d5db' }}>
-                                <p className="text-[10px] font-bold uppercase text-gray-700 tracking-wider" style={{ color: '#374151' }}>
-                                    Training Director
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-center">
-                            <div className="relative">
-                                <div className="w-28 h-28 border-4 border-yellow-600 rounded-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 shadow-xl"
-                                    style={{ borderColor: '#ca8a04', background: 'linear-gradient(to bottom right, #172554, #1e3a8a, #172554)' }}>
-                                    <div className="text-xs font-bold text-yellow-400 leading-tight tracking-wider" style={{ color: '#facc15' }}>GG</div>
-                                    <ShieldCheck className="w-8 h-8 text-yellow-400 my-1" strokeWidth={2.5} style={{ color: '#facc15' }} />
-                                    <div className="text-[8px] font-bold text-yellow-400 uppercase tracking-wide" style={{ color: '#facc15' }}>Certified</div>
-                                </div>
-                                {/* Seal Accent */}
-                                <div className="absolute inset-0 rounded-full border-2 m-1" style={{ borderColor: 'rgba(250, 204, 21, 0.3)' }}></div>
-                            </div>
-                        </div>
-
-                        <div className="text-center">
-                            <div className="h-20 flex items-center justify-center mb-3">
-                                <p className="text-3xl text-blue-900 pointer-events-none select-none" style={{ fontFamily: 'Brush Script MT, cursive', color: '#1e3a8a' }}>
-                                    Consular Services
-                                </p>
-                            </div>
-                            <div className="border-t-2 border-gray-300 pt-2" style={{ borderTopColor: '#d1d5db' }}>
-                                <p className="text-[10px] font-bold uppercase text-gray-700 tracking-wider" style={{ color: '#374151' }}>
-                                    Authorized Signature
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Premium Footer */}
-                    <div className="mt-14 text-center">
-                        <div className="flex items-center justify-center gap-2 mb-2">
-                            <div className="w-20 h-px" style={{ background: 'linear-gradient(to right, transparent, #d1d5db)' }}></div>
-                            <div className="w-1 h-1 bg-gray-400 rounded-full" style={{ backgroundColor: '#9ca3af' }}></div>
-                            <div className="w-20 h-px" style={{ background: 'linear-gradient(to left, transparent, #d1d5db)' }}></div>
-                        </div>
-                        <p className="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-light" style={{ color: '#6b7280' }}>
-                            Global Gateway International
-                        </p>
-                        <p className="text-[9px] text-gray-400 uppercase tracking-[0.25em] font-light mt-0.5" style={{ color: '#9ca3af' }}>
-                            Professional Visa & Immigration Services
-                        </p>
-                    </div>
-                </div>
-            </div>
+        {/* Corner Ornaments */}
+        <div style={{ position: 'absolute', top: '30px', left: '30px', width: '48px', height: '48px' }}>
+          <Star style={{ position: 'absolute', top: '0', left: '0', width: '16px', height: '16px', color: '#ca8a04', fill: '#ca8a04' }} />
         </div>
-    );
+        <div style={{ position: 'absolute', top: '30px', right: '30px', width: '48px', height: '48px' }}>
+          <Star style={{ position: 'absolute', top: '0', right: '0', width: '16px', height: '16px', color: '#ca8a04', fill: '#ca8a04' }} />
+        </div>
+        <div style={{ position: 'absolute', bottom: '30px', left: '30px', width: '48px', height: '48px' }}>
+          <Star style={{ position: 'absolute', bottom: '0', left: '0', width: '16px', height: '16px', color: '#ca8a04', fill: '#ca8a04' }} />
+        </div>
+        <div style={{ position: 'absolute', bottom: '30px', right: '30px', width: '48px', height: '48px' }}>
+          <Star style={{ position: 'absolute', bottom: '0', right: '0', width: '16px', height: '16px', color: '#ca8a04', fill: '#ca8a04' }} />
+        </div>
+
+        {/* Subtle Background Watermark */}
+        <div style={{ position: 'absolute', inset: '0', pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: '0.015' }}>
+          <FlightTakeoffIcon style={{ fontSize: '600px', color: '#172554' }} />
+        </div>
+
+        {/* Content Container */}
+        <div style={{ position: 'relative', paddingLeft: '48px', paddingRight: '48px', paddingTop: '40px', paddingBottom: '40px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+
+          {/* Header Section */}
+          <div style={{ textAlign: 'center', marginTop: '8px' }}>
+            {/* Premium Logo & Emblem */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  width: '64px', height: '64px', border: '2px solid #ca8a04', borderRadius: '9999px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: 'linear-gradient(to bottom right, #172554, #1e3a8a, #172554)',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', position: 'relative'
+                }}>
+                  <FlightTakeoffIcon style={{ fontSize: '32px', color: '#eab308' }} />
+                  <div style={{ position: 'absolute', inset: '0', borderRadius: '9999px', border: '1px solid rgba(250, 204, 21, 0.3)', margin: '2px' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '8px' }}>
+              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#172554', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '4px', fontFamily: 'Palatino, serif' }}>
+                Global Gateway
+              </h1>
+              <p style={{ fontSize: '12px', color: '#a16207', textTransform: 'uppercase', letterSpacing: '0.3em', fontWeight: '600' }}>
+                Your Gateway to Global Opportunities
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
+              <div style={{ width: '48px', height: '1px', background: 'linear-gradient(to right, transparent, #ca8a04)' }}></div>
+              <div style={{ width: '6px', height: '6px', backgroundColor: '#ca8a04', borderRadius: '9999px' }}></div>
+              <div style={{ width: '48px', height: '1px', background: 'linear-gradient(to left, transparent, #ca8a04)' }}></div>
+            </div>
+
+            <h2 style={{ fontSize: '36px', fontFamily: 'Palatino, serif', fontWeight: 'bold', color: '#172554', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+              Certificate
+            </h2>
+            <p style={{ fontSize: '18px', fontWeight: '300', color: '#4b5563', textTransform: 'uppercase', letterSpacing: '0.3em', marginBottom: '12px' }}>
+              of Completion
+            </p>
+          </div>
+
+          {/* Certificate Content */}
+          <div style={{ textAlign: 'center', flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '8px', paddingBottom: '8px' }}>
+            <p style={{ fontSize: '20px', color: '#4b5563', marginBottom: '8px', fontFamily: 'Palatino, serif', fontStyle: 'italic' }}>
+              This certifies that
+            </p>
+
+            <div style={{ marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '36px', fontWeight: 'bold', color: '#172554', marginBottom: '8px', textTransform: 'capitalize', fontFamily: 'Palatino, serif' }}>
+                {fullName}
+              </h3>
+              <div style={{ width: '192px', height: '1px', margin: '0 auto', backgroundColor: '#d1d5db' }}></div>
+            </div>
+
+            <p style={{ fontSize: '20px', color: '#4b5563', marginBottom: '16px', fontFamily: 'Palatino, serif', fontStyle: 'italic' }}>
+              has successfully completed
+            </p>
+
+            {/* Course Name Box */}
+            <div style={{
+              paddingTop: '16px', paddingBottom: '16px', paddingLeft: '24px', paddingRight: '24px', marginBottom: '16px',
+              borderTop: '1px solid rgba(202, 138, 4, 0.2)', borderBottom: '1px solid rgba(202, 138, 4, 0.2)',
+              margin: '0 auto', maxWidth: '896px',
+              background: 'linear-gradient(to right, rgba(23, 37, 84, 0.05), rgba(30, 58, 138, 0.1), rgba(23, 37, 84, 0.05))'
+            }}>
+              <h4 style={{ fontSize: '30px', fontWeight: 'bold', color: '#1e3a8a', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: '1.25', fontFamily: 'Palatino, serif' }}>
+                {course?.course_name || 'N/A'}
+              </h4>
+            </div>
+
+            <p style={{ fontSize: '16px', color: '#374151', maxWidth: '672px', margin: '0 auto', paddingLeft: '16px', paddingRight: '16px', lineHeight: '1.625', fontFamily: 'Palatino, serif' }}>
+              demonstrating exceptional commitment and proficiency in all course modules,
+              assessments, and practical requirements established by Global Gateway International.
+            </p>
+          </div>
+
+          {/* Verification Details */}
+          <div style={{ paddingTop: '16px', paddingBottom: '16px', marginBottom: '16px', background: 'linear-gradient(to right, transparent, rgba(23, 37, 84, 0.05), transparent)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '32px', maxWidth: '896px', margin: '0 auto', paddingLeft: '16px', paddingRight: '16px' }}>
+              <div style={{ textAlign: 'left', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <div style={{ padding: '8px', borderRadius: '8px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', flexShrink: '0', background: 'linear-gradient(to bottom right, #172554, #1e3a8a)' }}>
+                  <Calendar style={{ width: '20px', height: '20px', color: '#facc15' }} strokeWidth={2} />
+                </div>
+                <div style={{ minWidth: '0' }}>
+                  <p style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a16207', fontWeight: 'bold', letterSpacing: '0.1em', marginBottom: '2px' }}>
+                    Completion Date
+                  </p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#172554', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'Palatino, serif' }}>
+                    {completionDate}
+                  </p>
+                </div>
+              </div>
+              <div style={{ textAlign: 'right', display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-end', gap: '12px' }}>
+                <div style={{ textAlign: 'right', minWidth: '0' }}>
+                  <p style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a16207', fontWeight: 'bold', letterSpacing: '0.1em', marginBottom: '2px' }}>
+                    Certificate ID
+                  </p>
+                  <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#172554', fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    GG-{certificateData?.id?.substring(0, 8).toUpperCase() || 'OFFICIAL'}
+                  </p>
+                </div>
+                <div style={{ padding: '8px', borderRadius: '8px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', flexShrink: '0', background: 'linear-gradient(to bottom right, #172554, #1e3a8a)' }}>
+                  <ShieldCheck style={{ width: '20px', height: '20px', color: '#facc15' }} strokeWidth={2} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Signature Section */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px', alignItems: 'end', borderTop: '1px solid rgba(202, 138, 4, 0.2)', paddingTop: '16px', position: 'relative' }}>
+
+            {/* Stamp Image */}
+            <div style={{ position: 'absolute', top: '-60px', right: '18%', opacity: '0.9', transform: 'rotate(-10deg)', pointerEvents: 'none' }}>
+              <img src="/Stamp3.png" alt="Official Stamp" style={{ width: '128px', height: '128px', objectFit: 'contain' }} />
+            </div>
+
+            <div style={{ textAlign: 'center', zIndex: '10' }}>
+              <div style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '4px' }}>
+                <p style={{ fontSize: '24px', color: '#1e3a8a', pointerEvents: 'none', userSelect: 'none', fontFamily: 'Brush Script MT, cursive' }}>
+                  Global Gateway
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid #d1d5db', paddingTop: '4px' }}>
+                <p style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: '#374151', letterSpacing: '0.05em' }}>
+                  Training Director
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', zIndex: '10' }}>
+              <div style={{ position: 'relative', bottom: '16px' }}>
+                <div style={{
+                  width: '80px', height: '80px', border: '2px solid #ca8a04', borderRadius: '9999px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  background: 'linear-gradient(to bottom right, #172554, #1e3a8a, #172554)',
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                }}>
+                  <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#facc15', lineHeight: '1.25', letterSpacing: '0.05em' }}>GG</div>
+                  <ShieldCheck style={{ width: '24px', height: '24px', color: '#facc15', marginTop: '2px', marginBottom: '2px' }} strokeWidth={2.5} />
+                  <div style={{ fontSize: '6px', fontWeight: 'bold', color: '#facc15', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Certified</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'center', zIndex: '10' }}>
+              <div style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '4px' }}>
+                <p style={{ fontSize: '24px', color: '#1e3a8a', pointerEvents: 'none', userSelect: 'none', fontFamily: 'Brush Script MT, cursive' }}>
+                  Consular Services
+                </p>
+              </div>
+              <div style={{ borderTop: '1px solid #d1d5db', paddingTop: '4px' }}>
+                <p style={{ fontSize: '9px', fontWeight: 'bold', textTransform: 'uppercase', color: '#374151', letterSpacing: '0.05em' }}>
+                  Authorized Signature
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ marginTop: '16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '9px', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.2em', fontWeight: '300' }}>
+              Global Gateway International • Professional Visa & Immigration Services
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 });
 
 CourseCertificate.displayName = 'CourseCertificate';
