@@ -6,7 +6,7 @@ import InstructorSection from './course-content/InstructorSection';
 import VideoSection from './course-content/VideoSection';
 import CourseFeatures from './CourseFeatures';
 
-const CourseContent = ({ isPurchased, course, activeTab, setActiveTab, ratingAvg, userCount }) => {
+const CourseContent = ({ isPurchased, course, activeTab, setActiveTab, ratingAvg, userCount, certificates, userAuthData }) => {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
@@ -45,7 +45,7 @@ const CourseContent = ({ isPurchased, course, activeTab, setActiveTab, ratingAvg
                                     <VideoSection isPurchased={isPurchased} course={course} />
 
                                     {/* Documents Section */}
-                                    <DocumentSection isPurchased={isPurchased} course={course} />
+                                    <DocumentSection isPurchased={isPurchased} course={course} certificates={certificates} userAuthData={userAuthData} />
                                 </div>
                             )}
 

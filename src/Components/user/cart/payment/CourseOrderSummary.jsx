@@ -21,7 +21,6 @@ const CourseOrderSummary = ({ subtotal, total, discountAmount, discount, allChar
                         />
                     </div>
 
-
                     <div className="-ml-10">
                         <p className="text-sm text-gray-400">Secure Payment by </p>
                         <h3 className="text-lg font-bold italic ">PayPal</h3>

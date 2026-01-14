@@ -1,6 +1,8 @@
 import React from 'react'
 
 const CourseDetails = ({ course }) => {
+    console.log(course);
+    
     return (
         <div className="text-xs p-2 rounded bg-slate-700/30">
             <div className="flex justify-between items-center mb-1">

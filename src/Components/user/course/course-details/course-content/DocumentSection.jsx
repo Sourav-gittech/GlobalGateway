@@ -1,10 +1,13 @@
 import React from 'react'
 import { FileText, Lock, Download, FileIcon, Info } from 'lucide-react';
 import hotToast from '../../../../../util/alert/hot-toast';
+import { useDispatch } from 'react-redux';
+import { handleCertificateProgress } from '../../../../../Redux/Slice/certificateSlice';
 
-const DocumentSection = ({ isPurchased, course }) => {
+const DocumentSection = ({ isPurchased, course, certificates, userAuthData }) => {
+    const dispatch = useDispatch();
 
-    const handleDocumentDownload = (doc) => {
+    const handleDocumentDownload = async (doc) => {
         if (!doc?.isFree && !isPurchased) {
             hotToast('Please purchase the course to download this document', "info", <Info className='text-orange-600' />);
             return;
@@ -15,6 +18,14 @@ const DocumentSection = ({ isPurchased, course }) => {
             return;
         }
 
+        // Update certificate progress before opening the doc
+        const totalDocs = course?.course_content?.[0]?.documents?.length || 0;
+        await dispatch(handleCertificateProgress(userAuthData?.id, course.id, doc.name, totalDocs))
+        .then(res => {
+            // console.log('Response in documentation', res)
+        })
+
+        // Open document
         window.open(doc.file_url, '_blank', 'noopener,noreferrer');
     };
 

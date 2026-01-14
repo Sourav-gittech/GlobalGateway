@@ -15,6 +15,7 @@ import { fetchUserOrders } from '../../../../Redux/Slice/orderSlice';
 import { useCourseAvgRating } from '../../../../tanstack/query/getCourseAvgRating';
 import { useCourseWiseRatingCount } from '../../../../tanstack/query/getCourseWiseRatingCount';
 import { useUsersByCourse } from '../../../../tanstack/query/getUserByCourse';
+import { fetchUserCertificates } from '../../../../Redux/Slice/certificateSlice';
 
 const CourseDetails = () => {
 
@@ -31,6 +32,8 @@ const CourseDetails = () => {
   const { isCourseLoading, currentCourse: course, hasCourseError } = useSelector(state => state?.course);
   const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state?.cart);
   const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
+  const { isCertificateLoading, certificates, hasCertificateError } = useSelector(state => state.certificate);
+
   const { loading: ratingAvgLoading, data: ratingAvg, error: hasRatingAvgError } = useCourseAvgRating(id);
   const { loading: ratingCountLoading, data: ratingCount, error: hasRatingCountError } = useCourseWiseRatingCount(id);
   const { loading: userCountLoading, data: userCount, error: hasuserCountError } = useUsersByCourse({ courseId: id, status: 'success' });
@@ -90,6 +93,21 @@ const CourseDetails = () => {
         });
     }
   }, [dispatch, userAuthData]);
+  // console.log(userAuthData,id);
+
+  useEffect(() => {
+    if (!userAuthData?.id || !id) return;
+
+    dispatch(fetchUserCertificates({ userId: userAuthData?.id, course_id: id }))
+      .then(res => {
+        // console.log('Response for fetching all purchased courses certificate details', res);
+      })
+      .catch((err) => {
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+        console.log("Error occurred", err);
+      });
+
+  }, [dispatch, userAuthData?.id, id]);
 
   const uniqueCourses = useMemo(() => {
     if (!allOrders?.length) return [];
@@ -120,7 +138,7 @@ const CourseDetails = () => {
   // console.log('User data', userAuthData);
   // console.log('Available cart items', cartItems);
 
-  if (isCourseLoading) {
+  if (isCourseLoading || isCertificateLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -150,7 +168,7 @@ const CourseDetails = () => {
         </div>
 
         {/* Course Content */}
-        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab} ratingAvg={ratingAvg} userCount={userCount} />
+        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab} ratingAvg={ratingAvg} userCount={userCount} certificates={certificates} userAuthData={userAuthData} />
       </div>
 
       {/* Cart Drawer */}

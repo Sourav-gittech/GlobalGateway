@@ -23,6 +23,7 @@ import cartSliceReducer from '../Slice/cartSlice';
 import promocodeSliceReducer from '../Slice/promocodeSlice';
 import ordersSliceReducer from '../Slice/orderSlice';
 import courseRatingsSliceReducer from '../Slice/courseRatingsSlice';
+import certificateSliceReducer from '../Slice/certificateSlice';
 
 export const store = configureStore({
   reducer: {
@@ -48,7 +49,8 @@ export const store = configureStore({
     cart: cartSliceReducer,
     promocode: promocodeSliceReducer,
     orders: ordersSliceReducer,
-    ratings: courseRatingsSliceReducer
+    ratings: courseRatingsSliceReducer,
+    certificate: certificateSliceReducer
   }
 });
 

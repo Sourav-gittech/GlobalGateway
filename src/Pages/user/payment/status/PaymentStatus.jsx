@@ -16,6 +16,7 @@ import { decodeBase64Url } from "../../../../util/encodeDecode/base64";
 import { addOrder } from "../../../../Redux/Slice/orderSlice";
 import { deleteCart } from "../../../../Redux/Slice/cartSlice";
 import { updateCoursePurchaseStatus } from "../../../../Redux/Slice/userSlice";
+import { addCertificate } from "../../../../Redux/Slice/certificateSlice";
 
 const LottieAnimation = ({ animationData, isSuccess }) => {
     if (!animationData) return null;
@@ -236,31 +237,47 @@ export default function PaymentStatus() {
 
                                             if (res.meta.requestStatus === "fulfilled") {
 
-                                                dispatch(deleteCart(cartId))
+                                                dispatch(addCertificate({ userId: personalInfoData?.id, courses: orderObj?.items }))
                                                     .then(res => {
-                                                        // console.log('Response after deleting cart', res);
+                                                        console.log('Response after adding certificate details', res);
 
                                                         if (res.meta.requestStatus === "fulfilled") {
 
-                                                            dispatch(updateCoursePurchaseStatus({ id: personalInfoData?.id }))
+                                                            dispatch(deleteCart(cartId))
                                                                 .then(res => {
-                                                                    // console.log('Response after updating user data', res);
+                                                                    // console.log('Response after deleting cart', res);
 
                                                                     if (res.meta.requestStatus === "fulfilled") {
 
-                                                                        dispatch(addNotification({ ...user_notification_obj, title: "Course purchased successfully" }))
+                                                                        dispatch(updateCoursePurchaseStatus({ id: personalInfoData?.id }))
                                                                             .then(res => {
-                                                                                // console.log('Response after adding notification', res);
+                                                                                // console.log('Response after updating user data', res);
 
                                                                                 if (res.meta.requestStatus === "fulfilled") {
 
-                                                                                    setIsLottieTransitioning(true);
-                                                                                    setTimeout(() => {
-                                                                                        setPaymentStage('success');
-                                                                                        setIsLottieTransitioning(false);
-                                                                                        setShowConfetti(true);
-                                                                                        setTimeout(() => setShowConfetti(false), 4000);
-                                                                                    }, 3000);
+                                                                                    dispatch(addNotification({ ...user_notification_obj, title: "Course purchased successfully" }))
+                                                                                        .then(res => {
+                                                                                            // console.log('Response after adding notification', res);
+
+                                                                                            if (res.meta.requestStatus === "fulfilled") {
+
+                                                                                                setIsLottieTransitioning(true);
+                                                                                                setTimeout(() => {
+                                                                                                    setPaymentStage('success');
+                                                                                                    setIsLottieTransitioning(false);
+                                                                                                    setShowConfetti(true);
+                                                                                                    setTimeout(() => setShowConfetti(false), 4000);
+                                                                                                }, 3000);
+                                                                                            }
+                                                                                            else {
+                                                                                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                                            }
+                                                                                        })
+                                                                                        .catch(err => {
+                                                                                            console.log('Error occured', err);
+                                                                                            handleCancelPayment();
+                                                                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                                        })
                                                                                 }
                                                                                 else {
                                                                                     getSweetAlert('Oops...', 'Something went wrong!', 'error');

@@ -24,7 +24,7 @@ export function VisaTypeChart() {
     const values = Object.values(data || {});
 
     const generateColors = (count) => {
-        const colors = [
+        const colors = ["#5B8FF9", "#FF9F40", "#5AD8A6", "#F6BD16", "#9270CA", "#FF6B6B", "#36CFC9",
             "rgba(59,130,246,0.8)",
             "rgba(16,185,129,0.8)",
             "rgba(245,158,11,0.8)",
