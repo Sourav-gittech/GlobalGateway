@@ -94,8 +94,8 @@ export default function CourseManagement() {
     setMode(course?.status == 'active' ? 'Draft' : 'Active');
   };
 
-  const handleViewCourse = ({ course, avgRating, ratingCount, userCount }) => {
-    setViewCourse({ ...course, avgRating, ratingCount, userCount });
+  const handleViewCourse = ({ course, avgRating, ratingCount, userCount, allCharges, total }) => {
+    setViewCourse({ ...course, avgRating, ratingCount, userCount, allCharges, total });
     setIsDetailsOpen(true);
   };
 
