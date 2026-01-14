@@ -1,14 +1,37 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Edit2, Trash2, Eye, CircleOff, CircleCheckBig, Users, Video, Star, Section } from 'lucide-react';
 import { useCourseAvgRating } from '../../../tanstack/query/getCourseAvgRating';
 import { useUsersByCourse } from '../../../tanstack/query/getUserByCourse';
 import { useCourseWiseRatingCount } from '../../../tanstack/query/getCourseWiseRatingCount';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCharges } from '../../../Redux/Slice/chargesSlice';
+import getSweetAlert from '../../../util/alert/sweetAlert';
 
 const CourseCard = ({ course, onEdit, onDelete, onView, onShow }) => {
+
+    const dispatch = useDispatch();
 
     const { loading: ratingAvgLoading, data: avgRating, error: hasRatingAvgError } = useCourseAvgRating(course?.id);
     const { loading: ratingCountLoading, data: ratingCount, error: hasRatingCountError } = useCourseWiseRatingCount(course?.id);
     const { loading: userCountLoading, data: userCount, error: hasuserCountError } = useUsersByCourse({ courseId: course?.id, status: 'success' });
+    const { isChargesLoading, allCharges, hasChargesError } = useSelector(state => state?.charge);
+
+    let tax = 0;
+    allCharges?.course?.forEach(charge => {
+        tax += Math?.round((Number(course?.pricing)) * (Number.parseInt(charge?.percentage)) / 100);
+    })
+    const total = Number(course?.pricing) + tax;
+
+    useEffect(() => {
+        dispatch(fetchCharges({ type: 'course', status: true }))
+            .then(res => {
+                // console.log('Response for fetching all charges for course', res);
+            })
+            .catch(err => {
+                console.log('Error occured', err);
+                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+            })
+    }, []);
 
     return (
         <div className="group relative bg-slate-800/30 border border-slate-700/50 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
@@ -70,20 +93,20 @@ const CourseCard = ({ course, onEdit, onDelete, onView, onShow }) => {
                         Edit
                     </button>
                     <button
-                        onClick={() => onView({ course, avgRating, ratingCount, userCount })}
-                    className="flex-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                        onClick={() => onView({ course, avgRating, ratingCount, userCount, allCharges, total })}
+                        className="flex-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-700 border border-slate-600/50 text-slate-300 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1 cursor-pointer"
                     >
-                    <Eye className="w-4 h-4" />
-                    View
-                </button>
-                <button
-                    onClick={() => onDelete(course)}
-                    className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
+                        <Eye className="w-4 h-4" />
+                        View
+                    </button>
+                    <button
+                        onClick={() => onDelete(course)}
+                        className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
-        </div>
         </div >
     );
 }

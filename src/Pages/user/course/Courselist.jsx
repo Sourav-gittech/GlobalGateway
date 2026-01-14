@@ -35,8 +35,8 @@ const CourseList = () => {
 
           {isCourseLoading ? (
             <div className="text-center py-12">
-              <Loader2 className="w-16 h-16 text-white animate-spin mx-auto text-center" />
-              <p className="text-slate-400 text-lg">Loading...</p>
+              <Loader2 className="w-16 h-16 text-red-500 animate-spin mx-auto text-center" />
+              <p className="text-black text-lg">Loading...</p>
             </div>
           ) : courseList?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">

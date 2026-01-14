@@ -1,14 +1,37 @@
-import React, { useState } from 'react'
-import { Calendar, FileText, BookOpen, ChevronDown, ChevronUp, ShieldX, ShieldCheck, ShieldAlert } from "lucide-react";
+import React, { useMemo, useState } from 'react'
+import { Calendar, FileText, BookOpen, ChevronDown, ChevronUp, ShieldX, ShieldCheck, ShieldAlert, Loader2 } from "lucide-react";
 import StatusBadge from './userDetails/UserStatusBadge';
 import ApplicationDetails from './userDetails/user-card/ApplicationDetails';
 import CourseDetails from './userDetails/user-card/CourseDetails';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
+import { useUserOrders } from '../../../tanstack/query/getUserPurchasedCourse';
 
 const UserCard = ({ user, onBlock }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(user?.id);
-    // console.log("Received user",user);
+    const { data: allOrders, isLoading: isCourseLoading, isError: isCourseError, error: hasCourseError } = useUserOrders({ userId: user?.id, status: 'success' });
+
+    const uniqueCourses = useMemo(() => {
+        if (!Array.isArray(allOrders) || allOrders.length === 0) return [];
+
+        return [
+            ...new Map(
+                allOrders.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .flatMap(order => {
+                        if (!Array.isArray(order.order_items)) return [];
+
+                        return order.order_items.filter(item => item?.course_id && item?.courses).map(item => [
+                            item.course_id,
+                            {
+                                ...item.courses,
+                                order_created_at: order.created_at,
+                                purchase_date: order.purchase_date,
+                            },
+                        ]);
+                    })
+            ).values(),
+        ];
+    }, [allOrders]);
 
     return (
         <div className="p-4 border-b border-slate-700/50 hover:bg-slate-700/20 transition-colors">
@@ -63,12 +86,14 @@ const UserCard = ({ user, onBlock }) => {
             {isExpanded && (
                 <div className="space-y-3 mb-3">
                     {/* Visa Applications */}
-                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 max-h-[250px] overflow-y-auto">
                         <div className="flex items-center gap-2 mb-2">
                             <FileText className="w-4 h-4 text-blue-400" />
                             <h4 className="text-sm font-semibold text-white">Visa Applications</h4>
                         </div>
-                        {application?.length > 0 ? (
+                        {isApplicationLoading ? (
+                            <Loader2 className="w-6 h-6 ml-2 text-white animate-spin inline mx-auto" />
+                        ) : application?.length > 0 ? (
                             <div className="space-y-2">
                                 {application.map((visa, idx) => (
                                     <ApplicationDetails key={idx} visa={visa} />
@@ -80,15 +105,17 @@ const UserCard = ({ user, onBlock }) => {
                     </div>
 
                     {/* Course Purchases */}
-                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 max-h-[250px] overflow-y-auto">
                         <div className="flex items-center gap-2 mb-2">
                             <BookOpen className="w-4 h-4 text-green-400" />
                             <h4 className="text-sm font-semibold text-white">Course Purchases</h4>
                         </div>
-                        {user?.coursePurchases?.length > 0 ? (
+                        {isCourseLoading ? (
+                            <Loader2 className="w-6 h-6 ml-2 text-white animate-spin inline" />
+                        ) : uniqueCourses?.length > 0 ? (
                             <div className="space-y-2">
-                                {user.coursePurchases.map((course, idx) => (
-                                    <CourseDetails key={idx} course={course} />
+                                {uniqueCourses?.map((course, idx) => (
+                                    <CourseDetails key={idx} course={course} user={user} />
                                 ))}
                             </div>
                         ) : (

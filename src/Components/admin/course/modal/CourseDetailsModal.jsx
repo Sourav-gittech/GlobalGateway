@@ -134,32 +134,19 @@ const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
               <div className="p-4 bg-slate-700/30 border border-slate-600/50 rounded-lg space-y-3">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-slate-300">
-                    <span>Base Price:</span>
-                    <span className="font-medium">₹{parseFloat(course.pricing || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                    <span>Base Price :</span>
+                    <span className="font-medium">₹{parseFloat(course?.pricing || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                   </div>
 
-                  {/* <div className="flex justify-between text-slate-300">
-                    <span>CGST ({course.pricing.cgst || 0}%):</span>
-                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.cgst || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                  </div>
-
-                  <div className="flex justify-between text-slate-300">
-                    <span>SGST ({course.pricing.sgst || 0}%):</span>
-                    <span className="font-medium">₹{(parseFloat(course.pricing.basePrice || 0) * ((course.pricing.sgst || 0) / 100)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                  </div>
-
-                  {course.pricing.additionalCharges && course.pricing.additionalCharges.length > 0 && (
+                  {course?.allCharges && course?.allCharges?.course?.length > 0 && (
                     <>
                       <div className="border-t border-slate-600/50 my-2"></div>
-                      {course.pricing.additionalCharges.map((charge, index) => (
+                      {course?.allCharges?.course?.map((charge, index) => (
                         <div key={index}>
                           <div className="flex justify-between text-slate-300">
-                            <span>{charge.name}:</span>
-                            <span className="font-medium">₹{parseFloat(charge.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                            <span>{charge?.charge_type ?? 'N/A'} ({charge?.percentage ?? 'N/A'}%) :</span>
+                            <span className="font-medium">₹{Math?.round(course?.pricing * (Number.parseInt(charge?.percentage)) / 100).toFixed(2)}</span>
                           </div>
-                          {charge.description && (
-                            <p className="text-xs text-slate-500 mt-1">{charge.description}</p>
-                          )}
                         </div>
                       ))}
                     </>
@@ -168,9 +155,9 @@ const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
                   <div className="border-t border-slate-600/50 my-2"></div>
 
                   <div className="flex justify-between text-white text-base font-bold">
-                    <span>Total Price:</span>
-                    <span className="text-green-400">₹{parseInt(course.price).toLocaleString('en-IN')}</span>
-                  </div> */}
+                    <span>Total Price :</span>
+                    <span className="text-green-400">₹{parseInt(course?.total).toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
             </div>
