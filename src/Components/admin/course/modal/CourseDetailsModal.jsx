@@ -53,9 +53,9 @@ const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
             <div className="p-4 bg-slate-700/30 border border-slate-600/50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-slate-400">Students</span>
+                <span className="text-xs text-slate-400">Buyer</span>
               </div>
-              <p className="text-lg font-bold text-white">{course?.students}</p>
+              <p className="text-lg font-bold text-white">{course?.userCount?.length ?? 0}</p>
             </div>
 
             <div className="p-4 bg-slate-700/30 border border-slate-600/50 rounded-lg">
@@ -63,29 +63,29 @@ const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                 <span className="text-xs text-slate-400">Rating</span>
               </div>
-              <p className="text-lg font-bold text-white">{course?.rating} ({course?.reviews})</p>
+              <p className="text-lg font-bold text-white">{course?.avgRating ?? 0}/5 ({course?.ratingCount ?? 0} review{Number(course?.ratingCount) > 1 ? 's' : ''})</p>
             </div>
           </div>
 
           {/* Full Description */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-3">About This Course</h3>
-            <p className="text-slate-300 leading-relaxed">{course?.full_description}</p>
+            <p className="text-slate-300 leading-relaxed">{course?.full_description ?? 'N/A'}</p>
           </div>
 
           {/* Course Details */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">Skill Level</h4>
-              <p className="text-white">{course?.skill_level}</p>
+              <p className="text-white">{course?.skill_level ?? 'N/A'}</p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">Language</h4>
-              <p className="text-white">{course?.language}</p>
+              <p className="text-white">{course?.language ?? 'N/A'}</p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">Lectures</h4>
-              <p className="text-white">{course?.course_content?.[0]?.documents?.length + 1} lectures</p>
+              <p className="text-white">{(course?.course_content?.[0]?.documents?.length + 1) ?? 0} lectures</p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-slate-400 mb-2">Status</h4>
@@ -106,8 +106,8 @@ const CourseDetailsModal = ({ isOpen, onClose, course, iconOptions }) => {
                 <Award className="w-6 h-6 text-blue-400" />
               </div>
               <div>
-                <p className="text-white font-semibold">{course?.instructor?.name}</p>
-                <p className="text-sm text-slate-400">{course?.instructor?.bio}</p>
+                <p className="text-white font-semibold">{course?.instructor?.name ?? 'N/A'}</p>
+                <p className="text-sm text-slate-400">{course?.instructor?.bio ?? 'N/A'}</p>
               </div>
             </div>
           </div>

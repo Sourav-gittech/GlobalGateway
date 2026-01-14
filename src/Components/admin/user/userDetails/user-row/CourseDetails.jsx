@@ -1,6 +1,8 @@
 import React from 'react'
 
 const CourseDetails = ({user}) => {
+    console.log(user);
+    
     return (
         <div className="space-y-2">
             {user.coursePurchases.map((course, idx) => (

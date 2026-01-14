@@ -1,14 +1,21 @@
 import React from 'react'
-import { FileText, Lock, Download, FileIcon } from 'lucide-react';
+import { FileText, Lock, Download, FileIcon, Info } from 'lucide-react';
+import hotToast from '../../../../../util/alert/hot-toast';
 
 const DocumentSection = ({ isPurchased, course }) => {
 
     const handleDocumentDownload = (doc) => {
-        if (!doc.isFree && !isPurchased) {
-            alert('Please purchase the course to download this document');
+        if (!doc?.isFree && !isPurchased) {
+            hotToast('Please purchase the course to download this document', "info", <Info className='text-orange-600' />);
             return;
         }
-        alert(`Downloading: ${doc.name}`);
+
+        if (!doc?.file_url) {
+            hotToast('Document URL not found!', "error");
+            return;
+        }
+
+        window.open(doc.file_url, '_blank', 'noopener,noreferrer');
     };
 
     return (
@@ -51,7 +58,7 @@ const DocumentSection = ({ isPurchased, course }) => {
                             <button
                                 onClick={() => handleDocumentDownload(doc)}
                                 disabled={!doc.isFree && !isPurchased}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex-shrink-0 ${doc.isFree || isPurchased
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all flex-shrink-0 cursor-pointer ${doc.isFree || isPurchased
                                     ? 'bg-[#FF5252] hover:bg-[#E63946] text-white shadow-md hover:shadow-lg transform hover:scale-105'
                                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                     }`}

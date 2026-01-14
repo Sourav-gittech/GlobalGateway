@@ -1,7 +1,7 @@
 import React from 'react'
 import { Globe, Clock, Users, CheckCircle, Star, Video } from 'lucide-react';
 
-const CourseDetailsHeader = ({ isPurchased, course }) => {
+const CourseDetailsHeader = ({ isPurchased, course, ratingAvg, ratingCount, userCount }) => {
 
     return (
         <div className="lg:col-span-3 mt-20 space-y-6">
@@ -19,8 +19,8 @@ const CourseDetailsHeader = ({ isPurchased, course }) => {
                 </span>
                 <div className="flex items-center gap-1.5">
                     <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-bold text-lg">{course?.rating ?? 'N/A'}</span>
-                    <span className="text-white/70 text-sm">({course?.reviews ?? 'N/A'} reviews)</span>
+                    <span className="font-bold text-lg">{ratingAvg ?? '0'}/5</span>
+                    <span className="text-white/70 text-sm">({ratingCount ?? '0'} reviews)</span>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@ const CourseDetailsHeader = ({ isPurchased, course }) => {
                 </div>
                 <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-[#FF5252]" />
-                    <span className="text-base">{course?.students ?? 'N/A'} students</span>
+                    <span className="text-base">{userCount?.length ?? '0'} student{Number(userCount?.length) > 1 ? 's' : ''}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <Globe className="w-5 h-5 text-[#FF5252]" />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Plus, Search, FileText, Globe, School, Scale, Hand, Loader2 } from 'lucide-react';
-import CourseCard from '../../Components/admin/course/modal/CourseCard';
+import CourseCard from '../../Components/admin/course/CourseCard';
 import CourseFormModal from '../../Components/admin/course/modal/CourseFormModal';
 import CourseStats from '../../Components/admin/course/CourseStats';
 import CourseDetailsModal from '../../Components/admin/course/modal/CourseDetailsModal';
@@ -94,15 +94,15 @@ export default function CourseManagement() {
     setMode(course?.status == 'active' ? 'Draft' : 'Active');
   };
 
-  const handleViewCourse = (course) => {
-    setViewCourse(course);
+  const handleViewCourse = ({ course, avgRating, ratingCount, userCount }) => {
+    setViewCourse({ ...course, avgRating, ratingCount, userCount });
     setIsDetailsOpen(true);
   };
 
   const handleDeleteOrKeepCourse = () => {
     dispatch(deleteCourse(currentCourse?.id))
       .then(res => {
-        
+
         if (res.meta.requestStatus === "fulfilled") {
           // console.log('Response deleting course', res);
           dispatch(fetchAllCourses())

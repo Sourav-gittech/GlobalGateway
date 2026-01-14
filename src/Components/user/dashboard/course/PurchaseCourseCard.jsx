@@ -5,7 +5,7 @@ import { encodeBase64Url } from '../../../../util/encodeDecode/base64';
 import StarRating from './StarRating';
 import { formatDate } from '../../../../util/dateFormat/dateFormatConvertion';
 
-const PurchaseCourseCard = ({ course, submittedRatings, setSubmittedRatings }) => {
+const PurchaseCourseCard = ({ course, userId }) => {
 
     return (
         <div className="bg-white rounded-xl border border-slate-200 hover:border-red-300 hover:shadow-lg transition-all overflow-hidden group"
@@ -43,7 +43,7 @@ const PurchaseCourseCard = ({ course, submittedRatings, setSubmittedRatings }) =
 
                         {/* Star Rating */}
                         <div className="mb-4">
-                            <StarRating courseId={course?.id} submittedRatings={submittedRatings} setSubmittedRatings={setSubmittedRatings} />
+                            <StarRating courseId={course?.id} userId={userId} />
                         </div>
                     </div>
 

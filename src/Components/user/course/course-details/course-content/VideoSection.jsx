@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Lock, Play, Video } from 'lucide-react';
+import { Info, Lock, Play, Video } from 'lucide-react';
+import hotToast from '../../../../../util/alert/hot-toast';
 
 const VideoSection = ({ isPurchased, course }) => {
     const [showVideo, setShowVideo] = useState(false);
@@ -29,7 +30,7 @@ const VideoSection = ({ isPurchased, course }) => {
                                 if (course?.course_content?.[0]?.video?.isFree || isPurchased) {
                                     setShowVideo(true);
                                 } else {
-                                    alert('Please purchase the course to watch this video');
+                                    hotToast('Please purchase the course to watch this video', "info", <Info className='text-orange-600' />);
                                 }
                             }}
                         >

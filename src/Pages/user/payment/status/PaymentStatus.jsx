@@ -163,17 +163,32 @@ export default function PaymentStatus() {
 
                                                                     dispatch(addNotification(notification_obj))
                                                                         .then(res => {
-                                                                            console.log('Response for adding notification', res);
+                                                                            // console.log('Response for adding notification', res);
 
                                                                             if (res.meta.requestStatus === "fulfilled") {
 
-                                                                                setIsLottieTransitioning(true);
-                                                                                setTimeout(() => {
-                                                                                    setPaymentStage('success');
-                                                                                    setIsLottieTransitioning(false);
-                                                                                    setShowConfetti(true);
-                                                                                    setTimeout(() => setShowConfetti(false), 4000);
-                                                                                }, 3000);
+                                                                                dispatch(addNotification({ ...user_notification_obj, title: "Visa application has been placed successfully." }))
+                                                                                    .then(res => {
+                                                                                        // console.log('Response after adding notification', res);
+
+                                                                                        if (res.meta.requestStatus === "fulfilled") {
+
+                                                                                            setIsLottieTransitioning(true);
+                                                                                            setTimeout(() => {
+                                                                                                setPaymentStage('success');
+                                                                                                setIsLottieTransitioning(false);
+                                                                                                setShowConfetti(true);
+                                                                                                setTimeout(() => setShowConfetti(false), 4000);
+                                                                                            }, 3000);
+                                                                                        }
+                                                                                        else {
+                                                                                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                                        }
+                                                                                    })
+                                                                                    .catch(err => {
+                                                                                        console.log('Error occured', err);
+                                                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                                                    })
                                                                             }
                                                                             else {
                                                                                 getSweetAlert('Oops...', 'Something went wrong!', 'error');
@@ -327,12 +342,26 @@ export default function PaymentStatus() {
 
                                             if (res.meta.requestStatus === "fulfilled") {
 
-                                                setIsCancelled(true);
-                                                setIsLottieTransitioning(true);
-                                                setTimeout(() => {
-                                                    setPaymentStage('failed');
-                                                    setIsLottieTransitioning(false);
-                                                }, 1200);
+                                                dispatch(addNotification({ ...user_notification_obj, title: "Payment failed. Try to pay fee for visa application again..." }))
+                                                    .then(res => {
+                                                        // console.log('Response after adding notification', res);
+
+                                                        if (res.meta.requestStatus === "fulfilled") {
+                                                            setIsCancelled(true);
+                                                            setIsLottieTransitioning(true);
+                                                            setTimeout(() => {
+                                                                setPaymentStage('failed');
+                                                                setIsLottieTransitioning(false);
+                                                            }, 1200);
+                                                        }
+                                                        else {
+                                                            getSweetAlert('Oops...', 'Something went wrong!', 'info');
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.log('Error occured', err);
+                                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                                    })
                                             }
                                             else {
                                                 getSweetAlert('Oops...', 'Something went wrong!', 'info');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import CourseDetailsHeader from '../../../../Components/user/course/course-details/CourseDetailsHeader';
@@ -11,6 +11,10 @@ import { fetchCourseById } from '../../../../Redux/Slice/courseSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItems, getOrCreateCart } from '../../../../Redux/Slice/cartSlice';
 import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
+import { fetchUserOrders } from '../../../../Redux/Slice/orderSlice';
+import { useCourseAvgRating } from '../../../../tanstack/query/getCourseAvgRating';
+import { useCourseWiseRatingCount } from '../../../../tanstack/query/getCourseWiseRatingCount';
+import { useUsersByCourse } from '../../../../tanstack/query/getUserByCourse';
 
 const CourseDetails = () => {
 
@@ -26,6 +30,10 @@ const CourseDetails = () => {
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { isCourseLoading, currentCourse: course, hasCourseError } = useSelector(state => state?.course);
   const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state?.cart);
+  const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
+  const { loading: ratingAvgLoading, data: ratingAvg, error: hasRatingAvgError } = useCourseAvgRating(id);
+  const { loading: ratingCountLoading, data: ratingCount, error: hasRatingCountError } = useCourseWiseRatingCount(id);
+  const { loading: userCountLoading, data: userCount, error: hasuserCountError } = useUsersByCourse({ courseId: id, status: 'success' });
 
   useEffect(() => {
     dispatch(fetchCourseById(id))
@@ -70,30 +78,44 @@ const CourseDetails = () => {
   }, [dispatch]);
 
 
+  useEffect(() => {
+    if (userAuthData) {
+      dispatch(fetchUserOrders({ userId: userAuthData?.id, status: 'success' }))
+        .then(res => {
+          // console.log('Response for fetching all purchased courses', res);
+        })
+        .catch((err) => {
+          getSweetAlert('Oops...', 'Something went wrong!', 'error');
+          console.log("Error occurred", err);
+        });
+    }
+  }, [dispatch, userAuthData]);
 
+  const uniqueCourses = useMemo(() => {
+    if (!allOrders?.length) return [];
 
-  // const uniqueCourses = useMemo(() => {
-  //   if (!purchasedCourses?.length) return [];
+    return [
+      ...new Map([...allOrders].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .flatMap(order =>
+          order.order_items.map(item => [
+            item.course_id,
+            {
+              ...item.courses,
+              order_created_at: order.created_at,
+              purchase_date: order.purchase_date
+            }
+          ])
+        )
+      ).values()
+    ];
+  }, [allOrders]);
 
-  //   return [
-  //     ...new Map(
-  //       [...purchasedCourses]
-  //         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  //         .flatMap(order =>
-  //           order.order_items.map(item => [
-  //             item.course_id,
-  //             {
-  //               ...item.courses,
-  //               order_created_at: order.created_at,
-  //               purchase_date: order.purchase_date
-  //             }
-  //           ])
-  //         )
-  //     ).values()
-  //   ];
-  // }, [purchasedCourses]);
+  useEffect(() => {
+    if (uniqueCourses?.filter(course => course?.id == id)?.length > 0) {
+      setIsPurchased(true);
+    }
+  }, [userAuthData, uniqueCourses, allOrders]);
 
-  
   // console.log('current course details', course);
   // console.log('User data', userAuthData);
   // console.log('Available cart items', cartItems);
@@ -120,7 +142,7 @@ const CourseDetails = () => {
             </button>
 
             <div className="grid lg:grid-cols-5  gap-8 items-start">
-              <CourseDetailsHeader isPurchased={isPurchased} course={course} />
+              <CourseDetailsHeader isPurchased={isPurchased} course={course} ratingAvg={ratingAvg} ratingCount={ratingCount} userCount={userCount} />
               {/* Price Card */}
               <PricingCard isPurchased={isPurchased} course={course} setCartDrawer={setCartDrawer} setActiveTab={setActiveTab} userId={userAuthData?.id} />
             </div>
@@ -128,7 +150,7 @@ const CourseDetails = () => {
         </div>
 
         {/* Course Content */}
-        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <CourseContent isPurchased={isPurchased} course={course} activeTab={activeTab} setActiveTab={setActiveTab} ratingAvg={ratingAvg} userCount={userCount} />
       </div>
 
       {/* Cart Drawer */}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Star, Users } from 'lucide-react'
 
-const InstructorSection = ({ course }) => {
+const InstructorSection = ({ course, ratingAvg, userCount }) => {
     return (
         <div>
             <h2 className="text-2xl font-bold text-[#2C3E50] mb-4">About the Instructor</h2>
@@ -13,8 +13,8 @@ const InstructorSection = ({ course }) => {
                     <h3 className="text-xl font-bold text-gray-900">{course?.instructor?.name ?? 'N/A'}</h3>
                     <p className="text-gray-600">{course?.instructor?.bio ?? 'N/A'}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                        <span className="flex items-center"><Users className="w-4 h-4 mr-1" />{course?.students ?? 'N/A'}+ students</span>
-                        <span className="flex items-center"><Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />{course?.rating ?? 'N/A'} rating</span>
+                        <span className="flex items-center"><Users className="w-4 h-4 mr-1" />{userCount?.length ?? '0'} student{Number(userCount?.length) > 1 ? 's' : ''}</span>
+                        <span className="flex items-center"><Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />{ratingAvg ?? '0'} rating</span>
                     </div>
                 </div>
             </div>

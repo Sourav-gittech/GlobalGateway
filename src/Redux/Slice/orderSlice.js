@@ -47,13 +47,13 @@ export const fetchOrders = createAsyncThunk("ordersSlice/fetchOrders",
 
 // fetch user order 
 export const fetchUserOrders = createAsyncThunk("ordersSlice/fetchUserOrders",
-    async ({userId,status}, { rejectWithValue }) => {
+    async ({ userId, status }, { rejectWithValue }) => {
         try {
             let query = supabase.from("orders").select(`*,order_items (*,courses (*))`).eq("user_id", userId)
-            .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false });
 
-            if(status){
-                query = query.eq("status",status);
+            if (status) {
+                query = query.eq("status", status);
             }
             const res = await query;
             // console.log('Response for fetching specific user orders', res);

@@ -1,9 +1,13 @@
 import React from 'react'
 import { useTotalExpense } from '../../../../../tanstack/query/getTotalExpenseOfSpecificUser';
 import { Loader2 } from 'lucide-react';
+import { useUserTotalExpense } from '../../../../../tanstack/query/getTotalExpenseForCourseSpecificUser';
 
 const AdditionalInfo = ({ user }) => {
-    const { data: totalExpense, isLoading, isError, error } = useTotalExpense(user?.id);
+    const { data: totalExpenseForVisa, isLoading: isVisaExpenseLoading, isError, error: hasVisaExpenseError } = useTotalExpense(user?.id);
+    const { data: totalExpenseForCourse, isLoading: isCourseExpenseLoading, error: hasCourseExpenseError } = useUserTotalExpense({ userId: user?.id });
+
+    const totalExpense = Number(totalExpenseForVisa) + Number(totalExpenseForCourse);
 
     const formatDate = (dateString) => {
         if (!dateString) return "";
@@ -27,7 +31,7 @@ const AdditionalInfo = ({ user }) => {
             </div>
             <div>
                 <div className="text-slate-400 mb-1">Total Spent</div>
-                <div className="text-white">₹{isLoading ? <Loader2 className="w-3 h-3 ml-2 text-white animate-spin inline" /> : totalExpense?.toLocaleString('en-IN')}</div>
+                <div className="text-white">₹{(isVisaExpenseLoading || isCourseExpenseLoading) ? <Loader2 className="w-3 h-3 ml-2 text-white animate-spin inline" /> : totalExpense?.toLocaleString('en-IN')}</div>
             </div>
             <div>
                 <div className="text-slate-400 mb-1">Auth Provider</div>

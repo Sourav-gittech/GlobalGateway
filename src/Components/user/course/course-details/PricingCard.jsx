@@ -6,13 +6,15 @@ import { addCartItem, fetchCartItems, getOrCreateCart } from '../../../../Redux/
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import hotToast from '../../../../util/alert/hot-toast';
 import { checkLoggedInUser } from '../../../../Redux/Slice/auth/checkAuthSlice';
+import { fetchUserOrders } from '../../../../Redux/Slice/orderSlice';
 
 const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
-    const { currentCart, cartItems, isCartLoading,isCartAddLoading, hasCartError } = useSelector(state => state.cart);
+    const { currentCart, cartItems, isCartLoading, isCartAddLoading, hasCartError } = useSelector(state => state.cart);
+    const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
 
     useEffect(() => {
         dispatch(checkLoggedInUser())
@@ -25,11 +27,31 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
             });
     }, [dispatch]);
 
+    useEffect(() => {
+        if (userAuthData) {
+            dispatch(fetchUserOrders({ userId: userAuthData?.id, status: 'success' }))
+                .then(res => {
+                    // console.log('Response for fetching user profile', res);
+                })
+                .catch((err) => {
+                    console.log("Error occurred", err);
+                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                });
+        }
+    }, [userAuthData]);
+
+    const purchasedCourse = allOrders?.map(order => order?.id);
+
     const addToCart = (course) => {
 
         if (!userAuthData) {
             navigate('/authentication');
-        } else {
+        }
+        else if (purchasedCourse?.includes(course?.id)) {
+            hotToast("Course already purchased", "info", <Info className='text-orange-600' />);
+            return;
+        }
+        else {
             if (!course) return;
 
             dispatch(getOrCreateCart(userId))
@@ -79,7 +101,6 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
                     )}
                     <img src={course?.img_url} alt={course?.course_name} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-
                 </div>
 
                 <div className="p-6">
@@ -99,7 +120,7 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
                             {/* Access Course Button */}
                             <button
                                 onClick={() => setActiveTab('content')}
-                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg mb-4"
+                                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02] text-lg mb-4 cursor-pointer"
                             >
                                 <BookOpen className="w-6 h-6" />
                                 Access Course Content
@@ -108,7 +129,7 @@ const PricingCard = ({ isPurchased, course, setCartDrawer, setActiveTab, userId 
                             {/* Go to Dashboard Button */}
                             <button
                                 onClick={() => navigate('/dashboard')}
-                                className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/30"
+                                className="w-full bg-white/20 hover:bg-white/30 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/30 cursor-pointer"
                             >
                                 View in Dashboard
                                 <ArrowLeft className="w-4 h-4 rotate-180" />

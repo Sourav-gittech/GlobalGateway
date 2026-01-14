@@ -19,15 +19,13 @@ import { fetchUserOrders } from '../../../Redux/Slice/orderSlice';
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('overview');
+
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
   const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(userAuthData?.id);
   const { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true);
   const { isTransactionLoading, allTransactions: { all, visa, course } } = useSelector(state => state.transaction);
   const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
-
-  const purchasedCourses = [];
-
-  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     dispatch(checkLoggedInUser())
@@ -67,25 +65,27 @@ const Dashboard = () => {
   }, [dispatch, userAuthData]);
 
   const uniqueCourses = useMemo(() => {
-    if (!allOrders?.length) return [];
+    if (!Array.isArray(allOrders) || allOrders.length === 0) return [];
 
     return [
       ...new Map(
-        [...allOrders]
-          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-          .flatMap(order =>
-            order.order_items.map(item => [
+        allOrders.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .flatMap(order => {
+            if (!Array.isArray(order.order_items)) return [];
+
+            return order.order_items.filter(item => item?.course_id && item?.courses).map(item => [
               item.course_id,
               {
                 ...item.courses,
                 order_created_at: order.created_at,
-                purchase_date: order.purchase_date
-              }
-            ])
-          )
-      ).values()
+                purchase_date: order.purchase_date,
+              },
+            ]);
+          })
+      ).values(),
     ];
   }, [allOrders]);
+
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -210,6 +210,7 @@ const Dashboard = () => {
                 getStatusColor={getStatusColor}
                 getStatusIcon={getStatusIcon}
                 onNavigate={handleNavigate}
+                userId={userAuthData?.id}
               />
             )}
           </div>
