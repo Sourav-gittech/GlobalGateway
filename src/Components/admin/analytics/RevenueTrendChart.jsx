@@ -1,157 +1,139 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler } from 'chart.js';
+import { useRevenueTrend } from '../../../tanstack/query/getRevenueTrend';
+import { Loader2 } from 'lucide-react';
+import { buildMonthlyData } from '../../../util/analytics/MonthlyTransaction';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
 
 export default function RevenueTrendChart() {
-  const [activeView, setActiveView] = useState('revenue');
 
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const [activeView, setActiveView] = useState("revenue");
+  const { data, isLoading } = useRevenueTrend();
 
-  // Sample data for Revenue
-  const revenueData = [45000, 48000, 52000, 58000, 62000, 68000, 72000, 76000, 81000, 85000, 88000, 92000];
-  const revenueTarget = [50000, 50000, 50000, 60000, 60000, 60000, 70000, 70000, 70000, 80000, 80000, 80000];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-400" />
+      </div>
+    );
+  }
 
-  // Sample data for Course Purchases
-  const coursePurchasesData = [120, 145, 168, 195, 210, 238, 265, 290, 315, 340, 365, 390];
-  const coursePurchasesTarget = [100, 150, 150, 200, 200, 200, 250, 250, 250, 300, 350, 400];
+  const { revenue = [], purchases = [] } = buildMonthlyData(data || []);
 
   const getChartData = () => {
-    let actualData, targetData, actualLabel;
-    
-    if (activeView === 'revenue') {
-      actualData = revenueData;
-      targetData = revenueTarget;
-      actualLabel = 'Revenue';
-    } else if (activeView === 'purchases') {
-      actualData = coursePurchasesData;
-      targetData = coursePurchasesTarget;
-      actualLabel = 'Course Purchases';
-    } else {
-      // Both view - show both datasets
-      actualData = revenueData;
-      targetData = revenueTarget;
-      actualLabel = 'Revenue';
+    if (activeView === "revenue") {
+      return {
+        labels: MONTHS,
+        datasets: [
+          {
+            label: "Revenue (Visa)",
+            data: revenue,
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59,130,246,0.15)",
+            fill: true,
+          },
+        ],
+      };
+    }
+
+    if (activeView === "purchases") {
+      return {
+        labels: MONTHS,
+        datasets: [
+          {
+            label: "Course Purchases",
+            data: purchases,
+            borderColor: "#22c55e",
+            backgroundColor: "rgba(34,197,94,0.15)",
+            fill: true,
+          },
+        ],
+      };
     }
 
     return {
-      labels: months,
+      labels: MONTHS,
       datasets: [
         {
-          label: actualLabel,
-          data: actualData,
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          borderWidth: 2,
-          tension: 0,
-          pointRadius: 4,
-          pointBackgroundColor: '#06b6d4',
-          pointBorderColor: '#1e293b',
-          pointBorderWidth: 2,
-          fill: true,
+          label: "Revenue (Visa)",
+          data: revenue,
+          borderColor: "#3b82f6",
+          backgroundColor: "rgba(59,130,246,0.15)",
+          fill: false,
+          yAxisID: "y",
         },
         {
-          label: 'Target',
-          data: targetData,
-          borderColor: '#f59e0b',
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          borderDash: [8, 4],
-          tension: 0.4,
-          pointRadius: 0,
+          label: "Course Purchases",
+          data: purchases,
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34,197,94,0.15)",
           fill: false,
+          yAxisID: "y1",
         },
       ],
     };
+
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
-      mode: 'index',
+      mode: "index",
       intersect: false,
     },
     plugins: {
       legend: {
-        display: true,
-        position: 'bottom',
+        position: "bottom",
         labels: {
-          usePointStyle: true,
-          pointStyle: 'circle',
-          padding: 20,
-          font: {
-            size: 12,
-          },
-          color: '#9ca3af',
+          color: "#9ca3af",
         },
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-        padding: 12,
-        titleFont: {
-          size: 13,
-        },
-        bodyFont: {
-          size: 12,
-        },
-        titleColor: '#f3f4f6',
-        bodyColor: '#f3f4f6',
-        borderColor: '#374151',
-        borderWidth: 1,
         callbacks: {
-          label: function(context) {
-            let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
+          label: (ctx) => {
+            const value = ctx.parsed.y;
+            if (ctx.dataset.label.includes("Revenue")) {
+              return `₹${value.toLocaleString()}`;
             }
-            if (activeView === 'revenue') {
-              label += '$' + context.parsed.y.toLocaleString();
-            } else {
-              label += context.parsed.y.toLocaleString();
-            }
-            return label;
-          }
-        }
+            return `${value} purchases`;
+          },
+        },
       },
     },
     scales: {
-      x: {
-        grid: {
-          display: true,
-          color: 'rgba(255, 255, 255, 0.05)',
-        },
-        border: {
-          display: false,
-        },
-        ticks: {
-          font: {
-            size: 11,
-          },
-          color: '#6b7280',
-        },
-      },
       y: {
         beginAtZero: true,
-        grid: {
-          display: true,
-          color: 'rgba(255, 255, 255, 0.05)',
+        ticks: {
+          color: "#6b7280",
+          callback: (v) => `₹${v / 1000}k`,
         },
-        border: {
-          display: false,
+        grid: {
+          color: "rgba(255,255,255,0.05)",
+        },
+      },
+      y1: {
+        beginAtZero: true,
+        position: "right",
+        grid: {
+          drawOnChartArea: false,
         },
         ticks: {
-          font: {
-            size: 11,
-          },
-          color: '#6b7280',
-          callback: function(value) {
-            if (activeView === 'revenue') {
-              return value >= 1000 ? (value / 1000) + 'k' : value;
-            }
-            return value >= 1000 ? (value / 1000) + 'k' : value;
-          },
+          color: "#6b7280",
+        },
+      },
+      x: {
+        ticks: {
+          color: "#6b7280",
+        },
+        grid: {
+          color: "rgba(255,255,255,0.05)",
         },
       },
     },
@@ -169,32 +151,29 @@ export default function RevenueTrendChart() {
         <div className="flex gap-2 bg-gray-700 rounded-lg p-1" style={{ backgroundColor: '#334155' }}>
           <button
             onClick={() => setActiveView('revenue')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              activeView === 'revenue'
-                ? 'bg-gray-600 text-white shadow'
-                : 'text-gray-300 hover:text-white'
-            }`}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeView === 'revenue'
+              ? 'bg-gray-600 text-white shadow'
+              : 'text-gray-300 hover:text-white'
+              }`}
             style={activeView === 'revenue' ? { backgroundColor: '#475569' } : {}}
           >
             Revenue
           </button>
           <button
             onClick={() => setActiveView('purchases')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              activeView === 'purchases'
-                ? 'bg-blue-600 text-white shadow'
-                : 'text-gray-300 hover:text-white'
-            }`}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeView === 'purchases'
+              ? 'bg-blue-600 text-white shadow'
+              : 'text-gray-300 hover:text-white'
+              }`}
           >
             Course Purchases
           </button>
           <button
             onClick={() => setActiveView('both')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              activeView === 'both'
-                ? 'bg-gray-600 text-white shadow'
-                : 'text-gray-300 hover:text-white'
-            }`}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeView === 'both'
+              ? 'bg-gray-600 text-white shadow'
+              : 'text-gray-300 hover:text-white'
+              }`}
             style={activeView === 'both' ? { backgroundColor: '#475569' } : {}}
           >
             Both

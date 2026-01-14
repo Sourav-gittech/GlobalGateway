@@ -4,10 +4,10 @@ import AnalyticsStats from "../../Components/admin/analytics/AnalyticsStats";
 import AnalyticsHeader from "../../Components/admin/analytics/AnalyticsHeader";
 import AnalyticsChart from "../../Components/admin/analytics/AnalyticsChart";
 import AdditionalStats from "../../Components/admin/analytics/AdditionalStats";
-import CoursePurchaseChart from "../../Components/admin/analytics/CoursePurchaseChart";
-import CourseRevenueChart from "../../Components/admin/analytics/CourseRevenueChart";
+import CoursePurchaseChart from "../../Components/admin/analytics/chart/CoursePurchaseChart";
+import CourseRevenueChart from "../../Components/admin/analytics/chart/CourseRevenueChart";
 import RevenueTrendChart from "../../Components/admin/analytics/RevenueTrendChart";
-// Register Chart.js components
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,7 +20,7 @@ ChartJS.register(
   Legend
 );
 
-// Main Analytics Component
+
 export default function Analytics() {
   return (
     <div className="space-y-6">
@@ -37,18 +37,15 @@ export default function Analytics() {
         <AnalyticsChart />
       </div>
 
-      
-
       {/* Course Analytics - New Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CoursePurchaseChart />
+
         <CourseRevenueChart />
       </div>
 
-       {/* Revenue & Applications Trend - NEW */}
+      {/* Revenue & Applications Trend - NEW */}
       <RevenueTrendChart />
-
-
 
       {/* Additional Insights */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

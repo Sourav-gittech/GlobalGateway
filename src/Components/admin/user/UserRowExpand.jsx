@@ -1,13 +1,37 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FileText, BookOpen } from "lucide-react";
 import ApplicationDetails from './userDetails/user-row/ApplicationDetails';
 import CourseDetails from './userDetails/user-row/CourseDetails';
 import AdditionalInfo from './userDetails/user-row/AdditionalInfo';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
+import { useUserOrders } from '../../../tanstack/query/getUserPurchasedCourse';
 
 const UserRowExpand = ({ user }) => {
 
-    const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error } = useApplicationsByUser(user?.id);
+    const { data: application, isLoading: isApplicationLoading, isError: isApplicationError, error: hasApplicationError } = useApplicationsByUser(user?.id);
+    const { data: allOrders, isLoading: isCourseLoading, isError: isCourseError, error: hasCourseError } = useUserOrders({ userId: user?.id, status: 'success' });
+
+    const uniqueCourses = useMemo(() => {
+    if (!Array.isArray(allOrders) || allOrders.length === 0) return [];
+
+    return [
+      ...new Map(
+        allOrders.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          .flatMap(order => {
+            if (!Array.isArray(order.order_items)) return [];
+
+            return order.order_items.filter(item => item?.course_id && item?.courses).map(item => [
+              item.course_id,
+              {
+                ...item.courses,
+                order_created_at: order.created_at,
+                purchase_date: order.purchase_date,
+              },
+            ]);
+          })
+      ).values(),
+    ];
+  }, [allOrders]);
 
     return (
         <tr className="bg-slate-700/10 border-b border-slate-700/50">
@@ -40,8 +64,8 @@ const UserRowExpand = ({ user }) => {
                             <h4 className="text-sm font-semibold text-white">Course Purchases</h4>
                         </div>
 
-                        {user?.coursePurchases?.length > 0 ? (
-                            <CourseDetails user={user} />
+                        {uniqueCourses?.length > 0 ? (
+                            <CourseDetails purchaseCourse={uniqueCourses} />
                         ) : (
                             <div className="text-sm text-slate-400 italic">No course purchases</div>
                         )}

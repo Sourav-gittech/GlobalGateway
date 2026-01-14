@@ -48,6 +48,8 @@ export const fetchOrders = createAsyncThunk("ordersSlice/fetchOrders",
 // fetch user order 
 export const fetchUserOrders = createAsyncThunk("ordersSlice/fetchUserOrders",
     async ({ userId, status }, { rejectWithValue }) => {
+        // console.log('Received data for fetching specific user course', userId, status);
+
         try {
             let query = supabase.from("orders").select(`*,order_items (*,courses (*))`).eq("user_id", userId)
                 .order("created_at", { ascending: false });

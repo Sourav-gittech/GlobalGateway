@@ -5,7 +5,7 @@ const StatusBadge = ({ status, type }) => {
 
     const colorMap = {
         success: "bg-green-500/20 text-green-400 border-green-500/30 px-3",
-        pending: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+        pending: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30 px-4",
         processing: "bg-orange-500/20 text-yellow-400 border-yellow-500/30",
         failure: "bg-red-500/20 text-red-400 border-red-500/30 px-4",
 
