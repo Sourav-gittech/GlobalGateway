@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Box, Button, Typography, IconButton, Drawer, Menu, MenuItem, Avatar, Badge, useMediaQuery, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion as Motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { checkLoggedInUser, logoutUser } from '../../Redux/Slice/auth/checkAuthSlice';
 import { Link } from 'react-router-dom';
+import NotificationDrawer from '../../Components/user/common/NotificationDrawer';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -30,18 +31,28 @@ const dropdownVariants = {
 };
 
 const Navbar = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [isMobile, setIsMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [rightClickedLink, setRightClickedLink] = useState(null);
   const [clickedLink, setClickedLink] = useState(null);
+  const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+
+  // Handle responsive breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -91,64 +102,40 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        elevation={scrolled ? 4 : 0}
-        sx={{
-          backgroundColor: scrolled ? 'rgba(0,0,0,0.6)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(10px)' : 'none',
-          transition: 'background-color 0.4s ease',
-          px: 4,
-          py: 1,
-          boxShadow: 'none',
-          color: 'white',
-        }}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 px-16 py-4 transition-all duration-400 ${scrolled
+          ? 'bg-black/60 backdrop-blur-md shadow-lg'
+          : 'bg-transparent'
+          }`}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FlightTakeoffIcon sx={{ fontSize: '30px', color: 'white' }} />
-            <Typography variant="h5" sx={{ fontWeight: 'bold', fontSize: '25px', letterSpacing: 1 }}>
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <div className="flex items-center gap-2">
+            <FlightTakeoffIcon className="text-white text-[30px]" />
+            <h1 className="text-white font-bold text-[25px] tracking-wide">
               Global Gateway
-            </Typography>
-          </Box>
+            </h1>
+          </div>
 
+          {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+            <div className="flex gap-12 items-center">
               {navLinks.map((link) =>
                 link.children ? (
-                  <Box key={link.label} sx={{ position: 'relative' }}>
-                    <Button
+                  <div key={link.label} className="relative">
+                    <button
                       onClick={() => {
                         setClickedLink(link.label);
                         handleDropdownToggle(link.label);
                       }}
                       onContextMenu={(e) => handleRightClick(e, link.label)}
-                      sx={{
-                        color:
-                          clickedLink === link.label || rightClickedLink === link.label
-                            ? 'red'
-                            : 'white',
-                        fontWeight: 500,
-                        fontSize: '15px',
-                        textTransform: 'none',
-                        position: 'relative',
-                        '&::after': {
-                          content: '""',
-                          position: 'absolute',
-                          width: 0,
-                          height: '2px',
-                          bottom: 0,
-                          left: 0,
-                          backgroundColor: 'red',
-                          transition: 'width 0.3s ease',
-                        },
-                        '&:hover::after': {
-                          width: '100%',
-                        },
-                      }}
+                      className={`${clickedLink === link.label || rightClickedLink === link.label
+                        ? 'text-red-600'
+                        : 'text-white'
+                        } font-medium text-[15px] relative flex items-center gap-1 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full`}
                     >
                       {link.label} {openDropdown === link.label ? <ExpandLess /> : <ExpandMore />}
-                    </Button>
+                    </button>
                     <AnimatePresence>
                       {openDropdown === link.label && (
                         <Motion.div
@@ -156,310 +143,259 @@ const Navbar = () => {
                           animate="visible"
                           exit="exit"
                           variants={dropdownVariants}
-                          style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                            minWidth: '160px',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                            zIndex: 20,
-                            borderRadius: '6px',
-                          }}
+                          className="absolute top-full left-0 bg-black/60 min-w-[160px] shadow-lg z-20 rounded-md"
                         >
                           {link.children.map((sub) => (
-                            <Button
+                            <RouterLink
                               key={sub.label}
-                              component={RouterLink}
                               to={sub.to}
-                              fullWidth
                               onClick={() => setOpenDropdown(null)}
-                              sx={{
-                                justifyContent: 'flex-start',
-                                px: 2,
-                                py: 1,
-                                color: 'white',
-                                textTransform: 'none',
-                                fontWeight: 500,
-                              }}
+                              className="block w-full text-left px-8 py-4 text-white font-medium hover:bg-white/10"
                             >
                               {sub.label}
-                            </Button>
+                            </RouterLink>
                           ))}
                         </Motion.div>
                       )}
                     </AnimatePresence>
-                  </Box>
+                  </div>
                 ) : (
-                  <Button
+                  <RouterLink
                     key={link.label}
-                    component={RouterLink}
                     to={link.to}
                     onClick={() => setClickedLink(link.label)}
                     onContextMenu={(e) => handleRightClick(e, link.label)}
-                    sx={{
-                      color:
-                        clickedLink === link.label || rightClickedLink === link.label ? 'red' : 'white',
-                      fontWeight: 500,
-                      fontSize: '15px',
-                      textTransform: 'none',
-                      position: 'relative',
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        width: 0,
-                        height: '2px',
-                        bottom: 0,
-                        left: 0,
-                        backgroundColor: 'red',
-                        transition: 'width 0.3s ease',
-                      },
-                      '&:hover::after': {
-                        width: '100%',
-                      },
-                    }}>
+                    className={`${clickedLink === link.label || rightClickedLink === link.label ? 'text-red-600' : 'text-white'
+                      } font-medium text-[15px] relative after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full`}
+                  >
                     {link.label}
-                  </Button>
+                  </RouterLink>
                 )
               )}
 
               {/* Cart Icon - Only show when user is logged in */}
               {userAuthData && (
                 <Link
-                  color="inherit"
                   to='/cart'
-                  sx={{
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    },
-                  }}
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
                 >
-                  <Badge
-                    // badgeContent={cartCount}
-                    color="error"
-                    sx={{
-                      '& .MuiBadge-badge': {
-                        fontSize: '0.75rem',
-                        height: '18px',
-                        minWidth: '18px',
-                      },
-                    }}
-                  >
+                  <div className="relative">
                     <ShoppingCartIcon />
-                  </Badge>
+                    {/* Badge placeholder - uncomment when cartCount is available */}
+                    {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      {cartCount}
+                    </span> */}
+                  </div>
                 </Link>
+              )}
+
+              {/* Notification Bell - Only show when user is logged in */}
+              {userAuthData && (
+                <button
+                  onClick={() => setNotificationDrawerOpen(true)}
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
+                >
+                  <div className="relative">
+                    <NotificationsIcon />
+                    {/* Badge showing notification count */}
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      3
+                    </span>
+                  </div>
+                </button>
               )}
 
               {userAuthData ? (
                 <>
-                  <IconButton onClick={handleMenu}>
-                    <Avatar src={userAuthData?.avatar_url || '/demo-user.png'} alt="Profile" />
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    PaperProps={{
-                      sx: {
-                        mt: 1,
-                        minWidth: 150,
-                      }
-                    }}
-                  >
-                    <MenuItem component={RouterLink} to="/dashboard" onClick={handleClose}>
-                      Dashboard
-                    </MenuItem>
-                    <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
-                  </Menu>
-
+                  <button onClick={handleMenu} className="p-0">
+                    <img
+                      src={userAuthData?.avatar_url || '/demo-user.png'}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  </button>
+                  {/* User Menu Dropdown */}
+                  {anchorEl && (
+                    <>
+                      {/* Backdrop */}
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={handleClose}
+                      />
+                      {/* Menu */}
+                      <div
+                        className="absolute top-16 right-16 mt-4 min-w-[150px] bg-white rounded-md shadow-lg z-50"
+                      >
+                        <RouterLink
+                          to="/dashboard"
+                          onClick={handleClose}
+                          className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        >
+                          Dashboard
+                        </RouterLink>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </>
               ) : (
-                <Button component={RouterLink} to="/authentication" sx={{ color: 'white' }}>
+                <RouterLink
+                  to="/authentication"
+                  className="text-white font-medium hover:bg-white/10 px-4 py-2 rounded transition-colors"
+                >
                   Get Started
-                </Button>
+                </RouterLink>
               )}
-            </Box>
+            </div>
           )}
 
+          {/* Mobile Menu Button */}
           {isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <div className="flex items-center gap-4">
               {/* Mobile Cart Icon - Only show when user is logged in */}
               {userAuthData && (
-                <IconButton
-                  color="inherit"
-                  // onClick={() => dispatch(openCartDrawer())}
-                  sx={{
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    },
-                  }}
+                <Link
+                  to='/cart'
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
                 >
-                  <Badge
-                    // badgeContent={cartCount}
-                    color="error"
-                    sx={{
-                      '& .MuiBadge-badge': {
-                        fontSize: '0.75rem',
-                        height: '18px',
-                        minWidth: '18px',
-                      },
-                    }}
-                  >
+                  <div className="relative">
                     <ShoppingCartIcon />
-                  </Badge>
-                </IconButton>
+                    {/* Badge placeholder */}
+                    {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      {cartCount}
+                    </span> */}
+                  </div>
+                </Link>
               )}
 
-              <IconButton color="inherit" onClick={handleDrawerToggle}>
+              {/* Mobile Notification Bell - Only show when user is logged in */}
+              {userAuthData && (
+                <button
+                  onClick={() => setNotificationDrawerOpen(true)}
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
+                >
+                  <div className="relative">
+                    <NotificationsIcon />
+                    {/* Badge showing notification count */}
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      3
+                    </span>
+                  </div>
+                </button>
+              )}
+
+              <button
+                onClick={handleDrawerToggle}
+                className="text-white"
+              >
                 <MenuIcon />
-              </IconButton>
-            </Box>
+              </button>
+            </div>
           )}
-        </Toolbar>
-      </AppBar>
+        </div>
+      </nav>
+
+      <NotificationDrawer
+        isOpen={notificationDrawerOpen}
+        onClose={() => setNotificationDrawerOpen(false)}
+      />
 
       {/* Mobile Navigation Drawer */}
-      <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}
-        PaperProps={{
-          sx: {
-            backgroundColor: 'rgba(0,0,0,0.7)',
-            color: 'red',
-          },
-        }}>
-        <Box sx={{ width: 280, p: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-            Global Gateway
-          </Typography>
-          {navLinks.map((link) => (
-            <Box key={link.label} sx={{ mb: 1 }}>
-              {link.children ? (
-                <Box>
-                  <Button
-                    fullWidth
-                    onClick={() => handleDropdownToggle(link.label)}
-                    sx={{
-                      justifyContent: 'space-between',
-                      textTransform: 'none',
-                      color: 'white',
-                    }}>
+      {drawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={handleDrawerToggle}
+          />
+
+          {/* Drawer */}
+          <div className="fixed left-0 top-0 bottom-0 w-[280px] bg-black/70 text-red-600 z-50 p-8 overflow-y-auto">
+            <h6 className="mb-8 font-bold text-xl">
+              Global Gateway
+            </h6>
+
+            {navLinks.map((link) => (
+              <div key={link.label} className="mb-4">
+                {link.children ? (
+                  <div>
+                    <button
+                      onClick={() => handleDropdownToggle(link.label)}
+                      className="w-full flex justify-between items-center text-white font-medium"
+                    >
+                      {link.label}
+                      {openDropdown === link.label ? <ExpandLess /> : <ExpandMore />}
+                    </button>
+                    {openDropdown === link.label && (
+                      <div className="pl-8 mt-2">
+                        {link.children.map((sub) => (
+                          <RouterLink
+                            key={sub.label}
+                            to={sub.to}
+                            onClick={handleDrawerToggle}
+                            className="block w-full text-left py-2 text-white font-medium"
+                          >
+                            {sub.label}
+                          </RouterLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <RouterLink
+                    to={link.to}
+                    onClick={handleDrawerToggle}
+                    className="block w-full text-left text-white font-medium"
+                  >
                     {link.label}
-                    {openDropdown === link.label ? <ExpandLess /> : <ExpandMore />}
-                  </Button>
-                  {openDropdown === link.label && (
-                    <Box sx={{ pl: 2 }}>
-                      {link.children.map((sub) => (
-                        <Button
-                          key={sub.label}
-                          component={RouterLink}
-                          to={sub.to}
-                          fullWidth
-                          onClick={handleDrawerToggle}
-                          sx={{
-                            justifyContent: 'flex-start',
-                            textTransform: 'none',
-                            color: 'white',
-                          }}>
-                          {sub.label}
-                        </Button>
-                      ))}
-                    </Box>
-                  )}
-                </Box>
-              ) : (
-                <Button
-                  component={RouterLink}
-                  to={link.to}
-                  fullWidth
+                  </RouterLink>
+                )}
+              </div>
+            ))}
+
+            {userAuthData ? (
+              <div className="mt-8 pt-8 border-t border-gray-300">
+                <RouterLink
+                  to='/dashboard'
                   onClick={handleDrawerToggle}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                    color: 'white',
-                  }}>
-                  {link.label}
-                </Button>
-              )}
-            </Box>
-          ))}
-
-          {userAuthData ? (
-            <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #eee' }}>
-              <Button
-                component={RouterLink}
-                to='/dashboard'
-                fullWidth
+                  className="block w-full text-left mb-4 text-white font-medium"
+                >
+                  Dashboard
+                </RouterLink>
+                <RouterLink
+                  to="/cart"
+                  onClick={handleDrawerToggle}
+                  className="block w-full text-left mb-4 text-white font-medium"
+                >
+                  My Cart
+                </RouterLink>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    handleDrawerToggle();
+                  }}
+                  className="w-full mt-8 bg-[#e53935] text-white rounded-lg py-[9.6px] font-semibold hover:bg-[#c62828] transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <RouterLink
+                to="/authentication"
                 onClick={handleDrawerToggle}
-                sx={{ mb: 1, justifyContent: 'flex-start', textTransform: 'none', color: 'white' }}
+                className="block w-full mt-8 bg-[#e53935] text-white font-semibold py-[9.6px] rounded-[10px] shadow-[0_4px_14px_rgba(229,57,53,0.3)] hover:bg-[#c62828] hover:shadow-[0_6px_18px_rgba(229,57,53,0.4)] transition-all text-center"
               >
-                Dashboard
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/cart"
-                fullWidth
-                onClick={handleDrawerToggle}
-                sx={{ mb: 1, justifyContent: 'flex-start', textTransform: 'none', color: 'white' }}
-              >
-                My Cart
-              </Button>
-              <Button
-                onClick={() => {
-                  handleLogout();
-                  handleDrawerToggle();
-                }}
-                fullWidth
-                sx={{
-                  mt: 2,
-                  textTransform: "none",
-                  backgroundColor: "#e53935",
-                  color: "white",
-                  borderRadius: "8px",
-                  py: 1.2,
-                  fontWeight: 600,
-                  "&:hover": {
-                    backgroundColor: "#c62828",
-                  },
-                }}
-              >
-                Logout
-              </Button>
-
-            </Box>
-          ) : (
-            <Button
-              component={RouterLink}
-              to="/authentication"
-              fullWidth
-              onClick={handleDrawerToggle}
-              sx={{
-                mt: 2,
-                textTransform: "none",
-                backgroundColor: "#e53935",
-                color: "#fff",
-                fontWeight: 600,
-                py: 1.2,
-                borderRadius: "10px",
-                boxShadow: "0 4px 14px rgba(229,57,53,0.3)",
-                "&:hover": {
-                  backgroundColor: "#c62828",
-                  boxShadow: "0 6px 18px rgba(229,57,53,0.4)",
-                },
-              }}>
-              Get Started
-            </Button>
-          )}
-        </Box>
-      </Drawer>
+                Get Started
+              </RouterLink>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 };
