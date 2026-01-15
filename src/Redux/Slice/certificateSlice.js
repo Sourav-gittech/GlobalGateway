@@ -38,7 +38,7 @@ export const fetchUserSpecificCertificates = createAsyncThunk("certificateSlice/
 // Add a new certificate
 export const addCertificate = createAsyncThunk("certificateSlice/addCertificate",
     async ({ userId, courses }, { rejectWithValue }) => {
-        // console.log('Received data for certificate addition', userId, courses);
+        console.log('Received data for certificate addition', userId, courses);
 
         try {
 
@@ -50,8 +50,8 @@ export const addCertificate = createAsyncThunk("certificateSlice/addCertificate"
                 progress: '0'
             }));
 
-            const res = await supabase.from("certificates").insert(certificateData);
-            // console.log('Response for adding new certificate', res);
+            const res = await supabase.from("certificates").insert(certificateData).select();
+            console.log('Response for adding new certificate', res);
 
             if (res?.error) throw res?.error;
             return res?.data;

@@ -233,7 +233,7 @@ export default function PaymentStatus() {
                                         }
                                     }))
                                         .then(res => {
-                                            // console.log('Response after adding order details', res);
+                                            console.log('Response after adding order details', res);
 
                                             if (res.meta.requestStatus === "fulfilled") {
 
@@ -245,19 +245,19 @@ export default function PaymentStatus() {
 
                                                             dispatch(deleteCart(cartId))
                                                                 .then(res => {
-                                                                    // console.log('Response after deleting cart', res);
+                                                                    console.log('Response after deleting cart', res);
 
                                                                     if (res.meta.requestStatus === "fulfilled") {
 
                                                                         dispatch(updateCoursePurchaseStatus({ id: personalInfoData?.id }))
                                                                             .then(res => {
-                                                                                // console.log('Response after updating user data', res);
+                                                                                console.log('Response after updating user data', res);
 
                                                                                 if (res.meta.requestStatus === "fulfilled") {
 
                                                                                     dispatch(addNotification({ ...user_notification_obj, title: "Course purchased successfully" }))
                                                                                         .then(res => {
-                                                                                            // console.log('Response after adding notification', res);
+                                                                                            console.log('Response after adding notification', res);
 
                                                                                             if (res.meta.requestStatus === "fulfilled") {
 
