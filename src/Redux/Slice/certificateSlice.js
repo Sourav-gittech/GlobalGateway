@@ -3,12 +3,29 @@ import supabase from "../../util/Supabase/supabase";
 
 // Fetch all certificates for a user
 export const fetchUserCertificates = createAsyncThunk("certificateSlice/fetchUserCertificates",
-    async ({ userId, course_id }, { rejectWithValue }) => {
+    async ({ userId }, { rejectWithValue }) => {
         // console.log('Received data for fetching certificate details', userId, course_id);
 
         try {
-            const res = await supabase.from("certificates").select("*").eq("user_id", userId).eq("course_id", course_id);
+            const res = await supabase.from("certificates").select("*").eq("user_id", userId);
             // console.log('Response for fetching certificate details', res);
+
+            if (res?.error) throw res?.error;
+            return res?.data;
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+// Fetch a specific certificate for a user
+export const fetchUserSpecificCertificates = createAsyncThunk("certificateSlice/fetchUserSpecificCertificates",
+    async ({ userId, course_id }, { rejectWithValue }) => {
+        // console.log('Received data for fetching specific certificate details', userId, course_id);
+
+        try {
+            const res = await supabase.from("certificates").select("*").eq("user_id", userId).eq("course_id", course_id);
+            // console.log('Response for fetching a specific certificate details', res);
 
             if (res?.error) throw res?.error;
             return res?.data;
@@ -46,7 +63,7 @@ export const addCertificate = createAsyncThunk("certificateSlice/addCertificate"
 
 // Update a certificate
 export const updateCertificate = createAsyncThunk("certificateSlice/updateCertificate",
-    async ({ userId, courseId, certificateAvailable, progress,updatedDocs, certificateRegDate }, { rejectWithValue }) => {
+    async ({ userId, courseId, certificateAvailable, progress, updatedDocs, certificateRegDate }, { rejectWithValue }) => {
         // console.log('Received data for updating certificate data', userId, courseId, certificateAvailable, progress,updatedDocs, certificateRegDate);
 
         try {
@@ -68,45 +85,47 @@ export const updateCertificate = createAsyncThunk("certificateSlice/updateCertif
 
 
 // Helper to update progress & access_doc_name
-export const handleCertificateProgress =(userId, courseId, docName, totalDocs) =>
-  async (dispatch, getState) => {
+export const handleCertificateProgress = (userId, courseId, docName, totalDocs) =>
+    async (dispatch, getState) => {
 
-    const { certificates } = getState().certificate;
+        const { certificates } = getState().certificate;
 
-    if (!Array.isArray(certificates) || certificates.length === 0) {
-      return; // wait until fetched
-    }
+        if (!Array.isArray(certificates) || certificates.length === 0) {
+            return; // wait until fetched
+        }
 
-    const cert = certificates.find(
-      c => c.user_id === userId && c.course_id === courseId
-    );
+        const cert = certificates.find(
+            c => c.user_id === userId && c.course_id === courseId
+        );
 
-    if (!cert) return;
-    if (cert.certificate_available) return;
+        if (!cert) return;
+        if (cert.certificate_available) return;
 
-    const accessedDocs = cert.access_doc_name || [];
-    const updatedDocs = accessedDocs.includes(docName)
-      ? accessedDocs
-      : [...accessedDocs, docName];
+        const accessedDocs = cert.access_doc_name || [];
+        const updatedDocs = accessedDocs.includes(docName)
+            ? accessedDocs
+            : [...accessedDocs, docName];
 
-    const progress = Math.round((updatedDocs.length / totalDocs) * 100);
-    const certificateAvailable = progress === 100;
+        const progress = Math.round((updatedDocs.length / totalDocs) * 100);
+        const certificateAvailable = progress === 100;
 
-    await dispatch(updateCertificate({
-      userId,
-      courseId,
-      updatedDocs,
-      progress: String(progress),
-      certificateAvailable,
-      certificateRegDate: certificateAvailable
-        ? new Date().toISOString()
-        : cert.certificate_reg_date,
-    }));
-};
+        await dispatch(updateCertificate({
+            userId,
+            courseId,
+            updatedDocs,
+            progress: String(progress),
+            certificateAvailable,
+            certificateRegDate: certificateAvailable
+                ? new Date().toISOString()
+                : cert.certificate_reg_date,
+        }));
+        return ({progress, certificateAvailable});
+    };
 
 
 const initialState = {
     certificates: [],
+    specificCertificate: null,
     isCertificateLoading: false,
     hasCertificateError: null,
 };
@@ -133,6 +152,20 @@ export const certificateSlice = createSlice({
                 state.certificates = action.payload ?? [];
             })
             .addCase(fetchUserCertificates.rejected, (state, action) => {
+                state.isCertificateLoading = false;
+                state.hasCertificateError = action.payload;
+            })
+
+            // Fetch a specific
+            .addCase(fetchUserSpecificCertificates.pending, (state) => {
+                state.isCertificateLoading = true;
+                state.hasCertificateError = null;
+            })
+            .addCase(fetchUserSpecificCertificates.fulfilled, (state, action) => {
+                state.isCertificateLoading = false;
+                state.specificCertificate = action.payload ?? [];
+            })
+            .addCase(fetchUserSpecificCertificates.rejected, (state, action) => {
                 state.isCertificateLoading = false;
                 state.hasCertificateError = action.payload;
             })

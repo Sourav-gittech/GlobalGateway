@@ -8,6 +8,9 @@ export const useUserCertificates = ({ userId, courseId }) => {
         queryKey: ["user-certificates", userId, courseId],
         queryFn: () => getUserCertificates({ userId, courseId }),
         enabled: Boolean(userId && courseId), 
-        staleTime: 1000 * 60 * 5,
+        // staleTime: 1000 * 60 * 5,
+
+        refetchInterval: 1000 * 10, 
+        refetchIntervalInBackground: true, 
     });
 };

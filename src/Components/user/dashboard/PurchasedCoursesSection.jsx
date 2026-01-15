@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import PurchaseCourseCard from './course/PurchaseCourseCard';
 import NoAvailableCourse from './course/NoAvailableCourse';
 
-const PurchasedCoursesSection = ({ purchasedCourses = [], certificates = [], onNavigate, userId }) => {
+const PurchasedCoursesSection = ({ purchasedCourses = [], onNavigate, userAuthData }) => {
 
   const handleBrowseCourses = () => {
     if (onNavigate) {
@@ -38,29 +38,9 @@ const PurchasedCoursesSection = ({ purchasedCourses = [], certificates = [], onN
 
       {/* Course Cards */}
       <div className="grid gap-6">
-        {/* Static Mock Course for Demo */}
-        <PurchaseCourseCard
-          key="mock-course-completed"
-          course={{
-            id: 'mock-1',
-            course_name: 'Immigration Process Training (Demo)',
-            description: 'This is a demo course to showcase the certificate feature.',
-            img_url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800',
-            purchase_date: new Date().toISOString(),
-            skill_level: 'Advanced'
-          }}
-          userId={userId}
-          certificates={[{
-            course_id: 'mock-1',
-            certificate_available: true,
-            progress: '100',
-            certificate_reg_date: new Date().toISOString(),
-            id: 'MOCK-CERT-12345'
-          }]}
-        />
 
         {purchasedCourses?.map(course => (
-          <PurchaseCourseCard key={course.id} course={course} userId={userId} certificates={certificates} />
+          <PurchaseCourseCard key={course.id} course={course} userAuthData={userAuthData} />
         ))}
       </div>
     </div>

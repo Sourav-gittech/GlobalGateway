@@ -58,7 +58,7 @@ export const handleDownloadCertificate = async (userAuthData, course, certificat
             }
         });
 
-        console.log('Canvas captured successfully');
+        // console.log('Canvas captured successfully');
 
         const imgData = canvas.toDataURL('image/png', 1.0);
 

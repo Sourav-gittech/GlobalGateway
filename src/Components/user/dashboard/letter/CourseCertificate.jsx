@@ -157,7 +157,7 @@ const CourseCertificate = forwardRef(({ userAuthData, course, certificateData },
                     Certificate ID
                   </p>
                   <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#172554', fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    GG-{certificateData?.id?.substring(0, 8).toUpperCase() || 'OFFICIAL'}
+                    GG-{certificateData?.id?.substring(0, 12).toUpperCase() || 'OFFICIAL'}
                   </p>
                 </div>
                 <div style={{ padding: '8px', borderRadius: '8px', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)', flexShrink: '0', background: 'linear-gradient(to bottom right, #172554, #1e3a8a)' }}>

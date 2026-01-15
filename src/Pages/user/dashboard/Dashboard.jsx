@@ -11,7 +11,6 @@ import AppointmentsSection from '../../../Components/user/dashboard/Appointments
 import PurchasedCoursesSection from '../../../Components/user/dashboard/PurchasedCoursesSection';
 import { checkLoggedInUser } from '../../../Redux/Slice/auth/checkAuthSlice';
 import { fetchUserTransactions } from '../../../Redux/Slice/transactionSlice';
-import { fetchUserCertificates } from '../../../Redux/Slice/certificateSlice';
 import { useApplicationsByUser } from '../../../tanstack/query/getApplicationsByUser';
 import { useApplicationsWithAppointmentForUser } from '../../../tanstack/query/getAvailableAppointmentForUser';
 import getSweetAlert from '../../../util/alert/sweetAlert';
@@ -27,7 +26,6 @@ const Dashboard = () => {
   const { data: appointment = [], isLoading: isAppointmentLoading, isError: isAppointmentError } = useApplicationsWithAppointmentForUser(userAuthData?.id, "processing", true);
   const { isTransactionLoading, allTransactions: { all, visa, course } } = useSelector(state => state.transaction);
   const { isOrderLoading, allOrders, hasOrderError } = useSelector(state => state.orders);
-  const { certificates, isCertificateLoading } = useSelector(state => state.certificate);
 
   useEffect(() => {
     dispatch(checkLoggedInUser())
@@ -62,15 +60,6 @@ const Dashboard = () => {
         .catch((err) => {
           getSweetAlert('Oops...', 'Something went wrong!', 'error');
           console.log("Error occurred", err);
-        });
-    }
-  }, [dispatch, userAuthData]);
-
-  useEffect(() => {
-    if (userAuthData) {
-      dispatch(fetchUserCertificates({ userId: userAuthData?.id }))
-        .catch((err) => {
-          console.log("Error occurred while fetching certificates", err);
         });
     }
   }, [dispatch, userAuthData]);
@@ -141,7 +130,7 @@ const Dashboard = () => {
     navigate(path);
   };
 
-  if (isuserLoading || isApplicationLoading || isOrderLoading || isCertificateLoading) {
+  if (isuserLoading || isApplicationLoading || isOrderLoading ) {
     return (
       <div className='flex flex-col h-screen items-center justify-center bg-black'>
         <div className="w-18 h-18 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -218,11 +207,10 @@ const Dashboard = () => {
             {activeTab === 'courses' && (
               <PurchasedCoursesSection
                 purchasedCourses={uniqueCourses}
-                certificates={certificates}
                 getStatusColor={getStatusColor}
                 getStatusIcon={getStatusIcon}
                 onNavigate={handleNavigate}
-                userId={userAuthData?.id}
+                userAuthData={userAuthData}
               />
             )}
           </div>

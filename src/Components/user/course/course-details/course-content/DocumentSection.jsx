@@ -3,9 +3,19 @@ import { FileText, Lock, Download, FileIcon, Info } from 'lucide-react';
 import hotToast from '../../../../../util/alert/hot-toast';
 import { useDispatch } from 'react-redux';
 import { handleCertificateProgress } from '../../../../../Redux/Slice/certificateSlice';
+import { addNotification } from '../../../../../Redux/Slice/notificationSlice';
 
 const DocumentSection = ({ isPurchased, course, certificates, userAuthData }) => {
     const dispatch = useDispatch();
+
+    const user_notification_obj = {
+        application_id: null,
+        title: `Congratulations! Your certificate for completing the ${course?.course_name} course has been issued.`,
+        receiver_type: 'user',
+        user_id: userAuthData?.id,
+        receiver_country_id: null,
+        mark_read: false
+    }
 
     const handleDocumentDownload = async (doc) => {
         if (!doc?.isFree && !isPurchased) {
@@ -21,12 +31,29 @@ const DocumentSection = ({ isPurchased, course, certificates, userAuthData }) =>
         // Update certificate progress before opening the doc
         const totalDocs = course?.course_content?.[0]?.documents?.length || 0;
         await dispatch(handleCertificateProgress(userAuthData?.id, course.id, doc.name, totalDocs))
-        .then(res => {
-            // console.log('Response in documentation', res)
-        })
+            .then(res => {
+                // console.log('Response in documentation', res)
 
-        // Open document
-        window.open(doc.file_url, '_blank', 'noopener,noreferrer');
+                if (res?.progress == 100 && res?.certificateAvailable) {
+
+                    dispatch(addNotification(user_notification_obj))
+                        .then(res => {
+                            // console.log('Response after adding notification', res);
+                        })
+                        .catch(err => {
+                            console.log('Error occured', err);
+                            getSweetAlert('Oops...', 'Server unreachable.', 'error');
+                        })
+                }
+
+                // Open document
+                window.open(doc.file_url, '_blank', 'noopener,noreferrer');
+
+            })
+            .catch(err => {
+                console.log('Error for generating certificates', err);
+                getSweetAlert('Oops...', 'Server unreachable', 'error');
+            })
     };
 
     return (
