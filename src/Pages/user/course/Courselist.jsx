@@ -24,6 +24,22 @@ const CourseList = () => {
 
   // console.log('Available course', courseList);
 
+  // Skeleton Loader
+  const renderSkeletons = () =>
+    Array.from({ length: 6 }).map((_, index) => (
+      <div key={index} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 p-4">
+        <div className="bg-white rounded-xl shadow-md h-[320px] animate-pulse">
+          <div className="h-[180px] bg-gray-300 rounded-t-xl"></div>
+          <div className="p-4 space-y-3">
+            <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-300 rounded w-full"></div>
+            <div className="h-4 bg-gray-300 rounded w-4/5"></div>
+            <div className="h-4 bg-gray-300 rounded w-1/3 mt-3"></div>
+          </div>
+        </div>
+      </div>
+    ));
+
   return (
     <div className="min-h-screen bg-[#f9f9f9]">
       {/* Top Banner */}
@@ -34,9 +50,8 @@ const CourseList = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
           {isCourseLoading ? (
-            <div className="text-center py-12">
-              <Loader2 className="w-16 h-16 text-red-500 animate-spin mx-auto text-center" />
-              <p className="text-black text-lg">Loading...</p>
+            <div className="flex flex-wrap justify-center -m-4 lg:mx-8 md:mx-2">
+              {renderSkeletons()}
             </div>
           ) : courseList?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">

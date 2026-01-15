@@ -38,7 +38,7 @@ export const addNotification = createAsyncThunk("notificationSlice/addNotificati
 
 // fetch all notifications
 export const fetchNotifications = createAsyncThunk("notificationSlice/fetchNotifications",
-    async ({ receiver_type, receiver_country_id }, { rejectWithValue }) => {
+    async ({ receiver_type, receiver_country_id, user_id }, { rejectWithValue }) => {
         // console.log('Received data for fetching notifications', receiver_type, receiver_country_id);
 
         try {
@@ -56,6 +56,10 @@ export const fetchNotifications = createAsyncThunk("notificationSlice/fetchNotif
                 query = query.eq("receiver_country_id", receiver_country_id);
             }
 
+            if (receiver_type === "user") {
+                query = query.eq("user_id", user_id);
+            }
+
             const res = await query;
             // console.log('Response for fetching notification', res);
 
@@ -69,8 +73,8 @@ export const fetchNotifications = createAsyncThunk("notificationSlice/fetchNotif
 
 // update notification
 export const markNotificationRead = createAsyncThunk("notificationSlice/markNotificationRead",
-    async ({ id, receiver_type, receiver_id }, { rejectWithValue }) => {
-        // console.log('Received data for updating', id, receiver_type, receiver_id);
+    async ({ id, receiver_type, receiver_id, user_id }, { rejectWithValue }) => {
+        // console.log('Received data for updating', id, receiver_type, receiver_id, user_id);
 
         try {
             let query = supabase.from("notifications").update({ mark_read: true });
@@ -83,6 +87,9 @@ export const markNotificationRead = createAsyncThunk("notificationSlice/markNoti
 
             // Narrow down by receiver_id
             if (receiver_id) query = query.eq("receiver_country_id", receiver_id);
+
+            // Narrow down by user_id
+            if (user_id) query = query.eq("user_id", user_id);
 
             const res = await query.select();
             // console.log('Response for updating all notification', res);

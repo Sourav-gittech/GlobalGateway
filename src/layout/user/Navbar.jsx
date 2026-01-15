@@ -11,6 +11,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { checkLoggedInUser, logoutUser } from '../../Redux/Slice/auth/checkAuthSlice';
 import { Link } from 'react-router-dom';
 import NotificationDrawer from '../../Components/user/common/NotificationDrawer';
+import { fetchNotifications } from '../../Redux/Slice/notificationSlice';
+import { fetchCartItems, getOrCreateCart } from '../../Redux/Slice/cartSlice';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -43,6 +45,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
+  const { isCartLoading, cartItems, currentCart, hasCartError } = useSelector(state => state.cart);
 
   // Handle responsive breakpoint
   useEffect(() => {
@@ -94,6 +98,40 @@ const Navbar = () => {
     handleClose();
     navigate('/');
   };
+
+  // notification 
+  useEffect(() => {
+    if (!userAuthData?.id) return;
+
+    dispatch(fetchNotifications({ receiver_type: 'user', user_id: userAuthData?.id }))
+      .then(res => {
+        // console.log('Response for fetching notification', res);
+      })
+      .catch(err => {
+        console.log('Error occured', err);
+        // getSweetAlert("Oops...", "Something went wrong!", "error");
+      })
+  }, [dispatch, userAuthData?.id]);
+
+  useEffect(() => {
+    dispatch(getOrCreateCart(userAuthData?.id))
+      .then(res => {
+        // console.log('Response for getting cart details for specific user', res);
+
+        dispatch(fetchCartItems(res?.payload?.id))
+          .then(res => {
+            // console.log('Response for fetching cart items', res);
+          })
+          .catch(err => {
+            console.log('Error occured', err);
+            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+          })
+      })
+      .catch(err => {
+        console.log(err);
+        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+      })
+  }, [userAuthData?.id, dispatch]);
 
   const handleRightClick = (e, label) => {
     e.preventDefault();
@@ -182,9 +220,9 @@ const Navbar = () => {
                   <div className="relative">
                     <ShoppingCartIcon />
                     {/* Badge placeholder - uncomment when cartCount is available */}
-                    {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
-                      {cartCount}
-                    </span> */}
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      {cartItems?.length ?? 0}
+                    </span>
                   </div>
                 </Link>
               )}
@@ -193,13 +231,13 @@ const Navbar = () => {
               {userAuthData && (
                 <button
                   onClick={() => setNotificationDrawerOpen(true)}
-                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors cursor-pointer"
                 >
                   <div className="relative">
                     <NotificationsIcon />
                     {/* Badge showing notification count */}
                     <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
-                      3
+                      {notificationList?.length ?? 0}
                     </span>
                   </div>
                 </button>
@@ -266,9 +304,9 @@ const Navbar = () => {
                   <div className="relative">
                     <ShoppingCartIcon />
                     {/* Badge placeholder */}
-                    {/* <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
-                      {cartCount}
-                    </span> */}
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
+                      {cartItems?.length ?? 0}
+                    </span>
                   </div>
                 </Link>
               )}
@@ -277,13 +315,13 @@ const Navbar = () => {
               {userAuthData && (
                 <button
                   onClick={() => setNotificationDrawerOpen(true)}
-                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors"
+                  className="text-white hover:bg-white/10 rounded-full p-2 transition-colors cursor-pointer"
                 >
                   <div className="relative">
                     <NotificationsIcon />
                     {/* Badge showing notification count */}
                     <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[0.75rem] h-[18px] min-w-[18px] flex items-center justify-center rounded-full">
-                      3
+                      {notificationList?.length ?? 0}
                     </span>
                   </div>
                 </button>
@@ -301,9 +339,7 @@ const Navbar = () => {
       </nav>
 
       <NotificationDrawer
-        isOpen={notificationDrawerOpen}
-        onClose={() => setNotificationDrawerOpen(false)}
-      />
+        notificationList={notificationList} userAuthData={userAuthData} isOpen={notificationDrawerOpen} onClose={() => setNotificationDrawerOpen(false)} />
 
       {/* Mobile Navigation Drawer */}
       {drawerOpen && (
@@ -320,7 +356,7 @@ const Navbar = () => {
               Global Gateway
             </h6>
 
-            {navLinks.map((link) => (
+            {navLinks?.map(link => (
               <div key={link.label} className="mb-4">
                 {link.children ? (
                   <div>
