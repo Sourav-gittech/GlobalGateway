@@ -1,5 +1,6 @@
 import React from 'react';
 import ApproveLetter from '../Components/user/dashboard/letter/ApproveLetter';
+import CourseCertificate from '../Components/user/dashboard/letter/CourseCertificate';
 
 const printStyles = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -90,7 +91,28 @@ const printStyles = `
   .text-right { text-align: right; }
   .space-y-2 > * + * { margin-top: 0.5rem; }
   .space-y-3 > * + * { margin-top: 0.75rem; }
-  .overflow-hidden { overflow: hidden; }
+  .bg-blue-900 { background-color: #1e3a8a !important; }
+  .bg-blue-50 { background-color: #eff6ff !important; }
+  .bg-yellow-500 { background-color: #eab308 !important; }
+  .text-blue-900 { color: #1e3a8a !important; }
+  .text-blue-800 { color: #1e40af !important; }
+  .text-yellow-500 { color: #eab308 !important; }
+  .border-blue-900 { border-color: #1e3a8a !important; }
+  .border-double { border-style: double !important; }
+  .border-[16px] { border-width: 16px !important; }
+  .opacity-[0.03] { opacity: 0.03 !important; }
+  .flex { display: flex !important; }
+  .justify-center { justify-content: center !important; }
+  .items-center { align-items: center !important; }
+  .text-4xl { font-size: 2.25rem !important; }
+  .text-3xl { font-size: 1.875rem !important; }
+  .text-xl { font-size: 1.25rem !important; }
+  .italic { font-style: italic !important; }
+  .font-serif { font-family: Georgia, serif !important; }
+  .tracking-[0.2em] { letter-spacing: 0.2em !important; }
+  .tracking-[0.4em] { letter-spacing: 0.4em !important; }
+  .tracking-[0.3em] { letter-spacing: 0.3em !important; }
+  .overflow-hidden { overflow: hidden !important; }
 `;
 
 export const handlePrintApproval = (visa, countryDetails, visaData, applicationDetails) => {
