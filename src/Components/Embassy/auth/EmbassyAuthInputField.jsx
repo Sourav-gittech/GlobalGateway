@@ -3,7 +3,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export const EmbassyAuthInputField = React.forwardRef(
   (
-    { label, error, helperText, showPassword, setShowPassword, ...inputProps },
+    { label, error, helperText, showPassword, disable = false, setShowPassword, ...inputProps },
     ref
   ) => {
     const isPassword = inputProps.name === "password";
@@ -13,9 +13,8 @@ export const EmbassyAuthInputField = React.forwardRef(
         {/* LABEL — OUTSIDE INPUT */}
         <label
           htmlFor={inputProps.name}
-          className={`block mb-1 text-sm ${
-            error ? "text-red-500" : "text-white/80"
-          }`}
+          className={`block mb-1 text-sm ${error ? "text-red-500" : "text-white/80"
+            }`}
         >
           {label}
         </label>
@@ -23,20 +22,15 @@ export const EmbassyAuthInputField = React.forwardRef(
         {/* INPUT WRAPPER */}
         <div className="relative">
           <input
-            ref={ref}
+            ref={ref} disabled={disable}
             id={inputProps.name}
             type={
-              isPassword
-                ? showPassword
-                  ? "text"
-                  : "password"
-                : inputProps.type || "text"
+              isPassword ? showPassword ? "text" : "password" : inputProps.type || "text"
             }
-            className={`w-full px-4 py-3 rounded-md bg-transparent text-white border
-              ${
-                error
-                  ? "border-red-500"
-                  : "border-white/50 focus:border-white"
+            className={`w-full px-4 py-3 rounded-md bg-transparent text-white border ${disable ? 'cursor-not-allowed' : ''}
+              ${error
+                ? "border-red-500"
+                : "border-white/50 focus:border-white"
               }`}
             {...inputProps}
           />

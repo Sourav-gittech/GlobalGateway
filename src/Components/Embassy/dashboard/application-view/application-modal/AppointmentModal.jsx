@@ -9,10 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchSpecificationApplicationsById, updateApplicationStatus } from '../../../../../Redux/Slice/applicationSlice';
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
-import { buildISOFormat, getDateAndTimeFromISO } from '../../../../../util/dateFormat/dateFormatConvertion';
+import { getDateAndTimeFromISO } from '../../../../../util/dateFormat/dateFormatConvertion';
 import hotToast from '../../../../../util/alert/hot-toast';
 import { fetchAppointmentReasons } from '../../../../../Redux/Slice/appointmentReasonSlice';
 import { useEmbassiesAddress } from '../../../../../tanstack/query/getEmbassyAddress';
+import { addNotification } from '../../../../../Redux/Slice/notificationSlice';
 
 const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, currentCountry, setSelectedDate, setAppointmentSet, setSelectedTime, selectedDate, selectedTime, currentMonth, setCurrentMonth, embassyId, country_id }) => {
     const dispatch = useDispatch();
@@ -25,6 +26,14 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, c
     const { isApplicationLoading, application: fetchApplication, personalInfo, isApplicationError } = useSelector(state => state.application);
 
     // console.log('Current country', currentCountry);
+
+    const user_notification_obj = {
+        application_id: null,
+        receiver_type: 'user',
+        user_id: application?.user_id,
+        receiver_country_id: null,
+        mark_read: false
+    }
 
     useEffect(() => {
         dispatch(fetchAppointmentReasons('active'))
@@ -127,9 +136,6 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, c
                 return;
             }
             else {
-                console.log(combineDateAndTime(selectedDate, selectedTime));
-                console.log(fetchApplication?.[0]?.appointment_date);
-
                 dispatch(updateApplicationStatus({
                     applicationId: application?.id,
                     status: 'processing',
@@ -142,9 +148,25 @@ const AppointmentModal = ({ application, visaDetails, setShowAppointmentModal, c
                         // console.log('Response for updating application', res);
 
                         if (res.meta.requestStatus === "fulfilled") {
-                            queryClient.invalidateQueries(["application", application?.id]);
-                            setShowAppointmentModal(false);
-                            hotToast(`Appointment set successfully!`, "success");
+
+                            dispatch(addNotification({ ...user_notification_obj, title: `Visa appointment for ${application?.destinationCountry} has ${existingAppointmentDate ? 're-' : ''}scheduled` }))
+                                .then(res => {
+                                    // console.log('Response after adding notification', res);
+
+                                    if (res.meta.requestStatus === "fulfilled") {
+
+                                        queryClient.invalidateQueries(["application", application?.id]);
+                                        setShowAppointmentModal(false);
+                                        hotToast(`Appointment has ${existingAppointmentDate ? 're-' : ''}scheduled successfully!`, "success");
+                                    }
+                                    else {
+                                        getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log('Error occured', err);
+                                    getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                                })
                         }
                         else {
                             getSweetAlert('Oops...', 'Something went wrong!', 'error');

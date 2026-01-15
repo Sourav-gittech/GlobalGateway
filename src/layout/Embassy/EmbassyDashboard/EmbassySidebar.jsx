@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2, Bell, Columns4 } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2, Bell, Columns4, School } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -11,19 +11,11 @@ import { fetchNotifications } from "../../../Redux/Slice/notificationSlice";
 
 const NavItem = ({ to, icon: Icon, children, collapsed, onClick, badge }) => (
   <NavLink
-    to={to}
-    end
-    onClick={onClick}
-    className={({ isActive }) =>
+    to={to} end onClick={onClick} className={({ isActive }) =>
       `flex items-center gap-3 px-3 py-3 transition-all duration-200 text-sm font-medium relative group
      ${collapsed ? "justify-center" : ""}
-     ${isActive
-        ? collapsed
-          ? "bg-white/10 text-white shadow-lg rounded-xl"
-          : "bg-white/10 text-white shadow-lg rounded-lg"
-        : collapsed
-          ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl"
-          : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
+     ${isActive ? collapsed ? "bg-white/10 text-white shadow-lg rounded-xl" : "bg-white/10 text-white shadow-lg rounded-lg"
+        : collapsed ? "text-white/90 hover:bg-white/5 hover:text-white rounded-xl" : "text-white/90 hover:bg-white/5 hover:text-white rounded-lg"
       }`
     }
   >
@@ -111,6 +103,11 @@ export default function EmbassySidebar({ embassyData }) {
       to: "/embassy/dashboard/profile",
       label: "Profile",
       icon: UserCircle
+    },
+    {
+      to: "/embassy/dashboard/new-embassy",
+      label: "Add New Embassy",
+      icon: School
     },
     {
       to: "/embassy/dashboard/applications",

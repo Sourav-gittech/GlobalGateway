@@ -35,7 +35,7 @@ const PurchaseCourseCard = ({ course, userId }) => {
                         <div className="flex items-center gap-4 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
                             <span>
                                 Purchased:{' '}
-                                {formatDate(course?.purchase_date)}
+                                {formatDate(course?.purchase_date) ?? 'N/A'}
                             </span>
                             <span>•</span>
                             <span>Skill Level: {course?.skill_level ?? 'N/A'}</span>

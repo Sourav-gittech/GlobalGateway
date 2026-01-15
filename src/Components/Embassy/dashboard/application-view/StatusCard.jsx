@@ -7,11 +7,20 @@ import { updateApplicationApproveReject } from '../../../../Redux/Slice/applicat
 import { useQueryClient } from '@tanstack/react-query';
 import getSweetAlert from '../../../../util/alert/sweetAlert';
 import { useDispatch } from 'react-redux';
+import { addNotification } from '../../../../Redux/Slice/notificationSlice';
 
 const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }) => {
 
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
+
+    const user_notification_obj = {
+        application_id: null,
+        receiver_type: 'user',
+        user_id: application?.user_id,
+        receiver_country_id: null,
+        mark_read: false
+    }
 
     const isWithin24HoursBeforeAppointment = (appointmentDate) => {
         if (!appointmentDate) return false;
@@ -45,8 +54,24 @@ const StatusCard = ({ application, setShowRejectModal, setShowAppointmentModal }
                 // console.log('Response after updating the application status', res);
 
                 if (res.meta.requestStatus === "fulfilled") {
-                    queryClient.invalidateQueries(["application", application?.id]);
-                    hotToast(`Application approved successfully!`, "success");
+
+                    dispatch(addNotification({ ...user_notification_obj, title: `Congrates! Visa application for ${application?.destinationCountry} has approved successfully.` }))
+                        .then(res => {
+                            // console.log('Response after adding notification', res);
+
+                            if (res.meta.requestStatus === "fulfilled") {
+
+                                queryClient.invalidateQueries(["application", application?.id]);
+                                hotToast(`Application has approved successfully!`, "success");
+                            }
+                            else {
+                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                            }
+                        })
+                        .catch(err => {
+                            console.log('Error occured', err);
+                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                        })
                 }
                 else {
                     getSweetAlert('Oops...', 'Something went wrong!', 'error');

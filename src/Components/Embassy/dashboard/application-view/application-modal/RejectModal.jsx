@@ -6,8 +6,10 @@ import { updateApplicationApproveReject } from '../../../../../Redux/Slice/appli
 import getSweetAlert from '../../../../../util/alert/sweetAlert';
 import hotToast from '../../../../../util/alert/hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
+import { addNotification } from '../../../../../Redux/Slice/notificationSlice';
 
 const RejectModal = ({ application, setShowRejectModal }) => {
+
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
@@ -16,16 +18,40 @@ const RejectModal = ({ application, setShowRejectModal }) => {
         },
     });
 
+    const user_notification_obj = {
+        application_id: null,
+        receiver_type: 'user',
+        user_id: application?.user_id,
+        receiver_country_id: null,
+        mark_read: false
+    }
+
     const onSubmit = (data) => {
         dispatch(updateApplicationApproveReject({ applicationId: application?.id, status: 'rejected', rejection_reason: data?.reason }))
             .then(res => {
                 // console.log('Response after updating the application status', res);
 
                 if (res.meta.requestStatus === "fulfilled") {
-                    queryClient.invalidateQueries(["application", application?.id]);
-                    hotToast(`Application rejected successfully!`, "success");
-                    reset();
-                    setShowRejectModal(false);
+
+                    dispatch(addNotification({ ...user_notification_obj, title: `Visa application for ${application?.destinationCountry} got rejected` }))
+                        .then(res => {
+                            // console.log('Response after adding notification', res);
+
+                            if (res.meta.requestStatus === "fulfilled") {
+
+                                queryClient.invalidateQueries(["application", application?.id]);
+                                hotToast(`Application rejected successfully!`, "success");
+                                reset();
+                                setShowRejectModal(false);
+                            }
+                            else {
+                                getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                            }
+                        })
+                        .catch(err => {
+                            console.log('Error occured', err);
+                            getSweetAlert('Oops...', 'Something went wrong!', 'error');
+                        })
                 }
                 else {
                     getSweetAlert('Oops...', 'Something went wrong!', 'error');

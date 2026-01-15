@@ -18,7 +18,7 @@ const EmbassyLayout = () => {
   useEffect(() => {
     dispatch(checkLoggedInUser())
       .then((res) => {
-        console.log('Response for fetching embassy profile', res);
+        // console.log('Response for fetching embassy profile', res);
       })
       .catch((err) => {
         getSweetAlert('Oops...', 'Something went wrong!', 'error');

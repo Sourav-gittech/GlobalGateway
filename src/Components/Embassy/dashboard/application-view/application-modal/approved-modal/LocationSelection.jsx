@@ -213,7 +213,7 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
             const userCoords = await userCityGeocodePromise;
 
             if (userCoords) {
-                console.log(`User city (${userCity}) coordinates:`, userCoords);
+                // console.log(`User city (${userCity}) coordinates:`, userCoords);
 
                 // Calculate all distances at once using optimized haversine
                 const R = 6371; // Earth's radius in km
@@ -231,7 +231,7 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
                 });
 
                 unique.sort((a, b) => (a.distanceFromUser || Infinity) - (b.distanceFromUser || Infinity));
-                console.log('Sorted by distance. Nearest:', unique[0]?.name);
+                // console.log('Sorted by distance. Nearest:', unique[0]?.name);
             } else {
                 unique.sort((a, b) => b.importance - a.importance);
             }
@@ -242,7 +242,7 @@ const LocationSelection = ({ selectedLocation, currentCountry, setSelectedLocati
             // Auto-select the nearest embassy
             if (unique.length && !selectedLocation) {
                 setSelectedLocation(unique[0]);
-                console.log('Auto-selected nearest embassy:', unique[0].name);
+                // console.log('Auto-selected nearest embassy:', unique[0].name);
             }
         } catch (err) {
             console.error('Embassy fetch error:', err);

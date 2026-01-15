@@ -5,7 +5,7 @@ const ApplicationTable = ({ recentApplications }) => {
     // console.log('Recent applications', recentApplications);
 
     return (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto glass-scrollbar">
             <table className="w-full">
                 <thead className="bg-gray-50 sticky top-0 z-10">
                     <tr>
