@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2, Bell, Columns4, School } from "lucide-react";
+import { Home, FileText, Menu, LogOut, UserCircle, X, ChevronLeft, ChevronRight, Building2, BarChart2, Bell, Columns4, School, LayoutDashboard, LocateFixed, MessageSquareText } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSidebarStore } from "../../../util/useSidebarStore";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
@@ -98,7 +98,16 @@ export default function EmbassySidebar({ embassyData }) {
   };
 
   const navItems = [
-    { to: "/embassy/dashboard", label: "Dashboard", icon: Home },
+    {
+      to: "/embassy/dashboard",
+      label: "Dashboard",
+      icon: LayoutDashboard
+    },
+    {
+      to: "/embassy/",
+      label: "Home",
+      icon: Home
+    },
     {
       to: "/embassy/dashboard/profile",
       label: "Profile",
@@ -121,17 +130,27 @@ export default function EmbassySidebar({ embassyData }) {
       icon: Columns4
     },
     {
+      to: "/embassy/dashboard/analytics",
+      label: "Analytics",
+      icon: BarChart2
+    },
+    {
       to: `/embassy/dashboard/notifications/${encodeBase64Url(String(embassyData?.country_id))}`,
       label: "Notifications",
       icon: Bell,
       badge: notificationList?.length
     },
     {
-      to: "/embassy/dashboard/analytics",
-      label: "Analytics",
-      icon: BarChart2
+      to: "/embassy/dashboard/country",
+      label: "Country Details",
+      icon: LocateFixed
+    },
+    {
+      to: "/embassy/dashboard/message",
+      label: "Contact Messages",
+      icon: MessageSquareText,
+      badge: 0
     }
-
   ];
 
   return (

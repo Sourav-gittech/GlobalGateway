@@ -7,6 +7,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { fetchEmbassyById } from '../../Redux/Slice/embassySlice';
+import { useFullCountryDetails } from '../../tanstack/query/getCountryDetails';
 
 const navLinks = [
   { label: 'Home', to: '/embassy/' },
@@ -35,6 +37,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isuserLoading, userAuthData, userError } = useSelector(state => state.checkAuth);
+  const { isEmbassyLoading, embassyData, hasEmbassyerror } = useSelector(state => state.embassy);
+  const { data: countryDetails, isLoading: isCountryLoading, isError } = useFullCountryDetails(embassyData?.country_id);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -68,6 +72,18 @@ const Navbar = () => {
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    if (userAuthData) {
+      dispatch(fetchEmbassyById(userAuthData?.id))
+        .then(res => {
+          // console.log('Response for fetching embassy profile', res);
+        })
+        .catch((err) => {
+          console.log("Error occurred", err);
+        });
+    }
+  }, [dispatch, userAuthData?.id]);
+
   const handleLogout = async () => {
     await dispatch(logoutUser({ user_type: 'embassy', showAlert: true }))
       .then(res => {
@@ -89,11 +105,10 @@ const Navbar = () => {
     <>
       {/* Main AppBar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 px-16 py-4 transition-all duration-400 shadow-none text-white ${
-          scrolled
-            ? 'bg-black/60 backdrop-blur-[10px] shadow-md'
-            : 'bg-transparent'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 px-16 py-4 transition-all duration-400 shadow-none text-white ${scrolled
+          ? 'bg-black/60 backdrop-blur-[10px] shadow-md'
+          : 'bg-transparent'
+          }`}
       >
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -115,11 +130,10 @@ const Navbar = () => {
                       handleDropdownToggle(link.label);
                     }}
                     onContextMenu={(e) => handleRightClick(e, link.label)}
-                    className={`flex items-center font-medium text-[15px] relative normal-case ${
-                      clickedLink === link.label || rightClickedLink === link.label
-                        ? 'text-red-500'
-                        : 'text-white'
-                    } after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-500 after:transition-all after:duration-300 hover:after:w-full`}
+                    className={`flex items-center font-medium text-[15px] relative normal-case ${clickedLink === link.label || rightClickedLink === link.label
+                      ? 'text-red-500'
+                      : 'text-white'
+                      } after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-500 after:transition-all after:duration-300 hover:after:w-full`}
                   >
                     {link.label}
                     {openDropdown === link.label ? <ExpandLess /> : <ExpandMore />}
@@ -153,11 +167,10 @@ const Navbar = () => {
                   to={link.to}
                   onClick={() => setClickedLink(link.label)}
                   onContextMenu={(e) => handleRightClick(e, link.label)}
-                  className={`font-medium text-[15px] relative normal-case ${
-                    clickedLink === link.label || rightClickedLink === link.label
-                      ? 'text-red-500'
-                      : 'text-white'
-                  } after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-500 after:transition-all after:duration-300 hover:after:w-full`}
+                  className={`font-medium text-[15px] relative normal-case ${clickedLink === link.label || rightClickedLink === link.label
+                    ? 'text-red-500'
+                    : 'text-white'
+                    } after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-red-500 after:transition-all after:duration-300 hover:after:w-full`}
                 >
                   {link.label}
                 </Link>
@@ -168,7 +181,7 @@ const Navbar = () => {
               <div className="relative">
                 <button onClick={handleMenu} className="p-0">
                   <img
-                    src={userAuthData?.avatar_url || '/demo-user.png'}
+                    src={countryDetails?.details?.flag_url || '/demo/demo-flag.png'}
                     alt="Profile"
                     className="w-10 h-10 rounded-full object-cover"
                   />

@@ -55,6 +55,8 @@ import EmbassyContact from "../Pages/embassy/Contact";
 import EmbassyAuth from "../Pages/embassy/auth/Auth";
 import EmbassyDashboard from "../Pages/embassy/Dashboard/EmbassyDashboard";
 import EmbassyProfile from "../Pages/embassy/Dashboard/Profile";
+import EmbassyCountryDetails from "../Pages/embassy/dashboard/EmbassyCountryDetails";
+import EmbassyContactMsg from "../Pages/embassy/dashboard/EmbassyContactMsg";
 import AddEmbassy from "../Pages/embassy/dashboard/AddEmbassy";
 import EmbassyApplications from "../Pages/embassy/Dashboard/Applications/Applications";
 import EmbassyApplicationView from "../Pages/embassy/Dashboard/Applications/ApplicationView";
@@ -147,6 +149,8 @@ const Routing = () => {
           <Route path="/embassy/dashboard" element={<EmbassyDashboardLayout />}>
             <Route index element={<EmbassyDashboard />} />
             <Route path="profile" element={<EmbassyProfile />} />
+            <Route path="country" element={<EmbassyCountryDetails />} />
+            <Route path="message" element={<EmbassyContactMsg />} />
             <Route path="new-embassy" element={<AddEmbassy />} />
             <Route path="applications" element={<EmbassyApplications />} />
             <Route path="applications/:application_id" element={<EmbassyApplicationView />} />

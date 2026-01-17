@@ -12,7 +12,7 @@ import { decodeBase64Url } from "../../../util/encodeDecode/base64";
 export default function EmbassyNotifications() {
   const { countryId } = useParams();
   const country_id = decodeBase64Url(countryId);
-  
+
   const dispatch = useDispatch();
   const { isNotificationLoading, notificationList, hasNotificationError } = useSelector(state => state?.notification);
 
@@ -41,6 +41,7 @@ export default function EmbassyNotifications() {
   const filteredNotifications = (notificationList || []).filter(notification => {
     const matchesSearch = notification?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       notification?.message?.toLowerCase().includes(searchQuery.toLowerCase());
+      
     const matchesFilter = filterType === "all" ||
       (filterType === "unread" && !notification?.mark_read) ||
       (filterType === "read" && notification?.mark_read);
