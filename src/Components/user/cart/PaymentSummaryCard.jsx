@@ -56,9 +56,7 @@ const PaymentSummaryCard = ({ cartId, cartItems, userAuthData, allCharges, promo
             return;
         }
 
-        const hasInactiveCourse = cartItems?.some(
-            (item) => item?.courses?.status !== "active"
-        );
+        const hasInactiveCourse = cartItems?.some((item) => item?.courses?.status !== "active");
 
         if (hasInactiveCourse) {
             hotToast("All cart items not available right now. Please check", 'info', <Info className='text-orange-600' />);
